@@ -1,21 +1,44 @@
 body{
- color:#2c558a;   
- font-family: "Arial", "Helvetica", sans-serif;
+    font-size: large;
+    color: #444;
+    background:#fdfeff;
+    font-family: "Helvetica Neue", "Arial", "Helvetica", sans-serif;
 }
-#main{
-    width:70%;
-    margin:0 auto;
+
+a:link, a:visited, a:active, a:hover{
+    text-decoration: none;
 }
-h1,h2{
+
+a:link {
+    color: #3d3dff;
+}
+
+a:hover {
+    color: #622c8c;
+}
+
+a:active {
+    color: #8c2c85;
+}
+
+a:visited {
+    color: #6492ce;
+}
+
+h1,h2,h3{
     font-weight:normal;
     color:#2c558a;
+    letter-spacing:-0.02em;
 }
 
 h1{
-    font-size:32px;
+    font-size:2em;
 }
 h2{
-    font-size:24px;
+    font-size:1.5empx;
+}
+h3{
+    font-weight: bold;
 }
 
 p{
@@ -24,31 +47,36 @@ p{
 }
 
 .content .right-img{
-    margin-left:10px;
-    margin-bottom: 10px;
+    margin-left:1em;
+    margin-bottom: 1em;
     float:right;
 }
 .content .left-img{
-    margin-right:10px;
-    margin-bottom: 10px;
-    margin:10px;
+    margin-right:1em;
+    margin-bottom: 1em;
+    margin:1em;
     float:left;
 }
 .content h2{
     margin:0;
-    padding-bottom:0px;
+    padding-bottom:0;
 }
 .content .section{
-    margin:50px 0;
+    margin:2em 0;
 }
 
 #head{
-    margin-top:10px;
-    padding:20px 10px;
+    margin-top:1em;
+    padding:1.5em 1em;
     border-bottom: solid 1px #2c558a;
 
 }
 
 #head h1, #head h2{
     margin:0;
+}
+
+#main{
+    width:75ex;
+    margin:0 auto;
 }
