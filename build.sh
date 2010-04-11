@@ -1,6 +1,6 @@
 #!/bin/sh
 
-build="runhaskell builder.hs"
+build="./builder"
 
 set -x
 rsync -auP w2/ build/
