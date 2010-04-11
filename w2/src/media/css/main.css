@@ -2,6 +2,7 @@ body,html{
     font-size: 12pt;
     font-family: {{fonts}};
     color:{{main-fg}};
+    background:{{main-bg}};
     line-height: 1.7em;
 }
 
