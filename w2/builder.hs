@@ -5,12 +5,13 @@ import qualified Data.ByteString.Char8 as C
 
 loadEnv fp = do 
   l <- readFile fp >>= return . lines
-  return $ map (break (== ':')) l
+  return $ map ((\(a,b)->(a,tail b)) . break (== ':')) l
                 
 
-buildFile env fp = do 
+buildFile env fp = do
   tmpl <- ioEvalFile fp
   tmpl (toContext env)
+
 
 main = do
   args <- getArgs
