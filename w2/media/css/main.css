@@ -1,0 +1,19 @@
+body,html{
+    font-size: 12pt;
+    font-family: {{fonts}};
+    color:{{main-fg}};
+    line-height: 1.7em;
+}
+
+h1,h2{
+    font-weight: normal;
+}
+
+#main{
+    width:85%;
+    margin: auto;
+}
+
+#header{
+    border-bottom: {{main-fg}} solid 1px;
+}
