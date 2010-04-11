@@ -1,7 +1,7 @@
 body{
-    font-size: large;
-    color: #444;
-    background:#fdfeff;
+    font-size: 12pt;
+    color:#2c558a;
+    background:#f2f8ff;
     font-family: "Helvetica Neue", "Arial", "Helvetica", sans-serif;
 }
 
@@ -9,7 +9,7 @@ a:link, a:visited, a:active, a:hover{
     text-decoration: none;
 }
 
-a:link {
+a:link, a:visited {
     color: #3d3dff;
 }
 
@@ -19,10 +19,6 @@ a:hover {
 
 a:active {
     color: #8c2c85;
-}
-
-a:visited {
-    color: #6492ce;
 }
 
 h1,h2,h3{
@@ -35,17 +31,18 @@ h1{
     font-size:2em;
 }
 h2{
-    font-size:1.5empx;
+    font-size:1.5em;
 }
 h3{
     font-weight: bold;
 }
-
 p{
     line-height:1.7em;
     text-align: justify;
 }
-
+ul li{
+    padding: 0.5em 0em;
+}
 .content .right-img{
     margin-left:1em;
     margin-bottom: 1em;
@@ -63,11 +60,12 @@ p{
 }
 .content .section{
     margin:2em 0;
+    padding:0 0.5em;
 }
 
 #head{
     margin-top:1em;
-    padding:1.5em 1em;
+    padding:1.5em 0em;
     border-bottom: solid 1px #2c558a;
 
 }
