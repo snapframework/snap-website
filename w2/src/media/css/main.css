@@ -1,9 +1,15 @@
 body,html{
-    font-size: 12pt;
-    font-family: {{fonts}};
+    font-size: {{base-fs}};
+    font-family: {{main-fonts}};
+    line-height: 1.7em;
     color:{{main-fg}};
     background:{{main-bg}};
-    line-height: 1.7em;
+    margin:0;
+    padding:0;
+    {{highlight-shadow}}
+}
+h1{
+   font-size: {{large-fs}}
 }
 
 h1,h2{
@@ -11,10 +17,46 @@ h1,h2{
 }
 
 #main{
-    width:85%;
-    margin: auto;
+    width:100%;
 }
 
 #header{
-    border-bottom: {{main-fg}} solid 1px;
+    padding: 5px 0px ;
 }
+#header h1{
+    font-size:{{large-fs}};
+}
+
+.content {
+    width: 85%;
+    margin: 0 auto;
+}
+
+#hero-shot{
+    background: {{main-fg}};
+    color: {{light}};
+    padding:5px 0px;
+    border-bottom: {{light}} solid 1px;
+    {{dark-shadow}}
+}
+
+#hero-shot table{
+    vertical-align: middle;
+}
+#hero-shot td{
+    width:50%;
+}
+
+.left-cell{
+    float:left;
+}
+.right-cell{
+    float:right;
+}
+.doubles{
+    overflow:auto;
+}
+.doubles .left-cell,.doubles .right-cell{
+    width: 50%;
+}
+

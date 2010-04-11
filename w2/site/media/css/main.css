@@ -1,9 +1,15 @@
 body,html{
     font-size: 12pt;
-    font-family:  "Helvetica Neue", "Arial", "Helvetica", sans-serif;
-    color: #2c558a;
-    background: #eee;
+    font-family: "Helvetica Neue", "Arial", "Helvetica", sans-serif;
     line-height: 1.7em;
+    color:#2c558a;
+    background:#d6dde6;
+    margin:0;
+    padding:0;
+    text-shadow: #fff 0px 1px 1px;
+}
+h1{
+   font-size: 2em
 }
 
 h1,h2{
@@ -11,10 +17,46 @@ h1,h2{
 }
 
 #main{
-    width:85%;
-    margin: auto;
+    width:100%;
 }
 
 #header{
-    border-bottom:  #2c558a solid 1px;
+    padding: 5px 0px ;
 }
+#header h1{
+    font-size:2em;
+}
+
+.content {
+    width: 85%;
+    margin: 0 auto;
+}
+
+#hero-shot{
+    background: #2c558a;
+    color: #fff;
+    padding:5px 0px;
+    border-bottom: #fff solid 1px;
+    text-shadow: #101f33 0px 1px 1px;
+}
+
+#hero-shot table{
+    vertical-align: middle;
+}
+#hero-shot td{
+    width:50%;
+}
+
+.left-cell{
+    float:left;
+}
+.right-cell{
+    float:right;
+}
+.doubles{
+    overflow:auto;
+}
+.doubles .left-cell,.doubles .right-cell{
+    width: 50%;
+}
+
