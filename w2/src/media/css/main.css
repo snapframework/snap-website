@@ -2,18 +2,35 @@ body,html{
     font-size: {{base-fs}};
     font-family: {{main-fonts}};
     line-height: 1.7em;
-    color:{{main-fg}};
+    color:{{main-fg}} ;
     background:{{main-bg}};
     margin:0;
     padding:0;
-    {{highlight-shadow}}
+    
 }
+
+a:link,a:visited{ color: #ad104f; text-decoration: none; }
+
 h1{
-   font-size: {{large-fs}}
+   font-size: {{x-large-fs}}
+}
+
+h2{
+  font-size: {{large-fs}}
 }
 
 h1,h2{
     font-weight: normal;
+    {{highlight-shadow}}
+}
+
+p {
+    line-height: 1.8em;
+}
+
+p,li{
+    font-family: {{para-fonts}};
+
 }
 
 #main{
@@ -22,24 +39,34 @@ h1,h2{
 
 #header{
     padding: 5px 0px ;
+    background: url(sun-spots.png) scroll no-repeat center;
 }
 #header h1{
-    font-size:{{large-fs}};
+    font-size:{{x-large-fs}};
+    text-align:center;
+    color: {{main-fg}}
 }
 
 .content {
-    width: 85%;
+    width: 68em;
     margin: 0 auto;
 }
 
-#hero-shot{
-    background: {{main-fg}};
-    color: {{light}};
-    padding:5px 0px;
-    border-bottom: {{light}} solid 1px;
-    {{dark-shadow}}
+.content h1, .content h2{
+        color: {{highlight-fg}};
+
 }
 
+#hero-shot{
+    background: url(bars.png) scroll repeat-x top left ;
+    height: 22px;
+}
+#hero-shot h1{
+    {{dark-shadow}}
+    color: #fff;
+    text-align: center;
+    margin-bottom:10px;
+}
 #hero-shot table{
     vertical-align: middle;
 }
@@ -60,3 +87,34 @@ h1,h2{
     width: 50%;
 }
 
+.newspaper{
+    width: 100%;
+    overflow:auto;
+    background: transparent url(bars.png) repeat-y center;
+    /*border-bottom:1px solid #fff;
+    border-left:1px solid #fff;
+    border-right:1px solid #fff;*/
+}
+.newspaper .section{
+    float:left;
+    width: 50%;
+}
+.newspaper .inner {
+    margin:10px; 
+    padding:25px; 
+    /*background: url(holy-light.png) scroll repeat-x 0 -100px;;*/
+
+-moz-border-radius-topleft:5px;  -webkit-border-top-left-radius:5px;
+ -moz-border-radius-topright: 5px; -webkit-border-top-right-radius: 5px;
+}
+.newspaper .inner h2{
+    margin:0;
+}
+
+.newspaper .section.left .inner{ 
+    margin-right: 5px; 
+
+}
+.newspaper .section.right .inner{ 
+    margin-left: 5px; 
+}
