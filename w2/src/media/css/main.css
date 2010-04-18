@@ -22,15 +22,33 @@ h2{
 h1,h2{
     font-weight: normal;
     {{highlight-shadow}}
+    letter-spacing:0.1em;
+    font-family: "Gill Sans";
+    font-size: 22px;
+    text-transform: uppercase;
 }
 
 p {
     line-height: 1.8em;
+
 }
 
 p,li{
     font-family: {{para-fonts}};
 
+}
+ ul {
+	list-style: none;
+	margin-left: 1em;
+	padding-left: 1em;
+	text-indent: -1em;
+	}
+ li{
+list-style-type: none;
+}
+
+li:before {
+   content: "» ";
 }
 
 #main{
@@ -38,7 +56,7 @@ p,li{
 }
 
 #header{
-    padding: 5px 0px ;
+    padding: 1px 0px ;
     background: url(sun-spots.png) scroll no-repeat center;
 }
 #header h1{
@@ -48,7 +66,7 @@ p,li{
 }
 
 .content {
-    width: 68em;
+    width: 1024px;
     margin: 0 auto;
 }
 
@@ -58,8 +76,10 @@ p,li{
 }
 
 #hero-shot{
-    background: url(bars.png) scroll repeat-x top left ;
-    height: 22px;
+    /*background: url(bars.png) scroll repeat-x top left ;*/
+    color:#fff;
+    /*border-bottom: solid 4px #fff;*/
+    height: 1px;
 }
 #hero-shot h1{
     {{dark-shadow}}
@@ -90,7 +110,7 @@ p,li{
 .newspaper{
     width: 100%;
     overflow:auto;
-    background: transparent url(bars.png) repeat-y center;
+    /*background: transparent url(bars.png) repeat-y center;*/
     /*border-bottom:1px solid #fff;
     border-left:1px solid #fff;
     border-right:1px solid #fff;*/
@@ -109,6 +129,8 @@ p,li{
 }
 .newspaper .inner h2{
     margin:0;
+    border-bottom: 1px solid #c2d1e1;
+    padding:5px 0;
 }
 
 .newspaper .section.left .inner{ 
@@ -117,4 +139,9 @@ p,li{
 }
 .newspaper .section.right .inner{ 
     margin-left: 5px; 
+}
+
+.newspaper p{
+    margin: 20px 0;
+    text-align: justify;
 }
