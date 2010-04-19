@@ -6,6 +6,10 @@
    font-family: "Aller";
    src: url("Aller_Rg.ttf") format("truetype");
 }
+@font-face {
+   font-family: "PT Sans";
+   src: url("PT_Sans.ttf") format("truetype");
+}
 
 body,html{
     font-size: 12pt;
@@ -32,7 +36,7 @@ h1,h2{
     font-weight: normal;
     text-shadow: #fff 0px 1px 1px;
     letter-spacing:0.1em;
-    font-family: "Gill Sans", "Aller", "Arial", sans-serif;
+    font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;
     font-size: 24px;
     text-transform: uppercase;
 }
