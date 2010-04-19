@@ -1,3 +1,12 @@
+@font-face {
+   font-family: "Droid Serif";
+   src: url("DroidSerif-Regular.ttf") format("truetype");
+}
+@font-face {
+   font-family: "Aller";
+   src: url("Aller_Rg.ttf") format("truetype");
+}
+
 body,html{
     font-size: {{base-fs}};
     font-family: {{main-fonts}};
@@ -23,8 +32,8 @@ h1,h2{
     font-weight: normal;
     {{highlight-shadow}}
     letter-spacing:0.1em;
-    font-family: "Gill Sans";
-    font-size: 22px;
+    font-family: "Gill Sans", "Aller", "Arial", sans-serif;
+    font-size: 24px;
     text-transform: uppercase;
 }
 
@@ -66,7 +75,7 @@ li:before {
 }
 
 .content {
-    width: 1024px;
+    width: 960px;
     margin: 0 auto;
 }
 

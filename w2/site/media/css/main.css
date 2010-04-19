@@ -1,5 +1,14 @@
+@font-face {
+   font-family: "Droid Serif";
+   src: url("DroidSerif-Regular.ttf") format("truetype");
+}
+@font-face {
+   font-family: "Aller";
+   src: url("Aller_Rg.ttf") format("truetype");
+}
+
 body,html{
-    font-size: 12.5pt;
+    font-size: 12pt;
     font-family: "Helvetica Neue","Arial", "Helvetica", sans-serif;
     line-height: 1.7em;
     color:#0c1a30 ;
@@ -23,8 +32,8 @@ h1,h2{
     font-weight: normal;
     text-shadow: #fff 0px 1px 1px;
     letter-spacing:0.1em;
-    font-family: "Gill Sans";
-    font-size: 22px;
+    font-family: "Gill Sans", "Aller", "Arial", sans-serif;
+    font-size: 24px;
     text-transform: uppercase;
 }
 
@@ -34,7 +43,7 @@ p {
 }
 
 p,li{
-    font-family: "Georgia", "Arial", "Helvetica", sans-serif;
+    font-family: "Droid Serif", "Georgia", "Arial", "Helvetica", sans-serif;
 
 }
  ul {
@@ -66,7 +75,7 @@ li:before {
 }
 
 .content {
-    width: 1024px;
+    width: 960px;
     margin: 0 auto;
 }
 
