@@ -19,6 +19,7 @@ Executable snap-website
     base >= 4,
     haskell98,
     transformers,
+    bytestring,
     snap-core,
     snap-server,
     heist,

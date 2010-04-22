@@ -6,4 +6,6 @@ coding, there are a few things you should read.</p>
     <li><a href="/about">philosophy and roadmap</a></li>
     <li><a href="/style-guide">style guide</a></li>
   </ol>
+  <p>You can discuss snap on #snapframework on freenode IRC.</p>
+  <p>Also be sure to join the <a href="http://mailman-mail5.webfaction.com/listinfo/snap">mailing list.</a></p>
 </snap:apply>

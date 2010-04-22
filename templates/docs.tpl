@@ -1,7 +1,7 @@
 <snap:apply template="page">
     <h2>Tutorials</h2>
     <ul>
-      <li>Quick Start</li>
+      <li><a href="quickstart">Quick Start</a></li>
       <li><a href="tutorials/heist">Heist Template Tutorial</a></li>
     </ul>
     <h2>API Documentation</h2>
