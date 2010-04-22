@@ -1,0 +1,38 @@
+Name:                snap-website
+Version:             0.1
+Synopsis:            The Snap Framework Website
+Homepage:            http://snapframework.com
+License:             BSD3
+License-file:        LICENSE
+Author:              James Sanders, Gregory Collins, Doug Beardsley
+Maintainer:          snap@snapframework.com
+Stability:           Experimental
+Category:            Web
+Build-type:          Simple
+Cabal-version:       >=1.2
+
+Executable snap-website
+  hs-source-dirs: src
+  main-is: Main.hs
+  
+  Build-depends:
+    base >= 4,
+    haskell98,
+    transformers,
+    snap-core,
+    snap-server,
+    heist
+  
+  -- Modules not exported by this package.
+  -- Other-modules:       
+  
+  -- Extra tools (e.g. alex, hsc2hs, ...) needed to build the source.
+  -- Build-tools:         
+
+  if impl(ghc >= 6.12.0)
+    ghc-options: -O2 -Wall -fhpc -fwarn-tabs -funbox-strict-fields
+                 -threaded -fno-warn-unused-do-bind
+  else
+    ghc-options: -O2 -Wall -fhpc -fwarn-tabs -funbox-strict-fields
+                 -threaded
+  
