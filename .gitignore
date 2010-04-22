@@ -7,6 +7,7 @@ w2/builder
 w2/builder.hi
 w2/builder.o
 *.swp
+*.log
 .hpc
 Setup.hs
 dist

@@ -4,19 +4,19 @@
       <a href="/">Home</a>
     </li>
     <li>
-      <a href="about">About</a>
+      <a href="/about">About</a>
     </li>
     <li>
-      <a href="download">Download</a>
+      <a href="/download">Download</a>
     </li>
     <li>
-      <a href="docs">Docs</a>
+      <a href="/docs">Docs</a>
     </li>
     <li>
-      <a href="contribute">Contribute</a>
+      <a href="/contribute">Contribute</a>
     </li>
     <li>
-      <a href="news">News</a>
+      <a href="/news">News</a>
     </li>
   </ul>
 </div>

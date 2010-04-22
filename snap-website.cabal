@@ -21,7 +21,8 @@ Executable snap-website
     transformers,
     snap-core,
     snap-server,
-    heist
+    heist,
+    filepath
   
   -- Modules not exported by this package.
   -- Other-modules:       
@@ -30,9 +31,11 @@ Executable snap-website
   -- Build-tools:         
 
   if impl(ghc >= 6.12.0)
-    ghc-options: -O2 -Wall -fhpc -fwarn-tabs -funbox-strict-fields
+    ghc-options: -O2 -Wall -fwarn-tabs -funbox-strict-fields
                  -threaded -fno-warn-unused-do-bind
   else
-    ghc-options: -O2 -Wall -fhpc -fwarn-tabs -funbox-strict-fields
+    ghc-options: -O2 -Wall -fwarn-tabs -funbox-strict-fields
                  -threaded
   
+  Extensions: OverloadedStrings
+

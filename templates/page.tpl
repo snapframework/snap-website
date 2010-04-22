@@ -10,7 +10,7 @@
   <body>
     <div id="main">
       <div id="header" class="content">
-        <h1><img src="media/img/logo-alt.png" title="Snap Framework" /></h1>
+        <h1><img src="/media/img/logo-alt.png" title="Snap Framework" /></h1>
       </div><!--end header-->
 
 
@@ -42,9 +42,9 @@
 
     </div><!--end main-->
 
-    <link href="media/css/main.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="media/js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="media/js/init.js"></script>
+    <link href="/media/css/main.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/media/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="/media/js/init.js"></script>
 
 
   </body>
