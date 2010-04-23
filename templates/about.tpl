@@ -1,4 +1,4 @@
-<snap:apply template="page">
+<apply template="page">
 <h2>Snap Framework 0.1.1</h2>
 
 <p>This is the first developer prerelease of the Snap framework.  Snap is
@@ -53,4 +53,4 @@ of:</p>
 
 <li> Third prerelease: where we figure out what to do about data access</li>
 </ol>
-</snap:apply>
+</apply>

@@ -1,4 +1,4 @@
-<snap:apply template="page">
+<apply template="page">
     <div id="about" class="section left">
       <div class="inner">
         <h2>What is the Snap Framework?</h2>
@@ -56,4 +56,4 @@
 
       </div><!--end developers-->
     </div><!--end project-status-->
-</snap:apply>
+</apply>

@@ -24,7 +24,7 @@
   </table>
 </div>
 
-<snap:apply template="nav"/>
+<apply template="nav"/>
 
 <div class="content">
 

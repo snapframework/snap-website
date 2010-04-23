@@ -1,0 +1,271 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>{-# LANGUAGE OverloadedStrings #-}
+<span class="lineno">    2 </span>module Text.Templating.Heist.Constants where
+<span class="lineno">    3 </span>
+<span class="lineno">    4 </span>import           Data.ByteString.Char8 (ByteString)
+<span class="lineno">    5 </span>import qualified Data.Map as Map
+<span class="lineno">    6 </span>import           Data.Map (Map)
+<span class="lineno">    7 </span>
+<span class="lineno">    8 </span>htmlEntityLookupTable :: Map ByteString ByteString
+<span class="lineno">    9 </span><span class="decl"><span class="nottickedoff">htmlEntityLookupTable = Map.fromList [</span>
+<span class="lineno">   10 </span><span class="spaces">                         </span><span class="nottickedoff">(&quot;acute&quot;      ,  &quot;´&quot;)</span>
+<span class="lineno">   11 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;cedil&quot;      ,  &quot;¸&quot;)</span>
+<span class="lineno">   12 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;circ&quot;       ,  &quot;ˆ&quot;)</span>
+<span class="lineno">   13 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;macr&quot;       ,  &quot;¯&quot;)</span>
+<span class="lineno">   14 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;middot&quot;     ,  &quot;·&quot;)</span>
+<span class="lineno">   15 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;tilde&quot;      ,  &quot;˜&quot;)</span>
+<span class="lineno">   16 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;uml&quot;        ,  &quot;¨&quot;)</span>
+<span class="lineno">   17 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Aacute&quot;     ,  &quot;Á&quot;)</span>
+<span class="lineno">   18 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;aacute&quot;     ,  &quot;á&quot;)</span>
+<span class="lineno">   19 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Acirc&quot;      ,  &quot;Â&quot;)</span>
+<span class="lineno">   20 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;acirc&quot;      ,  &quot;â&quot;)</span>
+<span class="lineno">   21 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;AElig&quot;      ,  &quot;Æ&quot;)</span>
+<span class="lineno">   22 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;aelig&quot;      ,  &quot;æ&quot;)</span>
+<span class="lineno">   23 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Agrave&quot;     ,  &quot;À&quot;)</span>
+<span class="lineno">   24 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;agrave&quot;     ,  &quot;à&quot;)</span>
+<span class="lineno">   25 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Aring&quot;      ,  &quot;Å&quot;)</span>
+<span class="lineno">   26 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;aring&quot;      ,  &quot;å&quot;)</span>
+<span class="lineno">   27 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Atilde&quot;     ,  &quot;Ã&quot;)</span>
+<span class="lineno">   28 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;atilde&quot;     ,  &quot;ã&quot;)</span>
+<span class="lineno">   29 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Auml&quot;       ,  &quot;Ä&quot;)</span>
+<span class="lineno">   30 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;auml&quot;       ,  &quot;ä&quot;)</span>
+<span class="lineno">   31 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Ccedil&quot;     ,  &quot;Ç&quot;)</span>
+<span class="lineno">   32 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ccedil&quot;     ,  &quot;ç&quot;)</span>
+<span class="lineno">   33 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Eacute&quot;     ,  &quot;É&quot;)</span>
+<span class="lineno">   34 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;eacute&quot;     ,  &quot;é&quot;)</span>
+<span class="lineno">   35 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Ecirc&quot;      ,  &quot;Ê&quot;)</span>
+<span class="lineno">   36 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ecirc&quot;      ,  &quot;ê&quot;)</span>
+<span class="lineno">   37 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Egrave&quot;     ,  &quot;È&quot;)</span>
+<span class="lineno">   38 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;egrave&quot;     ,  &quot;è&quot;)</span>
+<span class="lineno">   39 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ETH&quot;        ,  &quot;Ð&quot;)</span>
+<span class="lineno">   40 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;eth&quot;        ,  &quot;ð&quot;)</span>
+<span class="lineno">   41 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Euml&quot;       ,  &quot;Ë&quot;)</span>
+<span class="lineno">   42 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;euml&quot;       ,  &quot;ë&quot;)</span>
+<span class="lineno">   43 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Iacute&quot;     ,  &quot;Í&quot;)</span>
+<span class="lineno">   44 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;iacute&quot;     ,  &quot;í&quot;)</span>
+<span class="lineno">   45 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Icirc&quot;      ,  &quot;Î&quot;)</span>
+<span class="lineno">   46 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;icirc&quot;      ,  &quot;î&quot;)</span>
+<span class="lineno">   47 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Igrave&quot;     ,  &quot;Ì&quot;)</span>
+<span class="lineno">   48 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;igrave&quot;     ,  &quot;ì&quot;)</span>
+<span class="lineno">   49 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Iuml&quot;       ,  &quot;Ï&quot;)</span>
+<span class="lineno">   50 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;iuml&quot;       ,  &quot;ï&quot;)</span>
+<span class="lineno">   51 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Ntilde&quot;     ,  &quot;Ñ&quot;)</span>
+<span class="lineno">   52 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ntilde&quot;     ,  &quot;ñ&quot;)</span>
+<span class="lineno">   53 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Oacute&quot;     ,  &quot;Ó&quot;)</span>
+<span class="lineno">   54 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;oacute&quot;     ,  &quot;ó&quot;)</span>
+<span class="lineno">   55 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Ocirc&quot;      ,  &quot;Ô&quot;)</span>
+<span class="lineno">   56 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ocirc&quot;      ,  &quot;ô&quot;)</span>
+<span class="lineno">   57 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;OElig&quot;      ,  &quot;Œ&quot;)</span>
+<span class="lineno">   58 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;oelig&quot;      ,  &quot;œ&quot;)</span>
+<span class="lineno">   59 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Ograve&quot;     ,  &quot;Ò&quot;)</span>
+<span class="lineno">   60 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ograve&quot;     ,  &quot;ò&quot;)</span>
+<span class="lineno">   61 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Oslash&quot;     ,  &quot;Ø&quot;)</span>
+<span class="lineno">   62 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;oslash&quot;     ,  &quot;ø&quot;)</span>
+<span class="lineno">   63 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Otilde&quot;     ,  &quot;Õ&quot;)</span>
+<span class="lineno">   64 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;otilde&quot;     ,  &quot;õ&quot;)</span>
+<span class="lineno">   65 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Ouml&quot;       ,  &quot;Ö&quot;)</span>
+<span class="lineno">   66 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ouml&quot;       ,  &quot;ö&quot;)</span>
+<span class="lineno">   67 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Scaron&quot;     ,  &quot;Š&quot;)</span>
+<span class="lineno">   68 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;scaron&quot;     ,  &quot;š&quot;)</span>
+<span class="lineno">   69 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;szlig&quot;      ,  &quot;ß&quot;)</span>
+<span class="lineno">   70 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;THORN&quot;      ,  &quot;Þ&quot;)</span>
+<span class="lineno">   71 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;thorn&quot;      ,  &quot;þ&quot;)</span>
+<span class="lineno">   72 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Uacute&quot;     ,  &quot;Ú&quot;)</span>
+<span class="lineno">   73 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;uacute&quot;     ,  &quot;ú&quot;)</span>
+<span class="lineno">   74 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Ucirc&quot;      ,  &quot;Û&quot;)</span>
+<span class="lineno">   75 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ucirc&quot;      ,  &quot;û&quot;)</span>
+<span class="lineno">   76 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Ugrave&quot;     ,  &quot;Ù&quot;)</span>
+<span class="lineno">   77 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ugrave&quot;     ,  &quot;ù&quot;)</span>
+<span class="lineno">   78 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Uuml&quot;       ,  &quot;Ü&quot;)</span>
+<span class="lineno">   79 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;uuml&quot;       ,  &quot;ü&quot;)</span>
+<span class="lineno">   80 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Yacute&quot;     ,  &quot;Ý&quot;)</span>
+<span class="lineno">   81 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;yacute&quot;     ,  &quot;ý&quot;)</span>
+<span class="lineno">   82 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;yuml&quot;       ,  &quot;ÿ&quot;)</span>
+<span class="lineno">   83 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Yuml&quot;       ,  &quot;Ÿ&quot;)</span>
+<span class="lineno">   84 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;cent&quot;       ,  &quot;¢&quot;)</span>
+<span class="lineno">   85 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;curren&quot;     ,  &quot;¤&quot;)</span>
+<span class="lineno">   86 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;euro&quot;       ,  &quot;€&quot;)</span>
+<span class="lineno">   87 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;pound&quot;      ,  &quot;£&quot;)</span>
+<span class="lineno">   88 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;yen&quot;        ,  &quot;¥&quot;)</span>
+<span class="lineno">   89 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;brvbar&quot;     ,  &quot;¦&quot;)</span>
+<span class="lineno">   90 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;bull&quot;       ,  &quot;•&quot;)</span>
+<span class="lineno">   91 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;copy&quot;       ,  &quot;©&quot;)</span>
+<span class="lineno">   92 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;dagger&quot;     ,  &quot;†&quot;)</span>
+<span class="lineno">   93 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Dagger&quot;     ,  &quot;‡&quot;)</span>
+<span class="lineno">   94 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;frasl&quot;      ,  &quot;⁄&quot;)</span>
+<span class="lineno">   95 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;hellip&quot;     ,  &quot;…&quot;)</span>
+<span class="lineno">   96 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;iexcl&quot;      ,  &quot;¡&quot;)</span>
+<span class="lineno">   97 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;image&quot;      ,  &quot;ℑ&quot;)</span>
+<span class="lineno">   98 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;iquest&quot;     ,  &quot;¿&quot;)</span>
+<span class="lineno">   99 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;mdash&quot;      ,  &quot;—&quot;)</span>
+<span class="lineno">  100 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ndash&quot;      ,  &quot;–&quot;)</span>
+<span class="lineno">  101 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;not&quot;        ,  &quot;¬&quot;)</span>
+<span class="lineno">  102 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;oline&quot;      ,  &quot;‾&quot;)</span>
+<span class="lineno">  103 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ordf&quot;       ,  &quot;ª&quot;)</span>
+<span class="lineno">  104 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ordm&quot;       ,  &quot;º&quot;)</span>
+<span class="lineno">  105 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;para&quot;       ,  &quot;¶&quot;)</span>
+<span class="lineno">  106 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;permil&quot;     ,  &quot;‰&quot;)</span>
+<span class="lineno">  107 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;prime&quot;      ,  &quot;′&quot;)</span>
+<span class="lineno">  108 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Prime&quot;      ,  &quot;″&quot;)</span>
+<span class="lineno">  109 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;real&quot;       ,  &quot;ℜ&quot;)</span>
+<span class="lineno">  110 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;reg&quot;        ,  &quot;®&quot;)</span>
+<span class="lineno">  111 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sect&quot;       ,  &quot;§&quot;)</span>
+<span class="lineno">  112 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;shy&quot;        ,  &quot;\173&quot;)</span>
+<span class="lineno">  113 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sup1&quot;       ,  &quot;¹&quot;)</span>
+<span class="lineno">  114 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;trade&quot;      ,  &quot;™&quot;)</span>
+<span class="lineno">  115 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;weierp&quot;     ,  &quot;℘&quot;)</span>
+<span class="lineno">  116 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;bdquo&quot;      ,  &quot;„&quot;)</span>
+<span class="lineno">  117 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;laquo&quot;      ,  &quot;«&quot;)</span>
+<span class="lineno">  118 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ldquo&quot;      ,  &quot;“&quot;)</span>
+<span class="lineno">  119 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;lsaquo&quot;     ,  &quot;‹&quot;)</span>
+<span class="lineno">  120 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;lsquo&quot;      ,  &quot;‘&quot;)</span>
+<span class="lineno">  121 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;raquo&quot;      ,  &quot;»&quot;)</span>
+<span class="lineno">  122 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;rdquo&quot;      ,  &quot;”&quot;)</span>
+<span class="lineno">  123 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;rsaquo&quot;     ,  &quot;›&quot;)</span>
+<span class="lineno">  124 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;rsquo&quot;      ,  &quot;’&quot;)</span>
+<span class="lineno">  125 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sbquo&quot;      ,  &quot;‚&quot;)</span>
+<span class="lineno">  126 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;emsp&quot;       ,  &quot; &quot;)</span>
+<span class="lineno">  127 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ensp&quot;       ,  &quot; &quot;)</span>
+<span class="lineno">  128 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;nbsp&quot;       ,  &quot; &quot;)</span>
+<span class="lineno">  129 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;thinsp&quot;     ,  &quot; &quot;)</span>
+<span class="lineno">  130 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;zwj&quot;        ,  &quot;\xE2\x80\x8D&quot;)</span>
+<span class="lineno">  131 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;zwnj&quot;       ,  &quot;\xE2\x80\x8C&quot;)</span>
+<span class="lineno">  132 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;deg&quot;        ,  &quot;°&quot;)</span>
+<span class="lineno">  133 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;divide&quot;     ,  &quot;÷&quot;)</span>
+<span class="lineno">  134 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;frac12&quot;     ,  &quot;½&quot;)</span>
+<span class="lineno">  135 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;frac14&quot;     ,  &quot;¼&quot;)</span>
+<span class="lineno">  136 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;frac34&quot;     ,  &quot;¾&quot;)</span>
+<span class="lineno">  137 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ge&quot;         ,  &quot;≥&quot;)</span>
+<span class="lineno">  138 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;le&quot;         ,  &quot;≤&quot;)</span>
+<span class="lineno">  139 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;minus&quot;      ,  &quot;−&quot;)</span>
+<span class="lineno">  140 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sup2&quot;       ,  &quot;²&quot;)</span>
+<span class="lineno">  141 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sup3&quot;       ,  &quot;³&quot;)</span>
+<span class="lineno">  142 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;times&quot;      ,  &quot;×&quot;)</span>
+<span class="lineno">  143 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;alefsym&quot;    ,  &quot;ℵ&quot;)</span>
+<span class="lineno">  144 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;and&quot;        ,  &quot;∧&quot;)</span>
+<span class="lineno">  145 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ang&quot;        ,  &quot;∠&quot;)</span>
+<span class="lineno">  146 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;asymp&quot;      ,  &quot;≈&quot;)</span>
+<span class="lineno">  147 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;cap&quot;        ,  &quot;∩&quot;)</span>
+<span class="lineno">  148 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;cong&quot;       ,  &quot;≅&quot;)</span>
+<span class="lineno">  149 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;cup&quot;        ,  &quot;∪&quot;)</span>
+<span class="lineno">  150 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;empty&quot;      ,  &quot;∅&quot;)</span>
+<span class="lineno">  151 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;equiv&quot;      ,  &quot;≡&quot;)</span>
+<span class="lineno">  152 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;exist&quot;      ,  &quot;∃&quot;)</span>
+<span class="lineno">  153 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;fnof&quot;       ,  &quot;ƒ&quot;)</span>
+<span class="lineno">  154 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;forall&quot;     ,  &quot;∀&quot;)</span>
+<span class="lineno">  155 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;infin&quot;      ,  &quot;∞&quot;)</span>
+<span class="lineno">  156 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;int&quot;        ,  &quot;∫&quot;)</span>
+<span class="lineno">  157 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;isin&quot;       ,  &quot;∈&quot;)</span>
+<span class="lineno">  158 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;lang&quot;       ,  &quot;〈&quot;)</span>
+<span class="lineno">  159 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;lceil&quot;      ,  &quot;⌈&quot;)</span>
+<span class="lineno">  160 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;lfloor&quot;     ,  &quot;⌊&quot;)</span>
+<span class="lineno">  161 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;lowast&quot;     ,  &quot;∗&quot;)</span>
+<span class="lineno">  162 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;micro&quot;      ,  &quot;µ&quot;)</span>
+<span class="lineno">  163 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;nabla&quot;      ,  &quot;∇&quot;)</span>
+<span class="lineno">  164 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ne&quot;         ,  &quot;≠&quot;)</span>
+<span class="lineno">  165 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;ni&quot;         ,  &quot;∋&quot;)</span>
+<span class="lineno">  166 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;notin&quot;      ,  &quot;∉&quot;)</span>
+<span class="lineno">  167 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;nsub&quot;       ,  &quot;⊄&quot;)</span>
+<span class="lineno">  168 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;oplus&quot;      ,  &quot;⊕&quot;)</span>
+<span class="lineno">  169 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;or&quot;         ,  &quot;∨&quot;)</span>
+<span class="lineno">  170 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;otimes&quot;     ,  &quot;⊗&quot;)</span>
+<span class="lineno">  171 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;part&quot;       ,  &quot;∂&quot;)</span>
+<span class="lineno">  172 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;perp&quot;       ,  &quot;⊥&quot;)</span>
+<span class="lineno">  173 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;plusmn&quot;     ,  &quot;±&quot;)</span>
+<span class="lineno">  174 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;prod&quot;       ,  &quot;∏&quot;)</span>
+<span class="lineno">  175 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;prop&quot;       ,  &quot;∝&quot;)</span>
+<span class="lineno">  176 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;radic&quot;      ,  &quot;√&quot;)</span>
+<span class="lineno">  177 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;rang&quot;       ,  &quot;〉&quot;)</span>
+<span class="lineno">  178 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;rceil&quot;      ,  &quot;⌉&quot;)</span>
+<span class="lineno">  179 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;rfloor&quot;     ,  &quot;⌋&quot;)</span>
+<span class="lineno">  180 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sdot&quot;       ,  &quot;⋅&quot;)</span>
+<span class="lineno">  181 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sim&quot;        ,  &quot;∼&quot;)</span>
+<span class="lineno">  182 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sub&quot;        ,  &quot;⊂&quot;)</span>
+<span class="lineno">  183 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sube&quot;       ,  &quot;⊆&quot;)</span>
+<span class="lineno">  184 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sum&quot;        ,  &quot;∑&quot;)</span>
+<span class="lineno">  185 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sup&quot;        ,  &quot;⊃&quot;)</span>
+<span class="lineno">  186 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;supe&quot;       ,  &quot;⊇&quot;)</span>
+<span class="lineno">  187 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;there4&quot;     ,  &quot;∴&quot;)</span>
+<span class="lineno">  188 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Alpha&quot;      ,  &quot;Α&quot;)</span>
+<span class="lineno">  189 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;alpha&quot;      ,  &quot;α&quot;)</span>
+<span class="lineno">  190 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Beta&quot;       ,  &quot;Β&quot;)</span>
+<span class="lineno">  191 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;beta&quot;       ,  &quot;β&quot;)</span>
+<span class="lineno">  192 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Chi&quot;        ,  &quot;Χ&quot;)</span>
+<span class="lineno">  193 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;chi&quot;        ,  &quot;χ&quot;)</span>
+<span class="lineno">  194 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Delta&quot;      ,  &quot;Δ&quot;)</span>
+<span class="lineno">  195 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;delta&quot;      ,  &quot;δ&quot;)</span>
+<span class="lineno">  196 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Epsilon&quot;    ,  &quot;Ε&quot;)</span>
+<span class="lineno">  197 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;epsilon&quot;    ,  &quot;ε&quot;)</span>
+<span class="lineno">  198 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Eta&quot;        ,  &quot;Η&quot;)</span>
+<span class="lineno">  199 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;eta&quot;        ,  &quot;η&quot;)</span>
+<span class="lineno">  200 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Gamma&quot;      ,  &quot;Γ&quot;)</span>
+<span class="lineno">  201 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;gamma&quot;      ,  &quot;γ&quot;)</span>
+<span class="lineno">  202 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Iota&quot;       ,  &quot;Ι&quot;)</span>
+<span class="lineno">  203 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;iota&quot;       ,  &quot;ι&quot;)</span>
+<span class="lineno">  204 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Kappa&quot;      ,  &quot;Κ&quot;)</span>
+<span class="lineno">  205 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;kappa&quot;      ,  &quot;κ&quot;)</span>
+<span class="lineno">  206 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Lambda&quot;     ,  &quot;Λ&quot;)</span>
+<span class="lineno">  207 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;lambda&quot;     ,  &quot;λ&quot;)</span>
+<span class="lineno">  208 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Mu&quot;         ,  &quot;Μ&quot;)</span>
+<span class="lineno">  209 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;mu&quot;         ,  &quot;μ&quot;)</span>
+<span class="lineno">  210 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Nu&quot;         ,  &quot;Ν&quot;)</span>
+<span class="lineno">  211 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;nu&quot;         ,  &quot;ν&quot;)</span>
+<span class="lineno">  212 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Omega&quot;      ,  &quot;Ω&quot;)</span>
+<span class="lineno">  213 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;omega&quot;      ,  &quot;ω&quot;)</span>
+<span class="lineno">  214 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Omicron&quot;    ,  &quot;Ο&quot;)</span>
+<span class="lineno">  215 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;omicron&quot;    ,  &quot;ο&quot;)</span>
+<span class="lineno">  216 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Phi&quot;        ,  &quot;Φ&quot;)</span>
+<span class="lineno">  217 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;phi&quot;        ,  &quot;φ&quot;)</span>
+<span class="lineno">  218 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Pi&quot;         ,  &quot;Π&quot;)</span>
+<span class="lineno">  219 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;pi&quot;         ,  &quot;π&quot;)</span>
+<span class="lineno">  220 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;piv&quot;        ,  &quot;ϖ&quot;)</span>
+<span class="lineno">  221 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Psi&quot;        ,  &quot;Ψ&quot;)</span>
+<span class="lineno">  222 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;psi&quot;        ,  &quot;ψ&quot;)</span>
+<span class="lineno">  223 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Rho&quot;        ,  &quot;Ρ&quot;)</span>
+<span class="lineno">  224 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;rho&quot;        ,  &quot;ρ&quot;)</span>
+<span class="lineno">  225 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Sigma&quot;      ,  &quot;Σ&quot;)</span>
+<span class="lineno">  226 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sigma&quot;      ,  &quot;σ&quot;)</span>
+<span class="lineno">  227 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;sigmaf&quot;     ,  &quot;ς&quot;)</span>
+<span class="lineno">  228 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Tau&quot;        ,  &quot;Τ&quot;)</span>
+<span class="lineno">  229 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;tau&quot;        ,  &quot;τ&quot;)</span>
+<span class="lineno">  230 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Theta&quot;      ,  &quot;Θ&quot;)</span>
+<span class="lineno">  231 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;theta&quot;      ,  &quot;θ&quot;)</span>
+<span class="lineno">  232 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;thetasym&quot;   ,  &quot;ϑ&quot;)</span>
+<span class="lineno">  233 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;upsih&quot;      ,  &quot;ϒ&quot;)</span>
+<span class="lineno">  234 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Upsilon&quot;    ,  &quot;Υ&quot;)</span>
+<span class="lineno">  235 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;upsilon&quot;    ,  &quot;υ&quot;)</span>
+<span class="lineno">  236 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Xi&quot;         ,  &quot;Ξ&quot;)</span>
+<span class="lineno">  237 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;xi&quot;         ,  &quot;ξ&quot;)</span>
+<span class="lineno">  238 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;Zeta&quot;       ,  &quot;Ζ&quot;)</span>
+<span class="lineno">  239 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;zeta&quot;       ,  &quot;ζ&quot;)</span>
+<span class="lineno">  240 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;crarr&quot;      ,  &quot;↵&quot;)</span>
+<span class="lineno">  241 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;darr&quot;       ,  &quot;↓&quot;)</span>
+<span class="lineno">  242 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;dArr&quot;       ,  &quot;⇓&quot;)</span>
+<span class="lineno">  243 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;harr&quot;       ,  &quot;↔&quot;)</span>
+<span class="lineno">  244 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;hArr&quot;       ,  &quot;⇔&quot;)</span>
+<span class="lineno">  245 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;larr&quot;       ,  &quot;←&quot;)</span>
+<span class="lineno">  246 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;lArr&quot;       ,  &quot;⇐&quot;)</span>
+<span class="lineno">  247 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;rarr&quot;       ,  &quot;→&quot;)</span>
+<span class="lineno">  248 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;rArr&quot;       ,  &quot;⇒&quot;)</span>
+<span class="lineno">  249 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;uarr&quot;       ,  &quot;↑&quot;)</span>
+<span class="lineno">  250 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;uArr&quot;       ,  &quot;⇑&quot;)</span>
+<span class="lineno">  251 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;clubs&quot;      ,  &quot;♣&quot;)</span>
+<span class="lineno">  252 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;diams&quot;      ,  &quot;♦&quot;)</span>
+<span class="lineno">  253 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;hearts&quot;     ,  &quot;♥&quot;)</span>
+<span class="lineno">  254 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;spades&quot;     ,  &quot;♠&quot;)</span>
+<span class="lineno">  255 </span><span class="spaces">                       </span><span class="nottickedoff">, (&quot;loz&quot;        ,  &quot;◊&quot;)</span>
+<span class="lineno">  256 </span><span class="spaces">                       </span><span class="nottickedoff">]</span></span>
+<span class="lineno">  257 </span>
+
+</pre>
+</html>

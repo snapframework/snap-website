@@ -1,4 +1,4 @@
-<snap:apply template="page">
+<apply template="page">
   <h2>Contributing</h2>
   <p>The Snap project welcomes contributors.  Before you start
 coding, there are a few things you should read.</p>
@@ -8,4 +8,4 @@ coding, there are a few things you should read.</p>
   </ol>
   <p>You can discuss snap on #snapframework on freenode IRC.</p>
   <p>Also be sure to join the <a href="http://mailman-mail5.webfaction.com/listinfo/snap">mailing list.</a></p>
-</snap:apply>
+</apply>

@@ -1,4 +1,4 @@
-<snap:apply template="page">
+<apply template="page">
     <h2>Quick Start</h2>                                                                               
     <p>The quickest way to get Snap is with Haskell's Cabal.  If you                                   
 already have Cabal set up, then getting Snap is just two simple                                        
@@ -34,4 +34,4 @@ href="http://hackage.haskell.org/package/heist">http://hackage.haskell.org/packa
         <td>git clone snap@snapframework.com:heist</td>                                                
       </tr>
     </table>                                                                                           
-</snap:apply>
+</apply>

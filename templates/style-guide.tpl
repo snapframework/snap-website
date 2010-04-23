@@ -1,8 +1,10 @@
-<snap:apply template="page">
+<apply template="page">
 <div id="haskell-style-guide"
 ><h1
   >Haskell Style Guide</h1
-  ><p
+  ><sub>(adapted from <a
+  href="http://github.com/tibbe/haskell-style-guide/blob/master/haskell-style.md">Johan
+Tibell's style guide</a>.)</sub><p
   >This document describes coding and comment style for the Snap projects. Currently we're more interested in building a working web framework than being code nazis and enforcing this style guide. However, it will be easier on everyone in the long run if contributors follow these guidelines. When something isn't covered by this guide you should stay consistent with the style used in our existing code.</p
   ><div id="table-of-contents"
   ><h2
@@ -271,4 +273,4 @@ foo n = salt * 32 + 9
     ></div
   ></div
 >
-</snap:apply>
+</apply>

@@ -1,4 +1,4 @@
-<snap:apply template="page">
+<apply template="page">
 <h2>Snap Quick Start</h2>
 <p>First, go to the <a href="/download">download</a> page to find
 out how to install Snap.  Next, try running the following sample
@@ -27,5 +27,5 @@ definition of <i>site</i> to</p>
 
 <p>This will serve all all files in the current directory.</p>
 
-</snap:apply>
+</apply>
 
