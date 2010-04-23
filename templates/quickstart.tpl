@@ -1,31 +1,32 @@
 <apply template="page">
 <h2>Snap Quick Start</h2>
-<p>First, go to the <a href="/download">download</a> page to find
-out how to install Snap.  Next, try running the following sample
-app.</p>
+<p>If you haven't already done so, first go to the <a
+href="/download">download</a> page to find out how to install Snap.
+The installation generates an executable <i>snap</i> that you can use
+to get started with a basic snap project.  To use it, run the
+following commands:</p>
 
 <pre>
-{-# LANGUAGE OverloadedStrings #-}
-module Main where
-import Snap.Http.Server
-import Snap.Types
-site = writeBS "hello world"
-main = do
-  httpServe "*" 8000 "servername"
-    (Just "access.log")
-    (Just "error.log")
-    site
+  mkdir myproject
+  cd myproject
+  snap init
 </pre>
 
-<p>Compile and run this program, then point your web browser to
-localhost:8000.</p>
+<p>The last command creates a template Snap project in the current
+directory.  (If it doesn't run for you, then try
+<i>~/.cabal/bin/snap</i> instead.)  The source code for this project
+will be in <i>src/Main.hs</i>.  When you build this project with
+<i>cabal install</i>, an executable is created called
+<i>myproject</i>.  When you run it, the example site will be served on
+port 8080.  To build and run the example application, run the
+following commands:</p>
 
-<p>Now, add another import for Snap.Util.FileServe and change the
-definition of <i>site</i> to</p>
+<pre>
+  cabal install
+  ~/.cabal/bin/myproject
+</pre>
 
-<pre>site = fileServe "."</pre>
-
-<p>This will serve all all files in the current directory.</p>
-
+<p>Now point your web browser to localhost:8000.  And you should see
+a simple response string.</p>
 </apply>
 

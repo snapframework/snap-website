@@ -1,37 +1,50 @@
 <apply template="page">
-    <h2>Quick Start</h2>                                                                               
-    <p>The quickest way to get Snap is with Haskell's Cabal.  If you                                   
-already have Cabal set up, then getting Snap is just two simple                                        
-commands:</p>                                                                                          
-    <pre>                                                                                              
+    <h2>Downloading Snap</h2>
+    <p>The quickest way to get Snap is with Haskell's Cabal.  If you
+already have Cabal set up, then getting Snap is just two simple
+commands:</p>
+    <pre>
       cabal update
-      cabal install snap-server                                                                        
-    </pre>                                                                                             
-        
-    <h2>Other Links</h2>                                                                               
+      cabal install snap-server
+    </pre>
+
+    <p>After Snap is installed, check out the <a href="/quickstart">quick
+start</a> for instructions on getting your project started.</p>
+
+    <h2>Snap Packages</h2>
+    <p>Snap is made up of three separate packages:</p>
     <table>
       <tr>
-        <th>Package</th>                                                                               
+        <th>Package</th>
         <th>Hackage</th>
         <th>Source Repo</th>
       </tr>
       <tr>
-        <td>snap-core</td>                                                                             
+        <td><dl>
+          <dt>snap-core</dt>
+          <dd>The core Snap functionality, data structures.</dd>
+        </dl></td>
         <td><a
-href="http://hackage.haskell.org/package/snap-core">http://hackage.haskell.org/package/snap-core</a></td>
-        <td>git clone snap@snapframework.com:snap-core</td>                                            
+href="http://hackage.haskell.org/package/snap-core">snap-core</a></td>
+        <td>git clone http://git.snapframework.com/snap-core.git</td>
       </tr>
       <tr>
-        <td>snap-server</td>                                                                           
+        <td><dl>
+          <dt>snap-server</dt>
+          <dd>The Snap web server with a fast iteratee implementation.</dd>
+        </dl></td>
         <td><a
-href="http://hackage.haskell.org/package/snap-server">http://hackage.haskell.org/package/snap-server</a></td>   
-        <td>git clone snap@snapframework.com:snap-server</td>                                          
+href="http://hackage.haskell.org/package/snap-server">snap-server</a></td>
+        <td>git clone http://git.snapframework.com/snap-server.git</td>
       </tr>
       <tr>
-        <td>heist</td>                                                                                 
+        <td><dl>
+          <dt>heist</dt>
+          <dd>An xml-based templating engine.</dd>
+        </dl></td>
         <td><a
-href="http://hackage.haskell.org/package/heist">http://hackage.haskell.org/package/heist</a></td>
-        <td>git clone snap@snapframework.com:heist</td>                                                
+href="http://hackage.haskell.org/package/heist">heist</a></td>
+        <td>git clone http://git.snapframework.com/heist.git</td>
       </tr>
-    </table>                                                                                           
+    </table>
 </apply>
