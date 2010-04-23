@@ -31,7 +31,7 @@
 
     <div id="project-status" class="section right">
       <div class="inner">
-                <div id="developers"  >
+        <div id="developers"  >
           <h2>Who's involved?</h2>
           <p>
             <strong><a href="http://james-sanders.com">James Sanders</a></strong> has been in the web development game for
@@ -52,8 +52,14 @@
             developement using Happstack since 2008.  He currently
             works for a finance company doing Haskell development.
           </p>
-        </div>
-
-      </div><!--end developers-->
+          <p>
+            <strong><a href="http://rfrn.org/~shu">Shu-yu Guo</a></strong>
+            is a PhD student in programming languages and compilers
+            at <a href="http://www.ucla.edu">UCLA</a>. He is also an
+            unaccomplished linguist and a professional StarCraft
+            enthusiast.
+          </p>
+        </div><!--end developers-->
+      </div><!--end inner-->
     </div><!--end project-status-->
 </apply>
