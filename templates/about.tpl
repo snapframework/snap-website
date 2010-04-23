@@ -1,56 +1,65 @@
 <apply template="page">
-<h2>Snap Framework 0.1.1</h2>
+    <div id="about" class="section left">
+      <div class="inner">
+        <h2>What is the Snap Framework?</h2>
 
-<p>This is the first developer prerelease of the Snap framework.  Snap is
-a simple and fast web development framework and server written in
-Haskell. For more information or to download the latest version, you
-can visit the Snap project website at http://snapframework.com/.</p>
+        <p>
+          <strong>Snap</strong> is a simple web development framework in
+          development, written in the purely functional programming
+          language <a href="http://www.haskell.org">Haskell</a>.
+        </p>
+
+        <p>
+          <strong>Snap</strong> aims to be the <i>de facto</i> web toolkit
+          for Haskell, on the basis of:
+          <ul>
+            <li>High performance</li>
+            <li>High design standards</li>
+            <li>Simplicity and ease of use, even for Haskell beginners</li>
+            <li>Excellent documentation</li>
+            <li>Robustness and high test coverage</li>
+          </ul>
+        </p>
+        <h2>What is the project's status?</h2>
+        <p>
+          <strong>Snap</strong> is still in the planning and design stages.
+        </p>
 
 
-<h3>Snap Status and Features</h3>
+      </div>
+    </div><!--end about-->
 
-This developer prerelease contains only the Snap core system, namely:
-
-<ul>
-  <li>a high-speed HTTP server, with an optional high-concurrency</li>
-  <li>backend using the <a href="http://software.schmorp.de/pkg/libev.html">libev</a> library</li>
-  <li>a sensible and clean monad for web programming</li>
-  <li>an xml-based templating system for generating HTML based on
-    <a href="http://expat.sourceforge.net/">expat</a> (via
-    <a href="http://hackage.haskell.org/package/hexpat">expat</a>) that allows you to
-    bind Haskell functionality to XML tags without getting PHP-style tag soup all over your pants</li>
-</ul>
-
-<p>Snap currently only runs on Unix platforms; it has been tested on
-Linux and Mac OSX Snow Leopard.</p>
-
-
-<h3>Snap Philosophy</h3>
-
-<p>Snap aims to be the *de facto* web toolkit for Haskell, on the basis
-of:</p>
-
-<ul>
-  <li>High performance</li>
-
-  <li>High design standards</li>
-
-  <li>Simplicity and ease of use, even for Haskell beginners</li>
-
-  <li>Excellent documentation</li>
-
-  <li>Robustness and high test coverage</li>
-</ul>
-
-<h3>Snap Roadmap</h3>
-
-<p>Where are we going?</p>
-
-<ol>
-<li> First prerelease: HTTP server, monad, template system</li>
-
-<li> Second prerelease: component system with a collection of useful stock modules (called "Snaplets") for things like user and session management, caching, an administrative interface, etc.</li>
-
-<li> Third prerelease: where we figure out what to do about data access</li>
-</ol>
+    <div id="project-status" class="section right">
+      <div class="inner">
+        <div id="developers"  >
+          <h2>Who's involved?</h2>
+          <p>
+            <strong><a href="http://james-sanders.com">James Sanders</a></strong> has been in the web development game for
+            over six years.  He works
+            at <a href="http://thisismedium.com/">Medium</a> 
+            You can e-mail him
+            at <a href="mailto:jimmyjazz14@gmail.com">jimmyjazz14@gmail.com</a>.
+          </p>
+          <p>
+            <strong><a href="http://gregorycollins.net/">Gregory Collins</a></strong>
+            is a programmer from Toronto, Canada. He works
+            at <a href="http://www.sysomos.com/">Sysomos</a>, a social media
+            analytics startup.
+          </p>
+          <p>
+            <strong><a href="http://softwaresimply.blogspot.com/">Doug Beardsley</a></strong>
+            loves Haskell and has been playing with Haskell web
+            developement using Happstack since 2008.  He currently
+            works for a finance company doing Haskell development.
+          </p>
+          <p>
+            <strong><a href="http://rfrn.org/~shu">Shu-yu Guo</a></strong>
+            is a PhD student in programming languages and compilers
+            at <a href="http://www.ucla.edu">UCLA</a>. He is also an
+            unaccomplished linguist and a professional StarCraft
+            enthusiast.
+          </p>
+        </div><!--end developers-->
+      </div><!--end inner-->
+    </div><!--end project-status-->
 </apply>

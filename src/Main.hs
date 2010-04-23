@@ -1,6 +1,5 @@
 module Main where
 
-import           Directory
 import           System
 import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as B
@@ -10,16 +9,21 @@ import           Control.Monad.Trans
 import           Snap.Http.Server
 import           Snap.Types
 import           Snap.Util.FileServe
-import           System.FilePath
 import           Text.Templating.Heist
 
+renderTmpl :: MVar (TemplateState IO)
+           -> ByteString
+           -> Snap ()
 renderTmpl tsMVar n = do
     ts <- liftIO $ readMVar tsMVar
     maybe pass writeBS =<< liftIO (renderTemplate ts n)
 
 templateServe :: MVar (TemplateState IO)
               -> Snap ()
-templateServe ts = renderTmpl ts . B.pack =<< getSafePath
+templateServe tsMVar = 
+    ifTop (renderTmpl tsMVar "index") <|>
+    path "admin/reload" (reloadTemplates tsMVar) <|>
+    (renderTmpl tsMVar . B.pack =<< getSafePath)
 
 reloadTemplates :: MVar (TemplateState IO)
                 -> Snap ()
@@ -28,12 +32,8 @@ reloadTemplates tsMVar = do
     
 site :: MVar (TemplateState IO) -> Snap ()
 site tsMVar = 
-    ifTop (renderTmpl tsMVar "index") <|>
-    path "admin/reload" (reloadTemplates tsMVar) <|>
     templateServe tsMVar <|>
     fileServe "static"
-  where
-    tmplPair n = (n, renderTmpl tsMVar n)
 
 main :: IO ()
 main = do

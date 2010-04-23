@@ -25,12 +25,6 @@ Executable snap-website
     heist,
     filepath
   
-  -- Modules not exported by this package.
-  -- Other-modules:       
-  
-  -- Extra tools (e.g. alex, hsc2hs, ...) needed to build the source.
-  -- Build-tools:         
-
   if impl(ghc >= 6.12.0)
     ghc-options: -O2 -Wall -fwarn-tabs -funbox-strict-fields
                  -threaded -fno-warn-unused-do-bind
