@@ -9,6 +9,7 @@ import           Control.Monad.Trans
 import           Snap.Http.Server
 import           Snap.Types
 import           Snap.Util.FileServe
+import           Snap.Util.GZip
 import           Text.Templating.Heist
 
 renderTmpl :: MVar (TemplateState IO)
@@ -31,9 +32,8 @@ reloadTemplates tsMVar = do
     liftIO $ modifyMVar_ tsMVar (const $ loadTemplates "templates")
     
 site :: MVar (TemplateState IO) -> Snap ()
-site tsMVar = 
-    templateServe tsMVar <|>
-    fileServe "static"
+site tsMVar = withCompression $ templateServe tsMVar <|>
+                                fileServe "static"
 
 main :: IO ()
 main = do
