@@ -17,9 +17,8 @@
         </div>
 
         <div class="blurb">
-<!--          <em>a super-fast web framework for the
-            <a href="http://www.haskell.org">Haskell</a> programming language.</em>-->
-          <em>the power of types compels you</em>
+          <em>a super-fast web framework for the
+            <a href="http://www.haskell.org">Haskell</a> programming language.</em>
         </div>
 
         <div class="clear"></div>
