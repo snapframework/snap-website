@@ -9,32 +9,17 @@
   </head>
   <body>
     <div id="main">
-      <div id="header" class="content">
-        <h1><img src="/media/img/logo-alt.png" title="Snap Framework" /></h1>
-      </div><!--end header-->
+      <apply template="nav"/>
 
+      <div id="content">
 
-<div id="hero-shot">
-  <table class="content">
-    <tr>
-      <td class="cell-1">
-       
-      </td>
-    </tr>
-  </table>
-</div>
+        <div class="newspaper">
 
-<apply template="nav"/>
+          <content/>
 
-<div class="content">
+        </div>
 
-  <div class="newspaper">
-
-    <content/>
-
-  </div>
-
-</div><!--end content-->
+      </div><!--end content-->
       
       <div id="footer">
 
@@ -43,8 +28,8 @@
     </div><!--end main-->
 
     <link href="/media/css/main.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="/media/js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="/media/js/init.js"></script>
+    <script type="text/javascript" src="/media/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="/media/js/init.js"></script>
 
 
   </body>

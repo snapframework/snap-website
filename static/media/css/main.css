@@ -1,38 +1,45 @@
 @font-face {
-   font-family: "Droid Serif";
-   src: url("DroidSerif-Regular.ttf") format("truetype");
-}
-@font-face {
-   font-family: "Aller";
-   src: url("Aller_Rg.ttf") format("truetype");
-}
-@font-face {
-   font-family: "PT Sans";
-   src: url("PT_Sans.ttf") format("truetype");
+    font-family: "PT Sans";
+    src: url("PT_Sans.ttf") format("truetype");
 }
 
+@font-face {
+    font-family: "Liberation Mono";
+    src: url("LiberationMono-Regular.ttf") format("truetype");
+}
+
+
+/*--------------------------------------------------------------------------
+ * tag definitions                                                          
+  ------------------------------------------------------------------------*/
 body,html{
-    font-size: 12pt;
-    font-family: "Helvetica Neue","Arial", "Helvetica", sans-serif;
+    font-size: 13pt;
+    font-family: "Georgia", "Arial", "Helvetica", sans-serif;
     line-height: 1.7em;
-    color:#0c1a30 ;
-    background:#fff url(holy-light.png) scroll repeat-x top left;
+    color:#0c1a30;
+    /*background:#fff url(holy-light.png) scroll repeat-x top left;*/
     margin:0;
     padding:0;
-    
 }
 
-a:link,a:visited{ color: #ad104f; text-decoration: none; }
+tt, code, pre {
+    font-family: "Liberation Mono", "monospace";
+    font-size: 90%;
+}
+
+/*a:link,a:visited{ color: #ad104f; text-decoration: none; }*/
+a:link,a:visited{ color: #2B7EA1; text-decoration: none; }
 
 h1{
-   font-size: 2.7em
+    font-size: 2.7em
 }
 
 h2{
-  font-size: 1.9em
+    font-size: 1.9em
 }
 
 h1,h2{
+    color: #2c558a;
     font-weight: normal;
     text-shadow: #fff 0px 1px 1px;
     letter-spacing:0.1em;
@@ -46,67 +53,25 @@ p {
 
 }
 
-p,li{
-    font-family: "Droid Serif", "Georgia", "Arial", "Helvetica", sans-serif;
-
+ul {
+    list-style: none;
+    margin-left: 1em;
+    padding-left: 1em;
+    text-indent: -1em;
 }
- ul {
-	list-style: none;
-	margin-left: 1em;
-	padding-left: 1em;
-	text-indent: -1em;
-	}
- li{
-list-style-type: none;
+
+li{
+    list-style-type: none;
 }
 
 li:before {
-   content: "» ";
+    content: "» ";
 }
 
-#main{
-    width:100%;
-}
 
-#header{
-    padding: 1px 0px ;
-    background: url(sun-spots.png) scroll no-repeat center;
-}
-#header h1{
-    font-size:2.7em;
-    text-align:center;
-    color: #0c1a30
-}
-
-.content {
-    width: 960px;
-    margin: 0 auto;
-}
-
-.content h1, .content h2{
-        color: #2c558a;
-
-}
-
-#hero-shot{
-    /*background: url(bars.png) scroll repeat-x top left ;*/
-    color:#fff;
-    /*border-bottom: solid 4px #fff;*/
-    height: 1px;
-}
-#hero-shot h1{
-    text-shadow: #101f33 0px 1px 1px;
-    color: #fff;
-    text-align: center;
-    margin-bottom:10px;
-}
-#hero-shot table{
-    vertical-align: middle;
-}
-#hero-shot td{
-    width:50%;
-}
-
+/*--------------------------------------------------------------------------
+ * styling for css classes
+  ------------------------------------------------------------------------*/
 .left-cell{
     float:left;
 }
@@ -123,10 +88,10 @@ li:before {
 .newspaper{
     width: 100%;
     overflow:auto;
-    /*background: transparent url(bars.png) repeat-y center;*/
-    /*border-bottom:1px solid #fff;
-    border-left:1px solid #fff;
-    border-right:1px solid #fff;*/
+/*background: transparent url(bars.png) repeat-y center;*/
+/*border-bottom:1px solid #fff;
+  border-left:1px solid #fff;
+  border-right:1px solid #fff;*/
 }
 .newspaper .section{
     float:left;
@@ -137,8 +102,8 @@ li:before {
     padding:25px; 
     /*background: url(holy-light.png) scroll repeat-x 0 -100px;;*/
 
--moz-border-radius-topleft:5px;  -webkit-border-top-left-radius:5px;
- -moz-border-radius-topright: 5px; -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft:5px;  -webkit-border-top-left-radius:5px;
+    -moz-border-radius-topright: 5px; -webkit-border-top-right-radius: 5px;
 }
 .newspaper .inner h2{
     margin:0;
@@ -159,17 +124,127 @@ li:before {
     text-align: justify;
 }
 
-div.nav {
-  text-align: center;
+
+.clear {
+    padding:0;margin:0;
+    clear:both;
 }
 
-ul.nav {
-  padding: 0;
-  margin: 0;
+
+/*--------------------------------------------------------------------------
+ * styling for divs with ids                                                          
+  ------------------------------------------------------------------------*/
+#content {
+    width: 960px;
+    margin: 0 auto;
 }
 
-ul.nav li {
-  list-style-type: none;
-  display: inline;
+#main{
+    margin: 0;
+    padding: 0;
+    width:100%;
 }
+
+#splash{
+    width: 100%;
+    width: 720px;
+    margin: 32px auto;
+/*    background: url(sun-spots.png) scroll no-repeat center;*/
+}
+
+#splash .logo {
+    text-align: center;
+    font-size: 16pt;
+    width: 350px;
+    margin-right: 20px;
+    float: left;
+}
+
+#splash .blurb {
+    margin-top: 38px;
+    width: 350px;
+    font-size: 20pt;
+    float: left;
+}
+
+
+#triptych {
+    /*background: #2C558A;*/
+    background: #46F9FF;
+    color: #040;
+    width: 100%;
+    padding: 10px 0;
+}
+
+#triptych div.triptych-content {
+    width: 960px;
+    margin: 0px auto;
+}
+
+#triptych div div.panel {
+    width: 300px;
+    padding: 10px;
+    margin: 0;
+    float: left;
+    text-align: center;
+    font-size: 12pt;
+    font-style: italic;
+}
+
+#triptych .panel a {
+    color: inherit;
+    border: none;
+    text-decoration: none;
+}
+
+#triptych .panel img {
+    border: none;
+}
+
+
+#hero-shot{
+    /*background: url(bars.png) scroll repeat-x top left ;*/
+    color:#fff;
+    /*border-bottom: solid 4px #fff;*/
+    height: 1px;
+}
+#hero-shot h1{
+    text-shadow: #101f33 0px 1px 1px;
+    color: #fff;
+    text-align: center;
+    margin-bottom:10px;
+}
+#hero-shot table{
+    vertical-align: middle;
+}
+#hero-shot td{
+    width:50%;
+}
+
+
+#nav {
+    text-align: center;
+    background: #231C69;
+    color: #44FBFF;
+}
+
+#nav a:link, #nav a:visited {
+    color: #44FBFF;
+}
+
+#nav a:hover, #nav a:active {
+    color: #fff;
+}
+
+#nav ul {
+    padding: 0;
+    margin: 0;
+    display: inline;
+}
+
+#nav li {
+    list-style-type: none;
+    display: inline;
+}
+
 
