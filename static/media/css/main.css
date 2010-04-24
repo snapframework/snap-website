@@ -246,7 +246,7 @@ li:before {
 }
 
 #nav a:link, #nav a:visited {
-    color: #44FBFF;
+    color: inherit;
 }
 
 #nav a:hover, #nav a:active {
