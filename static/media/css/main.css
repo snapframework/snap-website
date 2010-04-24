@@ -148,7 +148,7 @@ li:before {
 #splash{
     width: 100%;
     width: 720px;
-    margin: 32px auto;
+    margin: 32px auto 16px auto;
 /*    background: url(sun-spots.png) scroll no-repeat center;*/
 }
 
