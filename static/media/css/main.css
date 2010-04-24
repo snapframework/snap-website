@@ -171,6 +171,7 @@ li:before {
 #triptych {
     /*background: #2C558A;*/
     background: #C4E7FF;
+    /*background: #D6EFFF;*/
     color: #000;
     width: 100%;
     padding: 10px 0;
@@ -225,7 +226,7 @@ li:before {
 #nav {
     width: 100%;
     background: #231C69;
-    color: #44FBFF;
+    color: #C4E7FF;
     padding: 3px 0;
 }
 
