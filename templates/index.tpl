@@ -41,7 +41,7 @@
           <div class="panel">
             <a href="/FIXME">
               <img src="/media/img/placeholder.png"/><br/>
-              Well documented and tested
+              Well-documented and tested
             </a>
           </div>
           <div class="clear"></div>
