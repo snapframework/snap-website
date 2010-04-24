@@ -10,7 +10,7 @@
 
 
 /*--------------------------------------------------------------------------
- * tag definitions                                                          
+ * tag definitions
   ------------------------------------------------------------------------*/
 body,html{
     font-size: 13pt;
@@ -98,8 +98,8 @@ li:before {
     width: 50%;
 }
 .newspaper .inner {
-    margin:10px; 
-    padding:25px; 
+    margin:10px;
+    padding:25px;
     /*background: url(holy-light.png) scroll repeat-x 0 -100px;;*/
 
     -moz-border-radius-topleft:5px;  -webkit-border-top-left-radius:5px;
@@ -111,12 +111,12 @@ li:before {
     padding:5px 0;
 }
 
-.newspaper .section.left .inner{ 
-    margin-right: 5px; 
+.newspaper .section.left .inner{
+    margin-right: 5px;
 
 }
-.newspaper .section.right .inner{ 
-    margin-left: 5px; 
+.newspaper .section.right .inner{
+    margin-left: 5px;
 }
 
 .newspaper p{
@@ -132,7 +132,7 @@ li:before {
 
 
 /*--------------------------------------------------------------------------
- * styling for divs with ids                                                          
+ * styling for divs with ids
   ------------------------------------------------------------------------*/
 #content {
     width: 960px;
@@ -223,9 +223,25 @@ li:before {
 
 
 #nav {
-    text-align: center;
+    width: 100%;
     background: #231C69;
     color: #44FBFF;
+    padding: 3px 0;
+}
+
+#nav .heading {
+    float: left;
+    margin: 0 0 0 1em;
+    font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;
+}
+
+#nav .heading span {
+    color: #fff;
+}
+
+#nav .navlist {
+    float: right;
+    margin: 0 1em 0 0;
 }
 
 #nav a:link, #nav a:visited {
