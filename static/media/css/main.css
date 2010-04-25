@@ -22,7 +22,7 @@
   ------------------------------------------------------------------------*/
 body,html{
     font-size: 13pt;
-    font-family: "Droid Sans", "Georgia", "Arial", "Helvetica", sans-serif;
+    font-family: "Droid Serif", "Georgia", "Arial", "Helvetica", sans-serif;
     line-height: 1.7em;
     color:#0c1a30;
     /*background:#fff url(holy-light.png) scroll repeat-x top left;*/
@@ -180,7 +180,6 @@ img {
     width: 50%;
     line-height: 1.2em;
     font-family: "PT Sans";
-    font-style: italic;
     letter-spacing: 0.01em;
     text-shadow: 1px 1px #DAE6F5;
     color: #1f4986;
@@ -283,19 +282,18 @@ img {
     overflow:hidden;
     line-height: 1em;
     padding-bottom:5px;
+    position: relative;
 }
 #heading h1{
     margin:0;
     padding:0;
     float:left;
     margin: 0 auto;
-    line-height:0.1em;
+    position: absolute;
+    bottom:4px;
 }
 
 #nav{
-
-   /* background:#513c1e;*/
-
    overflow:hidden;
    color: #C4E7FF;
    padding:2px;

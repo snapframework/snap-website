@@ -21,9 +21,9 @@
         <div class="content">
             <img src="/media/img/splash-img.png" title="Snap Framework" />
           <div class="blurb">
-              a super-fast web framework for the
+             <em>a super-fast web framework for the
               <a href="http://www.haskell.org"><strong>Haskell</strong></a> 
-              programming language.
+              programming language.</em>
           </div>
         </div>
       </div>
