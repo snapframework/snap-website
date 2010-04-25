@@ -1,4 +1,12 @@
 @font-face {
+   font-family: "Droid Sans";
+   src: url("DroidSans.ttf") format("truetype");
+}
+@font-face {
+   font-family: "Droid Serif";
+   src: url("DroidSerif-Regular.ttf") format("truetype");
+}
+@font-face {
     font-family: "PT Sans";
     src: url("PT_Sans.ttf") format("truetype");
 }
@@ -14,7 +22,7 @@
   ------------------------------------------------------------------------*/
 body,html{
     font-size: 13pt;
-    font-family: "Georgia", "Arial", "Helvetica", sans-serif;
+    font-family: "Droid Sans", "Georgia", "Arial", "Helvetica", sans-serif;
     line-height: 1.7em;
     color:#0c1a30;
     /*background:#fff url(holy-light.png) scroll repeat-x top left;*/
@@ -68,6 +76,9 @@ li:before {
     content: "» ";
 }
 
+img {
+    border:0;
+}
 
 /*--------------------------------------------------------------------------
  * styling for css classes
@@ -134,43 +145,50 @@ li:before {
 /*--------------------------------------------------------------------------
  * styling for divs with ids
   ------------------------------------------------------------------------*/
-#content {
+.content {
     width: 960px;
     margin: 0 auto;
+    overflow:hidden;
+    position: relative;
 }
 
 #main{
     margin: 0;
     padding: 0;
     width:100%;
+    background: url("holy-light.png") repeat-x scroll left -30px #FFFFFF;
 }
 
 #splash{
     width: 100%;
-    width: 720px;
-    margin: 32px auto 16px auto;
-/*    background: url(sun-spots.png) scroll no-repeat center;*/
+    overflow:hidden;
+    background:#2e5d9c;
+    padding: 0;
+    background: url(splash-back.png) scroll repeat-x top left;
+    position:relative;
+ }
+#splash .logo img {
+    width: 800px;
+    margin: 0 auto;
+    display: block;
 }
-
-#splash .logo {
-    text-align: center;
-    font-size: 16pt;
-    width: 350px;
-    margin-right: 20px;
-    float: left;
-}
-
-#splash .blurb {
-    margin-top: 38px;
-    width: 350px;
-    font-size: 20pt;
-    float: left;
-}
+#splash .blurb{
+    position:absolute;
+    top: 35%;
+    right: 75px;
+    font-size: 1.7em;
+    width: 50%;
+    line-height: 1.2em;
+    font-family: "PT Sans";
+    font-style: italic;
+    letter-spacing: 0.01em;
+    text-shadow: 1px 1px #DAE6F5;
+    color: #1f4986;
+ }
 
 
 #triptych {
-    /*background: #2C558A;*/
-    background: #C4E7FF;
+    background: #f1f1f1;
     /*background: #D6EFFF;*/
     color: #000;
     width: 100%;
@@ -246,17 +264,45 @@ li:before {
 }
 
 
-#nav {
+
+
+#heading{
     width: 100%;
-    background: #231C69;
+    background: #132742 url(nav-back.png) scroll repeat-x bottom left;
     color: #C4E7FF;
     padding: 3px 0;
+    padding-left:0em;
+    padding-top:45px;
+    margin:0;
+    overflow:hidden;
+    border-bottom: 10px #2e5d9c solid;
+}
+#heading .inner{
+    width: 960px;
+    margin:0 auto;
+    overflow:hidden;
+    line-height: 1em;
+    padding-bottom:5px;
+}
+#heading h1{
+    margin:0;
+    padding:0;
+    float:left;
+    margin: 0 auto;
+    line-height:0.1em;
 }
 
-#nav .heading {
-    float: left;
-    margin: 0 0 0 1em;
-    font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;
+#nav{
+
+   /* background:#513c1e;*/
+
+   overflow:hidden;
+   color: #C4E7FF;
+   padding:2px;
+   padding-left:0;
+   padding-right:0;
+   padding-bottom: 4px;
+   float:right;
 }
 
 #nav .heading span {
@@ -264,8 +310,7 @@ li:before {
 }
 
 #nav .navlist {
-    float: right;
-    margin: 0 1em 0 0;
+float:left;
 }
 
 #nav a:link, #nav a:visited {
@@ -280,11 +325,19 @@ li:before {
     padding: 0;
     margin: 0;
     display: inline;
+
 }
 
 #nav li {
     list-style-type: none;
-    display: inline;
+    float:left;
+    letter-spacing: -0.01em;
+    margin:0 20px;
+    font-family: "Droid Sans";
+    text-shadow: 1px 1px #142845;
 }
 
+#nav li:before {
+    content: "";
+}
 

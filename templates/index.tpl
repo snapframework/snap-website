@@ -1,4 +1,7 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+          "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  
   <head>
     <title>Snap: Haskell Web Framework</title>
     <meta name="author" content="The Snap Framework Team"/>
@@ -7,48 +10,31 @@
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8"/>
     <meta http-equiv="content-style-type" content="text/css"/>
   </head>
+
   <body>
+
     <div id="main">
+
       <apply template="nav"/>
 
       <div id="splash">
-        <div class="logo">
-          <img src="/media/img/logo-alt.png" title="Snap Framework" /><br/>
+        <div class="content">
+            <img src="/media/img/splash-img.png" title="Snap Framework" />
+          <div class="blurb">
+              a super-fast web framework for the
+              <a href="http://www.haskell.org"><strong>Haskell</strong></a> 
+              programming language.
+          </div>
         </div>
-
-        <div class="blurb">
-          <em>a super-fast web framework for the
-            <a href="http://www.haskell.org">Haskell</a> programming language.</em>
-        </div>
-
-        <div class="clear"></div>
       </div>
 
       <div id="triptych">
         <div class="triptych-content">
-          <div class="panel">
-            <a href="/download">
-              <img src="/media/img/snap-dialog-logo.png" /><br/>
-              Easy to get started: no-hassle installation
-            </a>
-          </div>
-          <div class="panel">
-            <a href="/FIXME">
-              <img src="/media/img/placeholder.png"/><br/>
-              Ships with a super-fast HTTP server
-            </a>
-          </div>
-          <div class="panel">
-            <a href="/FIXME">
-              <img src="/media/img/placeholder.png"/><br/>
-              Well-documented and tested
-            </a>
-          </div>
-          <div class="clear"></div>
+          <img src="/media/img/splash-2.png" />
         </div>
       </div>
 
-      <div id="content">
+      <div class="content">
         <div class="newspaper">
           <div id="about" class="section left">
             <div class="inner">
