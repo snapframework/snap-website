@@ -12,7 +12,7 @@ following commands:</p>
   snap init
 </pre>
 
-<p>The last command creates a template Snap project in the current
+<p>That last command creates a template Snap project in the current
 directory.  (If it doesn't run for you, then try
 <i>~/.cabal/bin/snap</i> instead.)  The source code for this project
 will be in <i>src/Main.hs</i>.  When you build this project with
