@@ -4,6 +4,7 @@
     <h2>Tutorials</h2>
     <ul>
       <li><a href="quickstart">Quick Start</a></li>
+      <li><a href="tutorials/snap-api">Snap API Introduction</a></li>
       <li><a href="tutorials/heist">Heist Template Tutorial</a></li>
     </ul>
   </div>
