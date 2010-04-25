@@ -16,34 +16,30 @@ start</a> for instructions on getting your project started.</p>
     <table>
       <tr>
         <th>Package</th>
-        <th>Hackage</th>
         <th>Source Repo</th>
       </tr>
       <tr>
         <td><dl>
-          <dt>snap-core</dt>
+          <dt><a
+href="http://hackage.haskell.org/package/snap-core">snap-core</a></dt>
           <dd>The core Snap functionality, data structures.</dd>
         </dl></td>
-        <td><a
-href="http://hackage.haskell.org/package/snap-core">snap-core</a></td>
         <td>git clone http://git.snapframework.com/snap-core.git</td>
       </tr>
       <tr>
         <td><dl>
-          <dt>snap-server</dt>
+          <dt><a
+href="http://hackage.haskell.org/package/snap-server">snap-server</a></dt>
           <dd>The Snap web server with a fast iteratee implementation.</dd>
         </dl></td>
-        <td><a
-href="http://hackage.haskell.org/package/snap-server">snap-server</a></td>
         <td>git clone http://git.snapframework.com/snap-server.git</td>
       </tr>
       <tr>
         <td><dl>
-          <dt>heist</dt>
+          <dt><a
+href="http://hackage.haskell.org/package/heist">heist</a></dt>
           <dd>An xml-based templating engine.</dd>
         </dl></td>
-        <td><a
-href="http://hackage.haskell.org/package/heist">heist</a></td>
         <td>git clone http://git.snapframework.com/heist.git</td>
       </tr>
     </table>
