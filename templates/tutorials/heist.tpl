@@ -1,4 +1,15 @@
 <apply template="page">
+
+  <markdown><![CDATA[
+
+FIXME: replace document below with original  *markdown*-formatted text
+
+## TESTING 1-2-3
+This should be a [link](http://google.com)
+
+  ]]>
+  </markdown>
+
 <div id="TOC"
 ><ul
   ><li
