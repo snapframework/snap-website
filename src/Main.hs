@@ -1,11 +1,15 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Main where
 
 import           System
 import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as B
 import           Control.Applicative
-import           Control.Concurrent.MVar
+import           Control.Concurrent
+import           Control.Exception
 import           Control.Monad.Trans
+import           System.Exit
 import           Snap.Http.Server
 import           Snap.Types
 import           Snap.Util.FileServe
@@ -32,8 +36,19 @@ reloadTemplates tsMVar = do
     liftIO $ modifyMVar_ tsMVar (const $ loadTemplates "templates")
     
 site :: MVar (TemplateState IO) -> Snap ()
-site tsMVar = withCompression $ templateServe tsMVar <|>
-                                fileServe "static"
+site tsMVar = withCompression $ h1 <|> h2 tsMVar
+
+
+h1 :: Snap ()
+h1 = fileServe "static"
+
+h2 :: MVar (TemplateState IO) -> Snap ()
+h2 m = templateServe m
+                                  
+
+-- FIXME: remove
+killMe :: ThreadId -> Snap ()
+killMe t = liftIO (exitSuccess >> killThread t)
 
 main :: IO ()
 main = do
@@ -44,8 +59,11 @@ main = do
 
     ts <- loadTemplates "templates"
     tsMVar <- newMVar ts
-    httpServe "*" port "achilles"
-        (Just "access.log")
-        (Just "error.log")
-        (site tsMVar)
+    (try $ httpServe "*" port "achilles"
+             (Just "access.log")
+             (Just "error.log")
+             (site tsMVar)) :: IO (Either SomeException ())
+
+    putStrLn "exiting"
+    return ()
 

@@ -4,8 +4,12 @@
   >Haskell Style Guide</h1
   ><sub>(adapted from <a
   href="http://github.com/tibbe/haskell-style-guide/blob/master/haskell-style.md">Johan
-Tibell's style guide</a>.)</sub><p
-  >This document describes coding and comment style for the Snap projects. Currently we're more interested in building a working web framework than being code nazis and enforcing this style guide. However, it will be easier on everyone in the long run if contributors follow these guidelines. When something isn't covered by this guide you should stay consistent with the style used in our existing code.</p
+Tibell's style guide</a>.)</sub>
+
+<p><b>FIXME: check in markdown source</b></p>
+
+<p
+  >This document describes coding and comment style for the Snap projects. Currently we're more interested in building a working web framework than strictly enforcing this style guide; think of these as “aspirational” guidelines. When something isn't covered by this guide you should stay consistent with the style used in our existing code.</p
   ><div id="table-of-contents"
   ><h2
 	>Formatting</h2
@@ -14,7 +18,7 @@ Tibell's style guide</a>.)</sub><p
       >Line Length</h3
       ><p
       >Maximum line length is <em
-	>80 characters</em
+	>78 characters</em
 	>.</p
       ></div
     ><div id="indentation"
@@ -49,7 +53,7 @@ filter p (x:xs)
     ><h3
       >Blank Lines</h3
       ><p
-      >One blank line between top-level definitions. No blank lines between type signatures and function definitions. Add one blank line between functions in a type class instance declaration if the functions bodies are large. Use your judgement.</p
+      ><s>One blank line between top-level definitions.</s> Two blank lines between top-level definitions, and a line of “<tt>-</tt>” characters to delineate top-level definitions from each other. No blank lines between type signatures and function definitions. Add one blank line between functions in a type class instance declaration if the functions bodies are large. Use your <s>judgement</s> judgment.</p
       ></div
     ><div id="whitespace"
     ><h3
@@ -61,7 +65,7 @@ filter p (x:xs)
     ><h3
       >Data Declarations</h3
       ><p
-      >Align the constructors in a data type definition. Example:</p
+      ><b>Vertically</b> align the constructors in a data type definition. Example:</p
       ><pre
       ><code
 	>data Tree a = Branch a (Tree a) (Tree a)
@@ -165,11 +169,11 @@ foo = alloca 10 $ \a -&gt;
       >local application/library specific imports</li
       ></ol
     ><p
-    >Put a blank line between each group of imports. The imports in each group should be sorted alphabetically, by module name.</p
+    >Put a blank line between each group of imports. The imports in each group should be sorted alphabetically, by module name. We also like to line up the module names; e.g. if a module is not imported <tt>qualified</tt> then we will add an extra ten spaces between the &ldquo;<tt>import</tt>&rdquo; keyword and the module name. <b>FIXME: example</b> </p
     ><p
     >Always use explicit import lists or <code
       >qualified</code
-      > imports for standard and third party libraries. This makes the code more robust against changes in these libraries. Exception: The Prelude.</p
+      > imports for standard and third party libraries. <i>(Note: we don't follow this very well).</i> This makes the code more robust against changes in these libraries. Exception: The Prelude.</p
     ></div
   ><div id="comments"
   ><h2
@@ -185,7 +189,7 @@ foo = alloca 10 $ \a -&gt;
       >Line Length</h3
       ><p
       >Maximum line length is <em
-	>70 characters</em
+	>78 characters</em
 	>. This increases readability as the eye has to travel back to the start of the next line.</p
       ></div
     ><div id="punctuation"
@@ -209,13 +213,16 @@ foo = alloca 10 $ \a -&gt;
       >Comment every top level function (particularly exported functions), and provide a type signature; use Haddock syntax in the comments. Comment every exported data type. Some examples:</p
       ><pre
       ><code
-	>-- | Sends a message on a socket.  The socket must be in a connected
+	>
+------------------------------------------------------------------------------
+-- | Sends a message on a socket.  The socket must be in a connected
 -- state.  Returns the number of bytes sent.  Applications are
 -- responsible for ensuring that all data has been sent.
 send :: Socket      -- ^ Connected socket
      -&gt; ByteString  -- ^ Data to send
      -&gt; IO Int      -- ^ Bytes sent
 
+------------------------------------------------------------------------------
 -- | Bla bla bla.
 data Person = Person
     { age  :: Int     -- ^ Age
@@ -267,7 +274,7 @@ foo n = salt * 32 + 9
       >Warnings</h3
       ><p
       >Code should be compilable with <code
-	>-Wall -Werror</code
+	>-Wall -Werror -Wno-warn-unused-binds</code
 	>. There should be no warnings.</p
       ></div
     ></div

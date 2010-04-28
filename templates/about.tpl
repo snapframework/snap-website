@@ -3,10 +3,9 @@
       <div class="inner">
         <h2>What is the Snap Framework?</h2>
 
-        <p>
-          <strong>Snap</strong> is a simple web development framework in
-          development, written in the purely functional programming
-          language <a href="http://www.haskell.org">Haskell</a>.
+        <p><strong>Snap</strong> is a simple web development framework for unix
+          systems, written in <a href="http://www.haskell.org">Haskell</a>
+          programming language.
         </p>
 
         <p>
@@ -20,11 +19,30 @@
             <li>Robustness and high test coverage</li>
           </ul>
         </p>
+
         <h2>What is the project's status?</h2>
         <p>
-          <strong>Snap</strong> is still in the planning and design stages.
+          The first developer prerelease of the Snap framework is available
+          now.</p>
+
+        <p>
+          This developer prerelease contains only the Snap core system, namely:
+          <ul>
+            <li>A fast HTTP server library with an optional high-concurrency
+                backend using
+                the <a href="http://software.schmorp.de/pkg/libev.html">libev</a>
+                event loop library.</li>
+            <li>A sensible and clean monad for web programming.</li>
+            <li>an XML-based templating system for generating HTML that allows
+                you to bind Haskell functionality to XML tags without getting
+                PHP-style tag soup all over your pants</li>
+          </ul>
         </p>
 
+        <p>
+          Snap currently only runs on Unix platforms; it has been tested on
+          Linux and Mac OSX Snow Leopard.
+        </p>
 
       </div>
     </div><!--end about-->
@@ -47,9 +65,9 @@
             analytics startup.
           </p>
           <p>
-            <strong><a href="http://softwaresimply.blogspot.com/">Doug Beardsley</a></strong>
-            loves Haskell and has been playing with Haskell web
-            developement using Happstack since 2008.  He currently
+            <strong><a href="http://softwaresimply.blogspot.com/">Doug
+            Beardsley</a></strong> loves Haskell and has been playing with
+            Haskell web development using Happstack since 2008.  He currently
             works for a finance company doing Haskell development.
           </p>
           <p>
@@ -60,6 +78,18 @@
             enthusiast.
           </p>
         </div><!--end developers-->
+        <div>
+          <h2>Contacting us</h2>
+          <ul>
+            <li><b>IRC:</b> You can discuss snap in the <tt>#snapframework</tt>
+              channel on the <a href="http://freenode.net/">freenode</a> IRC
+              network.</li>
+                                
+            <li><b>Email:</b> join
+              the <a href="http://mailman-mail5.webfaction.com/listinfo/snap">mailing
+              list.</a></li>
+          </ul>
+        </div><!--end mailing list -->
       </div><!--end inner-->
     </div><!--end project-status-->
 </apply>
