@@ -47,8 +47,12 @@
                 language.
               </p>
 
-              <p>Snap is well-documented and has a test suite with a high level
-              of code coverage.</p>
+              <p>
+                Snap is well-documented and has a test suite with a high level
+                of code coverage, but it is <b>early-stage software</b> with
+                still-evolving interfaces. Snap is therefore likely to be most
+                appropriate for early adopters and potential contributors.
+              </p>
 
             </div>
           </div><!--end about-->
