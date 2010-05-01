@@ -11,7 +11,6 @@ import           Control.Concurrent
 import           Control.Exception (throwIO, SomeException)
 import           Control.Monad
 import           Control.Monad.CatchIO
-import           Control.Monad.Reader.Class
 import           Control.Monad.Trans
 import           Data.Typeable
 import           Snap.Http.Server
@@ -60,7 +59,7 @@ h2 m = templateServe m
                                   
 
 bindMarkdownTag :: TemplateState Snap -> TemplateState Snap
-bindMarkdownTag = bindSplice "markdown" markdownSplice 
+bindMarkdownTag = bindSplice "markdown" markdownSplice
 
 
 data PandocMissingException = PandocMissingException
@@ -83,8 +82,21 @@ instance Show MarkdownException where
 instance Exception MarkdownException
 
 
-pandoc :: FilePath -> ByteString -> IO ByteString
-pandoc pandocPath s = do
+pandoc :: FilePath -> FilePath -> IO ByteString
+pandoc pandocPath inputFile = do
+    putStrLn =<< getCurrentDirectory
+    (ex, sout, serr) <- readProcessWithExitCode pandocPath args ""
+
+    when (isFail ex) $ throw $ MarkdownException serr
+    return $ B.pack sout
+
+  where
+    isFail ExitSuccess = False
+    isFail _           = True
+    args = [ "-S", "--no-wrap", "templates/"++inputFile ]
+
+pandocBS :: FilePath -> ByteString -> IO ByteString
+pandocBS pandocPath s = do
     -- using the crummy string functions for convenience here
     let s' = B.unpack s
     (ex, sout, serr) <- readProcessWithExitCode pandocPath args s'
@@ -106,18 +118,23 @@ markdownSplice = do
 
     when (isNothing pdMD) $ liftIO $ throwIO PandocMissingException
 
-    tree <- ask
-    let txt = textContent tree
+    tree <- getParamNode
+    rawMarkup <- liftIO $
+        case getAttribute tree "file" of
+            Just f  -> do B.putStrLn $ B.append "Running pandoc on file " f
+                          pandoc (fromJust pdMD) $ B.unpack f
+            Nothing -> do let txt = textContent tree
+                          B.putStrLn "got text"
+                          B.putStrLn txt
+                          pandocBS (fromJust pdMD) txt
 
-    liftIO $ B.putStrLn "got text"
-    liftIO $ B.putStrLn txt
-
-    markup <- liftIO $ pandoc (fromJust pdMD) txt
+    let markup = B.concat ["<children>", rawMarkup, "</children>"]
 
     liftIO $ B.putStrLn "got markup"
     liftIO $ B.putStrLn markup
 
     let ee = parse' heistExpatOptions markup
+    liftIO $ print ee
     case ee of
       (Left e) -> liftIO $ throw $ MarkdownException $
                          "Error parsing markdown output: " ++ show e
