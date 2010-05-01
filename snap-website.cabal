@@ -28,7 +28,10 @@ Executable snap-website
     process,
     snap-core,
     snap-server,
-    transformers
+    text,
+    transformers,
+    utf8-string,
+    xhtml-combinators >= 0.2.2 && < 0.3
 
   ghc-prof-options: -prof -auto-all
   

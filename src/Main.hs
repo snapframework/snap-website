@@ -5,14 +5,17 @@ module Main where
 
 import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as B
+import qualified Data.ByteString.UTF8 as UTF8
 import           Data.Maybe
+import qualified Data.Text as T
 import           Control.Applicative
 import           Control.Concurrent
-import           Control.Exception (throwIO, SomeException)
+import           Control.Exception (throwIO, ErrorCall(..), SomeException)
 import           Control.Monad
 import           Control.Monad.CatchIO
 import           Control.Monad.Trans
 import           Data.Typeable
+import           Prelude hiding (catch)
 import           Snap.Http.Server
 import           Snap.Types
 import           Snap.Util.FileServe
@@ -22,8 +25,8 @@ import           System.Directory
 import           System.Exit
 import           System.Process
 import           Text.Templating.Heist
+import qualified Text.XHtmlCombinators.Escape as XH
 import           Text.XML.Expat.Tree
-
 
 renderTmpl :: MVar (TemplateState Snap)
            -> ByteString
@@ -48,7 +51,22 @@ reloadTemplates tsMVar = do
            liftM bindMarkdownTag $ loadTemplates "templates"
     
 site :: MVar (TemplateState Snap) -> Snap ()
-site tsMVar = withCompression $ h1 <|> h2 tsMVar
+site tsMVar = catch500 $ withCompression $ h1 <|> h2 tsMVar <|> h3
+
+
+catch500 :: Snap a -> Snap ()
+catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
+    let t = T.pack $ show e
+    putResponse r
+    writeBS "<html><head><title>Internal Server Error</title></head>"
+    writeBS "<body><h1>Internal Server Error</h1>"
+    writeBS "<p>A web handler threw an exception. Details:</p>"
+    writeBS "<pre>\n"
+    writeText $ XH.escape t
+    writeBS "\n</pre></body></html>"
+
+  where
+    r = setResponseStatus 500 "Internal Server Error" emptyResponse 
 
 
 h1 :: Snap ()
@@ -57,6 +75,9 @@ h1 = fileServe "static"
 h2 :: MVar (TemplateState Snap) -> Snap ()
 h2 m = templateServe m
                                   
+h3 :: Snap ()
+h3 = path "throwException" (throw $ ErrorCall "jlkfdjfldskjlf")
+
 
 bindMarkdownTag :: TemplateState Snap -> TemplateState Snap
 bindMarkdownTag = bindSplice "markdown" markdownSplice
@@ -88,21 +109,28 @@ pandoc pandocPath inputFile = do
     (ex, sout, serr) <- readProcessWithExitCode pandocPath args ""
 
     when (isFail ex) $ throw $ MarkdownException serr
-    return $ B.pack sout
+    return $ B.concat [ "<div class=\"markdown\">\n"
+                      , UTF8.fromString sout
+                      , "\n</div>" ]
 
   where
     isFail ExitSuccess = False
     isFail _           = True
+
+    -- FIXME: hardcoded path
     args = [ "-S", "--no-wrap", "templates/"++inputFile ]
+
 
 pandocBS :: FilePath -> ByteString -> IO ByteString
 pandocBS pandocPath s = do
     -- using the crummy string functions for convenience here
-    let s' = B.unpack s
+    let s' = UTF8.toString s
     (ex, sout, serr) <- readProcessWithExitCode pandocPath args s'
 
     when (isFail ex) $ throw $ MarkdownException serr
-    return $ B.pack sout
+    return $ B.concat [ "<div class=\"markdown\">\n"
+                      , UTF8.fromString sout
+                      , "\n</div>" ]
 
   where
     isFail ExitSuccess = False
@@ -114,29 +142,17 @@ markdownSplice :: Splice Snap
 markdownSplice = do
     pdMD <- liftIO $ findExecutable "pandoc"
 
-    liftIO $ B.putStrLn $ B.concat ["pandoc?", B.pack (show pdMD)]
-
     when (isNothing pdMD) $ liftIO $ throwIO PandocMissingException
 
     tree <- getParamNode
-    rawMarkup <- liftIO $
+    markup <- liftIO $
         case getAttribute tree "file" of
-            Just f  -> do B.putStrLn $ B.append "Running pandoc on file " f
-                          pandoc (fromJust pdMD) $ B.unpack f
-            Nothing -> do let txt = textContent tree
-                          B.putStrLn "got text"
-                          B.putStrLn txt
-                          pandocBS (fromJust pdMD) txt
-
-    let markup = B.concat ["<children>", rawMarkup, "</children>"]
-
-    liftIO $ B.putStrLn "got markup"
-    liftIO $ B.putStrLn markup
+            Just f  -> pandoc (fromJust pdMD) $ B.unpack f
+            Nothing -> pandocBS (fromJust pdMD) $ textContent tree
 
     let ee = parse' heistExpatOptions markup
-    liftIO $ print ee
     case ee of
-      (Left e) -> liftIO $ throw $ MarkdownException $
+      (Left e) -> throw $ MarkdownException $
                          "Error parsing markdown output: " ++ show e
       (Right n) -> return [n]
 
@@ -147,13 +163,14 @@ killMe t = liftIO (exitSuccess >> killThread t)
 
 main :: IO ()
 main = do
-    args <- getArgs
-    port <- case args of
-                []     -> error "You must specify a port!" >> exitFailure
-                port:_ -> return $ read port
+    args   <- getArgs
+    port   <- case args of
+                []       -> error "You must specify a port!" >> exitFailure
+                (port:_) -> return $ read port
 
-    ts <- loadTemplates "templates"
+    ts     <- loadTemplates "templates"
     tsMVar <- newMVar $ bindMarkdownTag ts
+
     (try $ httpServe "*" port "achilles"
              (Just "access.log")
              (Just "error.log")
