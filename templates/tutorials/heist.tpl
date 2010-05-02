@@ -1,3 +1,5 @@
 <apply template="page">
-<markdown file="tutorials/heist.md"/>
+  <div class="singlecolumn">
+    <markdown file="tutorials/heist.md"/>
+  </div>
 </apply>

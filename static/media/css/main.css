@@ -126,21 +126,30 @@ pre.sourceCode span.String { color: #4f4; }
 pre.sourceCode span.Comment { color: #999; font-style: italic; }
 pre.sourceCode span.Others { }
 pre.sourceCode span.Alert { color: #4f4; font-weight: bold; }
-pre.sourceCode span.Function { color: #4ff; }
+pre.sourceCode span.Function { color: #C4E7FF; }
 pre.sourceCode span.RegionMarker { }
 pre.sourceCode span.Error { color: #f44; font-weight: bold; }
 
 pre.sourceCode span.ModuleName { color: #f44; } 
-pre.sourceCode span.Keyword { color: #4ff; }
+pre.sourceCode span.Keyword { color: #C4E7FF; }
 pre.sourceCode span.Function { }
-pre.sourceCode span.FunctionDefinition { color: #4ff; }
-pre.sourceCode span.Class { color: #4ff; font-weight: bold; }
+pre.sourceCode span.FunctionDefinition { color: #C4E7FF; }
+pre.sourceCode span.Class { color: #C4E7FF; font-weight: bold; }
 pre.sourceCode span.Constructor { font-weight: bold; }
-pre.sourceCode span.DataConstructor { color: #4ff; }
+pre.sourceCode span.DataConstructor { color: #C4E7FF; }
 pre.sourceCode span.TypeConstructor { font-weight: bold; }
 pre.sourceCode span.InfixOperator { color: #aaa; }
 
 
+.singlecolumn {
+    width: 728px;
+}
+
+.singlecolumn pre.sourceCode, .singlecolumn pre.code {
+    width: 656px;
+    margin: 0 0 29px 40px;
+    padding: 16px;
+}
 
 .left-cell{
     float:left;
