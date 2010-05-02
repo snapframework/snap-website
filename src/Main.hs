@@ -176,6 +176,7 @@ main = do
              (Just "error.log")
              (site tsMVar)) :: IO (Either SomeException ())
 
+    threadDelay 1000000
     putStrLn "exiting"
     return ()
 

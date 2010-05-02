@@ -52,15 +52,17 @@
         <div id="developers"  >
           <h2>Who's involved?</h2>
           <p>
-            <strong><a href="http://james-sanders.com">James Sanders</a></strong> has been in the web development game for
-            over six years.  He works
-            at <a href="http://thisismedium.com/">Medium</a> 
-            You can e-mail him
+            <strong><a href="http://james-sanders.com">James
+            Sanders</a></strong> has been in the web development game for over
+            six years.  He works
+            at <a href="http://thisismedium.com/">Medium</a>.  You can e-mail
+            him
             at <a href="mailto:jimmyjazz14@gmail.com">jimmyjazz14@gmail.com</a>.
           </p>
           <p>
-            <strong><a href="http://gregorycollins.net/">Gregory Collins</a></strong>
-            is a programmer from Toronto, Canada. He works
+            <strong><a href="http://gregorycollins.net/">Gregory
+            Collins</a></strong> is a programmer from Toronto, Canada. He holds
+            an MSc in Computer Science from Yale University and he works
             at <a href="http://www.sysomos.com/">Sysomos</a>, a social media
             analytics startup.
           </p>
@@ -68,7 +70,7 @@
             <strong><a href="http://softwaresimply.blogspot.com/">Doug
             Beardsley</a></strong> loves Haskell and has been playing with
             Haskell web development using Happstack since 2008.  He currently
-            works for a finance company doing Haskell development.
+            works in the financial industry doing Haskell development.
           </p>
           <p>
             <strong><a href="http://rfrn.org/~shu">Shu-yu Guo</a></strong>

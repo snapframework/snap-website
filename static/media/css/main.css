@@ -21,9 +21,9 @@
  * tag definitions
   ------------------------------------------------------------------------*/
 body,html{
-    font-size: 13pt;
+    font-size: 17px;
     font-family: "Droid Serif", "Georgia", "Arial", "Helvetica", sans-serif;
-    line-height: 1.7em;
+    line-height: 29px;
     color:#0c1a30;
     /*background:#fff url(holy-light.png) scroll repeat-x top left;*/
     margin:0;
@@ -57,15 +57,14 @@ h1,h2{
 }
 
 p {
-    line-height: 1.8em;
-
+    margin: 0 0 29px 0;
 }
 
 ul {
     list-style: none;
-    margin-left: 1em;
-    padding-left: 1em;
-    text-indent: -1em;
+    margin: 0 0 29px 29px;
+    padding-left: 29px;
+    text-indent: -14px;
 }
 
 li{
@@ -80,9 +79,37 @@ img {
     border:0;
 }
 
+dl, dt, dd {
+    margin: 0;
+    padding: 0;
+    line-height: 29px;
+}
+
+dd {
+    padding-left: 3em;
+}
+
+dt {
+    height: 29px;
+    font-weight: bold;
+}
+
+
 /*--------------------------------------------------------------------------
  * styling for css classes
   ------------------------------------------------------------------------*/
+
+pre.code {
+    background: #222;
+    color: #ffbf00;
+    width: 85%;
+    margin: 0px auto 29px auto;
+    padding: 16px;
+
+    -moz-border-radius: 16px;
+    -webkit-border-radius: 16px;
+}
+
 .left-cell{
     float:left;
 }
@@ -108,31 +135,25 @@ img {
     float:left;
     width: 50%;
 }
-.newspaper .inner {
-    margin:10px;
-    padding:25px;
-    /*background: url(holy-light.png) scroll repeat-x 0 -100px;;*/
 
-    -moz-border-radius-topleft:5px;  -webkit-border-top-left-radius:5px;
-    -moz-border-radius-topright: 5px; -webkit-border-top-right-radius: 5px;
+.newspaper .inner {
+    padding: 20px;
+    margin: 0;
 }
+
 .newspaper .inner h2{
     margin:0;
     border-bottom: 1px solid #c2d1e1;
-    padding:5px 0;
+    line-height: 44px;
+    margin-bottom: 13px;
+    padding:0;
 }
 
 .newspaper .section.left .inner{
-    margin-right: 5px;
-
+    padding-left: 0;
 }
 .newspaper .section.right .inner{
-    margin-left: 5px;
-}
-
-.newspaper p{
-    margin: 20px 0;
-    text-align: justify;
+    padding-right: 0;
 }
 
 
