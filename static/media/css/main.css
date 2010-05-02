@@ -99,7 +99,7 @@ dt {
  * styling for css classes
   ------------------------------------------------------------------------*/
 
-pre.code {
+pre.code, pre.sourceCode {
     background: #222;
     color: #ffbf00;
     width: 85%;
@@ -109,6 +109,38 @@ pre.code {
     -moz-border-radius: 16px;
     -webkit-border-radius: 16px;
 }
+
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode, table.sourceCode pre 
+   { margin: 0; padding: 0; border: 0; vertical-align: baseline; border: none; }
+td.lineNumbers { text-align: right; background-color: #ccc; color: black; padding-right: 5px; padding-left: 5px; } 
+td.sourceCode { padding-left: 5px; }
+pre.sourceCode { }
+pre.sourceCode span.Normal { }
+pre.sourceCode span.Keyword { font-weight: bold; } 
+pre.sourceCode span.DataType { color: #ff0; }
+pre.sourceCode span.DecVal { color: #4f4; }
+pre.sourceCode span.BaseN { color: #4f4; }
+pre.sourceCode span.Float { color: #4f4; }
+pre.sourceCode span.Char { color: #4f4; }
+pre.sourceCode span.String { color: #4f4; }
+pre.sourceCode span.Comment { color: #999; font-style: italic; }
+pre.sourceCode span.Others { }
+pre.sourceCode span.Alert { color: #4f4; font-weight: bold; }
+pre.sourceCode span.Function { color: #4ff; }
+pre.sourceCode span.RegionMarker { }
+pre.sourceCode span.Error { color: #f44; font-weight: bold; }
+
+pre.sourceCode span.ModuleName { color: #f44; } 
+pre.sourceCode span.Keyword { color: #4ff; }
+pre.sourceCode span.Function { }
+pre.sourceCode span.FunctionDefinition { color: #4ff; }
+pre.sourceCode span.Class { color: #4ff; font-weight: bold; }
+pre.sourceCode span.Constructor { font-weight: bold; }
+pre.sourceCode span.DataConstructor { color: #4ff; }
+pre.sourceCode span.TypeConstructor { font-weight: bold; }
+pre.sourceCode span.InfixOperator { color: #aaa; }
+
+
 
 .left-cell{
     float:left;

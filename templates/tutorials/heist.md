@@ -30,12 +30,14 @@ Here's a simple example demonstrating the use of bind.
 
 ~~~~~~~~~~~~~~~ {.html}
   <bind tag="longname">
-    Einstein, Feynman, Heisenberg, and Newton Reasearch Corporation
-Ltd.<sup>TM</sup>
+    Einstein, Feynman, Heisenberg, and Newton Research Corporation
+    Ltd.<sup>TM</sup>
   </bind>
-  We at <longname/> have research expertise in many areas of physics.
-Employment at <longname/> carries significant prestige.  The rigorous
-hiring process developed by <longname/> is leading the industry.
+  <p>
+    We at <longname/> have research expertise in many areas of physics.
+    Employment at <longname/> carries significant prestige.  The rigorous
+    hiring process developed by <longname/> is leading the industry.
+  </p>
 ~~~~~~~~~~~~~~~
 
 The full company name will be substituted at every occurrance of the
