@@ -307,6 +307,34 @@ output.
 ## Heist Programming
 
 Heist lets you bind XML tags to Haskell code with a splice.  A
-`Splice` takes the input node from the template and generates a list
-of XML nodes that get spliced back into the template.  
+`Splice` takes the input node from the template and outputs a list of
+XML nodes that get "spliced" back into the template.  This lets you
+call haskell functions from your templates, while ensuring that
+business logic does not creep into the presentation layer.
+
+Splices that you write must have the type `mySplice :: Splice m` where
+m is the monad of your choice (usually Snap).  The `getParamNode`
+function lets you get the contents of the splice node which you can
+then process using functionality provided by
+[hexpat](http://hackage.haskell.org/package/hexpat).
+
+#### Example
+
+The following is code for a splice that calculates the factorial of a
+number.
+
+~~~~~~~~~~~~~~~ {.hs}
+factSplice :: Splice Snap
+factSplice = do
+    input <- getParamNode
+    let text = B.unpack $ textContent input
+        n = read text :: Int
+    return [Text $ B.pack $ show $ product [1..n]]
+~~~~~~~~~~~~~~~
+
+You must tell Heist to bind the splice to an XML tag using the
+`bindSplice` function: `bindSplice "fact" factSplice templateState`.
+This returns a new `TemplateState` with factSplice bound to the
+`<fact>` tag.  Now, in any of your templates the XML snippet
+`<fact>5</fact>` will render as `120`.
 
