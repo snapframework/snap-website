@@ -381,7 +381,7 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     top:0px;
 }
 
-#nav ul.selected {
+#nav li.selected {
     background-image: url(selected-tick.png);
     background-position: center bottom;
     background-repeat: no-repeat;
@@ -407,10 +407,16 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 
 #nav a:link, #nav a:visited {
     color: inherit;
+    vertical-align: top;
+    height: 100%;
+    display: block;
 }
 
 #nav a:hover, #nav a:active {
     color: #fff;
+    vertical-align: top;
+    height: 100%;
+    display: block;
 }
 
 #nav ul {
@@ -421,8 +427,10 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 }
 
 #nav li {
-    padding: 0;
-    height: 100%;
+    vertical-align: top;
+    padding: 0 0 10px 0;
+    height: 30px;
+    display: block;
     list-style-type: none;
     float:left;
     letter-spacing: -0.01em;
