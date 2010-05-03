@@ -39,21 +39,33 @@ tt, code, pre {
 a:link,a:visited{ color: #2B7EA1; text-decoration: none; }
 
 h1{
-    font-size: 2.7em
+    font-size: 22px;
 }
 
 h2{
-    font-size: 1.9em
+    font-size: 22px;
 }
 
-h1,h2{
+h3 {
+    font-size: 19px;
+}
+
+h4 {
+    font-size: 17px;
+}
+
+h1,h2,h3,h4{
     color: #2c558a;
     font-weight: normal;
     text-shadow: #fff 0px 1px 1px;
     letter-spacing:0.1em;
     font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;
-    font-size: 22px;
     text-transform: uppercase;
+}
+
+h1 code, h2 code, h3 code, h4 code {
+    font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;
+    font-size: inherit;
 }
 
 p {
@@ -143,6 +155,7 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 
 .singlecolumn {
     width: 728px;
+    margin-top: 20px;
 }
 
 .singlecolumn pre.sourceCode, .singlecolumn pre.code {
@@ -182,11 +195,21 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     margin: 0;
 }
 
-.newspaper .inner h2{
+.newspaper .inner h2, .singlecolumn h2
+{
     margin:0;
     border-bottom: 1px solid #c2d1e1;
     line-height: 44px;
     margin-bottom: 13px;
+    padding:0;
+}
+
+.newspaper .inner h3, .singlecolumn h3,
+.newspaper .inner h4, .singlecolumn h4
+{
+    margin:0;
+    line-height: 44px;
+    margin-bottom: 14px;
     padding:0;
 }
 
