@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <div class="content">
+      <div id="content">
         <div class="newspaper">
           <div id="about" class="section left">
             <div class="inner">

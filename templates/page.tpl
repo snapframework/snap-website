@@ -11,7 +11,7 @@
     <div id="main">
       <apply template="nav"/>
 
-      <div id="content" class="content">
+      <div id="content">
 
         <div class="newspaper">
 

@@ -1,3 +1,5 @@
 <apply template="page">
-  <markdown file="style-guide.md"/>
+  <div class="singlecolumn">
+    <markdown file="style-guide.md"/>
+  </div>
 </apply>
