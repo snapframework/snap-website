@@ -15,7 +15,106 @@
 >Snap.Types</DIV
 ><DIV CLASS="mini-synopsis"
 ><H1
->HTTP
+>The Snap Monad
+</H1
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3ASnap" TARGET="main"
+>Snap</A
+> a</DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArunSnap" TARGET="main"
+>runSnap</A
+></DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3ANoHandlerException" TARGET="main"
+>NoHandlerException</A
+> </DIV
+> <H2
+>Functions for control flow and early termination
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AfinishWith" TARGET="main"
+>finishWith</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Apass" TARGET="main"
+>pass</A
+></DIV
+> <H2
+>Routing
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Amethod" TARGET="main"
+>method</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Apath" TARGET="main"
+>path</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Adir" TARGET="main"
+>dir</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AifTop" TARGET="main"
+>ifTop</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Aroute" TARGET="main"
+>route</A
+></DIV
+> <H2
+>Access to state
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetRequest" TARGET="main"
+>getRequest</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetResponse" TARGET="main"
+>getResponse</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AputRequest" TARGET="main"
+>putRequest</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AputResponse" TARGET="main"
+>putResponse</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AmodifyRequest" TARGET="main"
+>modifyRequest</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AmodifyResponse" TARGET="main"
+>modifyResponse</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AlocalRequest" TARGET="main"
+>localRequest</A
+></DIV
+> <H2
+>Grabbing request bodies
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArunRequestBody" TARGET="main"
+>runRequestBody</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetRequestBody" TARGET="main"
+>getRequestBody</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AunsafeDetachRequestBody" TARGET="main"
+>unsafeDetachRequestBody</A
+></DIV
+> <H1
+>HTTP Datatypes and Functions
 </H1
 >  <DIV CLASS="decl"
 ><SPAN CLASS="keyword"
@@ -232,105 +331,6 @@
 > <DIV CLASS="decl"
 ><A HREF="Snap-Types.html#v%3AsendFile" TARGET="main"
 >sendFile</A
-></DIV
-> <H1
->The Snap Monad
-</H1
-> <DIV CLASS="decl"
-><SPAN CLASS="keyword"
->data</SPAN
->&nbsp;<A HREF="Snap-Types.html#t%3ASnap" TARGET="main"
->Snap</A
-> a</DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3ArunSnap" TARGET="main"
->runSnap</A
-></DIV
-> <DIV CLASS="decl"
-><SPAN CLASS="keyword"
->data</SPAN
->&nbsp;<A HREF="Snap-Types.html#t%3ANoHandlerException" TARGET="main"
->NoHandlerException</A
-> </DIV
-> <H2
->Functions for control flow and early termination
-</H2
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3AfinishWith" TARGET="main"
->finishWith</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3Apass" TARGET="main"
->pass</A
-></DIV
-> <H2
->Routing
-</H2
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3Amethod" TARGET="main"
->method</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3Apath" TARGET="main"
->path</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3Adir" TARGET="main"
->dir</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3AifTop" TARGET="main"
->ifTop</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3Aroute" TARGET="main"
->route</A
-></DIV
-> <H2
->Access to state
-</H2
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3AgetRequest" TARGET="main"
->getRequest</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3AgetResponse" TARGET="main"
->getResponse</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3AputRequest" TARGET="main"
->putRequest</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3AputResponse" TARGET="main"
->putResponse</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3AmodifyRequest" TARGET="main"
->modifyRequest</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3AmodifyResponse" TARGET="main"
->modifyResponse</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3AlocalRequest" TARGET="main"
->localRequest</A
-></DIV
-> <H2
->Grabbing request bodies
-</H2
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3ArunRequestBody" TARGET="main"
->runRequestBody</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3AgetRequestBody" TARGET="main"
->getRequestBody</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Types.html#v%3AunsafeDetachRequestBody" TARGET="main"
->unsafeDetachRequestBody</A
 ></DIV
 > <H1
 >Iteratee
