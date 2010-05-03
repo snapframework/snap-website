@@ -2438,11 +2438,10 @@
 >An identity is that:
 </P
 ><PRE
->rqURI r == <TT
-><A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#v%3Aconcat"
->concat</A
-></TT
-> [rqSnapletPath r, rqContextPath r, rqPathInfo r]</PRE
+> rqURI r == 'S.concat' [ rqSnapletPath r
+                       , rqContextPath r
+                       , rqPathInfo r ]
+</PRE
 ><P
 >note that until we introduce snaplets in v0.2, <TT
 ><A HREF="Snap-Internal-Http-Types.html#v%3ArqSnapletPath"
