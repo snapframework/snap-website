@@ -1,8 +1,38 @@
 <apply template="page">
+<div class="singlecolumn">
 <div id="getting-started-with-snap"
-><h2
-  >Getting Started with Snap</h2
-  ><p
+><h2>Getting Started with Snap</h2>
+
+<h2>FIXMEs</h2>
+
+<ul>
+  <li>
+    check the markdown source for this document into source control
+  </li>
+
+  <li>
+    what's an iteratee? why did we choose iteratee-based i/o? what's the
+    difference between an iteratee and an enumerator? emphasize that if you
+    don't want to worry about iteratees you generally don't really have
+    to. Note also when explaining enumerators that when you use
+    writeLBS/writeBS/addToOutput, you're not sending the data out of the socket
+    immediately; instead you're assembling a <i>program</i> that will write
+    your output to an arbitrary iteratee consumer at the end of the
+    computation.
+  </li>
+
+  <li>
+    what's a snap handler? what does the snap monad do? emphasize that we're
+    carrying a copy of the request and a copy of the response.
+  </li>
+
+  <li>some <i>pictures</i>, for the love of god</li>
+
+  <li>explain how snap-core, snap-server, heist relate to each other</li>
+  
+</ul>
+
+<p
   >This document provides an overview of some of the Snap API functions that you will use most frequently in web development.</p
   ></div
 ><div id="creating-responses"
@@ -43,7 +73,7 @@
   ><p
   >If you have used Happstack, these functions should sound familiar. The method function lets you match on specific HTTP method types, GET, POST, PUT, etc. The path function lets you match a complete path exactly. The dir function matches on the first &quot;directory&quot; component of the path. ifTop filters for the requests to the root of the site (i.e. http://mysite.com/).</p
   ><p
-  >The route function takes a list of (path, handler) tuples and provides efficient routing to the correct handler. It also provides a mechanism for capturing path components to variables. The captured variables are stored in the Request parameters.</p
+  >The route function takes a list of (path, handler) tuples and provides efficient routing to the correct handler. It also provides a mechanism for capturing path components to variables. The captured variables are stored in the Request parameters.  You should use the route function for as much of your site as possible because it matches routes in O(log n) time as opposed to O(n) without it.  The other routing functions should only be used for things the route function can't handle like matching on the method.</p
   ></div
 ><div id="request-parameters"
 ><h2
@@ -93,4 +123,5 @@
     >.</p
   ></div
 >
+</div>
 </apply>

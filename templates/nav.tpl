@@ -19,9 +19,6 @@
             <a href="/docs">Docs</a>
           </li>
           <li>
-            <a href="/contribute">Contribute</a>
-          </li>
-          <li>
             <a href="/about">About</a>
           </li>
         </ul>

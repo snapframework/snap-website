@@ -17,13 +17,23 @@ Executable snap-website
   
   Build-depends:
     base >= 4,
-    haskell98,
-    transformers,
     bytestring,
+    directory,
+    filepath,
+    haskell98,
+    heist,
+    hexpat,
+    MonadCatchIO-transformers >= 0.2 && < 0.3,
+    monads-fd,
+    process,
     snap-core,
     snap-server,
-    heist,
-    filepath
+    text,
+    transformers,
+    utf8-string,
+    xhtml-combinators >= 0.2.2 && < 0.3
+
+  ghc-prof-options: -prof -auto-all
   
   if impl(ghc >= 6.12.0)
     ghc-options: -O2 -Wall -fwarn-tabs -funbox-strict-fields

@@ -21,9 +21,9 @@
  * tag definitions
  ------------------------------------------------------------------------*/
 body,html{
-    font-size: 13pt;
+    font-size: 17px;
     font-family: "Droid Serif", "Georgia", "Arial", "Helvetica", sans-serif;
-    line-height: 1.7em;
+    line-height: 29px;
     color:#0c1a30;
     /*background:#fff url(holy-light.png) scroll repeat-x top left;*/
     margin:0;
@@ -39,33 +39,44 @@ tt, code, pre {
 a:link,a:visited{ color: #2B7EA1; text-decoration: none; }
 
 h1{
-    font-size: 2.7em
+    font-size: 22px;
 }
 
 h2{
-    font-size: 1.9em
+    font-size: 22px;
 }
 
-h1,h2{
+h3 {
+    font-size: 19px;
+}
+
+h4 {
+    font-size: 17px;
+}
+
+h1,h2,h3,h4{
     color: #2c558a;
     font-weight: normal;
     text-shadow: #fff 0px 1px 1px;
     letter-spacing:0.1em;
     font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;
-    font-size: 22px;
     text-transform: uppercase;
 }
 
-p {
-    line-height: 1.8em;
+h1 code, h2 code, h3 code, h4 code {
+    font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;
+    font-size: inherit;
+}
 
+p {
+    margin: 0 0 29px 0;
 }
 
 ul {
     list-style: none;
-    margin-left: 1em;
-    padding-left: 1em;
-    text-indent: -1em;
+    margin: 0 0 29px 29px;
+    padding-left: 29px;
+    text-indent: -14px;
 }
 
 li{
@@ -80,9 +91,79 @@ img {
     border:0;
 }
 
+dl, dt, dd {
+    margin: 0;
+    padding: 0;
+    line-height: 29px;
+}
+
+dd {
+    padding-left: 3em;
+}
+
+dt {
+    height: 29px;
+    font-weight: bold;
+}
+
+
 /*--------------------------------------------------------------------------
  * styling for css classes
- ------------------------------------------------------------------------*/
+  ------------------------------------------------------------------------*/
+
+pre.code, pre.sourceCode {
+    background: #222;
+    color: #ffbf00;
+    width: 85%;
+    margin: 0px auto 29px auto;
+    padding: 16px;
+
+    -moz-border-radius: 16px;
+    -webkit-border-radius: 16px;
+}
+
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode, table.sourceCode pre 
+   { margin: 0; padding: 0; border: 0; vertical-align: baseline; border: none; }
+td.lineNumbers { text-align: right; background-color: #ccc; color: black; padding-right: 5px; padding-left: 5px; } 
+td.sourceCode { padding-left: 5px; }
+pre.sourceCode { }
+pre.sourceCode span.Normal { }
+pre.sourceCode span.Keyword { font-weight: bold; } 
+pre.sourceCode span.DataType { color: #ff0; }
+pre.sourceCode span.DecVal { color: #4f4; }
+pre.sourceCode span.BaseN { color: #4f4; }
+pre.sourceCode span.Float { color: #4f4; }
+pre.sourceCode span.Char { color: #4f4; }
+pre.sourceCode span.String { color: #4f4; }
+pre.sourceCode span.Comment { color: #999; font-style: italic; }
+pre.sourceCode span.Others { }
+pre.sourceCode span.Alert { color: #4f4; font-weight: bold; }
+pre.sourceCode span.Function { color: #C4E7FF; }
+pre.sourceCode span.RegionMarker { }
+pre.sourceCode span.Error { color: #f44; font-weight: bold; }
+
+pre.sourceCode span.ModuleName { color: #f44; } 
+pre.sourceCode span.Keyword { color: #C4E7FF; }
+pre.sourceCode span.Function { }
+pre.sourceCode span.FunctionDefinition { color: #C4E7FF; }
+pre.sourceCode span.Class { color: #C4E7FF; font-weight: bold; }
+pre.sourceCode span.Constructor { font-weight: bold; }
+pre.sourceCode span.DataConstructor { color: #C4E7FF; }
+pre.sourceCode span.TypeConstructor { font-weight: bold; }
+pre.sourceCode span.InfixOperator { color: #aaa; }
+
+
+.singlecolumn {
+    width: 728px;
+    margin-top: 20px;
+}
+
+.singlecolumn pre.sourceCode, .singlecolumn pre.code {
+    width: 656px;
+    margin: 0 0 29px 40px;
+    padding: 16px;
+}
+
 .left-cell{
     float:left;
 }
@@ -108,31 +189,35 @@ img {
     float:left;
     width: 50%;
 }
-.newspaper .inner {
-    margin:10px;
-    padding:25px;
-    /*background: url(holy-light.png) scroll repeat-x 0 -100px;;*/
 
-    -moz-border-radius-topleft:5px;  -webkit-border-top-left-radius:5px;
-    -moz-border-radius-topright: 5px; -webkit-border-top-right-radius: 5px;
+.newspaper .inner {
+    padding: 20px;
+    margin: 0;
 }
-.newspaper .inner h2{
+
+.newspaper .inner h2, .singlecolumn h2
+{
     margin:0;
     border-bottom: 1px solid #c2d1e1;
-    padding:5px 0;
+    line-height: 44px;
+    margin-bottom: 13px;
+    padding:0;
+}
+
+.newspaper .inner h3, .singlecolumn h3,
+.newspaper .inner h4, .singlecolumn h4
+{
+    margin:0;
+    line-height: 44px;
+    margin-bottom: 14px;
+    padding:0;
 }
 
 .newspaper .section.left .inner{
-    margin-right: 5px;
-
+    padding-left: 0;
 }
 .newspaper .section.right .inner{
-    margin-left: 5px;
-}
-
-.newspaper p{
-    margin: 20px 0;
-    text-align: justify;
+    padding-right: 0;
 }
 
 
@@ -145,7 +230,7 @@ img {
 /*--------------------------------------------------------------------------
  * styling for divs with ids
  ------------------------------------------------------------------------*/
-.content {
+#splash .content, #content {
     width: 960px;
     margin: 0 auto;
     overflow:hidden;
@@ -270,43 +355,44 @@ img {
     width: 100%;
     background: #132742 url(nav-back.png) scroll repeat-x bottom left;
     color: #C4E7FF;
-    padding: 3px 0;
-    padding-left:0em;
-    padding-top:45px;
+    padding: 45px 0 0 0;
     margin:0;
+    height: 40px;
     overflow:hidden;
-    border-bottom: 10px #2e5d9c solid;
 }
+
 #heading .inner{
     width: 960px;
     margin:0 auto;
     overflow:hidden;
     line-height: 1em;
-    padding-bottom:5px;
+    vertical-align: top;
+    height: 40px;
+    padding: 0;
     position: relative;
     height: 2em;
 }
+
 #heading h1{
     margin:0;
     padding:0;
     margin: 0 auto;
     position: absolute;
-    bottom:4px;
-    z-index: 10;
+    top:0px;
+}
+
+#nav li.selected {
+    background-image: url(selected-tick.png);
+    background-position: center bottom;
+    background-repeat: no-repeat;
 }
 
 #nav{
-    overflow:hidden;
-    color: #C4E7FF;
-    padding:2px;
-    padding-left:0;
-    padding-right:0;
-    padding-bottom: 0px;
-
-    position: absolute;
-    right:0px;
-    bottom: 7px;
-
+   overflow:hidden;
+   color: #C4E7FF;
+   height: 36px;
+   padding: 4px 0 0 0; margin: 0;
+   float:right;
 }
 
 #nav .heading span {
@@ -314,25 +400,37 @@ img {
 }
 
 #nav .navlist {
-
+   float:left;
+   margin: 0; padding: 0;
+   height: 100%;
 }
 
 #nav a:link, #nav a:visited {
     color: inherit;
+    vertical-align: top;
+    height: 100%;
+    display: block;
 }
 
 #nav a:hover, #nav a:active {
     color: #fff;
+    vertical-align: top;
+    height: 100%;
+    display: block;
 }
 
 #nav ul {
     padding: 0;
     margin: 0;
+    height: 100%;
     display: inline;
-
 }
 
 #nav li {
+    vertical-align: top;
+    padding: 0 0 10px 0;
+    height: 30px;
+    display: block;
     list-style-type: none;
     float:left;
     letter-spacing: -0.01em;

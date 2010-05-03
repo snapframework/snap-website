@@ -91,6 +91,54 @@
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3Aset_c_locale"
+>set_c_locale</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Ac_parse_http_time"
+>c_parse_http_time</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-String.html#t%3ACString"
+>CString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-Types.html#t%3ACTime"
+>CTime</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Ac_format_http_time"
+>c_format_http_time</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-Types.html#t%3ACTime"
+>CTime</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-String.html#t%3ACString"
+>CString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><SPAN CLASS="keyword"
 >type</SPAN
 > <A HREF="#t%3AEnumerator"
@@ -597,6 +645,82 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A HREF="#t%3AResponseBody"
+>ResponseBody</A
+>  </TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+>= <A HREF="#v%3AEnum"
+>Enum</A
+> (<SPAN CLASS="keyword"
+>forall</SPAN
+> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a)</TD
+></TR
+><TR
+><TD CLASS="decl"
+>| <A HREF="#v%3ASendFile"
+>SendFile</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ArspBodyMap"
+>rspBodyMap</A
+> :: (<SPAN CLASS="keyword"
+>forall</SPAN
+> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a) -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
+>ResponseBody</A
+> -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
+>ResponseBody</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ArspBodyToEnum"
+>rspBodyToEnum</A
+> ::  <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
+>ResponseBody</A
+> -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><SPAN CLASS="keyword"
 >data</SPAN
 >  <A HREF="#t%3AResponse"
@@ -634,11 +758,9 @@
 ><TD CLASS="recfield"
 ><A HREF="#v%3ArspBody"
 >rspBody</A
-> :: <SPAN CLASS="keyword"
->forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
->Enumerator</A
-> a</TD
+> :: <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
+>ResponseBody</A
+></TD
 ></TR
 ><TR
 ><TD CLASS="recfield"
@@ -869,9 +991,11 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AformatHttpTime"
 >formatHttpTime</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/time/latest/doc/html/Data-Time-Clock.html#t%3AUTCTime"
->UTCTime</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-Types.html#t%3ACTime"
+>CTime</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ></TR
@@ -885,10 +1009,10 @@
 >parseHttpTime</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
->Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/time/latest/doc/html/Data-Time-Clock.html#t%3AUTCTime"
->UTCTime</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-Types.html#t%3ACTime"
+>CTime</A
 ></TD
 ></TR
 ><TR
@@ -899,7 +1023,9 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AparseToCompletion"
 >parseToCompletion</A
-> ::  Parser a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
@@ -913,7 +1039,9 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3ApUrlEscaped"
 >pUrlEscaped</A
-> :: Parser <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ></TR
@@ -957,7 +1085,9 @@
 >hexd</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
-> -&gt; Builder</TD
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/cereal/latest/doc/html/Data-Serialize-Builder.html#t%3ABuilder"
+>Builder</A
+></TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -967,7 +1097,11 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3Afinish"
 >finish</A
-> ::  Result a -&gt; Result a</TD
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AResult"
+>Result</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AResult"
+>Result</A
+> a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -979,7 +1113,9 @@
 >char</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
 >Char</A
-> -&gt; Parser <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 ></TD
 ></TR
@@ -1021,6 +1157,96 @@
 ><TR
 ><TD CLASS="section1"
 >Documentation</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:set_c_locale"
+><A NAME="v%3Aset_c_locale"
+></A
+></A
+><B
+>set_c_locale</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#set_c_locale"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:c_parse_http_time"
+><A NAME="v%3Ac_parse_http_time"
+></A
+></A
+><B
+>c_parse_http_time</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-String.html#t%3ACString"
+>CString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-Types.html#t%3ACTime"
+>CTime</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#c_parse_http_time"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:c_format_http_time"
+><A NAME="v%3Ac_format_http_time"
+></A
+></A
+><B
+>c_format_http_time</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-Types.html#t%3ACTime"
+>CTime</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-String.html#t%3ACString"
+>CString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#c_format_http_time"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -1213,33 +1439,27 @@
 ><DIV ID="i:HasHeaders" STYLE="display:block;"
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="Snap-Internal-Http-Types.html#t%3AHasHeaders"
 >HasHeaders</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
 >Response</A
 ></TD
-><TD CLASS="rdoc"
-></TD
 ></TR
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="Snap-Internal-Http-Types.html#t%3AHasHeaders"
 >HasHeaders</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3ARequest"
 >Request</A
 ></TD
-><TD CLASS="rdoc"
-></TD
 ></TR
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="Snap-Internal-Http-Types.html#t%3AHasHeaders"
 >HasHeaders</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3AHeaders"
 >Headers</A
-></TD
-><TD CLASS="rdoc"
 ></TD
 ></TR
 ></TABLE
@@ -1404,8 +1624,8 @@
 ><A HREF="Snap-Internal-Http-Types.html#t%3AHasHeaders"
 >HasHeaders</A
 ></TT
-> datatype. If many headers came in
- with the same name, they will be catenated together.
+> datatype. If many headers came
+ in with the same name, they will be catenated together.
 </TD
 ></TR
 ><TR
@@ -1561,43 +1781,35 @@
 ><DIV ID="i:Method" STYLE="display:block;"
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Eq.html#t%3AEq"
 >Eq</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3AMethod"
 >Method</A
 ></TD
-><TD CLASS="rdoc"
-></TD
 ></TR
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Ord.html#t%3AOrd"
 >Ord</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3AMethod"
 >Method</A
 ></TD
-><TD CLASS="rdoc"
-></TD
 ></TR
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Text-Read.html#t%3ARead"
 >Read</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3AMethod"
 >Method</A
 ></TD
-><TD CLASS="rdoc"
-></TD
 ></TR
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Text-Show.html#t%3AShow"
 >Show</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3AMethod"
 >Method</A
-></TD
-><TD CLASS="rdoc"
 ></TD
 ></TR
 ></TABLE
@@ -1790,23 +2002,19 @@
 ><DIV ID="i:Cookie" STYLE="display:block;"
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Eq.html#t%3AEq"
 >Eq</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3ACookie"
 >Cookie</A
 ></TD
-><TD CLASS="rdoc"
-></TD
 ></TR
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Text-Show.html#t%3AShow"
 >Show</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3ACookie"
 >Cookie</A
-></TD
-><TD CLASS="rdoc"
 ></TD
 ></TR
 ></TABLE
@@ -2230,11 +2438,10 @@
 >An identity is that:
 </P
 ><PRE
->rqURI r == <TT
-><A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#v%3Aconcat"
->concat</A
-></TT
-> [rqSnapletPath r, rqContextPath r, rqPathInfo r]</PRE
+> rqURI r == 'S.concat' [ rqSnapletPath r
+                       , rqContextPath r
+                       , rqPathInfo r ]
+</PRE
 ><P
 >note that until we introduce snaplets in v0.2, <TT
 ><A HREF="Snap-Internal-Http-Types.html#v%3ArqSnapletPath"
@@ -2393,27 +2600,159 @@
 ><DIV ID="i:Request" STYLE="display:block;"
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Text-Show.html#t%3AShow"
 >Show</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3ARequest"
 >Request</A
 ></TD
-><TD CLASS="rdoc"
-></TD
 ></TR
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="Snap-Internal-Http-Types.html#t%3AHasHeaders"
 >HasHeaders</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3ARequest"
 >Request</A
 ></TD
-><TD CLASS="rdoc"
-></TD
 ></TR
 ></TABLE
 ></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A NAME="t:ResponseBody"
+><A NAME="t%3AResponseBody"
+></A
+></A
+><B
+>ResponseBody</B
+>  </TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#ResponseBody"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v:Enum"
+><A NAME="v%3AEnum"
+></A
+></A
+><B
+>Enum</B
+> (<SPAN CLASS="keyword"
+>forall</SPAN
+> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a)</TD
+><TD CLASS="rdoc"
+>output body is enumerator
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v:SendFile"
+><A NAME="v%3ASendFile"
+></A
+></A
+><B
+>SendFile</B
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+><TD CLASS="rdoc"
+>output body is sendfile()
+</TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:rspBodyMap"
+><A NAME="v%3ArspBodyMap"
+></A
+></A
+><B
+>rspBodyMap</B
+> :: (<SPAN CLASS="keyword"
+>forall</SPAN
+> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a) -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
+>ResponseBody</A
+> -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
+>ResponseBody</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#rspBodyMap"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:rspBodyToEnum"
+><A NAME="v%3ArspBodyToEnum"
+></A
+></A
+><B
+>rspBodyToEnum</B
+> ::  <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
+>ResponseBody</A
+> -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#rspBodyToEnum"
+>Source</A
 ></TD
 ></TR
 ></TABLE
@@ -2530,11 +2869,9 @@
 ></A
 ><B
 >rspBody</B
-> :: <SPAN CLASS="keyword"
->forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
->Enumerator</A
-> a</TD
+> :: <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
+>ResponseBody</A
+></TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -2584,23 +2921,19 @@
 ><DIV ID="i:Response" STYLE="display:block;"
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Text-Show.html#t%3AShow"
 >Show</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
 >Response</A
 ></TD
-><TD CLASS="rdoc"
-></TD
 ></TR
 ><TR
-><TD CLASS="arg"
+><TD CLASS="decl"
 ><A HREF="Snap-Internal-Http-Types.html#t%3AHasHeaders"
 >HasHeaders</A
 > <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
 >Response</A
-></TD
-><TD CLASS="rdoc"
 ></TD
 ></TR
 ></TABLE
@@ -2941,11 +3274,11 @@
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: (<SPAN CLASS="keyword"
+>:: <SPAN CLASS="keyword"
 >forall</SPAN
 > a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
 >Enumerator</A
-> a)</TD
+> a</TD
 ><TD CLASS="rdoc"
 >new response body
  enumerator
@@ -3313,9 +3646,11 @@
 ></A
 ><B
 >formatHttpTime</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/time/latest/doc/html/Data-Time-Clock.html#t%3AUTCTime"
->UTCTime</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-Types.html#t%3ACTime"
+>CTime</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ><TD CLASS="declbut"
@@ -3328,7 +3663,11 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Converts a ClockTime into an HTTP timestamp.
+>Converts a <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-Types.html#t%3ACTime"
+>CTime</A
+></TT
+> into an HTTP timestamp.
 </TD
 ></TR
 ><TR
@@ -3348,10 +3687,10 @@
 >parseHttpTime</B
 > :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
->Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/time/latest/doc/html/Data-Time-Clock.html#t%3AUTCTime"
->UTCTime</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-Types.html#t%3ACTime"
+>CTime</A
 ></TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Http-Types.html#parseHttpTime"
@@ -3364,8 +3703,8 @@
 ><TR
 ><TD CLASS="doc"
 >Converts an HTTP timestamp into a <TT
-><A HREF="http://hackage.haskell.org/packages/archive/time/latest/doc/html/Data-Time-Clock.html#t%3AUTCTime"
->UTCTime</A
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-Types.html#t%3ACTime"
+>CTime</A
 ></TT
 >.
 </TD
@@ -3385,7 +3724,9 @@
 ></A
 ><B
 >parseToCompletion</B
-> ::  Parser a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
@@ -3413,7 +3754,9 @@
 ></A
 ><B
 >pUrlEscaped</B
-> :: Parser <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ><TD CLASS="declbut"
@@ -3515,7 +3858,9 @@
 >hexd</B
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
-> -&gt; Builder</TD
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/cereal/latest/doc/html/Data-Serialize-Builder.html#t%3ABuilder"
+>Builder</A
+></TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Http-Types.html#hexd"
 >Source</A
@@ -3539,7 +3884,11 @@
 ></A
 ><B
 >finish</B
-> ::  Result a -&gt; Result a</TD
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AResult"
+>Result</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AResult"
+>Result</A
+> a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Http-Types.html#finish"
 >Source</A
@@ -3565,7 +3914,9 @@
 >char</B
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
 >Char</A
-> -&gt; Parser <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 ></TD
 ><TD CLASS="declbut"
@@ -3640,7 +3991,7 @@
 ><TD CLASS="botbar"
 >Produced by <A HREF="http://www.haskell.org/haddock/"
 >Haddock</A
-> version 2.7.2</TD
+> version 2.6.1</TD
 ></TR
 ></TABLE
 ></BODY
