@@ -88,7 +88,7 @@
               network.</li>
                                 
             <li><b>Email:</b> join
-              the <a href="http://mailman-mail5.webfaction.com/listinfo/snap">mailing
+              our <a href="http://mailman-mail5.webfaction.com/listinfo/snap">mailing
               list.</a></li>
           </ul>
         </div><!--end mailing list -->

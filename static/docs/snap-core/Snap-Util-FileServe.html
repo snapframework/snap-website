@@ -80,6 +80,20 @@
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AgetSafePath"
+>getSafePath</A
+> :: <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AfileServe"
 >fileServe</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
@@ -182,6 +196,51 @@
 ><TR
 ><TD CLASS="section1"
 >Documentation</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getSafePath"
+><A NAME="v%3AgetSafePath"
+></A
+></A
+><B
+>getSafePath</B
+> :: <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#getSafePath"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Gets a path from the <TT
+><A HREF="Snap-Internal-Http-Types.html#t%3ARequest"
+>Request</A
+></TT
+> using <TT
+><A HREF="Snap-Internal-Http-Types.html#v%3ArqPathInfo"
+>rqPathInfo</A
+></TT
+> and makes sure it is
+ safe to use for opening files.  A path is safe if it is a relative path
+ and has no <A HREF="--.html"
+>..</A
+> elements to escape the intended directory structure.
+</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -584,7 +643,7 @@
 ><TD CLASS="botbar"
 >Produced by <A HREF="http://www.haskell.org/haddock/"
 >Haddock</A
-> version 2.7.2</TD
+> version 2.6.1</TD
 ></TR
 ></TABLE
 ></BODY

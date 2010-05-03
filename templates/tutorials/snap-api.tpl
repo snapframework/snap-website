@@ -1,4 +1,5 @@
 <apply template="page">
+<div class="singlecolumn">
 <div id="getting-started-with-snap"
 ><h2>Getting Started with Snap</h2>
 
@@ -122,4 +123,5 @@
     >.</p
   ></div
 >
+</div>
 </apply>

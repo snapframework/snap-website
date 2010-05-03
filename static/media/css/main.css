@@ -230,7 +230,7 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 /*--------------------------------------------------------------------------
  * styling for divs with ids
   ------------------------------------------------------------------------*/
-.content {
+#splash .content, #content {
     width: 960px;
     margin: 0 auto;
     overflow:hidden;
@@ -355,37 +355,43 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     width: 100%;
     background: #132742 url(nav-back.png) scroll repeat-x bottom left;
     color: #C4E7FF;
-    padding: 3px 0;
-    padding-left:0em;
-    padding-top:45px;
+    padding: 45px 0 0 0;
     margin:0;
+    height: 40px;
     overflow:hidden;
-    border-bottom: 10px #2e5d9c solid;
 }
+
 #heading .inner{
     width: 960px;
     margin:0 auto;
     overflow:hidden;
     line-height: 1em;
-    padding-bottom:5px;
+    vertical-align: top;
+    height: 40px;
+    padding: 0;
     position: relative;
 }
+
 #heading h1{
     margin:0;
     padding:0;
     float:left;
     margin: 0 auto;
     position: absolute;
-    bottom:4px;
+    top:0px;
+}
+
+#nav ul.selected {
+    background-image: url(selected-tick.png);
+    background-position: center bottom;
+    background-repeat: no-repeat;
 }
 
 #nav{
    overflow:hidden;
    color: #C4E7FF;
-   padding:2px;
-   padding-left:0;
-   padding-right:0;
-   padding-bottom: 4px;
+   height: 36px;
+   padding: 4px 0 0 0; margin: 0;
    float:right;
 }
 
@@ -394,7 +400,9 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 }
 
 #nav .navlist {
-float:left;
+   float:left;
+   margin: 0; padding: 0;
+   height: 100%;
 }
 
 #nav a:link, #nav a:visited {
@@ -408,11 +416,13 @@ float:left;
 #nav ul {
     padding: 0;
     margin: 0;
+    height: 100%;
     display: inline;
-
 }
 
 #nav li {
+    padding: 0;
+    height: 100%;
     list-style-type: none;
     float:left;
     letter-spacing: -0.01em;
