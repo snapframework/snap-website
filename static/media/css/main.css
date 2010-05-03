@@ -1,10 +1,10 @@
 @font-face {
-   font-family: "Droid Sans";
-   src: url("DroidSans.ttf") format("truetype");
+    font-family: "Droid Sans";
+    src: url("DroidSans.ttf") format("truetype");
 }
 @font-face {
-   font-family: "Droid Serif";
-   src: url("DroidSerif-Regular.ttf") format("truetype");
+    font-family: "Droid Serif";
+    src: url("DroidSerif-Regular.ttf") format("truetype");
 }
 @font-face {
     font-family: "PT Sans";
@@ -19,7 +19,7 @@
 
 /*--------------------------------------------------------------------------
  * tag definitions
-  ------------------------------------------------------------------------*/
+ ------------------------------------------------------------------------*/
 body,html{
     font-size: 13pt;
     font-family: "Droid Serif", "Georgia", "Arial", "Helvetica", sans-serif;
@@ -82,7 +82,7 @@ img {
 
 /*--------------------------------------------------------------------------
  * styling for css classes
-  ------------------------------------------------------------------------*/
+ ------------------------------------------------------------------------*/
 .left-cell{
     float:left;
 }
@@ -144,7 +144,7 @@ img {
 
 /*--------------------------------------------------------------------------
  * styling for divs with ids
-  ------------------------------------------------------------------------*/
+ ------------------------------------------------------------------------*/
 .content {
     width: 960px;
     margin: 0 auto;
@@ -166,7 +166,7 @@ img {
     padding: 0;
     background: url(splash-back.png) scroll repeat-x top left;
     position:relative;
- }
+}
 #splash .logo img {
     width: 800px;
     margin: 0 auto;
@@ -184,11 +184,11 @@ img {
     text-shadow: 1px 1px #DAE6F5;
     color: #1f4986;
     font-style: italic;
- }
+}
 
 
 #triptych {
-    background: #f1f1f1;
+    background: #f1f1f1 url(splash-2-back.png) scroll repeat-x bottom left;
     /*background: #D6EFFF;*/
     color: #000;
     width: 100%;
@@ -284,24 +284,29 @@ img {
     line-height: 1em;
     padding-bottom:5px;
     position: relative;
+    height: 2em;
 }
 #heading h1{
     margin:0;
     padding:0;
-    float:left;
     margin: 0 auto;
     position: absolute;
     bottom:4px;
+    z-index: 10;
 }
 
 #nav{
-   overflow:hidden;
-   color: #C4E7FF;
-   padding:2px;
-   padding-left:0;
-   padding-right:0;
-   padding-bottom: 4px;
-   float:right;
+    overflow:hidden;
+    color: #C4E7FF;
+    padding:2px;
+    padding-left:0;
+    padding-right:0;
+    padding-bottom: 0px;
+
+    position: absolute;
+    right:0px;
+    bottom: 7px;
+
 }
 
 #nav .heading span {
@@ -309,7 +314,7 @@ img {
 }
 
 #nav .navlist {
-float:left;
+
 }
 
 #nav a:link, #nav a:visited {
@@ -332,8 +337,12 @@ float:left;
     float:left;
     letter-spacing: -0.01em;
     margin:0 20px;
-    font-family: "Droid Sans";
+    font-family: "Droid Sans", sans-serif;
     text-shadow: 1px 1px #142845;
+}
+
+#nav li.selected {
+    color: #fff;
 }
 
 #nav li:before {

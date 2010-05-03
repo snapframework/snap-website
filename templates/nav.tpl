@@ -8,9 +8,8 @@
 
 
     <div id="nav" class="nav">           
-      <div class="navlist">
         <ul class="nav">
-          <li>
+          <li class="selected">
             <a href="/">Home</a>
           </li>
           <li>
@@ -26,7 +25,6 @@
             <a href="/about">About</a>
           </li>
         </ul>
-      </div>
     </div>
 
   </div>
