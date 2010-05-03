@@ -23,10 +23,7 @@
         <h2>What is the project's status?</h2>
         <p>
           The first developer prerelease of the Snap framework is available
-          now.</p>
-
-        <p>
-          This developer prerelease contains only the Snap core system, namely:
+          now. It contains only the Snap core system, namely:
           <ul>
             <li>A fast HTTP server library with an optional high-concurrency
                 backend using
@@ -39,6 +36,22 @@
           </ul>
         </p>
 
+        <p>
+          Higher-level facilities for building web applications (like
+          user/session management, component interfaces, data modeling, etc.)
+          are planned but not yet implemented, so this release will mostly be
+          of interest for those who:
+          <ul>
+            <li>
+              need a fast and minimal HTTP API at roughly the same level of
+              abstraction as Java servlets, or
+            </li>
+            <li>
+              are interested in contributing to the Snap Framework
+              project.
+            </li>
+          </ul>
+        </p>
         <p>
           Snap currently only runs on Unix platforms; it has been tested on
           Linux and Mac OSX Snow Leopard.

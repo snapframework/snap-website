@@ -55,6 +55,20 @@
 ></TD
 ></TR
 ><TR
+><TD CLASS="section1"
+>Description</TD
+></TR
+><TR
+><TD CLASS="doc"
+>The Snap HTTP server is a high performance, epoll-enabled, iteratee-based
+ web server library written in Haskell. Together with the <TT
+>snap-core</TT
+> library
+ upon which it depends, it provides a clean and efficient Haskell programming
+ interface to the HTTP protocol.
+</TD
+></TR
+><TR
 ><TD CLASS="s15"
 ></TD
 ></TR
@@ -87,7 +101,9 @@
 >Maybe</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
-> -&gt; Snap <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
@@ -168,7 +184,7 @@
 >FilePath</A
 ></TD
 ><TD CLASS="rdoc"
->path to the access log
+>path to the (optional) access log
 </TD
 ></TR
 ><TR
@@ -179,12 +195,14 @@
 >FilePath</A
 ></TD
 ><TD CLASS="rdoc"
->path to the error log
+>path to the (optional) error log
 </TD
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; Snap <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="rdoc"
@@ -203,7 +221,7 @@
 ></TR
 ><TR
 ><TD CLASS="ndoc" COLSPAN="2"
->FIXME: document this
+>Starts serving HTTP requests on the given port using the given handler.
 </TD
 ></TR
 ></TABLE
@@ -217,7 +235,7 @@
 ><TD CLASS="botbar"
 >Produced by <A HREF="http://www.haskell.org/haddock/"
 >Haddock</A
-> version 2.7.2</TD
+> version 2.6.1</TD
 ></TR
 ></TABLE
 ></BODY
