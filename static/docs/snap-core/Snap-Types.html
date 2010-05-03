@@ -68,64 +68,64 @@
 ><DL
 ><DT
 ><A HREF="#1"
->HTTP
-</A
-></DT
-><DD
-><DL
-><DT
-><A HREF="#2"
->Headers
-</A
-></DT
-><DT
-><A HREF="#3"
->Requests
-</A
-></DT
-><DT
-><A HREF="#4"
->Responses
-</A
-></DT
-><DD
-><DL
-><DT
-><A HREF="#5"
->Response I/O
-</A
-></DT
-></DL
-></DD
-></DL
-></DD
-><DT
-><A HREF="#6"
 >The Snap Monad
 </A
 ></DT
 ><DD
 ><DL
 ><DT
-><A HREF="#7"
+><A HREF="#2"
 >Functions for control flow and early termination
 </A
 ></DT
 ><DT
-><A HREF="#8"
+><A HREF="#3"
 >Routing
 </A
 ></DT
 ><DT
-><A HREF="#9"
+><A HREF="#4"
 >Access to state
 </A
 ></DT
 ><DT
-><A HREF="#10"
+><A HREF="#5"
 >Grabbing request bodies
 </A
 ></DT
+></DL
+></DD
+><DT
+><A HREF="#6"
+>HTTP Datatypes and Functions
+</A
+></DT
+><DD
+><DL
+><DT
+><A HREF="#7"
+>Headers
+</A
+></DT
+><DT
+><A HREF="#8"
+>Requests
+</A
+></DT
+><DT
+><A HREF="#9"
+>Responses
+</A
+></DT
+><DD
+><DL
+><DT
+><A HREF="#10"
+>Response I/O
+</A
+></DT
+></DL
+></DD
 ></DL
 ></DD
 ><DT
@@ -177,6 +177,318 @@ for HTTP as well as the <TT
 ><TR
 ><TD CLASS="body"
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A HREF="#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ArunSnap"
+>runSnap</A
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+> -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+>, <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A HREF="#t%3ANoHandlerException"
+>NoHandlerException</A
+>  = <A HREF="#v%3ANoHandlerException"
+>NoHandlerException</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AfinishWith"
+>finishWith</A
+> :: <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Apass"
+>pass</A
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Amethod"
+>method</A
+> ::  <A HREF="Snap-Types.html#t%3AMethod"
+>Method</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Apath"
+>path</A
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Adir"
+>dir</A
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AifTop"
+>ifTop</A
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Aroute"
+>route</A
+> ::  [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a)] -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetRequest"
+>getRequest</A
+> :: <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetResponse"
+>getResponse</A
+> :: <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AputRequest"
+>putRequest</A
+> :: <A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AputResponse"
+>putResponse</A
+> :: <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AmodifyRequest"
+>modifyRequest</A
+> :: (<A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+> -&gt; <A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+>) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AmodifyResponse"
+>modifyResponse</A
+> :: (<A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+>) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AlocalRequest"
+>localRequest</A
+> ::  (<A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+> -&gt; <A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+>) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ArunRequestBody"
+>runRequestBody</A
+> ::  <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetRequestBody"
+>getRequestBody</A
+> :: <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
+>ByteString</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AunsafeDetachRequestBody"
+>unsafeDetachRequestBody</A
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> (<A HREF="Snap-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
 ><TR
 ><TD CLASS="decl"
 ><SPAN CLASS="keyword"
@@ -1032,318 +1344,6 @@ for HTTP as well as the <TT
 ><TR
 ><TD CLASS="decl"
 ><SPAN CLASS="keyword"
->data</SPAN
->  <A HREF="#t%3ASnap"
->Snap</A
-> a</TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3ArunSnap"
->runSnap</A
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-> -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
->Iteratee</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Snap-Types.html#t%3ARequest"
->Request</A
->, <A HREF="Snap-Types.html#t%3AResponse"
->Response</A
->)</TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><SPAN CLASS="keyword"
->data</SPAN
->  <A HREF="#t%3ANoHandlerException"
->NoHandlerException</A
->  = <A HREF="#v%3ANoHandlerException"
->NoHandlerException</A
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AfinishWith"
->finishWith</A
-> :: <A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3Apass"
->pass</A
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3Amethod"
->method</A
-> ::  <A HREF="Snap-Types.html#t%3AMethod"
->Method</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3Apath"
->path</A
-> ::  <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3Adir"
->dir</A
-> ::  <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AifTop"
->ifTop</A
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3Aroute"
->route</A
-> ::  [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->, <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a)] -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AgetRequest"
->getRequest</A
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AgetResponse"
->getResponse</A
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AputRequest"
->putRequest</A
-> :: <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AputResponse"
->putResponse</A
-> :: <A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AmodifyRequest"
->modifyRequest</A
-> :: (<A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-> -&gt; <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AmodifyResponse"
->modifyResponse</A
-> :: (<A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3AResponse"
->Response</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AlocalRequest"
->localRequest</A
-> ::  (<A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-> -&gt; <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3ArunRequestBody"
->runRequestBody</A
-> ::  <A HREF="Snap-Iteratee.html#t%3AIteratee"
->Iteratee</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AgetRequestBody"
->getRequestBody</A
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
->ByteString</A
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AunsafeDetachRequestBody"
->unsafeDetachRequestBody</A
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> (<A HREF="Snap-Types.html#t%3AEnumerator"
->Enumerator</A
-> a)</TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><SPAN CLASS="keyword"
 >type</SPAN
 > <A HREF="#t%3AEnumerator"
 >Enumerator</A
@@ -1430,7 +1430,1411 @@ for HTTP as well as the <TT
 ><TD CLASS="section1"
 ><A NAME="1"
 ><A NAME="1"
->HTTP
+>The Snap Monad
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A NAME="t:Snap"
+><A NAME="t%3ASnap"
+></A
+></A
+><B
+>Snap</B
+> a </TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#Snap"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+><P
+><TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> is the <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+></TT
+> that user web handlers run in. <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> gives you:
+</P
+><P
+>1. stateful access to fetch or modify an HTTP <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+>
+</P
+><P
+>2. stateful access to fetch or modify an HTTP <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+>
+</P
+><P
+>3. failure / <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AAlternative"
+>Alternative</A
+></TT
+> / <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonadPlus"
+>MonadPlus</A
+></TT
+> semantics: a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> handler can
+   choose not to handle a given request, using <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3Aempty"
+>empty</A
+></TT
+> or its synonym <TT
+><A HREF="Snap-Types.html#v%3Apass"
+>pass</A
+></TT
+>,
+   and you can try alternative handlers with the <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3A%3C%7C%3E"
+>&lt;|&gt;</A
+></TT
+> operator:
+</P
+><PRE
+> a :: Snap String
+ a = pass
+
+ b :: Snap String
+ b = return &quot;foo&quot;
+
+ c :: Snap String
+ c = a &lt;|&gt; b             -- try running a, if it fails then try b
+</PRE
+><P
+>4. convenience functions (<TT
+><A HREF="Snap-Types.html#v%3AwriteBS"
+>writeBS</A
+></TT
+>, <TT
+><A HREF="Snap-Types.html#v%3AwriteLBS"
+>writeLBS</A
+></TT
+>, <TT
+><A HREF="Snap-Types.html#v%3AwriteText"
+>writeText</A
+></TT
+>, <TT
+><A HREF="Snap-Types.html#v%3AwriteLazyText"
+>writeLazyText</A
+></TT
+>,
+   <TT
+><A HREF="Snap-Types.html#v%3AaddToOutput"
+>addToOutput</A
+></TT
+>) for writing output to the <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+>:
+</P
+><PRE
+> a :: (forall a . Enumerator a) -&gt; Snap ()
+ a someEnumerator = do
+     writeBS &quot;I'm a strict bytestring&quot;
+     writeLBS &quot;I'm a lazy bytestring&quot;
+     addToOutput someEnumerator
+</PRE
+><P
+>5. early termination: if you call <TT
+><A HREF="Snap-Types.html#v%3AfinishWith"
+>finishWith</A
+></TT
+>:
+</P
+><PRE
+> a :: Snap ()
+ a = do
+   modifyResponse $ setResponseStatus 500
+   writeBS &quot;500 error&quot;
+   r &lt;- getResponse
+   finishWith r
+</PRE
+><P
+>then any subsequent processing will be skipped and supplied <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> value
+   will be returned from <TT
+><A HREF="Snap-Types.html#v%3ArunSnap"
+>runSnap</A
+></TT
+> as-is.
+</P
+><P
+>6. access to the <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+></TT
+> monad through a <TT
+><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+></TT
+> instance:
+</P
+><PRE
+> a :: Snap ()
+ a = liftIO fireTheMissiles
+</PRE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:Snap')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:Snap" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AFunctor"
+>Functor</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonadPlus"
+>MonadPlus</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AApplicative"
+>Applicative</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#t%3AMonadCatchIO"
+>MonadCatchIO</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AAlternative"
+>Alternative</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:runSnap"
+><A NAME="v%3ArunSnap"
+></A
+></A
+><B
+>runSnap</B
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+> -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+>, <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+>)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#runSnap"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Runs a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad action in the 'Iteratee IO' monad.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A NAME="t:NoHandlerException"
+><A NAME="t%3ANoHandlerException"
+></A
+></A
+><B
+>NoHandlerException</B
+>  </TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#NoHandlerException"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+>This exception is thrown if the handler you supply to <TT
+><A HREF="Snap-Types.html#v%3ArunSnap"
+>runSnap</A
+></TT
+> fails.
+</TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v:NoHandlerException"
+><A NAME="v%3ANoHandlerException"
+></A
+></A
+><B
+>NoHandlerException</B
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:NoHandlerException')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:NoHandlerException" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Eq.html#t%3AEq"
+>Eq</A
+> <A HREF="Snap-Types.html#t%3ANoHandlerException"
+>NoHandlerException</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Text-Show.html#t%3AShow"
+>Show</A
+> <A HREF="Snap-Types.html#t%3ANoHandlerException"
+>NoHandlerException</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable"
+>Typeable</A
+> <A HREF="Snap-Types.html#t%3ANoHandlerException"
+>NoHandlerException</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#t%3AException"
+>Exception</A
+> <A HREF="Snap-Types.html#t%3ANoHandlerException"
+>NoHandlerException</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section2"
+><A NAME="2"
+><A NAME="2"
+>Functions for control flow and early termination
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:finishWith"
+><A NAME="v%3AfinishWith"
+></A
+></A
+><B
+>finishWith</B
+> :: <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#finishWith"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Short-circuits a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad action early, storing the given
+ <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> value in its state.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:pass"
+><A NAME="v%3Apass"
+></A
+></A
+><B
+>pass</B
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#pass"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Fails out of a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad action.  This is used to indicate
+ that you choose not to handle the given request within the given
+ handler.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section2"
+><A NAME="3"
+><A NAME="3"
+>Routing
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:method"
+><A NAME="v%3Amethod"
+></A
+></A
+><B
+>method</B
+> ::  <A HREF="Snap-Types.html#t%3AMethod"
+>Method</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#method"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Runs a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad action only if the request's HTTP method matches
+ the given method.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:path"
+><A NAME="v%3Apath"
+></A
+></A
+><B
+>path</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#path"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="rdoc"
+>path to match against
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="rdoc"
+>handler to run
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Runs a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad action only for requests where <TT
+><A HREF="Snap-Types.html#v%3ArqPathInfo"
+>rqPathInfo</A
+></TT
+> is exactly
+ equal to the given string. If the path matches, locally sets <TT
+><A HREF="Snap-Types.html#v%3ArqContextPath"
+>rqContextPath</A
+></TT
+>
+ to the old value of <TT
+><A HREF="Snap-Types.html#v%3ArqPathInfo"
+>rqPathInfo</A
+></TT
+>, sets <TT
+><A HREF="Snap-Types.html#v%3ArqPathInfo"
+>rqPathInfo</A
+></TT
+>=&quot;&quot;, and runs the given
+ handler.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:dir"
+><A NAME="v%3Adir"
+></A
+></A
+><B
+>dir</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#dir"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="rdoc"
+>path component to match
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="rdoc"
+>handler to run
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+><P
+>Runs a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad action only when the <TT
+><A HREF="Snap-Types.html#v%3ArqPathInfo"
+>rqPathInfo</A
+></TT
+> of the request
+ starts with the given path. For example,
+</P
+><PRE
+> dir &quot;foo&quot; handler
+</PRE
+><P
+>Will fail if <TT
+><A HREF="Snap-Types.html#v%3ArqPathInfo"
+>rqPathInfo</A
+></TT
+> is not &quot;<TT
+>/foo</TT
+>&quot; or &quot;<TT
+>/foo/...</TT
+>&quot;, and will
+ add <TT
+>&quot;foo/&quot;</TT
+> to the handler's local <TT
+><A HREF="Snap-Types.html#v%3ArqContextPath"
+>rqContextPath</A
+></TT
+>.
+</P
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:ifTop"
+><A NAME="v%3AifTop"
+></A
+></A
+><B
+>ifTop</B
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#ifTop"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Runs a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad action only when <TT
+><A HREF="Snap-Types.html#v%3ArqPathInfo"
+>rqPathInfo</A
+></TT
+> is empty.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:route"
+><A NAME="v%3Aroute"
+></A
+></A
+><B
+>route</B
+> ::  [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a)] -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Routing.html#route"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>A web handler which, given a mapping from URL entry points to web
+ handlers, efficiently routes requests to the correct handler.
+</P
+><P
+>The URL entry points are given as relative paths, for example:
+</P
+><PRE
+> route [ (&quot;foo/bar/quux&quot;, fooBarQuux) ]
+</PRE
+><P
+>If the URI of the incoming request is
+</P
+><PRE
+> /foo/bar/quux
+</PRE
+><P
+>or
+</P
+><PRE
+> /foo/bar/quux/...anything...
+</PRE
+><P
+>then the request will be routed to &quot;<TT
+>fooBarQuux</TT
+>&quot;, with <TT
+><A HREF="Snap-Types.html#v%3ArqContextPath"
+>rqContextPath</A
+></TT
+>
+ set to &quot;<TT
+>/foo/bar/quux/</TT
+>&quot; and <TT
+><A HREF="Snap-Types.html#v%3ArqPathInfo"
+>rqPathInfo</A
+></TT
+> set to
+ &quot;<TT
+>...anything...</TT
+>&quot;.
+</P
+><P
+><TT
+>FIXME</TT
+>/<TT
+>TODO</TT
+>: we need a version with and without the context path setting
+ behaviour; if the route is &quot;<TT
+>article/:id/print</TT
+>&quot;, we probably want the
+ contextPath to be &quot;<TT
+>/article</TT
+>&quot; instead of &quot;<TT
+>/article/whatever/print</TT
+>&quot;.
+</P
+><P
+>A path component within an URL entry point beginning with a colon (&quot;<TT
+>:</TT
+>&quot;)
+ is treated as a <EM
+>variable capture</EM
+>; the corresponding path component within
+ the request URI will be entered into the <TT
+><A HREF="Snap-Types.html#v%3ArqParams"
+>rqParams</A
+></TT
+> parameters mapping with
+ the given name. For instance, if the routes were:
+</P
+><PRE
+> route [ (&quot;foo/:bar/baz&quot;, fooBazHandler) ]
+</PRE
+><P
+>Then a request for &quot;<TT
+>/foo/saskatchewan/baz</TT
+>&quot; would be routed to
+ <TT
+>fooBazHandler</TT
+> with a mapping for:
+</P
+><PRE
+> &quot;bar&quot; =&gt; &quot;saskatchewan&quot;
+</PRE
+><P
+>in its parameters table.
+</P
+><P
+>Longer paths are matched first, and specific routes are matched before
+ captures. That is, if given routes:
+</P
+><PRE
+> [ (&quot;a&quot;, h1), (&quot;a/b&quot;, h2), (&quot;a/:x&quot;, h3) ]
+</PRE
+><P
+>a request for &quot;<TT
+>/a/b</TT
+>&quot; will go to <TT
+>h2</TT
+>, &quot;<TT
+>/a/s</TT
+>&quot; for any <EM
+>s</EM
+> will go
+ to <TT
+>h3</TT
+>, and &quot;<TT
+>/a</TT
+>&quot; will go to <TT
+>h1</TT
+>.
+</P
+><P
+>The following example matches &quot;<TT
+>/article</TT
+>&quot; to an article index,
+ &quot;<TT
+>/login</TT
+>&quot; to a login, and &quot;<TT
+>/article/...</TT
+>&quot; to an article renderer.
+</P
+><PRE
+> route [ (&quot;article&quot;,     renderIndex)
+       , (&quot;article/:id&quot;, renderArticle)
+       , (&quot;login&quot;,       method POST doLogin) ]
+</PRE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section2"
+><A NAME="4"
+><A NAME="4"
+>Access to state
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getRequest"
+><A NAME="v%3AgetRequest"
+></A
+></A
+><B
+>getRequest</B
+> :: <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#getRequest"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Grabs the <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+> object out of the <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getResponse"
+><A NAME="v%3AgetResponse"
+></A
+></A
+><B
+>getResponse</B
+> :: <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#getResponse"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Grabs the <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> object out of the <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:putRequest"
+><A NAME="v%3AputRequest"
+></A
+></A
+><B
+>putRequest</B
+> :: <A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#putRequest"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Puts a new <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+> object into the <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:putResponse"
+><A NAME="v%3AputResponse"
+></A
+></A
+><B
+>putResponse</B
+> :: <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#putResponse"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Puts a new <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> object into the <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:modifyRequest"
+><A NAME="v%3AmodifyRequest"
+></A
+></A
+><B
+>modifyRequest</B
+> :: (<A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+> -&gt; <A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+>) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#modifyRequest"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Modifies the <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+> object stored in a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:modifyResponse"
+><A NAME="v%3AmodifyResponse"
+></A
+></A
+><B
+>modifyResponse</B
+> :: (<A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+>) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#modifyResponse"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Modifes the <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> object stored in a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:localRequest"
+><A NAME="v%3AlocalRequest"
+></A
+></A
+><B
+>localRequest</B
+> ::  (<A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+> -&gt; <A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+>) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#localRequest"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Runs a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> action with a locally-modified <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+> state
+ object. The <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+> object in the Snap monad state after the call
+ to localRequest will be unchanged.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section2"
+><A NAME="5"
+><A NAME="5"
+>Grabbing request bodies
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:runRequestBody"
+><A NAME="v%3ArunRequestBody"
+></A
+></A
+><B
+>runRequestBody</B
+> ::  <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#runRequestBody"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Sends the request body through an iteratee (data consumer) and
+ returns the result.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getRequestBody"
+><A NAME="v%3AgetRequestBody"
+></A
+></A
+><B
+>getRequestBody</B
+> :: <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#getRequestBody"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Returns the request body as a bytestring.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:unsafeDetachRequestBody"
+><A NAME="v%3AunsafeDetachRequestBody"
+></A
+></A
+><B
+>unsafeDetachRequestBody</B
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> (<A HREF="Snap-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#unsafeDetachRequestBody"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Detaches the request body's <TT
+><A HREF="Snap-Types.html#t%3AEnumerator"
+>Enumerator</A
+></TT
+> from the <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+> and
+ returns it. You would want to use this if you needed to send the
+ HTTP request body (transformed or otherwise) through to the output
+ in O(1) space. (Examples: transcoding, &quot;echo&quot;, etc)
+</P
+><P
+>Normally Snap is careful to ensure that the request body is fully
+ consumed after your web handler runs; this function is marked
+ &quot;unsafe&quot; because it breaks this guarantee and leaves the
+ responsibility up to you. If you don't fully consume the
+ <TT
+><A HREF="Snap-Types.html#t%3AEnumerator"
+>Enumerator</A
+></TT
+> you get here, the next HTTP request in the pipeline
+ (if any) will misparse. Be careful with exception handlers.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+><A NAME="6"
+><A NAME="6"
+>HTTP Datatypes and Functions
 </A
 ></A
 ></TD
@@ -2227,8 +3631,8 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="section2"
-><A NAME="2"
-><A NAME="2"
+><A NAME="7"
+><A NAME="7"
 >Headers
 </A
 ></A
@@ -2362,8 +3766,8 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="section2"
-><A NAME="3"
-><A NAME="3"
+><A NAME="8"
+><A NAME="8"
 >Requests
 </A
 ></A
@@ -3242,8 +4646,8 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="section2"
-><A NAME="4"
-><A NAME="4"
+><A NAME="9"
+><A NAME="9"
 >Responses
 </A
 ></A
@@ -3635,8 +5039,8 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="section3"
-><A NAME="5"
-><A NAME="5"
+><A NAME="10"
+><A NAME="10"
 >Response I/O
 </A
 ></A
@@ -4070,1410 +5474,6 @@ for HTTP as well as the <TT
  be read using <TT
 >mmap()</TT
 >.
-</P
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="section1"
-><A NAME="6"
-><A NAME="6"
->The Snap Monad
-</A
-></A
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><SPAN CLASS="keyword"
->data</SPAN
->  <A NAME="t:Snap"
-><A NAME="t%3ASnap"
-></A
-></A
-><B
->Snap</B
-> a </TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#Snap"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="body"
-><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
-><TR
-><TD CLASS="ndoc"
-><P
-><TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> is the <TT
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
->Monad</A
-></TT
-> that user web handlers run in. <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> gives you:
-</P
-><P
->1. stateful access to fetch or modify an HTTP <TT
-><A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-></TT
->
-</P
-><P
->2. stateful access to fetch or modify an HTTP <TT
-><A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-></TT
->
-</P
-><P
->3. failure / <TT
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AAlternative"
->Alternative</A
-></TT
-> / <TT
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonadPlus"
->MonadPlus</A
-></TT
-> semantics: a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> handler can
-   choose not to handle a given request, using <TT
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3Aempty"
->empty</A
-></TT
-> or its synonym <TT
-><A HREF="Snap-Types.html#v%3Apass"
->pass</A
-></TT
->,
-   and you can try alternative handlers with the <TT
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3A%3C%7C%3E"
->&lt;|&gt;</A
-></TT
-> operator:
-</P
-><PRE
-> a :: Snap String
- a = pass
-
- b :: Snap String
- b = return &quot;foo&quot;
-
- c :: Snap String
- c = a &lt;|&gt; b             -- try running a, if it fails then try b
-</PRE
-><P
->4. convenience functions (<TT
-><A HREF="Snap-Types.html#v%3AwriteBS"
->writeBS</A
-></TT
->, <TT
-><A HREF="Snap-Types.html#v%3AwriteLBS"
->writeLBS</A
-></TT
->, <TT
-><A HREF="Snap-Types.html#v%3AwriteText"
->writeText</A
-></TT
->, <TT
-><A HREF="Snap-Types.html#v%3AwriteLazyText"
->writeLazyText</A
-></TT
->,
-   <TT
-><A HREF="Snap-Types.html#v%3AaddToOutput"
->addToOutput</A
-></TT
->) for writing output to the <TT
-><A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-></TT
->:
-</P
-><PRE
-> a :: (forall a . Enumerator a) -&gt; Snap ()
- a someEnumerator = do
-     writeBS &quot;I'm a strict bytestring&quot;
-     writeLBS &quot;I'm a lazy bytestring&quot;
-     addToOutput someEnumerator
-</PRE
-><P
->5. early termination: if you call <TT
-><A HREF="Snap-Types.html#v%3AfinishWith"
->finishWith</A
-></TT
->:
-</P
-><PRE
-> a :: Snap ()
- a = do
-   modifyResponse $ setResponseStatus 500
-   writeBS &quot;500 error&quot;
-   r &lt;- getResponse
-   finishWith r
-</PRE
-><P
->then any subsequent processing will be skipped and supplied <TT
-><A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-></TT
-> value
-   will be returned from <TT
-><A HREF="Snap-Types.html#v%3ArunSnap"
->runSnap</A
-></TT
-> as-is.
-</P
-><P
->6. access to the <TT
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-></TT
-> monad through a <TT
-><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-></TT
-> instance:
-</P
-><PRE
-> a :: Snap ()
- a = liftIO fireTheMissiles
-</PRE
-></TD
-></TR
-><TR
-><TD CLASS="section4"
-><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:Snap')" ALT="show/hide"
-> Instances</TD
-></TR
-><TR
-><TD CLASS="body"
-><DIV ID="i:Snap" STYLE="display:block;"
-><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
-><TR
-><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
->Monad</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AFunctor"
->Functor</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonadPlus"
->MonadPlus</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AApplicative"
->Applicative</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#t%3AMonadCatchIO"
->MonadCatchIO</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AAlternative"
->Alternative</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
-></TR
-></TABLE
-></DIV
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:runSnap"
-><A NAME="v%3ArunSnap"
-></A
-></A
-><B
->runSnap</B
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-> -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
->Iteratee</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Snap-Types.html#t%3ARequest"
->Request</A
->, <A HREF="Snap-Types.html#t%3AResponse"
->Response</A
->)</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#runSnap"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Runs a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad action in the 'Iteratee IO' monad.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><SPAN CLASS="keyword"
->data</SPAN
->  <A NAME="t:NoHandlerException"
-><A NAME="t%3ANoHandlerException"
-></A
-></A
-><B
->NoHandlerException</B
->  </TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#NoHandlerException"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="body"
-><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
-><TR
-><TD CLASS="ndoc"
->This exception is thrown if the handler you supply to <TT
-><A HREF="Snap-Types.html#v%3ArunSnap"
->runSnap</A
-></TT
-> fails.
-</TD
-></TR
-><TR
-><TD CLASS="section4"
->Constructors</TD
-></TR
-><TR
-><TD CLASS="body"
-><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
-><TR
-><TD CLASS="arg"
-><A NAME="v:NoHandlerException"
-><A NAME="v%3ANoHandlerException"
-></A
-></A
-><B
->NoHandlerException</B
-></TD
-><TD CLASS="rdoc"
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="section4"
-><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:NoHandlerException')" ALT="show/hide"
-> Instances</TD
-></TR
-><TR
-><TD CLASS="body"
-><DIV ID="i:NoHandlerException" STYLE="display:block;"
-><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
-><TR
-><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Eq.html#t%3AEq"
->Eq</A
-> <A HREF="Snap-Types.html#t%3ANoHandlerException"
->NoHandlerException</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Text-Show.html#t%3AShow"
->Show</A
-> <A HREF="Snap-Types.html#t%3ANoHandlerException"
->NoHandlerException</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable"
->Typeable</A
-> <A HREF="Snap-Types.html#t%3ANoHandlerException"
->NoHandlerException</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#t%3AException"
->Exception</A
-> <A HREF="Snap-Types.html#t%3ANoHandlerException"
->NoHandlerException</A
-></TD
-></TR
-></TABLE
-></DIV
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="section2"
-><A NAME="7"
-><A NAME="7"
->Functions for control flow and early termination
-</A
-></A
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:finishWith"
-><A NAME="v%3AfinishWith"
-></A
-></A
-><B
->finishWith</B
-> :: <A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#finishWith"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Short-circuits a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad action early, storing the given
- <TT
-><A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-></TT
-> value in its state.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:pass"
-><A NAME="v%3Apass"
-></A
-></A
-><B
->pass</B
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#pass"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Fails out of a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad action.  This is used to indicate
- that you choose not to handle the given request within the given
- handler.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="section2"
-><A NAME="8"
-><A NAME="8"
->Routing
-</A
-></A
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:method"
-><A NAME="v%3Amethod"
-></A
-></A
-><B
->method</B
-> ::  <A HREF="Snap-Types.html#t%3AMethod"
->Method</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#method"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Runs a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad action only if the request's HTTP method matches
- the given method.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:path"
-><A NAME="v%3Apath"
-></A
-></A
-><B
->path</B
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#path"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="body"
-><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
-><TR
-><TD CLASS="arg"
->:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-></TD
-><TD CLASS="rdoc"
->path to match against
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-><TD CLASS="rdoc"
->handler to run
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-><TD CLASS="rdoc"
-></TD
-></TR
-><TR
-><TD CLASS="ndoc" COLSPAN="2"
->Runs a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad action only for requests where <TT
-><A HREF="Snap-Types.html#v%3ArqPathInfo"
->rqPathInfo</A
-></TT
-> is exactly
- equal to the given string. If the path matches, locally sets <TT
-><A HREF="Snap-Types.html#v%3ArqContextPath"
->rqContextPath</A
-></TT
->
- to the old value of <TT
-><A HREF="Snap-Types.html#v%3ArqPathInfo"
->rqPathInfo</A
-></TT
->, sets <TT
-><A HREF="Snap-Types.html#v%3ArqPathInfo"
->rqPathInfo</A
-></TT
->=&quot;&quot;, and runs the given
- handler.
-</TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:dir"
-><A NAME="v%3Adir"
-></A
-></A
-><B
->dir</B
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#dir"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="body"
-><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
-><TR
-><TD CLASS="arg"
->:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-></TD
-><TD CLASS="rdoc"
->path component to match
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-><TD CLASS="rdoc"
->handler to run
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-><TD CLASS="rdoc"
-></TD
-></TR
-><TR
-><TD CLASS="ndoc" COLSPAN="2"
-><P
->Runs a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad action only when the <TT
-><A HREF="Snap-Types.html#v%3ArqPathInfo"
->rqPathInfo</A
-></TT
-> of the request
- starts with the given path. For example,
-</P
-><PRE
-> dir &quot;foo&quot; handler
-</PRE
-><P
->Will fail if <TT
-><A HREF="Snap-Types.html#v%3ArqPathInfo"
->rqPathInfo</A
-></TT
-> is not &quot;<TT
->/foo</TT
->&quot; or &quot;<TT
->/foo/...</TT
->&quot;, and will
- add <TT
->&quot;foo/&quot;</TT
-> to the handler's local <TT
-><A HREF="Snap-Types.html#v%3ArqContextPath"
->rqContextPath</A
-></TT
->.
-</P
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:ifTop"
-><A NAME="v%3AifTop"
-></A
-></A
-><B
->ifTop</B
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#ifTop"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Runs a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad action only when <TT
-><A HREF="Snap-Types.html#v%3ArqPathInfo"
->rqPathInfo</A
-></TT
-> is empty.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:route"
-><A NAME="v%3Aroute"
-></A
-></A
-><B
->route</B
-> ::  [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->, <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a)] -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Routing.html#route"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
-><P
->A web handler which, given a mapping from URL entry points to web
- handlers, efficiently routes requests to the correct handler.
-</P
-><P
->The URL entry points are given as relative paths, for example:
-</P
-><PRE
-> route [ (&quot;foo/bar/quux&quot;, fooBarQuux) ]
-</PRE
-><P
->If the URI of the incoming request is
-</P
-><PRE
-> /foo/bar/quux
-</PRE
-><P
->or
-</P
-><PRE
-> /foo/bar/quux/...anything...
-</PRE
-><P
->then the request will be routed to &quot;<TT
->fooBarQuux</TT
->&quot;, with <TT
-><A HREF="Snap-Types.html#v%3ArqContextPath"
->rqContextPath</A
-></TT
->
- set to &quot;<TT
->/foo/bar/quux/</TT
->&quot; and <TT
-><A HREF="Snap-Types.html#v%3ArqPathInfo"
->rqPathInfo</A
-></TT
-> set to
- &quot;<TT
->...anything...</TT
->&quot;.
-</P
-><P
-><TT
->FIXME</TT
->/<TT
->TODO</TT
->: we need a version with and without the context path setting
- behaviour; if the route is &quot;<TT
->article/:id/print</TT
->&quot;, we probably want the
- contextPath to be &quot;<TT
->/article</TT
->&quot; instead of &quot;<TT
->/article/whatever/print</TT
->&quot;.
-</P
-><P
->A path component within an URL entry point beginning with a colon (&quot;<TT
->:</TT
->&quot;)
- is treated as a <EM
->variable capture</EM
->; the corresponding path component within
- the request URI will be entered into the <TT
-><A HREF="Snap-Types.html#v%3ArqParams"
->rqParams</A
-></TT
-> parameters mapping with
- the given name. For instance, if the routes were:
-</P
-><PRE
-> route [ (&quot;foo/:bar/baz&quot;, fooBazHandler) ]
-</PRE
-><P
->Then a request for &quot;<TT
->/foo/saskatchewan/baz</TT
->&quot; would be routed to
- <TT
->fooBazHandler</TT
-> with a mapping for:
-</P
-><PRE
-> &quot;bar&quot; =&gt; &quot;saskatchewan&quot;
-</PRE
-><P
->in its parameters table.
-</P
-><P
->Longer paths are matched first, and specific routes are matched before
- captures. That is, if given routes:
-</P
-><PRE
-> [ (&quot;a&quot;, h1), (&quot;a/b&quot;, h2), (&quot;a/:x&quot;, h3) ]
-</PRE
-><P
->a request for &quot;<TT
->/a/b</TT
->&quot; will go to <TT
->h2</TT
->, &quot;<TT
->/a/s</TT
->&quot; for any <EM
->s</EM
-> will go
- to <TT
->h3</TT
->, and &quot;<TT
->/a</TT
->&quot; will go to <TT
->h1</TT
->.
-</P
-><P
->The following example matches &quot;<TT
->/article</TT
->&quot; to an article index,
- &quot;<TT
->/login</TT
->&quot; to a login, and &quot;<TT
->/article/...</TT
->&quot; to an article renderer.
-</P
-><PRE
-> route [ (&quot;article&quot;,     renderIndex)
-       , (&quot;article/:id&quot;, renderArticle)
-       , (&quot;login&quot;,       method POST doLogin) ]
-</PRE
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="section2"
-><A NAME="9"
-><A NAME="9"
->Access to state
-</A
-></A
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:getRequest"
-><A NAME="v%3AgetRequest"
-></A
-></A
-><B
->getRequest</B
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#getRequest"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Grabs the <TT
-><A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-></TT
-> object out of the <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:getResponse"
-><A NAME="v%3AgetResponse"
-></A
-></A
-><B
->getResponse</B
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#getResponse"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Grabs the <TT
-><A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-></TT
-> object out of the <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:putRequest"
-><A NAME="v%3AputRequest"
-></A
-></A
-><B
->putRequest</B
-> :: <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#putRequest"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Puts a new <TT
-><A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-></TT
-> object into the <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:putResponse"
-><A NAME="v%3AputResponse"
-></A
-></A
-><B
->putResponse</B
-> :: <A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#putResponse"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Puts a new <TT
-><A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-></TT
-> object into the <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:modifyRequest"
-><A NAME="v%3AmodifyRequest"
-></A
-></A
-><B
->modifyRequest</B
-> :: (<A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-> -&gt; <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#modifyRequest"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Modifies the <TT
-><A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-></TT
-> object stored in a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:modifyResponse"
-><A NAME="v%3AmodifyResponse"
-></A
-></A
-><B
->modifyResponse</B
-> :: (<A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3AResponse"
->Response</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#modifyResponse"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Modifes the <TT
-><A HREF="Snap-Types.html#t%3AResponse"
->Response</A
-></TT
-> object stored in a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:localRequest"
-><A NAME="v%3AlocalRequest"
-></A
-></A
-><B
->localRequest</B
-> ::  (<A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-> -&gt; <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#localRequest"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Runs a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> action with a locally-modified <TT
-><A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-></TT
-> state
- object. The <TT
-><A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-></TT
-> object in the Snap monad state after the call
- to localRequest will be unchanged.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="section2"
-><A NAME="10"
-><A NAME="10"
->Grabbing request bodies
-</A
-></A
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:runRequestBody"
-><A NAME="v%3ArunRequestBody"
-></A
-></A
-><B
->runRequestBody</B
-> ::  <A HREF="Snap-Iteratee.html#t%3AIteratee"
->Iteratee</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#runRequestBody"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Sends the request body through an iteratee (data consumer) and
- returns the result.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:getRequestBody"
-><A NAME="v%3AgetRequestBody"
-></A
-></A
-><B
->getRequestBody</B
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
->ByteString</A
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#getRequestBody"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Returns the request body as a bytestring.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:unsafeDetachRequestBody"
-><A NAME="v%3AunsafeDetachRequestBody"
-></A
-></A
-><B
->unsafeDetachRequestBody</B
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> (<A HREF="Snap-Types.html#t%3AEnumerator"
->Enumerator</A
-> a)</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#unsafeDetachRequestBody"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
-><P
->Detaches the request body's <TT
-><A HREF="Snap-Types.html#t%3AEnumerator"
->Enumerator</A
-></TT
-> from the <TT
-><A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-></TT
-> and
- returns it. You would want to use this if you needed to send the
- HTTP request body (transformed or otherwise) through to the output
- in O(1) space. (Examples: transcoding, &quot;echo&quot;, etc)
-</P
-><P
->Normally Snap is careful to ensure that the request body is fully
- consumed after your web handler runs; this function is marked
- &quot;unsafe&quot; because it breaks this guarantee and leaves the
- responsibility up to you. If you don't fully consume the
- <TT
-><A HREF="Snap-Types.html#t%3AEnumerator"
->Enumerator</A
-></TT
-> you get here, the next HTTP request in the pipeline
- (if any) will misparse. Be careful with exception handlers.
 </P
 ></TD
 ></TR
