@@ -62,17 +62,16 @@ If the template name contains a '/' character, then it will behave
 like traditional relative and absolute paths.  The root directory will
 be the root of your template directory tree, and the current directory
 will be the directory containing whatever template is currently being
-processed.  Absolute template path names start at the root directory.
-Relative template path names start at the current directory.
+processed.
 
 If the template name does not have any '/' characters, then Heist
 searches in the current directory for a template with that name.  If
-it finds one, then Heist applies the template just like you would
-expect.  The different behavior is that if the named template is
-not found in the current directory, Heist recursively searches up the
-directory hierarchy looking for the name.  Heist uses the first
-template it finds on the way up that has that name.  If no template is
-found, then you'll get an error.
+it finds one, then Heist applies that template.  The different
+behavior is that if the named template is not found in the current
+directory, Heist recursively searches up the directory hierarchy
+looking for the name.  Heist uses the first template it finds on the
+way up that has that name.  If no template is found, then you'll get
+an error.
 
 This cascading behavior allows you to put site-wide templates in the
 top-level directory and selectively override them in subdirectories
@@ -80,11 +79,10 @@ for certain parts of your site.
 
 #### Example
 
-Let's look at a simple example to demonstrate the most basic use of
-the `apply` tag.  Say you have a navigation menu that is used on many
-different pages of your site.  You want to avoid duplicating the HTML
-code in multiple different page templates, so you might put it in a
-template file by itself called `nav.tpl` that looks like this:
+Consider a navigation menu that is used on many different pages of
+your site.  You want to avoid duplicating the HTML code in multiple
+different page templates, so you might put it in a template file by
+itself called `nav.tpl`:
 
 ~~~~~~~~~~~~~~~ {.html}
   <ul>
@@ -139,9 +137,7 @@ template:
 Sometimes it is useful to pass information (usually in the form of XML
 data) into the template when it is applied so the template can insert
 it in useful places.  This allows you to build page templates that are
-not just static blocks of code.  If you are a programmer, you can
-think of a template as if it was a function that could have any number
-of parameters.
+not just static blocks of code.
 
 In our previous example, we did not pass any parameters to the `nav`
 template when it was applied, so the `<apply>` tag was empty.  If we
@@ -215,7 +211,7 @@ home.tpl supplies as an argument.  This seems like different behavior,
 but it is just a different use of the same `apply` tag.  This
 illustrates the power of a simple concept like `apply`.
 
-### Using Bind and Apply
+### Bind and Apply with Multiple Parameters
 
 What if, in the above example, we decided that the contents of the
 header div should be different for different pages?  To do this, we
@@ -307,4 +303,10 @@ just returns its child nodes.  This allows you to have a single root
 element where necessary, but have that tag disappear in the rendered
 output.
 
+
+## Heist Programming
+
+Heist lets you bind XML tags to Haskell code with a splice.  A
+`Splice` takes the input node from the template and generates a list
+of XML nodes that get spliced back into the template.  
 
