@@ -44,12 +44,20 @@ templateServe tsMVar =
     (renderTmpl tsMVar . B.pack =<< getSafePath)
 
 
+loadError :: String -> String
+loadError str = "Error loading templates\n"++str
+    
+
 reloadTemplates :: MVar (TemplateState Snap)
                 -> Snap ()
 reloadTemplates tsMVar = do
-    liftIO $ modifyMVar_ tsMVar $ const $
-           liftM bindMarkdownTag $ loadTemplates "templates"
-    
+    ts <- liftIO $ loadTemplates "templates"
+    either bad good ts
+  where
+    bad msg = do writeBS $ B.pack $ loadError msg ++ "Keeping old templates."
+    good ts = do liftIO $ modifyMVar_ tsMVar (const $ return $ bindMarkdownTag ts)
+                 writeBS "Templates loaded successfully"
+
 site :: MVar (TemplateState Snap) -> Snap ()
 site tsMVar = catch500 $ withCompression $ h1 <|> h2 tsMVar <|> h3
 
@@ -169,7 +177,9 @@ main = do
                 (port:_) -> return $ read port
 
     ts     <- loadTemplates "templates"
-    tsMVar <- newMVar $ bindMarkdownTag ts
+    either (\s -> putStrLn (loadError s) >> exitFailure) (const $ return ()) ts
+--    either (\s -> putStrLn s >> exitFailure) (const $ return ()) ts
+    tsMVar <- newMVar $ either error bindMarkdownTag ts
 
     (try $ httpServe "*" port "achilles"
              (Just "access.log")
