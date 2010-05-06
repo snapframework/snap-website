@@ -11,7 +11,7 @@
     <meta http-equiv="content-style-type" content="text/css"/>
   </head>
 
-  <body>
+  <body id="frontpage">
 
     <div id="main">
 
