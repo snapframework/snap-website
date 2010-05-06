@@ -18,9 +18,9 @@
   <div class="inner">
     <h2>API Documentation</h2>
     <ul>
-      <li><a href="docs/snap-core/index.html">snap-core</a></li>
-      <li><a href="docs/snap-server/index.html">snap-server</a></li>
-      <li><a href="docs/heist/index.html">heist</a> <em>(experimental)</em></li>
+      <li><a href="docs/latest/snap-core/index.html">snap-core</a></li>
+      <li><a href="docs/latest/snap-server/index.html">snap-server</a></li>
+      <li><a href="docs/latest/heist/index.html">heist</a> <em>(experimental)</em></li>
     </ul>
   </div>
 </div>
