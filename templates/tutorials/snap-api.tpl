@@ -55,7 +55,7 @@
 ><h2
   >Routing</h2
   ><p
-  >The Haddock documentation for Snap has a <a href="http://mightybyte.net:8000/docs/snap-core/Snap-Types.html#8"
+  >The Haddock documentation for Snap has a <a href="/docs/latest/snap-core/Snap-Types.html#3"
     >section on routing functions</a
     > that covers this material in detail, this will just give a brief overview. There are 5 core functions for routing:</p
   ><ul
