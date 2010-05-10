@@ -41,7 +41,7 @@ $ snap init
 
 We now have a skeleton Snap project with a `.cabal` file and a source
 directory. To see that it works, we can install it, point your browser to
-`localhost:8000` and see that just prints "hello world". (If you did not
+`localhost:8000`, and see that it prints "hello world". (If you did not
 install Heist, you need to remove the `import Text.Templating.Heist` line in
 `Main.hs`.)
 
@@ -65,16 +65,16 @@ a part of the request URL.
 
 ### The `Snap` Monad
 
-All our actions that we want the web application to perform are written inside
+All the actions that we want the web application to perform are written inside
 the `Snap` monad. Basically, the `Snap` monad is a state transformer that lugs
 around a request from the server and a response that it should give back to the
 server. The programmer (that's you) modifies the response according to the
 request, and after your web handler finishes, the server writes the response
 back to the end-user over HTTP.
 
-The reading of requests is standard fare. You can get the request out of
-`Snap` monad by calling the function `getRequest`. For the specific functions
-on getting fields out of the request, please refer to the [API
+You can get the request out of `Snap` monad by calling the function
+`getRequest`. For the specific functions on getting fields out of the
+request, please refer to the [API
 documentation](/docs/latest/snap-core/index.html).
 
 The writing of certain parts of responses is also standard fare. Like for
@@ -101,12 +101,13 @@ intuitive way using the `<|>` infix operator. Two actions `<|>`'d together
 means something like "try the first action, and if it fails, then do the second
 one".
 
-Before we continue, let us explain iteratees and enumerators.  You do not need
-to read the intermezzo to understand the rest of the tutorial.  If you choose
-to skip it, the take-home lesson is that the convenience functions like
-`writeBS` do not immediately write out to the socket. Instead, you are
-composing functions behind the scenes into one big function that will write
-your output out at the end of the computation.
+Before we continue, let us explain iteratees and enumerators.  You do
+not need to read the following intermezzo to understand the rest of
+the tutorial.  If you choose to skip it, the take-home lesson is that
+the convenience functions like `writeBS` do not immediately write out
+to the socket. Instead, you are composing functions behind the scenes
+into one big function that will write your output out at the end of
+the computation.
 
 
 #### Intermezzo: Iteratee I/O
@@ -130,13 +131,13 @@ encodes the intermediate state of the computation using all that closure
 goodness into a continuation iteratee.
 
 Iteratees are the consumers of data, and their incremental nature
-unsurprisingly gives us incremental processing. This is a very useful property
-to have in an HTTP server! In the Snap framework, we fix the "stream" to be
-strict `ByteString`s, and iteratees are used to consume many kinds of
-`ByteString`s. They can take a raw HTTP request and give back a parsed result.
-They are also the ones that take your response body, the stuff that you told
-the `Snap` monad to write out using `writeBS` and the like, and sends it over
-the socket.
+unsurprisingly gives us incremental processing. This is a very useful
+property to have in an HTTP server! In the Snap framework, we fix the
+"stream" to be strict `ByteString`s, and iteratees are used to consume
+many kinds of `ByteString`s. They can take a raw HTTP request and give
+back a parsed result.  They are also the ones that send your response
+body, the stuff that you told the `Snap` monad to write out using
+`writeBS` and the like, over the socket.
 
 That's the story for iteratees, but who's in charge of the caring and feeding
 the iteratees? Those are the enumerators.  Enumerators take an iteratee `f` and
@@ -258,13 +259,11 @@ ByteString -> Snap [ByteString]`.
 echoHandler :: Snap ()
 echoHandler = do
     req <- getRequest
-    case (rqParam "s" req) of
-        Just [s] -> writeBS s
-        _        -> writeBS ""
+    writeBS $ maybe "" id (rqParam "s" req)
 ~~~~~~~~~~~~~~~
 
 Let's build our toy application and run it again. Now we have a perfectly
-useless server that echos paths that start with `echo`!
+useless server that echos paths that start with `echo`.
 
 ~~~~~~ {.shell}
 $ curl localhost:8000/echo/foo; echo
@@ -329,7 +328,7 @@ Forbidden: four-letter word
 
 ## What Now?
 
-We hope we've whet your appetite for using Snap. From here on out you should
+We hope we've whetted your appetite for using Snap. From here on out you should
 take a look at the [API documentation](/docs/latest/snap-core/index.html),
 which explains many of the concepts and functions here in further detail.
 
