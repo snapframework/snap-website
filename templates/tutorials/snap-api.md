@@ -29,7 +29,7 @@ $ cabal install heist
 
 ## Hello Snap
 
-To generate a skeleton Snap web application, the `snap-core` package is
+To generate a skeleton Snap web application, the `snap-core` package
 installs an executable `snap` into `$HOME/.cabal/bin`. We can use that to
 create our "Hello Snap" application.
 
@@ -40,9 +40,9 @@ $ snap init
 ~~~~~~
 
 We now have a skeleton Snap project with a `.cabal` file and a source
-directory. To see that it works, we can install it, point your browser to
-`localhost:8000`, and see that it prints "hello world". (If you did not
-install Heist, you need to remove the `import Text.Templating.Heist` line in
+directory. Install it, point your browser to `localhost:8000`, and
+check that it responds with "hello world". (If you did not install
+Heist, you need to remove the `import Text.Templating.Heist` line in
 `Main.hs`.)
 
 ~~~~~~ {.shell}
@@ -75,13 +75,13 @@ back to the end-user over HTTP.
 You can get the request out of `Snap` monad by calling the function
 `getRequest`. For the specific functions on getting fields out of the
 request, please refer to the [API
-documentation](/docs/latest/snap-core/index.html).
+documentation](/docs/latest/snap-core/Snap-Types.html#8).
 
 The writing of certain parts of responses is also standard fare. Like for
 requests, you can get the response by calling `getResponse`. You can also put a
 new response into the state with `putResponse`, and modify the existing one
 with `modifyResponse`. These are also documented in the [API
-documentation](/docs/latest/snap-core/index.html).
+documentation](/docs/latest/snap-core/Snap-Types.html#9).
 
 Writing the response body, however, is a little tricky and requires some
 explanation of things called "iteratees" and "enumerators", which we will get
@@ -180,7 +180,8 @@ give the response body enumerator an iteratee that sends data out over the
 socket, potentially with a `transfer-encoding` applied.
 
 For other convenience functions that manipulate the response body enumerator,
-consult the [API documentation](/docs/latest/snap-core/index.html).
+consult the [API
+documentation](/docs/latest/snap-core/Snap-Types.html#10).
 
 We hope this quick and dirty introduction to iteratee I/O has shed some light
 on using Snap. For further discussion, the original talk and other iteratee
@@ -259,7 +260,7 @@ ByteString -> Snap [ByteString]`.
 echoHandler :: Snap ()
 echoHandler = do
     req <- getRequest
-    writeBS $ maybe "" id (rqParam "s" req)
+    writeBS $ maybe "" id (getParam "s" req)
 ~~~~~~~~~~~~~~~
 
 Let's build our toy application and run it again. Now we have a perfectly
@@ -293,8 +294,8 @@ Let's rewrite our `echoHandler` as follows.
 echoHandler :: Snap ()
 echoHandler = do
     req <- getRequest
-    case (rqParam "s" req) of
-        Just [s] -> if (B.length s == 4) then badWord else (writeBS s)
+    case (getParam "s" req) of
+        Just s -> if (B.length s == 4) then badWord else (writeBS s)
         _        -> writeBS "bad input!"
   where
     badWord = do
