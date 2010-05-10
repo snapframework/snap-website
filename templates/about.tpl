@@ -96,7 +96,10 @@
         <div>
           <h2>Contacting us</h2>
           <ul>
-            <li><b>IRC:</b> You can discuss snap in the <tt>#snapframework</tt>
+            <li><b>IRC:</b> You can discuss snap in the
+              <a target="_blank"
+                 href="http://webchat.freenode.net/?channels=snapframework&amp;uio=d4"
+                 ><tt>#snapframework</tt></a>
               channel on the <a href="http://freenode.net/">freenode</a> IRC
               network.</li>
                                 

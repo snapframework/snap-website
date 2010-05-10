@@ -66,48 +66,62 @@ a part of the request URL.
 ### The `Snap` Monad
 
 All the actions that we want the web application to perform are written inside
-the `Snap` monad. Basically, the `Snap` monad is a state transformer that lugs
-around a request from the server and a response that it should give back to the
-server. The programmer (that's you) modifies the response according to the
-request, and after your web handler finishes, the server writes the response
-back to the end-user over HTTP.
+the [`Snap`](/docs/latest/snap-core/Snap-Types.html#t%3ASnap) monad. Basically,
+the `Snap` monad is a state transformer that lugs around a request from the
+server and a response that it should give back to the server. The programmer
+(that's you) modifies the response according to the request, and after your web
+handler finishes, the server writes the response back to the end-user over
+HTTP.
 
 You can get the request out of `Snap` monad by calling the function
-`getRequest`. For the specific functions on getting fields out of the
-request, please refer to the [API
-documentation](/docs/latest/snap-core/Snap-Types.html#8).
+[`getRequest`](/docs/latest/snap-core/Snap-Types.html#v%3AgetRequest). For the
+specific functions on getting fields out of the request, please refer to the
+[API documentation](/docs/latest/snap-core/Snap-Types.html#8).
 
 The writing of certain parts of responses is also standard fare. Like for
-requests, you can get the response by calling `getResponse`. You can also put a
-new response into the state with `putResponse`, and modify the existing one
-with `modifyResponse`. These are also documented in the [API
+requests, you can get the response by calling
+[`getResponse`](/docs/latest/snap-core/Snap-Types.html#v%3AgetResponse). You
+can also put a new response into the state with
+[`putResponse`](/docs/latest/snap-core/Snap-Types.html#v%3AputResponse), and
+modify the existing one with
+[`modifyResponse`](/docs/latest/snap-core/Snap-Types.html#v%3AmodifyResponse). These
+are also documented in the [API
 documentation](/docs/latest/snap-core/Snap-Types.html#9).
 
 Writing the response body, however, is a little tricky and requires some
 explanation of things called "iteratees" and "enumerators", which we will get
 to in a bit.
 
-The `Snap` monad provides type class instances for `MonadPlus` and
-`Alternative`. For those unfamiliar with these Haskell type classes, we
-recommend taking a look at Brent Yorgey's outstanding
+The [`Snap`](/docs/latest/snap-core/Snap-Types.html#t%3ASnap) monad provides
+type class instances for
+[`MonadPlus`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonadPlus)
+and
+[`Alternative`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AAlternative). For
+those unfamiliar with these Haskell type classes, we recommend taking a look at
+Brent Yorgey's outstanding
 [Typeclassopedia](http://haskell.org/sitewiki/images/8/85/TMR-Issue13.pdf).
 Having an `Alternative` instance means that `Snap` monad actions can "fail";
 here failure translates to "we decided not to handle this request, and you can
-skip further processing". The `empty` or `mzero` values in the `Snap` monad
-cause the computation to fail -- for any `a`, `empty >> a --> empty`.
+skip further processing". The
+[`empty`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3Aempty)
+or
+[`mzero`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#v%3Amzero)
+values in the `Snap` monad cause the computation to fail -- for any `a`, `empty
+>> a` is the same as `empty`.
 
 Given a failure mode, we can combine actions in the `Snap` monad in an
-intuitive way using the `<|>` infix operator. Two actions `<|>`'d together
-means something like "try the first action, and if it fails, then do the second
-one".
+intuitive way using the
+[`<|>`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3A%3C%7C%3E)
+infix operator. Two actions `<|>`'d together means something like "try the
+first action, and if it fails, then do the second one".
 
-Before we continue, let us explain iteratees and enumerators.  You do
-not need to read the following intermezzo to understand the rest of
-the tutorial.  If you choose to skip it, the take-home lesson is that
-the convenience functions like `writeBS` do not immediately write out
-to the socket. Instead, you are composing functions behind the scenes
-into one big function that will write your output out at the end of
-the computation.
+Before we continue, let us explain iteratees and enumerators.  You do not need
+to read the following intermezzo to understand the rest of the tutorial.  If
+you choose to skip it, the take-home lesson is that the convenience functions
+like [`writeBS`](/docs/latest/snap-core/Snap-Types.html#v%3AwriteBS) do not
+immediately write out to the socket. Instead, you are composing functions
+behind the scenes into one big function that will write your output out at the
+end of the computation.
 
 
 #### Intermezzo: Iteratee I/O
@@ -131,13 +145,14 @@ encodes the intermediate state of the computation using all that closure
 goodness into a continuation iteratee.
 
 Iteratees are the consumers of data, and their incremental nature
-unsurprisingly gives us incremental processing. This is a very useful
-property to have in an HTTP server! In the Snap framework, we fix the
-"stream" to be strict `ByteString`s, and iteratees are used to consume
-many kinds of `ByteString`s. They can take a raw HTTP request and give
-back a parsed result.  They are also the ones that send your response
-body, the stuff that you told the `Snap` monad to write out using
-`writeBS` and the like, over the socket.
+unsurprisingly gives us incremental processing. This is a very useful property
+to have in an HTTP server! In the Snap framework, we fix the "stream" to be
+strict
+[`ByteString`](http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString)s,
+and iteratees are used to consume many kinds of `ByteString`s. They can take a
+raw HTTP request and give back a parsed result.  They are also the ones that
+send your response body, the stuff that you told the `Snap` monad to write out
+using `writeBS` and the like, over the socket.
 
 That's the story for iteratees, but who's in charge of the caring and feeding
 the iteratees? Those are the enumerators.  Enumerators take an iteratee `f` and
@@ -150,11 +165,12 @@ iteratee. In this sense enumerators may be more naturally thought of as
 _iteratee transformers_.
 
 Since we are Haskell programmers, it is not surprising that iteratees and
-enumerators are monads and compose nicely (using the "`>.` operator). In Snap,
-enumerators are prominently used for the response body. When you write
-`writeBS`, we are actually making an enumerator that will feed your string to
-the output iteratee, and composing it with the enumerator that was already in
-the response. In other words:
+enumerators are monads and compose nicely (using the
+"[`>.`](http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#v%3A%3E.)"
+operator). In Snap, enumerators are prominently used for the response
+body. When you write `writeBS`, we are actually making an enumerator that will
+feed your string to the output iteratee, and composing it with the enumerator
+that was already in the response. In other words:
 
 ~~~~~~ {.haskell}
 foo :: Snap ()
@@ -184,10 +200,11 @@ consult the [API
 documentation](/docs/latest/snap-core/Snap-Types.html#10).
 
 We hope this quick and dirty introduction to iteratee I/O has shed some light
-on using Snap. For further discussion, the original talk and other iteratee
-resources may be found on [Oleg's site](http://okmij.org/ftp/Streams.html), the
-[iteratee](http://hackage.haskell.org/package/iteratee) package API docs, and
-the [Haskell Wiki](http://www.haskell.org/haskellwiki/Iteratee).
+on using Snap. Some further discussion, the original talk and other iteratee
+resources may be found on [Oleg's site](http://okmij.org/ftp/Streams.html). You
+can also consult the [iteratee package API
+docs](http://hackage.haskell.org/package/iteratee), and the [Haskell
+Wiki page on iteratees](http://www.haskell.org/haskellwiki/Iteratee).
 
 ### Routing
 
@@ -200,12 +217,14 @@ ohsnap
 ~~~~~~
 
 So first, we need to tackle how to route URLs. Snap provides two types of
-routing functions: combinators and `route`. Some combinators are as follows:
+routing functions: combinators and
+[`route`](/docs/latest/snap-core/Snap-Types.html#v%3Aroute). Some combinators
+are as follows:
 
-- `<|> :: Snap a -> Snap a -> Snap a`
-- `ifTop :: Snap a -> Snap a`
-- `dir :: ByteString -> Snap a -> Snap a`
-- `method :: Method -> Snap a -> Snap a`
+- [`<|>`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3A%3C%7C%3E) `:: Snap a -> Snap a -> Snap a`
+- [`ifTop`](/docs/latest/snap-core/Snap-Types.html#v%3AifTop) `:: Snap a -> Snap a`
+- [`dir`](/docs/latest/snap-core/Snap-Types.html#v%3Adir) `:: ByteString -> Snap a -> Snap a`
+- [`method`]((/docs/latest/snap-core/Snap-Types.html#v%3Amethod) `:: Method -> Snap a -> Snap a`
 
 These do exactly what you might think they do. Calling `ifTop`:
 
@@ -215,10 +234,11 @@ foo = ifTop $ do ...
 ~~~~~~
 
 takes an action in the Snap monad and transforms it to only run if the request
-path is at the "top level" (specifically, when `rqPathInfo` is empty). The
-`dir` combinator transforms the action to run if the request path starts with
-the specified directory. The `method` combinator matches on specific HTTP
-methods.
+path is at the "top level" (specifically, when
+[`rqPathInfo`](/docs/latest/snap-core/Snap-Types.html#v%3ArqPathInfo) is
+empty). The `dir` combinator transforms the action to run if the request path
+starts with the specified directory. The `method` combinator matches on
+specific HTTP methods.
 
 The astute reader will no doubt now see that these functions can be used in
 conjunction with `Alternative` semantics of the `Snap` monad to do routing.
@@ -238,23 +258,21 @@ following.
 
 ~~~~~~~~~~~~~~~ {.haskell}
 site :: Snap ()
-site = route [ ("", ifTop (writeBS "hello world"))
-             , ("echo/:s", echoHandler) ] <|> fileServe "."
+site = route [ (""        , ifTop (writeBS "hello world"))
+             , ("echo/:s" , echoHandler) ]
+          <|> fileServe "."
 ~~~~~~~~~~~~~~~
 
 The above code routes the top level empty path to the original "hello world"
 action, and the path `echo/` to `echoHandler` (which we haven't written yet).
 More importantly, when it routes `echo`, it captures the next immediate path
 component (not the rest of the path) into a parameter named `s`. We can access
-`s`, or any other request parameter, with the function `rqParam`. If the
+`s`, or any other request parameter, with the function
+[`getParam`](/docs/latest/snap-core/Snap-Types.html#v%3AgetParam). If the
 request was neither to the top level nor to `echo`, we try to find a file in
 the current directory with the same name as the request path and serve that.
 
 Moving on, let's write `echoHandler`, which should just spit back `s`.
-
-FIXME: non-exhaustive pattern match; should have a convenience function
-`getParam :: ByteString -> Snap (Maybe ByteString)` and `getParams ::
-ByteString -> Snap [ByteString]`.
 
 ~~~~~~~~~~~~~~~ {.haskell}
 echoHandler :: Snap ()
@@ -307,8 +325,12 @@ echoHandler = do
 ~~~~~~~~~~~~~~~
 
 The `badWord` action sets the response status code to be 403 using a
-combination of the `putResponse` and `setResponseStatus` functions, writes out
-the body of the response, and calls the function `finishWith` on that response.
+combination of the
+[`putResponse`](/docs/latest/snap-core/Snap-Types.html#v%3AputResponse) and
+[`setResponseStatus`](/docs/latest/snap-core/Snap-Types.html#v%3AsetResponseStatus)
+functions, writes out the body of the response, and calls the function
+[`finishWith`](/docs/latest/snap-core/Snap-Types.html#v%3AfinishWith) on that
+response.
 
 The `finishWith` combinator is a function you can call to short-circuit the
 monad processing so that no further `Snap` actions will be run; use it when
@@ -333,4 +355,6 @@ We hope we've whetted your appetite for using Snap. From here on out you should
 take a look at the [API documentation](/docs/latest/snap-core/index.html),
 which explains many of the concepts and functions here in further detail.
 
-You can also come hang out in `#snap-framework` on `freenode`.
+You can also come hang out in
+[`#snap-framework`](http://webchat.freenode.net/?channels=snapframework&uio=d4)
+on [`freenode`](http://freenode.net/).

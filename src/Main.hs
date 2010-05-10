@@ -38,10 +38,14 @@ renderTmpl tsMVar n = do
 
 templateServe :: MVar (TemplateState Snap)
               -> Snap ()
-templateServe tsMVar = 
-    ifTop (renderTmpl tsMVar "index") <|>
-    path "admin/reload" (reloadTemplates tsMVar) <|>
-    (renderTmpl tsMVar . B.pack =<< getSafePath)
+templateServe tsMVar = do
+    p
+    modifyResponse $ setContentType "text/html"
+
+  where
+    p = ifTop (renderTmpl tsMVar "index") <|>
+        path "admin/reload" (reloadTemplates tsMVar) <|>
+        (renderTmpl tsMVar . B.pack =<< getSafePath)
 
 
 loadError :: String -> String
@@ -113,7 +117,6 @@ instance Exception MarkdownException
 
 pandoc :: FilePath -> FilePath -> IO ByteString
 pandoc pandocPath inputFile = do
-    putStrLn =<< getCurrentDirectory
     (ex, sout, serr) <- readProcessWithExitCode pandocPath args ""
 
     when (isFail ex) $ throw $ MarkdownException serr
