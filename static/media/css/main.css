@@ -111,7 +111,7 @@ dt {
  * styling for css classes
   ------------------------------------------------------------------------*/
 
-pre.code, pre.sourceCode {
+pre.code, pre.sourceCode, pre.shell {
     background: #222;
     color: #ffbf00;
     width: 85%;
@@ -237,11 +237,15 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     position: relative;
 }
 
+#frontpage #main{
+    background: url("holy-light.png") repeat-x scroll left -30px #FFFFFF;
+}
+
 #main{
     margin: 0;
     padding: 0;
     width:100%;
-    background: url("holy-light.png") repeat-x scroll left -30px #FFFFFF;
+    background: #FFFFFF;
 }
 
 #splash{

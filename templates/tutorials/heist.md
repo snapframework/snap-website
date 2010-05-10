@@ -293,17 +293,6 @@ the `<ignore>` tag for this purpose.  All `<ignore>` tags and their
 contents will be eliminated in a template's output.
 
 
-### The `<children>` tag
-
-XML requires that well-formed documents have a single root element.
-Sometimes you might want to make templates that don't have a single
-root element.  In these situations the `<children>` tag is just what
-you want.  When the children tag is rendered, it strips itself off and
-just returns its child nodes.  This allows you to have a single root
-element where necessary, but have that tag disappear in the rendered
-output.
-
-
 ## Heist Programming
 
 Heist lets you bind XML tags to Haskell code with a splice.  A
