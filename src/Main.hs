@@ -22,11 +22,32 @@ import           Snap.Util.FileServe
 import           Snap.Util.GZip
 import           System
 import           System.Directory
+import           System.Posix.Env
 import           System.Exit
 import           System.Process
 import           Text.Templating.Heist
 import qualified Text.XHtmlCombinators.Escape as XH
 import           Text.XML.Expat.Tree
+
+
+setLocaleToUTF8 :: IO ()
+setLocaleToUTF8 = do
+    mapM_ (\k -> setEnv k "en_US.UTF-8" True)
+          [ "LANG"
+          , "LC_CTYPE"
+          , "LC_NUMERIC"
+          , "LC_TIME"
+          , "LC_COLLATE"
+          , "LC_MONETARY"
+          , "LC_MESSAGES"
+          , "LC_PAPER"
+          , "LC_NAME"
+          , "LC_ADDRESS"
+          , "LC_TELEPHONE"
+          , "LC_MEASUREMENT"
+          , "LC_IDENTIFICATION"
+          , "LC_ALL" ]
+
 
 renderTmpl :: MVar (TemplateState Snap)
            -> ByteString
@@ -50,7 +71,7 @@ templateServe tsMVar = do
 
 loadError :: String -> String
 loadError str = "Error loading templates\n"++str
-    
+
 
 reloadTemplates :: MVar (TemplateState Snap)
                 -> Snap ()
@@ -78,7 +99,7 @@ catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
     writeBS "\n</pre></body></html>"
 
   where
-    r = setResponseStatus 500 "Internal Server Error" emptyResponse 
+    r = setResponseStatus 500 "Internal Server Error" emptyResponse
 
 
 h1 :: Snap ()
@@ -86,7 +107,7 @@ h1 = fileServe "static"
 
 h2 :: MVar (TemplateState Snap) -> Snap ()
 h2 m = templateServe m
-                                  
+
 h3 :: Snap ()
 h3 = path "throwException" (throw $ ErrorCall "jlkfdjfldskjlf")
 
@@ -178,6 +199,8 @@ main = do
     port   <- case args of
                 []       -> error "You must specify a port!" >> exitFailure
                 (port:_) -> return $ read port
+
+    setLocaleToUTF8
 
     ts     <- loadTemplates "templates"
     either (\s -> putStrLn (loadError s) >> exitFailure) (const $ return ()) ts
