@@ -111,7 +111,7 @@ dt {
  * styling for css classes
   ------------------------------------------------------------------------*/
 
-pre.code, pre.sourceCode {
+pre.code, pre.sourceCode, pre.shell {
     background: #222;
     color: #ffbf00;
     width: 85%;
