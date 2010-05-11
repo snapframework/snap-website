@@ -158,7 +158,9 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     margin-top: 20px;
 }
 
-.singlecolumn pre.sourceCode, .singlecolumn pre.code {
+.singlecolumn pre.sourceCode,
+.singlecolumn pre.code,
+.singlecolumn pre.shell {
     width: 656px;
     margin: 0 0 29px 40px;
     padding: 16px;
