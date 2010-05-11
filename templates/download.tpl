@@ -33,35 +33,35 @@ $ cabal install snap-server</pre>
         <dt><tt>snap-core</tt></dt>
         <dd>Core type definitions (<tt>Snap</tt> monad, HTTP types, etc) and
           utilities for web
-          handlers. <span class="linklist">
-            [<a href="http://hackage.haskell.org/package/snap-core"
-                >hackage</a>,
-             <a href="http://github.com/snapframework/snap-core"
-                >github</a>,
-             <a href="/docs/snap-core-hpc/hpc_index.html"
-                >test coverage report</a>]</span></dd>
+          handlers. <br/><span class="linklist">
+            [ <a href="http://hackage.haskell.org/package/snap-core"
+                 >hackage</a> |
+              <a href="http://github.com/snapframework/snap-core"
+                 >github</a> |
+              <a href="/docs/snap-core-hpc/hpc_index.html"
+                 >test coverage report</a> ]</span></dd>
 
         <dt><tt>snap-server</tt></dt>
         <dd>An iteratee-based HTTP server library, which runs <tt>Snap</tt> web
-          handlers. <span class="linklist">
-            [<a href="http://hackage.haskell.org/package/snap-server"
-                >hackage</a>,
-             <a href="http://github.com/snapframework/snap-server"
-                >github</a>,
-             <a href="/docs/snap-server-hpc/hpc_index.html"
-                >test coverage report</a>]</span></dd>
+          handlers. <br/><span class="linklist">
+            [ <a href="http://hackage.haskell.org/package/snap-server"
+                 >hackage</a> |
+              <a href="http://github.com/snapframework/snap-server"
+                 >github</a> |
+              <a href="/docs/snap-server-hpc/hpc_index.html"
+                 >test coverage report</a> ]</span></dd>
 
 
         <dt><tt>heist</tt> <strong>(experimental)</strong></dt>
         <dd>An xhtml-based templating engine, based on allowing Haskell functions
           to be bound to XML
-          tags. <span class="linklist">
-            [<a href="http://hackage.haskell.org/package/heist"
-                >hackage</a>,
-             <a href="http://github.com/snapframework/heist"
-                >github</a>,
-             <a href="/docs/heist-hpc/hpc_index.html"
-                >test coverage report</a>]</span></dd>
+          tags. <br/><span class="linklist">
+            [ <a href="http://hackage.haskell.org/package/heist"
+                 >hackage</a> |
+              <a href="http://github.com/snapframework/heist"
+                 >github</a> |
+              <a href="/docs/heist-hpc/hpc_index.html"
+                 >test coverage report</a> ]</span></dd>
       </dl>
     </div>
   </div>
