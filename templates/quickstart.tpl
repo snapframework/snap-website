@@ -29,6 +29,10 @@ $ myproject 8000</pre>
 
     <p>Now point your web browser to localhost:8000; you should see a simple
       response string.</p>
+
+    <p>For more information, continue on to the
+      <a href="/tutorials/snap-api">Snap API tutorial</a> or take a look at
+      the <a href="/docs">Snap reference documentation</a>.</p>
   </div>
 </apply>
 

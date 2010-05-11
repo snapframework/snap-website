@@ -40,15 +40,14 @@ $ snap init
 ~~~~~~
 
 We now have a skeleton Snap project with a `.cabal` file and a source
-directory. Install it, point your browser to `localhost:8000`, and
-check that it responds with "hello world". (If you did not install
-Heist, you need to remove the `import Text.Templating.Heist` line in
-`Main.hs`.)
+directory. Install it, run it, and check that it responds with "hello
+world":
 
 ~~~~~~ {.shell}
 $ cabal install
 $ hello-snap 8000 &
-$ curl localhost:8000
+$ curl 'http://localhost:8000/'; echo
+hello world
 ~~~~~~
 
 When you are satisfied, we can kill the server.
