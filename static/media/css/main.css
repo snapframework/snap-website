@@ -111,6 +111,12 @@ dt {
  * styling for css classes
   ------------------------------------------------------------------------*/
 
+dl span.linklist {
+    font-size: 15px;
+    vertical-align: top;
+    font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;
+}
+
 pre.code, pre.sourceCode, pre.shell {
     background: #222;
     color: #ffbf00;

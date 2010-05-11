@@ -1,0 +1,174 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>module Snap.Internal.Routing where
+<span class="lineno">    2 </span>
+<span class="lineno">    3 </span>
+<span class="lineno">    4 </span>------------------------------------------------------------------------------
+<span class="lineno">    5 </span>import           Data.ByteString (ByteString)
+<span class="lineno">    6 </span>import           Data.ByteString.Internal (c2w)
+<span class="lineno">    7 </span>import qualified Data.ByteString as B
+<span class="lineno">    8 </span>import           Data.Monoid
+<span class="lineno">    9 </span>import qualified Data.Map as Map
+<span class="lineno">   10 </span>
+<span class="lineno">   11 </span>------------------------------------------------------------------------------
+<span class="lineno">   12 </span>import           Snap.Internal.Http.Types
+<span class="lineno">   13 </span>import           Snap.Internal.Types
+<span class="lineno">   14 </span>
+<span class="lineno">   15 </span>
+<span class="lineno">   16 </span>------------------------------------------------------------------------------
+<span class="lineno">   17 </span>{-|
+<span class="lineno">   18 </span>
+<span class="lineno">   19 </span>The internal data type you use to build a routing tree.  Matching is
+<span class="lineno">   20 </span>done unambiguously.
+<span class="lineno">   21 </span>
+<span class="lineno">   22 </span>'Capture' and 'Dir' routes can have a &quot;fallback&quot; route:
+<span class="lineno">   23 </span>
+<span class="lineno">   24 </span>  - For 'Capture', the fallback is routed when there is nothing to capture
+<span class="lineno">   25 </span>  - For 'Dir', the fallback is routed when we can't find a route in its map
+<span class="lineno">   26 </span>
+<span class="lineno">   27 </span>Fallback routes are stacked: i.e. for a route like:
+<span class="lineno">   28 </span>
+<span class="lineno">   29 </span>&gt; Dir [(&quot;foo&quot;, Capture &quot;bar&quot; (Action bar) NoRoute)] baz
+<span class="lineno">   30 </span>
+<span class="lineno">   31 </span>visiting the URI foo/ will result in the &quot;bar&quot; capture being empty and
+<span class="lineno">   32 </span>triggering its fallback. It's NoRoute, so we go to the nearest parent
+<span class="lineno">   33 </span>fallback and try that, which is the baz action.
+<span class="lineno">   34 </span>
+<span class="lineno">   35 </span>-}
+<span class="lineno">   36 </span>data Route a = Action (Snap a)                        -- wraps a 'Snap' action
+<span class="lineno">   37 </span>             | Capture ByteString (Route a) (Route a) -- captures the dir in a param
+<span class="lineno">   38 </span>             | Dir (Map.Map ByteString (Route a)) (Route a)  -- match on a dir
+<span class="lineno">   39 </span>             | NoRoute
+<span class="lineno">   40 </span>
+<span class="lineno">   41 </span>
+<span class="lineno">   42 </span>------------------------------------------------------------------------------
+<span class="lineno">   43 </span>instance Monoid (Route a) where
+<span class="lineno">   44 </span>    <span class="decl"><span class="istickedoff">mempty = NoRoute</span></span>
+<span class="lineno">   45 </span>
+<span class="lineno">   46 </span>    -- Unions two routes, favoring the right-hand side
+<span class="lineno">   47 </span>    <span class="decl"><span class="istickedoff">mappend NoRoute r = r</span>
+<span class="lineno">   48 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   49 </span><span class="spaces">    </span><span class="istickedoff">mappend l@(Action _) r = case r of</span>
+<span class="lineno">   50 </span><span class="spaces">      </span><span class="istickedoff">(Action _)        -&gt; <span class="nottickedoff">r</span></span>
+<span class="lineno">   51 </span><span class="spaces">      </span><span class="istickedoff">(Capture p r' fb) -&gt; Capture p r' (mappend fb l)</span>
+<span class="lineno">   52 </span><span class="spaces">      </span><span class="istickedoff">(Dir _ _)         -&gt; mappend (Dir Map.empty l) r</span>
+<span class="lineno">   53 </span><span class="spaces">      </span><span class="istickedoff">NoRoute           -&gt; l</span>
+<span class="lineno">   54 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   55 </span><span class="spaces">    </span><span class="istickedoff">mappend l@(Capture p r' fb) r = case r of</span>
+<span class="lineno">   56 </span><span class="spaces">      </span><span class="istickedoff">(Action _)      -&gt; <span class="nottickedoff">Capture p r' (mappend fb r)</span></span>
+<span class="lineno">   57 </span><span class="spaces">      </span><span class="istickedoff">(Capture _ _ _) -&gt; <span class="nottickedoff">r</span></span>
+<span class="lineno">   58 </span><span class="spaces">      </span><span class="istickedoff">(Dir rm fb')    -&gt; Dir rm (mappend fb' l)</span>
+<span class="lineno">   59 </span><span class="spaces">      </span><span class="istickedoff">NoRoute         -&gt; <span class="nottickedoff">l</span></span>
+<span class="lineno">   60 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   61 </span><span class="spaces">    </span><span class="istickedoff">mappend l@(Dir rm fb) r = case r of</span>
+<span class="lineno">   62 </span><span class="spaces">      </span><span class="istickedoff">(Action _)      -&gt; Dir rm (mappend fb r)</span>
+<span class="lineno">   63 </span><span class="spaces">      </span><span class="istickedoff">(Capture _ _ _) -&gt; Dir rm (mappend fb r)</span>
+<span class="lineno">   64 </span><span class="spaces">      </span><span class="istickedoff">(Dir rm' fb')   -&gt; Dir (Map.unionWith mappend rm rm') (mappend fb fb')</span>
+<span class="lineno">   65 </span><span class="spaces">      </span><span class="istickedoff">NoRoute         -&gt; l</span></span>
+<span class="lineno">   66 </span>
+<span class="lineno">   67 </span>
+<span class="lineno">   68 </span>------------------------------------------------------------------------------
+<span class="lineno">   69 </span>-- | A web handler which, given a mapping from URL entry points to web
+<span class="lineno">   70 </span>-- handlers, efficiently routes requests to the correct handler.
+<span class="lineno">   71 </span>--
+<span class="lineno">   72 </span>-- The URL entry points are given as relative paths, for example:
+<span class="lineno">   73 </span>--
+<span class="lineno">   74 </span>-- &gt; route [ (&quot;foo/bar/quux&quot;, fooBarQuux) ]
+<span class="lineno">   75 </span>--
+<span class="lineno">   76 </span>-- If the URI of the incoming request is
+<span class="lineno">   77 </span>--
+<span class="lineno">   78 </span>-- &gt; /foo/bar/quux
+<span class="lineno">   79 </span>--
+<span class="lineno">   80 </span>-- or
+<span class="lineno">   81 </span>--
+<span class="lineno">   82 </span>-- &gt; /foo/bar/quux/...anything...
+<span class="lineno">   83 </span>--
+<span class="lineno">   84 </span>-- then the request will be routed to \&quot;@fooBarQuux@\&quot;, with 'rqContextPath'
+<span class="lineno">   85 </span>-- set to \&quot;@\/foo\/bar\/quux\/@\&quot; and 'rqPathInfo' set to
+<span class="lineno">   86 </span>-- \&quot;@...anything...@\&quot;.
+<span class="lineno">   87 </span>--
+<span class="lineno">   88 </span>-- @FIXME@\/@TODO@: we need a version with and without the context path setting
+<span class="lineno">   89 </span>-- behaviour; if the route is \&quot;@article\/:id\/print@\&quot;, we probably want the
+<span class="lineno">   90 </span>-- contextPath to be \&quot;@\/article@\&quot; instead of \&quot;@\/article\/whatever\/print@\&quot;.
+<span class="lineno">   91 </span>--
+<span class="lineno">   92 </span>-- A path component within an URL entry point beginning with a colon (\&quot;@:@\&quot;)
+<span class="lineno">   93 </span>-- is treated as a /variable capture/; the corresponding path component within
+<span class="lineno">   94 </span>-- the request URI will be entered into the 'rqParams' parameters mapping with
+<span class="lineno">   95 </span>-- the given name. For instance, if the routes were:
+<span class="lineno">   96 </span>--
+<span class="lineno">   97 </span>-- &gt; route [ (&quot;foo/:bar/baz&quot;, fooBazHandler) ]
+<span class="lineno">   98 </span>--
+<span class="lineno">   99 </span>-- Then a request for \&quot;@\/foo\/saskatchewan\/baz@\&quot; would be routed to
+<span class="lineno">  100 </span>-- @fooBazHandler@ with a mapping for:
+<span class="lineno">  101 </span>--
+<span class="lineno">  102 </span>-- &gt; &quot;bar&quot; =&gt; &quot;saskatchewan&quot;
+<span class="lineno">  103 </span>--
+<span class="lineno">  104 </span>-- in its parameters table.
+<span class="lineno">  105 </span>--
+<span class="lineno">  106 </span>-- Longer paths are matched first, and specific routes are matched before
+<span class="lineno">  107 </span>-- captures. That is, if given routes:
+<span class="lineno">  108 </span>--
+<span class="lineno">  109 </span>-- &gt; [ (&quot;a&quot;, h1), (&quot;a/b&quot;, h2), (&quot;a/:x&quot;, h3) ]
+<span class="lineno">  110 </span>--
+<span class="lineno">  111 </span>-- a request for \&quot;@\/a\/b@\&quot; will go to @h2@, \&quot;@\/a\/s@\&quot; for any /s/ will go
+<span class="lineno">  112 </span>-- to @h3@, and \&quot;@\/a@\&quot; will go to @h1@.
+<span class="lineno">  113 </span>--
+<span class="lineno">  114 </span>-- The following example matches \&quot;@\/article@\&quot; to an article index,
+<span class="lineno">  115 </span>-- \&quot;@\/login@\&quot; to a login, and \&quot;@\/article\/...@\&quot; to an article renderer.
+<span class="lineno">  116 </span>--
+<span class="lineno">  117 </span>-- &gt; route [ (&quot;article&quot;,     renderIndex)
+<span class="lineno">  118 </span>-- &gt;       , (&quot;article/:id&quot;, renderArticle)
+<span class="lineno">  119 </span>-- &gt;       , (&quot;login&quot;,       method POST doLogin) ]
+<span class="lineno">  120 </span>--
+<span class="lineno">  121 </span>route :: [(ByteString, Snap a)] -&gt; Snap a
+<span class="lineno">  122 </span><span class="decl"><span class="istickedoff">route rts = route' rts' []</span>
+<span class="lineno">  123 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  124 </span><span class="spaces">    </span><span class="istickedoff">rts' = mconcat (map pRoute rts)</span></span>
+<span class="lineno">  125 </span>
+<span class="lineno">  126 </span>
+<span class="lineno">  127 </span>------------------------------------------------------------------------------
+<span class="lineno">  128 </span>pRoute :: (ByteString, Snap a) -&gt; Route a
+<span class="lineno">  129 </span><span class="decl"><span class="istickedoff">pRoute (r, a) = foldr f (Action a) hier</span>
+<span class="lineno">  130 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  131 </span><span class="spaces">    </span><span class="istickedoff">hier   = filter (not . B.null) $ B.splitWith (== (c2w '/')) r</span>
+<span class="lineno">  132 </span><span class="spaces">    </span><span class="istickedoff">f s rt = if B.head s == c2w ':'</span>
+<span class="lineno">  133 </span><span class="spaces">        </span><span class="istickedoff">then Capture (B.tail s) rt NoRoute</span>
+<span class="lineno">  134 </span><span class="spaces">        </span><span class="istickedoff">else Dir (Map.fromList [(s, rt)]) NoRoute</span></span>
+<span class="lineno">  135 </span>
+<span class="lineno">  136 </span>
+<span class="lineno">  137 </span>------------------------------------------------------------------------------
+<span class="lineno">  138 </span>route' :: Route a -&gt; [Route a] -&gt; Snap a
+<span class="lineno">  139 </span><span class="decl"><span class="istickedoff">route' (Action action) _ = action</span>
+<span class="lineno">  140 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  141 </span><span class="spaces"></span><span class="istickedoff">route' (Capture param rt fb) fbs = do</span>
+<span class="lineno">  142 </span><span class="spaces">    </span><span class="istickedoff">cwd &lt;- getRequest &gt;&gt;= return . B.takeWhile (/= (c2w '/')) . rqPathInfo</span>
+<span class="lineno">  143 </span><span class="spaces">    </span><span class="istickedoff">if B.null cwd</span>
+<span class="lineno">  144 </span><span class="spaces">      </span><span class="istickedoff">then route' fb <span class="nottickedoff">fbs</span></span>
+<span class="lineno">  145 </span><span class="spaces">      </span><span class="istickedoff">else do modifyRequest $ updateContextPath (B.length cwd) . (f cwd)</span>
+<span class="lineno">  146 </span><span class="spaces">              </span><span class="istickedoff">route' rt <span class="nottickedoff">(fb:fbs)</span></span>
+<span class="lineno">  147 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  148 </span><span class="spaces">    </span><span class="istickedoff">f v req = req { rqParams = Map.insertWith <span class="nottickedoff">(++)</span> param [v] (rqParams req) }</span>
+<span class="lineno">  149 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  150 </span><span class="spaces"></span><span class="istickedoff">route' (Dir rtm fb) fbs = do</span>
+<span class="lineno">  151 </span><span class="spaces">    </span><span class="istickedoff">cwd &lt;- getRequest &gt;&gt;= return . B.takeWhile (/= (c2w '/')) . rqPathInfo</span>
+<span class="lineno">  152 </span><span class="spaces">    </span><span class="istickedoff">case Map.lookup cwd rtm of</span>
+<span class="lineno">  153 </span><span class="spaces">      </span><span class="istickedoff">Just rt -&gt; do</span>
+<span class="lineno">  154 </span><span class="spaces">          </span><span class="istickedoff">modifyRequest $ updateContextPath (B.length cwd)</span>
+<span class="lineno">  155 </span><span class="spaces">          </span><span class="istickedoff">route' rt <span class="nottickedoff">(fb:fbs)</span></span>
+<span class="lineno">  156 </span><span class="spaces">      </span><span class="istickedoff">Nothing -&gt; route' fb fbs</span>
+<span class="lineno">  157 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  158 </span><span class="spaces"></span><span class="istickedoff">route' NoRoute       [] = pass</span>
+<span class="lineno">  159 </span><span class="spaces"></span><span class="istickedoff">route' NoRoute (fb:fbs) = <span class="nottickedoff">route' fb fbs</span></span></span>
+<span class="lineno">  160 </span>
+
+</pre>
+</html>
