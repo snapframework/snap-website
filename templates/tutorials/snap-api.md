@@ -252,7 +252,7 @@ This function takes an associative list of paths and actions and combines it
 all together into one action that does the routing. It also supports capturing
 parts of the path into parameters.
 
-Let's see this in action to route the path `/echo` to some echo action. Open
+Let's see this in action to route the path `echo/` to some echo action. Open
 up `Main.hs` in your favorite editor and edit `site` to look like the
 following.
 
@@ -265,11 +265,11 @@ site = route [ (""        , ifTop (writeBS "hello world"))
 
 The above code routes the top level empty path to the original "hello world"
 action, and the path `echo/` to `echoHandler` (which we haven't written yet).
-More importantly, when it routes `echo`, it captures the next immediate path
+More importantly, when it routes `echo/`, it captures the next immediate path
 component (not the rest of the path) into a parameter named `s`. We can access
 `s`, or any other request parameter, with the function
 [`getParam`](/docs/latest/snap-core/Snap-Types.html#v%3AgetParam). If the
-request was neither to the top level nor to `echo`, we try to find a file in
+request was neither to the top level nor to `echo/`, we try to find a file in
 the current directory with the same name as the request path and serve that.
 
 Moving on, let's write `echoHandler`, which should just spit back `s`.
@@ -282,7 +282,7 @@ echoHandler = do
 ~~~~~~~~~~~~~~~
 
 Let's build our toy application and run it again. Now we have a perfectly
-useless server that echos paths that start with `echo`.
+useless server that echos paths that start with `echo/`.
 
 ~~~~~~ {.shell}
 $ curl localhost:8000/echo/foo; echo
