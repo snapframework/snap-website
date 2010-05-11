@@ -34,7 +34,9 @@ $ cabal install snap-server</pre>
         <dd>Core type definitions (<tt>Snap</tt> monad, HTTP types, etc) and
           utilities for web
           handlers. <br/><span class="linklist">
-            [ <a href="http://hackage.haskell.org/package/snap-core"
+            [ <a href="/docs/latest/snap-core/index.html"
+                 >api docs</a> |
+              <a href="http://hackage.haskell.org/package/snap-core"
                  >hackage</a> |
               <a href="http://github.com/snapframework/snap-core"
                  >github</a> |
@@ -44,7 +46,9 @@ $ cabal install snap-server</pre>
         <dt><tt>snap-server</tt></dt>
         <dd>An iteratee-based HTTP server library, which runs <tt>Snap</tt> web
           handlers. <br/><span class="linklist">
-            [ <a href="http://hackage.haskell.org/package/snap-server"
+            [ <a href="/docs/latest/snap-server/index.html"
+                 >api docs</a> |
+              <a href="http://hackage.haskell.org/package/snap-server"
                  >hackage</a> |
               <a href="http://github.com/snapframework/snap-server"
                  >github</a> |
@@ -56,7 +60,9 @@ $ cabal install snap-server</pre>
         <dd>An xhtml-based templating engine, based on allowing Haskell functions
           to be bound to XML
           tags. <br/><span class="linklist">
-            [ <a href="http://hackage.haskell.org/package/heist"
+            [ <a href="/docs/latest/heist/index.html"
+                 >api docs</a> |
+              <a href="http://hackage.haskell.org/package/heist"
                  >hackage</a> |
               <a href="http://github.com/snapframework/heist"
                  >github</a> |
