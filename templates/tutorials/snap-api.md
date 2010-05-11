@@ -169,7 +169,7 @@ enumerators are monads and compose nicely (using the
 "[`>.`](http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#v%3A%3E.)"
 operator). In Snap, enumerators are prominently used for the response
 body. When you write `writeBS`, we are actually making an enumerator that will
-feed your string to the output iteratee, and composing it with the enumerator
+feed your string to the output iteratee and composing it with the enumerator
 that was already in the response. In other words:
 
 ~~~~~~ {.haskell}
@@ -296,8 +296,8 @@ Pretend that we wrote this echo server for an elementary school, and the PTA
 has requested that profanities be censored and unechoable. The parents of PTA
 also happen to be not very bright and have taken the euphemism "4-letter word"
 too literally. They have requested that we block all 4-letter words. For
-arbitrary reasons, we have decided to respond to echo requests of 4-letter
-words by sending a `403 Forbidden` error.
+arbitrary reasons, we've decided to respond to echo requests of 4-letter words
+by sending a `403 Forbidden` error.
 
 We'll need `ByteString` utility functions for this, so be sure to add the
 following line somewhere in your list of `import`s.
@@ -314,7 +314,7 @@ echoHandler = do
     req <- getRequest
     case (getParam "s" req) of
         Just s -> if (B.length s == 4) then badWord else (writeBS s)
-        _        -> writeBS "bad input!"
+        _      -> writeBS ""
   where
     badWord = do
         putResponse $
@@ -348,6 +348,28 @@ Transfer-Encoding: chunked
 
 Forbidden: four-letter word
 ~~~~~~
+
+
+### Serving It Up
+
+So we've written our handler, how do we actually serve it and run the server?
+Luckily you don't need to write any code as the generated `Main.hs` has the
+glue code already. The relevant portion is reproduced below.
+
+~~~~~~~~~~~~~~~ {.haskell}
+    httpServe "*" port "myserver"
+        (Just "access.log")
+        (Just "error.log")
+        site
+~~~~~~~~~~~~~~~
+
+There is no external server to plug into and no complicated directory
+structure to manage. Everything is done programmatically. To embed the Snap
+server inside your program, all you need to do is to pass
+[`httpServe`](/docs/latest/snap-server/Snap-Http-Server.html#v%3AhttpServe)
+some configuration parameters and your handler. Note that access and error
+logging are optional, should you wish to forego them for performance reasons.
+
 
 ## What Now?
 
