@@ -29,9 +29,9 @@ $ cabal install snap-server</pre>
       <div class="inner">
         <h2>Snap Packages</h2>
         <p>Snap is made up of three separate packages:</p>
-
+        <div id="packages">
         <dl>
-          <dt><tt>snap-core</tt></dt>
+          <dt>snap-core</dt>
           <dd>Core type definitions (<tt>Snap</tt> monad, HTTP types, etc) and
             utilities for web
             handlers. <br/><span class="linklist">
@@ -44,7 +44,7 @@ $ cabal install snap-server</pre>
               <a href="/docs/snap-core-hpc/hpc_index.html"
                  >test coverage report</a> ]</span></dd>
 
-          <dt><tt>snap-server</tt></dt>
+          <dt>snap-server</dt>
           <dd>An iteratee-based HTTP server library, which runs <tt>Snap</tt> web
             handlers. <br/><span class="linklist">
               [ <a href="/docs/latest/snap-server/index.html"
@@ -57,7 +57,7 @@ $ cabal install snap-server</pre>
                  >test coverage report</a> ]</span></dd>
 
 
-          <dt><tt>heist</tt> <strong>(experimental)</strong></dt>
+          <dt>heist <strong>(experimental)</strong></dt>
           <dd>An xhtml-based templating engine, allowing Haskell functions to be
             bound to XML tags. <br/><span class="linklist">
               [ <a href="/docs/latest/heist/index.html" >api docs</a> |
@@ -68,6 +68,7 @@ $ cabal install snap-server</pre>
               <a href="/docs/heist-hpc/hpc_index.html"
                  >test coverage report</a> ]</span></dd>
         </dl>
+        </div>
       </div>
     </div>
   </static>
