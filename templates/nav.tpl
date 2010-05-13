@@ -9,16 +9,16 @@
 
     <div id="nav" class="nav">           
         <ul class="nav">
-          <li class="selected">
+          <li class="home">
             <a href="/">Home</a>
           </li>
-          <li>
+          <li class="download">
             <a href="/download">Download</a>
           </li>
-          <li>
+          <li class="docs">
             <a href="/docs">Docs</a>
           </li>
-          <li>
+          <li class="about">
             <a href="/about">About</a>
           </li>
         </ul>

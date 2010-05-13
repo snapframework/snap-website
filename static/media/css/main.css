@@ -25,7 +25,7 @@ body,html{
     font-family: "Droid Serif", "Georgia", "Arial", "Helvetica", sans-serif;
     line-height: 29px;
     color:#0c1a30;
-    /*background:#fff url(holy-light.png) scroll repeat-x top left;*/
+    background:#fff url(holy-light.png) scroll repeat-x 0px -100px;
     margin:0;
     padding:0;
 }
@@ -238,14 +238,14 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 }
 
 #frontpage #main{
-    background: url("holy-light.png") repeat-x scroll left -30px #FFFFFF;
+    /*background: url("holy-light.png") repeat-x scroll left -30px #FFFFFF;*/
 }
 
 #main{
     margin: 0;
     padding: 0;
     width:100%;
-    background: #FFFFFF;
+    /*background: #FFFFFF;*/
 }
 
 #splash{

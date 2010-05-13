@@ -19,7 +19,7 @@
         <div class="content">
             <img src="/media/img/splash-img.png" title="Snap Framework" />
           <div class="blurb">
-             a super-fast web framework for the
+             a web framework for the
               <a href="http://www.haskell.org"><strong>Haskell</strong></a> 
               programming language.
           </div>
@@ -76,6 +76,8 @@
 
         </div>
 
+        <script type="text/javascript">var NAV_TOP_SECTION="home";</script>
+
       </div><!--end content-->
       
       <div id="footer">
@@ -85,9 +87,9 @@
     </div><!--end main-->
 
     <link href="/media/css/main.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="/media/js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="/media/js/init.js"></script>
 
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js">  </script>
+    <script type="text/javascript" src="/media/js/init.js">  </script>
 
   </body>
 </html>
