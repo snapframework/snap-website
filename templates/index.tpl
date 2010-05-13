@@ -1,4 +1,5 @@
 <apply template="wrap">
+<div class="front-page">
         <div id="splash">
           <div class="content">
             <img src="/media/img/splash-img.png" title="Snap Framework" />
@@ -63,5 +64,5 @@
 
         </div><!--end content-->
         
-
+</div>
 </apply>

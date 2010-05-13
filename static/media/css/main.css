@@ -241,8 +241,8 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
         padding: 20px;
 }
 
-#frontpage #main{
-    /*background: url("holy-light.png") repeat-x scroll left -30px #FFFFFF;*/
+.front-page #content{
+    margin-top:20px;
 }
 
 #main{
