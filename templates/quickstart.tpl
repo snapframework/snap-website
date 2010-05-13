@@ -14,8 +14,8 @@
       <p>To set up a new Snap project, run the following commands:</p>
 
       <pre class="code">$ mkdir myproject
-        $ cd myproject
-        $ snap init</pre>
+$ cd myproject
+$ snap init</pre>
 
       <p>The <code>snap init</code> command creates a template Snap project in
         the current directory. The <code>Main</code> module for this project will
@@ -26,7 +26,7 @@
         following commands:</p>
 
       <pre class="code">$ cabal install
-        $ myproject 8000</pre>
+$ myproject 8000</pre>
 
       <p>Now point your web browser to localhost:8000; you should see a simple
         response string.</p>
