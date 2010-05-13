@@ -99,6 +99,7 @@ dl, dt, dd {
 
 dd {
     padding-left: 3em;
+    padding-bottom: 29px;
 }
 
 dt {
@@ -110,6 +111,13 @@ dt {
 /*--------------------------------------------------------------------------
  * styling for css classes
   ------------------------------------------------------------------------*/
+
+dl span.linklist {
+    color: #888;
+    font-size: 15px;
+    vertical-align: top;
+    font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;
+}
 
 pre.code, pre.sourceCode, pre.shell {
     background: #222;
@@ -158,7 +166,9 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     margin-top: 20px;
 }
 
-.singlecolumn pre.sourceCode, .singlecolumn pre.code {
+.singlecolumn pre.sourceCode,
+.singlecolumn pre.code,
+.singlecolumn pre.shell {
     width: 656px;
     margin: 0 0 29px 40px;
     padding: 16px;

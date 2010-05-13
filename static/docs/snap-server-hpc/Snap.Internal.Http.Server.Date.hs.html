@@ -1,0 +1,129 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>{-# LANGUAGE BangPatterns #-}
+<span class="lineno">    2 </span>
+<span class="lineno">    3 </span>module Snap.Internal.Http.Server.Date
+<span class="lineno">    4 </span>( getDateString
+<span class="lineno">    5 </span>, getLogDateString
+<span class="lineno">    6 </span>, getCurrentDateTime) where
+<span class="lineno">    7 </span>
+<span class="lineno">    8 </span>import           Control.Concurrent
+<span class="lineno">    9 </span>import           Control.Exception
+<span class="lineno">   10 </span>import           Control.Monad
+<span class="lineno">   11 </span>import           Data.ByteString (ByteString)
+<span class="lineno">   12 </span>import           Data.ByteString.Internal (c2w)
+<span class="lineno">   13 </span>import qualified Data.ByteString as B
+<span class="lineno">   14 </span>import           Data.IORef
+<span class="lineno">   15 </span>import           Data.Time.Clock
+<span class="lineno">   16 </span>import           Data.Time.LocalTime
+<span class="lineno">   17 </span>import           Data.Time.Format
+<span class="lineno">   18 </span>import           System.IO.Unsafe
+<span class="lineno">   19 </span>import           System.Locale
+<span class="lineno">   20 </span>
+<span class="lineno">   21 </span>
+<span class="lineno">   22 </span>-- Here comes a dirty hack. We don't want to be wasting context switches
+<span class="lineno">   23 </span>-- building date strings, so we're only going to compute one every two
+<span class="lineno">   24 </span>-- seconds. (Approximate timestamps to within a couple of seconds are OK here,
+<span class="lineno">   25 </span>-- and we'll reduce overhead.)
+<span class="lineno">   26 </span>--
+<span class="lineno">   27 </span>-- Note that we also don't want to wake up a potentially sleeping CPU by just
+<span class="lineno">   28 </span>-- running the computation on a timer. We'll allow client traffic to trigger
+<span class="lineno">   29 </span>-- the process.
+<span class="lineno">   30 </span>
+<span class="lineno">   31 </span>data <span class="istickedoff"><span class="nottickedoff"><span class="istickedoff"><span class="nottickedoff">DateState</span></span></span></span> = DateState {
+<span class="lineno">   32 </span>      _cachedDateString :: !(IORef ByteString)
+<span class="lineno">   33 </span>    , _cachedLogString  :: !(IORef ByteString)
+<span class="lineno">   34 </span>    , _cachedDate       :: !(IORef UTCTime)
+<span class="lineno">   35 </span>    , _valueIsOld       :: !(IORef Bool)
+<span class="lineno">   36 </span>    , _morePlease       :: !(MVar ())
+<span class="lineno">   37 </span>    , _dataAvailable    :: !(MVar ())
+<span class="lineno">   38 </span>    , _dateThread       :: !(MVar ThreadId)
+<span class="lineno">   39 </span>    }
+<span class="lineno">   40 </span>
+<span class="lineno">   41 </span>dateState :: DateState
+<span class="lineno">   42 </span><span class="decl"><span class="istickedoff">dateState = unsafePerformIO $ do</span>
+<span class="lineno">   43 </span><span class="spaces">    </span><span class="istickedoff">(s1,s2,date) &lt;- fetchTime</span>
+<span class="lineno">   44 </span><span class="spaces">    </span><span class="istickedoff">bs1 &lt;- newIORef s1</span>
+<span class="lineno">   45 </span><span class="spaces">    </span><span class="istickedoff">bs2 &lt;- newIORef <span class="nottickedoff">s2</span></span>
+<span class="lineno">   46 </span><span class="spaces">    </span><span class="istickedoff">dt  &lt;- newIORef <span class="nottickedoff">date</span></span>
+<span class="lineno">   47 </span><span class="spaces">    </span><span class="istickedoff">ov  &lt;- newIORef False</span>
+<span class="lineno">   48 </span><span class="spaces">    </span><span class="istickedoff">th  &lt;- newEmptyMVar</span>
+<span class="lineno">   49 </span><span class="spaces">    </span><span class="istickedoff">mp  &lt;- newMVar <span class="nottickedoff">()</span></span>
+<span class="lineno">   50 </span><span class="spaces">    </span><span class="istickedoff">da  &lt;- newMVar <span class="nottickedoff">()</span></span>
+<span class="lineno">   51 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   52 </span><span class="spaces">    </span><span class="istickedoff">let d = DateState bs1 bs2 dt ov mp da th</span>
+<span class="lineno">   53 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   54 </span><span class="spaces">    </span><span class="istickedoff">t  &lt;- forkIO $ dateThread d</span>
+<span class="lineno">   55 </span><span class="spaces">    </span><span class="istickedoff">putMVar th <span class="nottickedoff">t</span></span>
+<span class="lineno">   56 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   57 </span><span class="spaces">    </span><span class="istickedoff">return d</span></span>
+<span class="lineno">   58 </span>
+<span class="lineno">   59 </span>
+<span class="lineno">   60 </span>fetchTime :: IO (ByteString,ByteString,UTCTime)
+<span class="lineno">   61 </span><span class="decl"><span class="istickedoff">fetchTime = do</span>
+<span class="lineno">   62 </span><span class="spaces">     </span><span class="istickedoff">now &lt;- getCurrentTime</span>
+<span class="lineno">   63 </span><span class="spaces">     </span><span class="istickedoff">zt  &lt;- liftM zonedTimeToLocalTime getZonedTime</span>
+<span class="lineno">   64 </span><span class="spaces">     </span><span class="istickedoff">return (t1 now, t2 zt, <span class="nottickedoff">now</span>)</span>
+<span class="lineno">   65 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   66 </span><span class="spaces">    </span><span class="istickedoff">t1 now = B.pack $ map c2w $</span>
+<span class="lineno">   67 </span><span class="spaces">             </span><span class="istickedoff">formatTime defaultTimeLocale &quot;%a, %d %b %Y %H:%M:%S GMT&quot; now</span>
+<span class="lineno">   68 </span><span class="spaces">    </span><span class="istickedoff">t2 now = B.pack $ map c2w $</span>
+<span class="lineno">   69 </span><span class="spaces">             </span><span class="istickedoff">formatTime defaultTimeLocale &quot;%d/%b/%Y:%H:%M:%S %z&quot; now</span></span>
+<span class="lineno">   70 </span>
+<span class="lineno">   71 </span>dateThread :: DateState -&gt; IO ()
+<span class="lineno">   72 </span><span class="decl"><span class="istickedoff">dateThread ds@(DateState dateString logString time valueIsOld morePlease</span>
+<span class="lineno">   73 </span><span class="spaces">                         </span><span class="istickedoff">dataAvailable _) = do</span>
+<span class="lineno">   74 </span><span class="spaces">    </span><span class="istickedoff">-- a lot of effort to make sure we don't deadlock</span>
+<span class="lineno">   75 </span><span class="spaces">    </span><span class="istickedoff">takeMVar morePlease</span>
+<span class="lineno">   76 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   77 </span><span class="spaces">    </span><span class="istickedoff">(s1,s2,now) &lt;- fetchTime</span>
+<span class="lineno">   78 </span><span class="spaces">    </span><span class="istickedoff">atomicModifyIORef dateString $ const (s1,<span class="nottickedoff">()</span>)</span>
+<span class="lineno">   79 </span><span class="spaces">    </span><span class="istickedoff">atomicModifyIORef logString $ const (s2,<span class="nottickedoff">()</span>)</span>
+<span class="lineno">   80 </span><span class="spaces">    </span><span class="istickedoff">atomicModifyIORef time $ <span class="nottickedoff">const (now,())</span></span>
+<span class="lineno">   81 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   82 </span><span class="spaces">    </span><span class="istickedoff">writeIORef valueIsOld False</span>
+<span class="lineno">   83 </span><span class="spaces">    </span><span class="istickedoff">tryPutMVar dataAvailable <span class="nottickedoff">()</span></span>
+<span class="lineno">   84 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   85 </span><span class="spaces">    </span><span class="istickedoff">threadDelay 2000000</span>
+<span class="lineno">   86 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   87 </span><span class="spaces">    </span><span class="istickedoff">takeMVar dataAvailable</span>
+<span class="lineno">   88 </span><span class="spaces">    </span><span class="istickedoff">writeIORef valueIsOld <span class="nottickedoff">True</span></span>
+<span class="lineno">   89 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   90 </span><span class="spaces">    </span><span class="istickedoff">dateThread ds</span></span>
+<span class="lineno">   91 </span>
+<span class="lineno">   92 </span>ensureFreshDate :: IO ()
+<span class="lineno">   93 </span><span class="decl"><span class="istickedoff">ensureFreshDate = block $ do</span>
+<span class="lineno">   94 </span><span class="spaces">    </span><span class="istickedoff">old &lt;- readIORef $ _valueIsOld dateState</span>
+<span class="lineno">   95 </span><span class="spaces">    </span><span class="istickedoff">when old $ <span class="nottickedoff">do</span></span>
+<span class="lineno">   96 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">tryPutMVar (_morePlease dateState) ()</span></span>
+<span class="lineno">   97 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">readMVar $ _dataAvailable dateState</span></span></span>
+<span class="lineno">   98 </span>
+<span class="lineno">   99 </span>getDateString :: IO ByteString
+<span class="lineno">  100 </span><span class="decl"><span class="istickedoff">getDateString = block $ do</span>
+<span class="lineno">  101 </span><span class="spaces">    </span><span class="istickedoff">ensureFreshDate</span>
+<span class="lineno">  102 </span><span class="spaces">    </span><span class="istickedoff">readIORef $ _cachedDateString dateState</span></span>
+<span class="lineno">  103 </span>
+<span class="lineno">  104 </span>
+<span class="lineno">  105 </span>getLogDateString :: IO ByteString
+<span class="lineno">  106 </span><span class="decl"><span class="istickedoff">getLogDateString = block $ do</span>
+<span class="lineno">  107 </span><span class="spaces">    </span><span class="istickedoff">ensureFreshDate</span>
+<span class="lineno">  108 </span><span class="spaces">    </span><span class="istickedoff">readIORef $ _cachedLogString dateState</span></span>
+<span class="lineno">  109 </span>
+<span class="lineno">  110 </span>
+<span class="lineno">  111 </span>getCurrentDateTime :: IO UTCTime
+<span class="lineno">  112 </span><span class="decl"><span class="nottickedoff">getCurrentDateTime = block $ do</span>
+<span class="lineno">  113 </span><span class="spaces">    </span><span class="nottickedoff">ensureFreshDate</span>
+<span class="lineno">  114 </span><span class="spaces">    </span><span class="nottickedoff">readIORef $ _cachedDate dateState</span></span>
+<span class="lineno">  115 </span>
+
+</pre>
+</html>
