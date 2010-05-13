@@ -7,8 +7,6 @@
         <a href="/" ><img src="/media/img/head-logo.png" title="Snap Framwork" /></a>
       </h1>
 
-
-
     <div id="nav" class="nav">           
         <div class="navlist">
         <ul class="nav">

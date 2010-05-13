@@ -1,0 +1,17 @@
+@font-face {
+    font-family: "Droid Sans";
+    src: url("DroidSans.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Droid Serif";
+    src: url("DroidSerif-Regular.ttf") format("truetype");
+}
+@font-face {
+    font-family: "PT Sans";
+    src: url("PT_Sans.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Liberation Mono";
+    src: url("LiberationMono-Regular.ttf") format("truetype");
+}

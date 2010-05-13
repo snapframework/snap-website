@@ -80,7 +80,6 @@ templateServe orig tsMVar staticMVar = do
 loadError :: String -> String
 loadError str = "Error loading templates\n"++str
 
-
 reloadTemplates :: TemplateState Snap
                 -> MVar (TemplateState Snap)
                 -> MVar (Map ByteString [Node])
@@ -279,10 +278,7 @@ main = do
 
     setLocaleToUTF8
 
-
-
-    (origTs,staticMVar) <- (bindMarkdownTag >=> bindStaticTag)
-                             emptyTemplateState
+    (origTs,staticMVar) <- (bindMarkdownTag >=> bindStaticTag) emptyTemplateState
 
     ets <- loadTemplates "templates" origTs
     let ts = either error id ets

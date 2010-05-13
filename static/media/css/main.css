@@ -1,20 +1,3 @@
-@font-face {
-    font-family: "Droid Sans";
-    src: url("DroidSans.ttf") format("truetype");
-}
-@font-face {
-    font-family: "Droid Serif";
-    src: url("DroidSerif-Regular.ttf") format("truetype");
-}
-@font-face {
-    font-family: "PT Sans";
-    src: url("PT_Sans.ttf") format("truetype");
-}
-
-@font-face {
-    font-family: "Liberation Mono";
-    src: url("LiberationMono-Regular.ttf") format("truetype");
-}
 
 
 /*--------------------------------------------------------------------------
@@ -69,13 +52,13 @@ h1 code, h2 code, h3 code, h4 code {
 }
 
 p {
-    margin: 0 0 29px 0;
+    margin: 0 0 20px 0;
 }
 
 ul {
     list-style: none;
-    margin: 0 0 29px 29px;
-    padding-left: 29px;
+    margin: 0 0 20px 10px;
+    padding-left: 10px;
     text-indent: -14px;
 }
 
