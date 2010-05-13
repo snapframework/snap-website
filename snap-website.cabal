@@ -18,6 +18,7 @@ Executable snap-website
   Build-depends:
     base >= 4,
     bytestring,
+    containers,
     directory,
     filepath,
     haskell98,
@@ -26,6 +27,7 @@ Executable snap-website
     MonadCatchIO-transformers >= 0.2 && < 0.3,
     monads-fd,
     process,
+    random,
     snap-core,
     snap-server,
     text,

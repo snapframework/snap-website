@@ -1,4 +1,5 @@
 <apply template="page">
+  <static>
     <div id="about" class="section left">
       <div class="inner">
         <h2>What is the Snap Framework?</h2>
@@ -110,4 +111,5 @@
         </div><!--end mailing list -->
       </div><!--end inner-->
     </div><!--end project-status-->
+  </static>
 </apply>

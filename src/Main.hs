@@ -6,6 +6,8 @@ module Main where
 import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.UTF8 as UTF8
+import           Data.Map (Map)
+import qualified Data.Map as Map
 import           Data.Maybe
 import qualified Data.Text as T
 import           Control.Applicative
@@ -14,6 +16,8 @@ import           Control.Exception (throwIO, ErrorCall(..), SomeException)
 import           Control.Monad
 import           Control.Monad.CatchIO
 import           Control.Monad.Trans
+import           Data.IORef
+import qualified Data.Set as Set
 import           Data.Typeable
 import           Prelude hiding (catch)
 import           Snap.Http.Server
@@ -25,9 +29,11 @@ import           System.Directory
 import           System.Posix.Env
 import           System.Exit
 import           System.Process
+import           System.Random
 import           Text.Templating.Heist
 import qualified Text.XHtmlCombinators.Escape as XH
-import           Text.XML.Expat.Tree
+import           Text.XML.Expat.Cursor
+import           Text.XML.Expat.Tree hiding (Node)
 
 
 setLocaleToUTF8 :: IO ()
@@ -59,14 +65,15 @@ renderTmpl tsMVar n = do
 
 templateServe :: TemplateState Snap
               -> MVar (TemplateState Snap)
+              -> MVar (Map ByteString [Node])
               -> Snap ()
-templateServe orig tsMVar = do
+templateServe orig tsMVar staticMVar = do
     p
     modifyResponse $ setContentType "text/html"
 
   where
     p = ifTop (renderTmpl tsMVar "index") <|>
-        path "admin/reload" (reloadTemplates orig tsMVar) <|>
+        path "admin/reload" (reloadTemplates orig tsMVar staticMVar) <|>
         (renderTmpl tsMVar . B.pack =<< getSafePath)
 
 
@@ -76,20 +83,27 @@ loadError str = "Error loading templates\n"++str
 
 reloadTemplates :: TemplateState Snap
                 -> MVar (TemplateState Snap)
+                -> MVar (Map ByteString [Node])
                 -> Snap ()
-reloadTemplates origTs tsMVar = do
+reloadTemplates origTs tsMVar staticMVar = do
+    liftIO $ modifyMVar_ staticMVar (const $ return Map.empty)
     ts <- liftIO $ loadTemplates "templates" origTs
     either bad good ts
   where
     bad msg = do writeBS $ B.pack $ loadError msg ++ "Keeping old templates."
-    good ts = do liftIO $ modifyMVar_ tsMVar (const $ return $ bindMarkdownTag ts)
+    good ts = do liftIO $ modifyMVar_ tsMVar (const $ bindMarkdownTag ts)
                  writeBS "Templates loaded successfully"
 
-site :: TemplateState Snap -> MVar (TemplateState Snap) -> Snap ()
-site origTs tsMVar = catch500 $
-                     withCompression $     h1
-                                       <|> templateServe origTs tsMVar
-                                       <|> h3
+
+site :: TemplateState Snap
+     -> MVar (TemplateState Snap)
+     -> MVar (Map ByteString [Node])
+     -> Snap ()
+site origTs tsMVar staticMVar =
+    catch500 $
+    withCompression $     h1
+                      <|> templateServe origTs tsMVar staticMVar
+                      <|> h3
 
 
 catch500 :: Snap a -> Snap ()
@@ -114,8 +128,69 @@ h3 :: Snap ()
 h3 = path "throwException" (throw $ ErrorCall "jlkfdjfldskjlf")
 
 
-bindMarkdownTag :: TemplateState Snap -> TemplateState Snap
-bindMarkdownTag = bindSplice "markdown" markdownSplice
+bindMarkdownTag :: TemplateState Snap -> IO (TemplateState Snap)
+bindMarkdownTag = return . bindSplice "markdown" markdownSplice
+
+
+bindStaticTag :: TemplateState Snap
+              -> IO (TemplateState Snap, MVar (Map ByteString [Node]))
+bindStaticTag ts = do
+    sr <- newIORef $ Set.empty
+    mv <- newMVar Map.empty
+
+    return $ (addOnLoadHook (assignIds sr) $
+                bindSplice "static" (staticSplice mv) ts,
+              mv)
+
+  where
+    staticSplice mv = do
+        tree <- getParamNode
+        let i = fromJust $ getAttribute tree "id"
+
+        mp <- liftIO $ readMVar mv
+
+        (mp',ns) <- do
+                       let mbn = Map.lookup i mp
+                       case mbn of
+                           Nothing -> do
+                               nodes' <- runNodeList $ getChildren tree
+                               return $! (Map.insert i nodes' mp, nodes')
+                           (Just n) -> do
+                               stopRecursion
+                               return $! (mp,n)
+
+        liftIO $ modifyMVar_ mv (const $ return mp')
+
+        return ns
+
+
+    generateId :: IO Int
+    generateId = getStdRandom random
+
+    assignIds setref = mapM f
+        where
+          f node = g $ fromTree node
+
+          getId = do
+              i  <- liftM (B.pack . show) generateId
+              st <- readIORef setref
+              if Set.member i st
+                then getId
+                else do
+                    writeIORef setref $ Set.insert i st
+                    return i
+
+          g curs = do
+              let node = current curs
+              curs' <- if getName node == "static"
+                         then do
+                             i <- getId
+                             return $ modifyContent (setAttribute "id" i) curs
+                         else return curs
+              let mbc = nextDF curs'
+              maybe (return $ toTree curs') g mbc
+
+
 
 
 data PandocMissingException = PandocMissingException
@@ -204,16 +279,20 @@ main = do
 
     setLocaleToUTF8
 
-    let origTs = bindMarkdownTag emptyTemplateState
 
-    ts     <- loadTemplates "templates" origTs
-    either (\s -> putStrLn (loadError s) >> exitFailure) (const $ return ()) ts
-    tsMVar <- newMVar $ either error bindMarkdownTag ts
+
+    (origTs,staticMVar) <- (bindMarkdownTag >=> bindStaticTag)
+                             emptyTemplateState
+
+    ets <- loadTemplates "templates" origTs
+    let ts = either error id ets
+    either (\s -> putStrLn (loadError s) >> exitFailure) (const $ return ()) ets
+    tsMVar <- newMVar $ ts
 
     (try $ httpServe "*" port "achilles"
              (Just "access.log")
              (Just "error.log")
-             (site origTs tsMVar)) :: IO (Either SomeException ())
+             (site origTs tsMVar staticMVar)) :: IO (Either SomeException ())
 
     threadDelay 1000000
     putStrLn "exiting"
