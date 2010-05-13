@@ -7,6 +7,8 @@
       <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
       <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8"/>
       <meta http-equiv="content-style-type" content="text/css"/>
+      <link href="/media/css/fonts.css" rel="stylesheet" type="text/css" />
+      <link href="/media/css/main.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
 
@@ -25,8 +27,6 @@
 
       <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js">  </script>
       <script type="text/javascript" src="/media/js/init.js">  </script>
-      <link href="/media/css/fonts.css" rel="stylesheet" type="text/css" />
-      <link href="/media/css/main.css" rel="stylesheet" type="text/css" />
       <script type="text/javascript" src="/media/js/jquery-1.4.2.min.js"></script>
       <script type="text/javascript" src="/media/js/init.js"></script>
 

@@ -8,7 +8,7 @@ body,html{
     font-family: "Droid Serif", "Georgia", "Arial", "Helvetica", sans-serif;
     line-height: 29px;
     color:#0c1a30;
-    background:#fff url(holy-light.png) scroll repeat-x 0px -100px;
+    background:#fff url(holy-light.png) scroll repeat-x 0px -80px;
     margin:0;
     padding:0;
 }
@@ -185,6 +185,7 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 
 .newspaper .inner {
     padding: 20px;
+    padding-top:0px;
     margin: 0;
 }
 
@@ -228,6 +229,16 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     margin: 0 auto;
     overflow:hidden;
     position: relative;
+}
+
+#content.subpage{
+    background: transparent url(white-40.png) scroll repeat top left;
+    border: solid 1px #fff;
+    margin-top: 10px;
+    border-bottom: none;
+}
+#content.subpage .inner-page{
+        padding: 20px;
 }
 
 #frontpage #main{

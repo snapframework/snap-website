@@ -1,13 +1,14 @@
 <apply template="wrap">
 
-      <div id="content">
+  <div class="subpage" id="content">
+    <div class="inner-page">
+      <div class="newspaper">
 
-        <div class="newspaper">
+        <content/>
 
-          <content/>
+      </div>
+    </div>
 
-        </div>
+  </div><!--end content-->
 
-      </div><!--end content-->
-      
 </apply>
