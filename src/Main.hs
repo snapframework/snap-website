@@ -57,15 +57,16 @@ renderTmpl tsMVar n = do
     maybe pass writeBS =<< renderTemplate ts n
 
 
-templateServe :: MVar (TemplateState Snap)
+templateServe :: TemplateState Snap
+              -> MVar (TemplateState Snap)
               -> Snap ()
-templateServe tsMVar = do
+templateServe orig tsMVar = do
     p
     modifyResponse $ setContentType "text/html"
 
   where
     p = ifTop (renderTmpl tsMVar "index") <|>
-        path "admin/reload" (reloadTemplates tsMVar) <|>
+        path "admin/reload" (reloadTemplates orig tsMVar) <|>
         (renderTmpl tsMVar . B.pack =<< getSafePath)
 
 
@@ -73,18 +74,22 @@ loadError :: String -> String
 loadError str = "Error loading templates\n"++str
 
 
-reloadTemplates :: MVar (TemplateState Snap)
+reloadTemplates :: TemplateState Snap
+                -> MVar (TemplateState Snap)
                 -> Snap ()
-reloadTemplates tsMVar = do
-    ts <- liftIO $ loadTemplates "templates"
+reloadTemplates origTs tsMVar = do
+    ts <- liftIO $ loadTemplates "templates" origTs
     either bad good ts
   where
     bad msg = do writeBS $ B.pack $ loadError msg ++ "Keeping old templates."
     good ts = do liftIO $ modifyMVar_ tsMVar (const $ return $ bindMarkdownTag ts)
                  writeBS "Templates loaded successfully"
 
-site :: MVar (TemplateState Snap) -> Snap ()
-site tsMVar = catch500 $ withCompression $ h1 <|> h2 tsMVar <|> h3
+site :: TemplateState Snap -> MVar (TemplateState Snap) -> Snap ()
+site origTs tsMVar = catch500 $
+                     withCompression $     h1
+                                       <|> templateServe origTs tsMVar
+                                       <|> h3
 
 
 catch500 :: Snap a -> Snap ()
@@ -104,9 +109,6 @@ catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
 
 h1 :: Snap ()
 h1 = fileServe "static"
-
-h2 :: MVar (TemplateState Snap) -> Snap ()
-h2 m = templateServe m
 
 h3 :: Snap ()
 h3 = path "throwException" (throw $ ErrorCall "jlkfdjfldskjlf")
@@ -202,15 +204,16 @@ main = do
 
     setLocaleToUTF8
 
-    ts     <- loadTemplates "templates"
+    let origTs = bindMarkdownTag emptyTemplateState
+
+    ts     <- loadTemplates "templates" origTs
     either (\s -> putStrLn (loadError s) >> exitFailure) (const $ return ()) ts
---    either (\s -> putStrLn s >> exitFailure) (const $ return ()) ts
     tsMVar <- newMVar $ either error bindMarkdownTag ts
 
     (try $ httpServe "*" port "achilles"
              (Just "access.log")
              (Just "error.log")
-             (site tsMVar)) :: IO (Either SomeException ())
+             (site origTs tsMVar)) :: IO (Either SomeException ())
 
     threadDelay 1000000
     putStrLn "exiting"
