@@ -67,6 +67,13 @@ $ cabal install snap-server</pre>
                  >github</a> |
               <a href="/docs/heist-hpc/hpc_index.html"
                  >test coverage report</a> ]</span></dd>
+
+
+          <dt>snap-website </dt>
+          <dd>The source code for this website is a good example of
+Snap in action. <br/><span class="linklist">
+              [ <a href="http://github.com/snapframework/snap-website"
+                 >github</a> ]</span></dd>
         </dl>
         </div>
       </div>

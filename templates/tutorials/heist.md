@@ -1,10 +1,28 @@
 ## Heist Templates
 
-Heist templates serve two primary design goals.  First, they facilitate
-the separation of the view from the other aspects of your application.
-Second, they provide abstraction capabilities that allow you to avoid
-repeated template code.  This allows you to follow the DRY principle
-(Don't Repeat Yourself) in the development of your application views.
+Heist is an XML templating engine based loosely on ideas from the Lift
+Web Framework.  It functions as a bridge between your web application
+and its views.  Heist templates are XML fragments that are not
+required to have a single root element.  Heist uses hexpat, a haskell
+interface to the Expat XML library, for fast XML parsing and
+manipulation.  
+
+Heist is being developed by the Snap Team in conjunction with Snap,
+but Heist is a completely standalone library with no dependencies on
+Snap.  Snap itself is also template-agnostic and does not depend on
+Heist.  In the future, we are planning to use Heist in higher-level
+Snap functionality, but the core Snap infrastructure and web server
+will remain free of Heist dependencies, leaving the choice of
+templating engine up to the user.  That said, we strongly encourage
+you to use Heist in your Snap applications so you can take full
+advantage of Snap's capabilities.
+
+Heist templates serve two primary design goals.  First, they
+facilitate the separation of the view from the other aspects of your
+application.  Second, they provide abstraction capabilities that allow
+you to avoid repeated template code.  This allows you to follow the
+DRY principle (Don't Repeat Yourself) in the development of your
+application views.
 
 Heist has two primary template abstraction constructs: bind and apply.
 They are implemented as specialized XML tags.
@@ -302,9 +320,11 @@ call haskell functions from your templates, while ensuring that
 business logic does not creep into the presentation layer.
 
 Splices that you write must have the type `mySplice :: Splice m` where
-m is the monad of your choice (usually Snap).  The `getParamNode`
-function lets you get the contents of the splice node which you can
-then process using functionality provided by
+m is the monad of your choice (usually Snap).  `Splice m` is a type
+synonym for `TemplateMonad m Template`.  The `getParamNode` function
+is a TemplateMonad computation that lets you get the contents of the
+splice node.  You can then do any processing you want using
+functionality provided by
 [hexpat](http://hackage.haskell.org/package/hexpat).
 
 #### Example
@@ -326,4 +346,70 @@ You must tell Heist to bind the splice to an XML tag using the
 This returns a new `TemplateState` with factSplice bound to the
 `<fact>` tag.  Now, in any of your templates the XML snippet
 `<fact>5</fact>` will render as `120`.
+
+
+### Hooks
+
+Heist provides three hooks to give you more control over the template
+rendering process.  They are `onLoad`, `preRun`, and `postRun`.  They
+are monadic filter functions that you can use to read or transform
+templates at different points in time.  The `onLoad` hook is called
+once for every template immediately after it is loaded from disk.
+`preRun` and `postRun` are called immediately before and after each
+template is rendered.  
+
+
+### Setting up TemplateState
+
+All of Heist's splices, templates, and hooks are stored in
+`TemplateState`.  Heist provides `TemplateState` modifier functions
+for configuration.  `emptyTemplateState` gives you reasonable defaults
+that you build on to suit your needs.  Let's look at an example to
+illustrate.
+
+~~~~~~~~~~~~~~~ {.hs}
+myHeistState =
+    addOnLoadHook onLoad $
+    addPreRunHook preRun $
+    addPostRunHook postRun $
+    bindSplice "fact" factSplice emptyTemplateState
+
+main = do
+    ets <- loadTemplates "templates" myHeistState
+    let ts = either error id ets
+~~~~~~~~~~~~~~~
+
+In this example we added the custom factSplice function from the last
+section to the default set of splices as well as our own hooks.  Then
+we called loadTemplates to add templates from the `templates`
+directory in the filesystem to our template state.
+
+The three addXYZHook functions above add hooks to the TemplateState.
+Previous hooks are not overwritten--the new hooks are appended to any
+other hooks that have already been added.  
+
+### Generating Pages with Heist
+
+Once you have built a `TemplateState`, you are ready to generate pages
+with Heist.  The two functions you will use most frequently are
+`renderTemplate` and `callTemplate`.  `renderTemplate` renders a
+template by name and returns it as a Maybe ByteString.  `callTemplate`
+is similar but is designed for templates that require parameters to be
+bound by the caller.  When you're calling the template from another
+template with the apply tag, this is easily accomplished by using
+`<bind>` within the body of the `<apply>`.  But when you are "calling"
+the template from code, binding splices for each of the template's
+parameters is cumbersome.  `callTemplate` does this for you.
+
+[This website](http://github.com/snapframework/snap-website) is a good
+example of how Heist can be used.  It demonstrates some of the more
+sophisticated things you can do with Heist such as custom splices,
+dynamic template reloading, and content caching.  In the future much
+of the general purpose code in snap-website will become built-in
+functionality in snap-core.
+
+NOTE: It should be emphasized that Heist is still in the early stages
+of development, and its interfaces are subject to change.  
+
+
 
