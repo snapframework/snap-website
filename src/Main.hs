@@ -5,6 +5,7 @@ module Main where
 
 import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as B
+import qualified Data.ByteString.Lazy.Char8 as L
 import qualified Data.ByteString.UTF8 as UTF8
 import           Data.Map (Map)
 import qualified Data.Map as Map
@@ -12,7 +13,7 @@ import           Data.Maybe
 import qualified Data.Text as T
 import           Control.Applicative
 import           Control.Concurrent
-import           Control.Exception (throwIO, ErrorCall(..), SomeException)
+import           Control.Exception (evaluate, throwIO, ErrorCall(..), SomeException)
 import           Control.Monad
 import           Control.Monad.CatchIO
 import           Control.Monad.Trans
@@ -28,6 +29,7 @@ import           System
 import           System.Directory
 import           System.Posix.Env
 import           System.Exit
+import           System.IO
 import           System.Process
 import           System.Random
 import           Text.Templating.Heist
@@ -198,12 +200,12 @@ instance Show PandocMissingException where
 instance Exception PandocMissingException
 
 
-data MarkdownException = MarkdownException String
+data MarkdownException = MarkdownException L.ByteString
    deriving (Typeable)
 
 instance Show MarkdownException where
     show (MarkdownException e) =
-        "Markdown error: pandoc replied:\n\n" ++ e
+        "Markdown error: pandoc replied:\n\n" ++ L.unpack e
 
 instance Exception MarkdownException
 
@@ -231,13 +233,53 @@ apidoc mvar = do
     docframe src = return [ mkElement "frame" [ ("id" , "docframe")
                                               , ("src", src       ) ] [] ]
 
+
+
+-- a version of readProcessWithExitCode that does I/O properly
+readProcessWithExitCode'
+    :: FilePath                 -- ^ command to run
+    -> [String]                 -- ^ any arguments
+    -> ByteString               -- ^ standard input
+    -> IO (ExitCode,L.ByteString,L.ByteString) -- ^ exitcode, stdout, stderr
+readProcessWithExitCode' cmd args input = do
+    (Just inh, Just outh, Just errh, pid) <-
+        createProcess (proc cmd args){ std_in  = CreatePipe,
+                                       std_out = CreatePipe,
+                                       std_err = CreatePipe }
+    outMVar <- newEmptyMVar
+
+    -- fork off a thread to start consuming stdout
+    out <- L.hGetContents outh
+    forkIO $ evaluate (L.length out) >> putMVar outMVar ()
+
+    -- fork off a thread to start consuming stderr
+    err  <- L.hGetContents errh
+    forkIO $ evaluate (L.length err) >> putMVar outMVar ()
+
+    -- now write and flush any input
+    when (not (B.null input)) $ do B.hPutStr inh input; hFlush inh
+    hClose inh -- done with stdin
+
+    -- wait on the output
+    takeMVar outMVar
+    takeMVar outMVar
+    hClose outh
+
+    -- wait on the process
+    ex <- waitForProcess pid
+
+    return (ex, out, err)
+
+
+
 pandoc :: FilePath -> FilePath -> IO ByteString
 pandoc pandocPath inputFile = do
-    (ex, sout, serr) <- readProcessWithExitCode pandocPath args ""
+    (ex, sout, serr) <- readProcessWithExitCode' pandocPath args ""
 
     when (isFail ex) $ throw $ MarkdownException serr
-    return $ B.concat [ "<div class=\"markdown\">\n"
-                      , UTF8.fromString sout
+    return $ B.concat $ L.toChunks
+           $ L.concat [ "<div class=\"markdown\">\n"
+                      , sout
                       , "\n</div>" ]
 
   where
@@ -245,24 +287,24 @@ pandoc pandocPath inputFile = do
     isFail _           = True
 
     -- FIXME: hardcoded path
-    args = [  "--no-wrap", "templates/"++inputFile ]
+    args = [ "-S", "--no-wrap", "templates/"++inputFile ]
 
 
 pandocBS :: FilePath -> ByteString -> IO ByteString
 pandocBS pandocPath s = do
     -- using the crummy string functions for convenience here
-    let s' = UTF8.toString s
-    (ex, sout, serr) <- readProcessWithExitCode pandocPath args s'
+    (ex, sout, serr) <- readProcessWithExitCode' pandocPath args s
 
     when (isFail ex) $ throw $ MarkdownException serr
-    return $ B.concat [ "<div class=\"markdown\">\n"
-                      , UTF8.fromString sout
+    return $ B.concat $ L.toChunks
+           $ L.concat [ "<div class=\"markdown\">\n"
+                      , sout
                       , "\n</div>" ]
 
   where
     isFail ExitSuccess = False
     isFail _           = True
-    args = [ "--no-wrap" ]
+    args = [ "-S", "--no-wrap" ]
 
 
 markdownSplice :: Splice Snap
@@ -279,14 +321,15 @@ markdownSplice = do
 
     let ee = parse' heistExpatOptions markup
     case ee of
-      (Left e) -> throw $ MarkdownException $
-                         "Error parsing markdown output: " ++ show e
+      (Left e) -> throw $ MarkdownException
+                        $ L.pack ("Error parsing markdown output: " ++ show e)
       (Right n) -> return [n]
 
 
 -- FIXME: remove
 killMe :: ThreadId -> Snap ()
 killMe t = liftIO (exitSuccess >> killThread t)
+
 
 main :: IO ()
 main = do
