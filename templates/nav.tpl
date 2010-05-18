@@ -13,14 +13,14 @@
           <li class="home">
             <a href="/">Home</a>
           </li>
+          <li class="about">
+            <a href="/about">About</a>
+          </li>
           <li class="download">
             <a href="/download">Download</a>
           </li>
           <li class="docs">
             <a href="/docs">Docs</a>
-          </li>
-          <li class="about">
-            <a href="/about">About</a>
           </li>
         </ul>
         </div>

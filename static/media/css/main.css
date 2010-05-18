@@ -275,7 +275,9 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     color: #1f4986;
     font-style: italic;
 }
-
+#splash .slideshow{
+    margin: 0px auto;
+}
 
 #triptych {
     background: #f1f1f1 url(splash-2-back.png) scroll repeat-x bottom left;
@@ -285,11 +287,22 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     padding: 10px 0;
     font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;
     font-style: italic;
+    display: none;
 }
 
 #triptych div.triptych-content {
     width: 960px;
     margin: 0px auto;
+/*    background: url("/media/img/splash-2.png") scroll no-repeat center;*/
+    height: 160px;
+}
+
+#triptych div.triptych-content h2{
+    float: left;
+    width: 33%;
+    text-align:center;
+    font-size: 1.7em;
+    line-height: 110px;
 }
 
 #triptych div div.panel {
@@ -494,4 +507,13 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     font-size:1em;
     background: url(package.png) no-repeat center left;
     line-height: 28px;
+}
+
+.small-logo{
+    float:left;
+    margin-right: 10px;
+}
+.photo{
+    float: left;
+    margin-right: 10px;
 }

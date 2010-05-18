@@ -5,7 +5,7 @@
       <div class="inner">
         <h2>What is the Snap Framework?</h2>
 
-        <p><strong>Snap</strong> is a simple web development framework for unix
+        <p><img class="small-logo" src="/media/img/logo-small.png" /><strong>Snap</strong> is a simple web development framework for unix
           systems, written in <a href="http://www.haskell.org">Haskell</a>
           programming language.
         </p>
@@ -67,14 +67,6 @@
         <div id="developers"  >
           <h2>Who's involved?</h2>
           <p>
-            <strong><a href="http://james-sanders.com">James
-            Sanders</a></strong> has been in the web development game for over
-            six years.  He works
-            at <a href="http://thisismedium.com/">Medium</a>.  You can e-mail
-            him
-            at <a href="mailto:jimmyjazz14@gmail.com">jimmyjazz14@gmail.com</a>.
-          </p>
-          <p>
             <strong><a href="http://gregorycollins.net/">Gregory
             Collins</a></strong> is a programmer from Toronto, Canada. He holds
             an MSc in Computer Science from Yale University and he works
@@ -93,6 +85,15 @@
             at <a href="http://www.ucla.edu">UCLA</a>. He is also an
             unaccomplished linguist and a professional StarCraft
             enthusiast.
+          </p>
+          <p>
+
+            <strong><a href="http://james-sanders.com">James
+            Sanders</a></strong> has been in the web development game for over
+            six years.  He works
+            at <a href="http://thisismedium.com/">Medium</a>.  You can e-mail
+            him
+            at <a href="mailto:jimmyjazz14@gmail.com">jimmyjazz14@gmail.com</a>.
           </p>
         </div><!--end developers-->
         <div>

@@ -1,19 +1,34 @@
 <apply template="wrap">
 <div class="front-page">
+
+
         <div id="splash">
+          <div class="slideshow">
           <div class="content">
             <img src="/media/img/splash-img.png" title="Snap Framework" />
             <div class="blurb">
-              a super-fast web framework for the
+              a web framework for the
               <a href="http://www.haskell.org"><strong>Haskell</strong></a> 
               programming language.
             </div>
           </div>
+
+          <div class="content">
+            <img src="/media/img/splash-img-2.png" title="Snap Framework" />
+            <div class="blurb">
+              Build faster web applications that are easy to maintain.
+            </div>
+          </div>
+          </div>
         </div>
 
+
         <div id="triptych">
-          <div class="triptych-content">
-            <img src="/media/img/splash-2.png" />
+          <div class="triptych-content" >
+            <h2>Downloads</h2>
+            <h2>Documentation</h2>
+            <h2>About</h2>
+            
           </div>
         </div>
 
@@ -45,8 +60,6 @@
               <div class="inner">
                 <h2>Snap Features:</h2>
 
-                <p>
-                  Snap comes with:
                   <ul>
                     <li>A fast HTTP server library with an optional
                       high-concurrency backend using
@@ -55,7 +68,6 @@
                     <li>A sensible and clean monad for web programming</li>
                     <li>An XML-based templating system for generating HTML</li>
                   </ul>
-                </p>
 
               </div><!--end inner-->
             </div><!--end project-status-->

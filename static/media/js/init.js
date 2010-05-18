@@ -1,4 +1,4 @@
 $(document).ready(function(){ 
-  $("#nav li."+NAV_TOP_SECTION).addClass("selected");
-  
+  /*$("#nav li."+NAV_TOP_SECTION).addClass("selected");*/
+                    $('.slideshow').cycle({fx: 'fade', timeout:  7000  });  
 });

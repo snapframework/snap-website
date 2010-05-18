@@ -245,7 +245,7 @@ pandoc pandocPath inputFile = do
     isFail _           = True
 
     -- FIXME: hardcoded path
-    args = [ "-S", "--no-wrap", "templates/"++inputFile ]
+    args = [  "--no-wrap", "templates/"++inputFile ]
 
 
 pandocBS :: FilePath -> ByteString -> IO ByteString
@@ -262,7 +262,7 @@ pandocBS pandocPath s = do
   where
     isFail ExitSuccess = False
     isFail _           = True
-    args = [ "-S", "--no-wrap" ]
+    args = [ "--no-wrap" ]
 
 
 markdownSplice :: Splice Snap
