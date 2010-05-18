@@ -19,6 +19,15 @@
               Build faster web applications that are easy to maintain.
             </div>
           </div>
+
+          <div class="content">
+            <img src="/media/img/splash-img-3.png" title="Snap Framework" />
+            <div class="blurb">
+              Some more text here.
+            </div>
+          </div>
+
+
           </div>
         </div>
 
