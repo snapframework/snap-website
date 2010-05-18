@@ -1,4 +1,5 @@
 <apply template="page">
+  <bind tag="subtitle">: About</bind>
   <static>
     <div id="about" class="section left">
       <div class="inner">

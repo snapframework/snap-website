@@ -1,8 +1,9 @@
+<bind tag="subtitle">: Quick Start Guide</bind>
 <static>
   <apply template="page">
     <div class="singlecolumn">
       
-      <h2>Snap Quick Start</h2>
+      <h2>Snap Quick Start Guide</h2>
       <p>If you haven't already done so, first go to the
         <a href="/download">download</a> page to find out how to install Snap.
         The installation generates an executable called <code>snap</code> that
@@ -32,7 +33,7 @@ $ myproject 8000</pre>
         response string.</p>
 
       <p>For more information, continue on to the
-        <a href="/tutorials/snap-api">Snap API tutorial</a> or take a look at
+        <a href="tutorials/snap-api">Snap API tutorial</a> or take a look at
         the <a href="/docs">Snap reference documentation</a>.</p>
     </div>
   </apply>

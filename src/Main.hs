@@ -99,10 +99,13 @@ site :: TemplateState Snap
      -> MVar (Map ByteString [Node])
      -> Snap ()
 site origTs tsMVar staticMVar =
-    catch500 $
-    withCompression $     h1
-                      <|> templateServe origTs tsMVar staticMVar
-                      <|> h3
+    catch500 $ withCompression hndl
+
+  where
+    hndl = route [ ("docs/api", apidoc tsMVar) ] <|> fallThru
+
+    fallThru = templateServe origTs tsMVar staticMVar
+               <|> fileServe "static"
 
 
 catch500 :: Snap a -> Snap ()
@@ -118,13 +121,6 @@ catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
 
   where
     r = setResponseStatus 500 "Internal Server Error" emptyResponse
-
-
-h1 :: Snap ()
-h1 = fileServe "static"
-
-h3 :: Snap ()
-h3 = path "throwException" (throw $ ErrorCall "jlkfdjfldskjlf")
 
 
 bindMarkdownTag :: TemplateState Snap -> IO (TemplateState Snap)
@@ -211,6 +207,29 @@ instance Show MarkdownException where
 
 instance Exception MarkdownException
 
+
+apidoc :: MVar (TemplateState Snap) -> Snap ()
+apidoc mvar = do
+    ts <- liftIO $ readMVar mvar
+    -- remainder of pathInfo is the doc to lookup
+    whichDoc <- liftM rqPathInfo getRequest
+
+    title <- maybe pass return $ Map.lookup whichDoc titles
+    let href = B.concat ["/docs/latest/", whichDoc, "/index.html"]
+
+    let ts' = bindSplice "docframe" (docframe href) $
+              bindSplice "subtitle" (return [mkText title]) ts
+
+    maybe pass writeBS =<< renderTemplate ts' "docs/api"
+
+  where
+    titles = Map.fromList [ ("snap-core", ": snap-core APIs")
+                          , ("snap-server", ": snap-server APIs")
+                          , ("heist", ": heist APIs") ]
+
+    docframe :: ByteString -> Splice Snap
+    docframe src = return [ mkElement "frame" [ ("id" , "docframe")
+                                              , ("src", src       ) ] [] ]
 
 pandoc :: FilePath -> FilePath -> IO ByteString
 pandoc pandocPath inputFile = do

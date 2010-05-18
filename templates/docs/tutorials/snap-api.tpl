@@ -1,7 +1,8 @@
+<bind tag="subtitle">: Snap Tutorial</bind>
 <static>
   <apply template="page">
     <div class="singlecolumn">
-      <markdown file="tutorials/snap-api.md"/>
+      <markdown file="docs/tutorials/snap-api.md"/>
     </div>
   </apply>
 </static>

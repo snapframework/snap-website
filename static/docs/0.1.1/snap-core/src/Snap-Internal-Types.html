@@ -19,7 +19,7 @@
 <a name="line-11"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>CatchIO</span>
 <a name="line-12"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>State</span><span class='hs-varop'>.</span><span class='hs-conid'>Strict</span>
 <a name="line-13"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
-<a name="line-14"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>B</span>
+<a name="line-14"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>S</span>
 <a name="line-15"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Lazy</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>L</span>
 <a name="line-16"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>IORef</span>
 <a name="line-17"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Iter</span>
@@ -74,7 +74,7 @@
 <a name="line-66"></a>
 <a name="line-67"></a>   &gt; a :: Snap ()
 <a name="line-68"></a>   &gt; a = do
-<a name="line-69"></a>   &gt;   modifyResponse $ setResponseStatus 500
+<a name="line-69"></a>   &gt;   modifyResponse $ setResponseStatus 500 "Internal Server Error"
 <a name="line-70"></a>   &gt;   writeBS "500 error"
 <a name="line-71"></a>   &gt;   r &lt;- getResponse
 <a name="line-72"></a>   &gt;   finishWith r
@@ -252,9 +252,9 @@
 <a name="line-244"></a>                                          <span class='hs-layout'>,</span> <span class='hs-varid'>rqPathInfo</span>    <span class='hs-keyglyph'>=</span> <span class='hs-varid'>pinfo</span> <span class='hs-layout'>}</span>
 <a name="line-245"></a>                        <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>req</span>
 <a name="line-246"></a>  <span class='hs-keyword'>where</span>
-<a name="line-247"></a>    <span class='hs-varid'>ctx'</span>  <span class='hs-keyglyph'>=</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>take</span> <span class='hs-varid'>n</span> <span class='hs-layout'>(</span><span class='hs-varid'>rqPathInfo</span> <span class='hs-varid'>req</span><span class='hs-layout'>)</span>
-<a name="line-248"></a>    <span class='hs-varid'>ctx</span>   <span class='hs-keyglyph'>=</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>rqContextPath</span> <span class='hs-varid'>req</span><span class='hs-layout'>,</span> <span class='hs-varid'>ctx'</span><span class='hs-layout'>,</span> <span class='hs-str'>"/"</span><span class='hs-keyglyph'>]</span>
-<a name="line-249"></a>    <span class='hs-varid'>pinfo</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>drop</span> <span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-varop'>+</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-varid'>rqPathInfo</span> <span class='hs-varid'>req</span><span class='hs-layout'>)</span>
+<a name="line-247"></a>    <span class='hs-varid'>ctx'</span>  <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>take</span> <span class='hs-varid'>n</span> <span class='hs-layout'>(</span><span class='hs-varid'>rqPathInfo</span> <span class='hs-varid'>req</span><span class='hs-layout'>)</span>
+<a name="line-248"></a>    <span class='hs-varid'>ctx</span>   <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>rqContextPath</span> <span class='hs-varid'>req</span><span class='hs-layout'>,</span> <span class='hs-varid'>ctx'</span><span class='hs-layout'>,</span> <span class='hs-str'>"/"</span><span class='hs-keyglyph'>]</span>
+<a name="line-249"></a>    <span class='hs-varid'>pinfo</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>drop</span> <span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-varop'>+</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-varid'>rqPathInfo</span> <span class='hs-varid'>req</span><span class='hs-layout'>)</span>
 <a name="line-250"></a>
 <a name="line-251"></a>
 <a name="line-252"></a><a name="pathWith"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
@@ -267,7 +267,7 @@
 <a name="line-259"></a><span class='hs-definition'>pathWith</span> <span class='hs-varid'>c</span> <span class='hs-varid'>p</span> <span class='hs-varid'>action</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
 <a name="line-260"></a>    <span class='hs-varid'>req</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getRequest</span>
 <a name="line-261"></a>    <span class='hs-varid'>unless</span> <span class='hs-layout'>(</span><span class='hs-varid'>c</span> <span class='hs-varid'>p</span> <span class='hs-layout'>(</span><span class='hs-varid'>rqPathInfo</span> <span class='hs-varid'>req</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span> <span class='hs-varid'>pass</span>
-<a name="line-262"></a>    <span class='hs-varid'>localRequest</span> <span class='hs-layout'>(</span><span class='hs-varid'>updateContextPath</span> <span class='hs-varop'>$</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>length</span> <span class='hs-varid'>p</span><span class='hs-layout'>)</span> <span class='hs-varid'>action</span>
+<a name="line-262"></a>    <span class='hs-varid'>localRequest</span> <span class='hs-layout'>(</span><span class='hs-varid'>updateContextPath</span> <span class='hs-varop'>$</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>length</span> <span class='hs-varid'>p</span><span class='hs-layout'>)</span> <span class='hs-varid'>action</span>
 <a name="line-263"></a>
 <a name="line-264"></a>
 <a name="line-265"></a><a name="dir"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
@@ -285,7 +285,7 @@
 <a name="line-277"></a>  <span class='hs-keyword'>where</span>
 <a name="line-278"></a>    <span class='hs-varid'>f</span> <span class='hs-varid'>dr</span> <span class='hs-varid'>pinfo</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>dr</span> <span class='hs-varop'>==</span> <span class='hs-varid'>x</span>
 <a name="line-279"></a>      <span class='hs-keyword'>where</span>
-<a name="line-280"></a>        <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-layout'>,</span><span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>break</span> <span class='hs-layout'>(</span><span class='hs-varop'>==</span><span class='hs-chr'>'/'</span><span class='hs-layout'>)</span> <span class='hs-varid'>pinfo</span>
+<a name="line-280"></a>        <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-layout'>,</span><span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>break</span> <span class='hs-layout'>(</span><span class='hs-varop'>==</span><span class='hs-chr'>'/'</span><span class='hs-layout'>)</span> <span class='hs-varid'>pinfo</span>
 <a name="line-281"></a><span class='hs-comment'>{-# INLINE dir #-}</span>
 <a name="line-282"></a>
 <a name="line-283"></a>
@@ -428,67 +428,97 @@
 <a name="line-420"></a><span class='hs-comment'>{-# INLINE localRequest #-}</span>
 <a name="line-421"></a>
 <a name="line-422"></a>
-<a name="line-423"></a><a name="NoHandlerException"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-424"></a><a name="NoHandlerException"></a><span class='hs-comment'>-- | This exception is thrown if the handler you supply to 'runSnap' fails.</span>
-<a name="line-425"></a><a name="NoHandlerException"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>NoHandlerException</span>
-<a name="line-426"></a>   <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Eq</span><span class='hs-layout'>,</span> <span class='hs-conid'>Typeable</span><span class='hs-layout'>)</span>
-<a name="line-427"></a>
+<a name="line-423"></a><a name="withRequest"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-424"></a><span class='hs-comment'>-- | Fetches the 'Request' from state and hands it to the given action.</span>
+<a name="line-425"></a><span class='hs-definition'>withRequest</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Request</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
+<a name="line-426"></a><span class='hs-definition'>withRequest</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>getRequest</span> <span class='hs-varop'>&gt;&gt;=</span><span class='hs-layout'>)</span>
+<a name="line-427"></a><span class='hs-comment'>{-# INLINE withRequest #-}</span>
 <a name="line-428"></a>
-<a name="line-429"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-430"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Show</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyword'>where</span>
-<a name="line-431"></a>    <span class='hs-varid'>show</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"No handler for request"</span>
-<a name="line-432"></a>
-<a name="line-433"></a>
-<a name="line-434"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-435"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Exception</span> <span class='hs-conid'>NoHandlerException</span>
+<a name="line-429"></a>
+<a name="line-430"></a><a name="withResponse"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-431"></a><span class='hs-comment'>-- | Fetches the 'Response' from state and hands it to the given action.</span>
+<a name="line-432"></a><span class='hs-definition'>withResponse</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Response</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
+<a name="line-433"></a><span class='hs-definition'>withResponse</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>getResponse</span> <span class='hs-varop'>&gt;&gt;=</span><span class='hs-layout'>)</span>
+<a name="line-434"></a><span class='hs-comment'>{-# INLINE withResponse #-}</span>
+<a name="line-435"></a>
 <a name="line-436"></a>
-<a name="line-437"></a>
-<a name="line-438"></a><a name="runSnap"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-439"></a><span class='hs-comment'>-- | Runs a 'Snap' monad action in the 'Iteratee IO' monad.</span>
-<a name="line-440"></a><span class='hs-definition'>runSnap</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Request</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Request</span><span class='hs-layout'>,</span><span class='hs-conid'>Response</span><span class='hs-layout'>)</span>
-<a name="line-441"></a><span class='hs-definition'>runSnap</span> <span class='hs-layout'>(</span><span class='hs-conid'>Snap</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-varid'>req</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-442"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-layout'>,</span> <span class='hs-varid'>ss'</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runStateT</span> <span class='hs-varid'>m</span> <span class='hs-varid'>ss</span>
-<a name="line-443"></a>
-<a name="line-444"></a>    <span class='hs-varid'>e</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Left</span> <span class='hs-varid'>fourohfour</span><span class='hs-layout'>)</span>
-<a name="line-445"></a>               <span class='hs-varid'>return</span>
-<a name="line-446"></a>               <span class='hs-varid'>r</span>
+<a name="line-437"></a><a name="NoHandlerException"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-438"></a><a name="NoHandlerException"></a><span class='hs-comment'>-- | This exception is thrown if the handler you supply to 'runSnap' fails.</span>
+<a name="line-439"></a><a name="NoHandlerException"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>NoHandlerException</span>
+<a name="line-440"></a>   <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Eq</span><span class='hs-layout'>,</span> <span class='hs-conid'>Typeable</span><span class='hs-layout'>)</span>
+<a name="line-441"></a>
+<a name="line-442"></a>
+<a name="line-443"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-444"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Show</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyword'>where</span>
+<a name="line-445"></a>    <span class='hs-varid'>show</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"No handler for request"</span>
+<a name="line-446"></a>
 <a name="line-447"></a>
-<a name="line-448"></a>    <span class='hs-comment'>-- is this a case of early termination?</span>
-<a name="line-449"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>resp</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>case</span> <span class='hs-varid'>e</span> <span class='hs-keyword'>of</span> 
-<a name="line-450"></a>                 <span class='hs-conid'>Left</span> <span class='hs-varid'>x</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>x</span>
-<a name="line-451"></a>                 <span class='hs-conid'>Right</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-sel'>_snapResponse</span> <span class='hs-varid'>ss'</span>
-<a name="line-452"></a>
-<a name="line-453"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-sel'>_snapRequest</span> <span class='hs-varid'>ss'</span><span class='hs-layout'>,</span> <span class='hs-varid'>resp</span><span class='hs-layout'>)</span>
-<a name="line-454"></a>
-<a name="line-455"></a>  <span class='hs-keyword'>where</span>
-<a name="line-456"></a>    <span class='hs-varid'>fourohfour</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>setContentLength</span> <span class='hs-num'>3</span> <span class='hs-varop'>$</span>
-<a name="line-457"></a>                 <span class='hs-varid'>setResponseStatus</span> <span class='hs-num'>404</span> <span class='hs-str'>"Not Found"</span> <span class='hs-varop'>$</span>
-<a name="line-458"></a>                 <span class='hs-varid'>modifyResponseBody</span> <span class='hs-layout'>(</span><span class='hs-varop'>&gt;.</span> <span class='hs-varid'>enumBS</span> <span class='hs-str'>"404"</span><span class='hs-layout'>)</span> <span class='hs-varop'>$</span>
-<a name="line-459"></a>                 <span class='hs-varid'>emptyResponse</span>
-<a name="line-460"></a>
-<a name="line-461"></a>    <span class='hs-varid'>dresp</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>emptyResponse</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rspHttpVersion</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>rqVersion</span> <span class='hs-varid'>req</span> <span class='hs-layout'>}</span>
-<a name="line-462"></a>
-<a name="line-463"></a>    <span class='hs-varid'>ss</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SnapState</span> <span class='hs-varid'>req</span> <span class='hs-varid'>dresp</span>
-<a name="line-464"></a><span class='hs-comment'>{-# INLINE runSnap #-}</span>
-<a name="line-465"></a>
+<a name="line-448"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-449"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Exception</span> <span class='hs-conid'>NoHandlerException</span>
+<a name="line-450"></a>
+<a name="line-451"></a>
+<a name="line-452"></a><a name="runSnap"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-453"></a><span class='hs-comment'>-- | Runs a 'Snap' monad action in the 'Iteratee IO' monad.</span>
+<a name="line-454"></a><span class='hs-definition'>runSnap</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Request</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Request</span><span class='hs-layout'>,</span><span class='hs-conid'>Response</span><span class='hs-layout'>)</span>
+<a name="line-455"></a><span class='hs-definition'>runSnap</span> <span class='hs-layout'>(</span><span class='hs-conid'>Snap</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-varid'>req</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-456"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-layout'>,</span> <span class='hs-varid'>ss'</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runStateT</span> <span class='hs-varid'>m</span> <span class='hs-varid'>ss</span>
+<a name="line-457"></a>
+<a name="line-458"></a>    <span class='hs-varid'>e</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Left</span> <span class='hs-varid'>fourohfour</span><span class='hs-layout'>)</span>
+<a name="line-459"></a>               <span class='hs-varid'>return</span>
+<a name="line-460"></a>               <span class='hs-varid'>r</span>
+<a name="line-461"></a>
+<a name="line-462"></a>    <span class='hs-comment'>-- is this a case of early termination?</span>
+<a name="line-463"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>resp</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>case</span> <span class='hs-varid'>e</span> <span class='hs-keyword'>of</span> 
+<a name="line-464"></a>                 <span class='hs-conid'>Left</span> <span class='hs-varid'>x</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>x</span>
+<a name="line-465"></a>                 <span class='hs-conid'>Right</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-sel'>_snapResponse</span> <span class='hs-varid'>ss'</span>
 <a name="line-466"></a>
-<a name="line-467"></a><a name="evalSnap"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-468"></a><span class='hs-definition'>evalSnap</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Request</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span>
-<a name="line-469"></a><span class='hs-definition'>evalSnap</span> <span class='hs-layout'>(</span><span class='hs-conid'>Snap</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-varid'>req</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-470"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-layout'>,</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runStateT</span> <span class='hs-varid'>m</span> <span class='hs-varid'>ss</span>
-<a name="line-471"></a>
-<a name="line-472"></a>    <span class='hs-varid'>e</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>throwIO</span> <span class='hs-conid'>NoHandlerException</span><span class='hs-layout'>)</span>
-<a name="line-473"></a>               <span class='hs-varid'>return</span>
-<a name="line-474"></a>               <span class='hs-varid'>r</span>
-<a name="line-475"></a>
-<a name="line-476"></a>    <span class='hs-comment'>-- is this a case of early termination?</span>
-<a name="line-477"></a>    <span class='hs-keyword'>case</span> <span class='hs-varid'>e</span> <span class='hs-keyword'>of</span> 
-<a name="line-478"></a>      <span class='hs-conid'>Left</span> <span class='hs-keyword'>_</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>ErrorCall</span> <span class='hs-str'>"no value"</span>
-<a name="line-479"></a>      <span class='hs-conid'>Right</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-varid'>x</span>
-<a name="line-480"></a>  <span class='hs-keyword'>where</span>
-<a name="line-481"></a>    <span class='hs-varid'>dresp</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>emptyResponse</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rspHttpVersion</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>rqVersion</span> <span class='hs-varid'>req</span> <span class='hs-layout'>}</span>
-<a name="line-482"></a>    <span class='hs-varid'>ss</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SnapState</span> <span class='hs-varid'>req</span> <span class='hs-varid'>dresp</span>
-<a name="line-483"></a><span class='hs-comment'>{-# INLINE evalSnap #-}</span>
-<a name="line-484"></a>
+<a name="line-467"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-sel'>_snapRequest</span> <span class='hs-varid'>ss'</span><span class='hs-layout'>,</span> <span class='hs-varid'>resp</span><span class='hs-layout'>)</span>
+<a name="line-468"></a>
+<a name="line-469"></a>  <span class='hs-keyword'>where</span>
+<a name="line-470"></a>    <span class='hs-varid'>fourohfour</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>setContentLength</span> <span class='hs-num'>3</span> <span class='hs-varop'>$</span>
+<a name="line-471"></a>                 <span class='hs-varid'>setResponseStatus</span> <span class='hs-num'>404</span> <span class='hs-str'>"Not Found"</span> <span class='hs-varop'>$</span>
+<a name="line-472"></a>                 <span class='hs-varid'>modifyResponseBody</span> <span class='hs-layout'>(</span><span class='hs-varop'>&gt;.</span> <span class='hs-varid'>enumBS</span> <span class='hs-str'>"404"</span><span class='hs-layout'>)</span> <span class='hs-varop'>$</span>
+<a name="line-473"></a>                 <span class='hs-varid'>emptyResponse</span>
+<a name="line-474"></a>
+<a name="line-475"></a>    <span class='hs-varid'>dresp</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>emptyResponse</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rspHttpVersion</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>rqVersion</span> <span class='hs-varid'>req</span> <span class='hs-layout'>}</span>
+<a name="line-476"></a>
+<a name="line-477"></a>    <span class='hs-varid'>ss</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SnapState</span> <span class='hs-varid'>req</span> <span class='hs-varid'>dresp</span>
+<a name="line-478"></a><span class='hs-comment'>{-# INLINE runSnap #-}</span>
+<a name="line-479"></a>
+<a name="line-480"></a>
+<a name="line-481"></a><a name="evalSnap"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-482"></a><span class='hs-definition'>evalSnap</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Request</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span>
+<a name="line-483"></a><span class='hs-definition'>evalSnap</span> <span class='hs-layout'>(</span><span class='hs-conid'>Snap</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-varid'>req</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-484"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-layout'>,</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runStateT</span> <span class='hs-varid'>m</span> <span class='hs-varid'>ss</span>
+<a name="line-485"></a>
+<a name="line-486"></a>    <span class='hs-varid'>e</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>throwIO</span> <span class='hs-conid'>NoHandlerException</span><span class='hs-layout'>)</span>
+<a name="line-487"></a>               <span class='hs-varid'>return</span>
+<a name="line-488"></a>               <span class='hs-varid'>r</span>
+<a name="line-489"></a>
+<a name="line-490"></a>    <span class='hs-comment'>-- is this a case of early termination?</span>
+<a name="line-491"></a>    <span class='hs-keyword'>case</span> <span class='hs-varid'>e</span> <span class='hs-keyword'>of</span> 
+<a name="line-492"></a>      <span class='hs-conid'>Left</span> <span class='hs-keyword'>_</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>ErrorCall</span> <span class='hs-str'>"no value"</span>
+<a name="line-493"></a>      <span class='hs-conid'>Right</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-varid'>x</span>
+<a name="line-494"></a>  <span class='hs-keyword'>where</span>
+<a name="line-495"></a>    <span class='hs-varid'>dresp</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>emptyResponse</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rspHttpVersion</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>rqVersion</span> <span class='hs-varid'>req</span> <span class='hs-layout'>}</span>
+<a name="line-496"></a>    <span class='hs-varid'>ss</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SnapState</span> <span class='hs-varid'>req</span> <span class='hs-varid'>dresp</span>
+<a name="line-497"></a><span class='hs-comment'>{-# INLINE evalSnap #-}</span>
+<a name="line-498"></a>
+<a name="line-499"></a>
+<a name="line-500"></a>
+<a name="line-501"></a><a name="getParam"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-502"></a><span class='hs-comment'>-- | See 'rqParam'. Looks up a value for the given named parameter in the</span>
+<a name="line-503"></a><span class='hs-comment'>-- 'Request'. If more than one value was entered for the given parameter name,</span>
+<a name="line-504"></a><span class='hs-comment'>-- 'getParam' gloms the values together with:</span>
+<a name="line-505"></a><span class='hs-comment'>--</span>
+<a name="line-506"></a><span class='hs-comment'>-- @    'S.intercalate' \" \"@</span>
+<a name="line-507"></a><span class='hs-comment'>--</span>
+<a name="line-508"></a><span class='hs-definition'>getParam</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span>          <span class='hs-comment'>-- ^ parameter name to look up</span>
+<a name="line-509"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
+<a name="line-510"></a><span class='hs-definition'>getParam</span> <span class='hs-varid'>k</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-511"></a>    <span class='hs-varid'>rq</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getRequest</span>
+<a name="line-512"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>liftM</span> <span class='hs-layout'>(</span><span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>intercalate</span> <span class='hs-str'>" "</span><span class='hs-layout'>)</span> <span class='hs-varop'>$</span> <span class='hs-varid'>rqParam</span> <span class='hs-varid'>k</span> <span class='hs-varid'>rq</span>
+<a name="line-513"></a>
+<a name="line-514"></a>
 </pre></body>
 </html>

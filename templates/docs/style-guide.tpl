@@ -1,3 +1,4 @@
+<bind tag="subtitle">: Haskell Style Guide</bind>
 <static>
   <apply template="page">
     <div class="singlecolumn">

@@ -447,6 +447,38 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AwithRequest"
+>withRequest</A
+> ::  (<A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AwithResponse"
+>withResponse</A
+> ::  (<A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3ArunRequestBody"
 >runRequestBody</A
 > ::  <A HREF="Snap-Iteratee.html#t%3AIteratee"
@@ -1037,13 +1069,13 @@ for HTTP as well as the <TT
 >getParam</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
 > <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-></TD
+>)</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -1579,7 +1611,7 @@ for HTTP as well as the <TT
 ><PRE
 > a :: Snap ()
  a = do
-   modifyResponse $ setResponseStatus 500
+   modifyResponse $ setResponseStatus 500 &quot;Internal Server Error&quot;
    writeBS &quot;500 error&quot;
    r &lt;- getResponse
    finishWith r
@@ -2684,6 +2716,84 @@ for HTTP as well as the <TT
 ></TT
 > object in the Snap monad state after the call
  to localRequest will be unchanged.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:withRequest"
+><A NAME="v%3AwithRequest"
+></A
+></A
+><B
+>withRequest</B
+> ::  (<A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#withRequest"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Fetches the <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+> from state and hands it to the given action.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:withResponse"
+><A NAME="v%3AwithResponse"
+></A
+></A
+><B
+>withResponse</B
+> ::  (<A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#withResponse"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Fetches the <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> from state and hands it to the given action.
 </TD
 ></TR
 ><TR
@@ -4462,7 +4572,7 @@ for HTTP as well as the <TT
 >getParam</B
 ></TD
 ><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Http-Types.html#getParam"
+><A HREF="src/Snap-Internal-Types.html#getParam"
 >Source</A
 ></TD
 ></TR
@@ -4483,20 +4593,13 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-></TD
-><TD CLASS="rdoc"
->HTTP request
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>-&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
 > <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-></TD
+>)</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -4507,13 +4610,17 @@ for HTTP as well as the <TT
 ><A HREF="Snap-Types.html#v%3ArqParam"
 >rqParam</A
 ></TT
->. Looks up a value for the given named parameter. If more
- than one value was entered for the given parameter name, <TT
+>. Looks up a value for the given named parameter in the
+ <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+>. If more than one value was entered for the given parameter name,
+ <TT
 ><A HREF="Snap-Types.html#v%3AgetParam"
 >getParam</A
 ></TT
-> gloms
- the values together with:
+> gloms the values together with:
 </P
 ><PRE
 >    <TT

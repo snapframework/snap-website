@@ -1,3 +1,4 @@
+<bind tag="subtitle">: Download</bind>
 <apply template="page">
   <static>
     <div class="section left">
