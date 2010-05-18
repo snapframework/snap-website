@@ -3,32 +3,35 @@
 
 
         <div id="splash">
+
           <div class="slideshow">
-          <div class="content">
-            <img src="/media/img/splash-img.png" title="Snap Framework" />
-            <div class="blurb">
-              a web framework for the
-              <a href="http://www.haskell.org"><strong>Haskell</strong></a> 
-              programming language.
+
+            <div class="content">
+              <img src="/media/img/splash-img.png" title="Snap Framework" />
+              <p class="blurb">
+                a web framework for the
+                <a href="http://www.haskell.org"><strong>Haskell</strong></a> 
+                programming language.
+              </p>
+            </div>
+
+            <div class="content" style="display: none;">
+              <img src="/media/img/splash-img-2.png" title="Snap Framework" />
+              <p class="blurb">
+                Build faster web applications that are easy to maintain.
+              </p>
+            </div>
+
+            <div class="content" style="display: none;">
+              <img src="/media/img/splash-img-3.png" title="Snap Framework" />
+              <p class="blurb">
+                Some more text here.
+              </p>
             </div>
           </div>
 
-          <div class="content">
-            <img src="/media/img/splash-img-2.png" title="Snap Framework" />
-            <div class="blurb">
-              Build faster web applications that are easy to maintain.
-            </div>
-          </div>
+          <div id="pager"> </div>
 
-          <div class="content">
-            <img src="/media/img/splash-img-3.png" title="Snap Framework" />
-            <div class="blurb">
-              Some more text here.
-            </div>
-          </div>
-
-
-          </div>
         </div>
 
 

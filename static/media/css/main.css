@@ -256,6 +256,7 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     padding: 0;
     background: url(splash-back.png) scroll repeat-x top left;
     position:relative;
+    border-bottom:10px solid #F2F7FD;
 }
 #splash .logo img {
     width: 800px;
@@ -278,6 +279,35 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 #splash .slideshow{
     margin: 0px auto;
 }
+
+#splash #pager{
+    position: absolute;
+    z-index: 10;
+    left: 0;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+}
+#splash #pager a{
+    width: 15px;
+    height: 15px;
+    overflow: hidden;
+    text-indent: -100px;
+    background: #fff;
+    opacity: 0.4;
+    margin: 0 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px
+;
+    display: -moz-inline-stack;
+    display: inline-block;
+    zoom: 1; /*IE HACK*/
+    *display: inline; /* IE HACK */
+
+
+}
+
+#splash #pager a.activeSlide{ opacity: 0.9 }
 
 #triptych {
     background: #f1f1f1 url(splash-2-back.png) scroll repeat-x bottom left;
@@ -465,6 +495,10 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     vertical-align: top;
     height: 100%;
     display: block;
+}
+
+#nav li.active a:link, #nav li.active a:visited{
+    color: #fff;
 }
 
 #nav ul {

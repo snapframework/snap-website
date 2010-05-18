@@ -17,12 +17,20 @@
       </div><!--end main-->
 
 
-      <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js">  </script>
-      <script type="text/javascript" src="/media/js/init.js">  </script>
-      <script type="text/javascript" src="/media/js/jquery-1.4.2.min.js"> </script>
-      <script type="text/javascript" src="/media/js/init.js"> </script>
-      <script type="text/javascript" src="/media/js/jquery.cycle.min.js"> </script>
+      <script type="text/javascript"
+      src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js">  </script>
 
+      <script type="text/javascript"
+      src="/media/js/jquery-1.4.2.min.js"> </script>
+
+      <script type="text/javascript"
+      src="/media/js/jquery.cycle.min.js"> </script>
+
+      <script type="text/javascript"
+      src="/media/js/jquery.url.packed.js"> </script>
+
+
+      <script type="text/javascript" src="/media/js/init.js"> </script>
 
     </body>
   </html>
