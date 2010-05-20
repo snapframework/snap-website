@@ -6,19 +6,16 @@ module Main where
 import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.Lazy.Char8 as L
-import qualified Data.ByteString.UTF8 as UTF8
 import           Data.Map (Map)
 import qualified Data.Map as Map
 import           Data.Maybe
 import qualified Data.Text as T
 import           Control.Applicative
 import           Control.Concurrent
-import           Control.Exception (evaluate, throwIO, ErrorCall(..), SomeException)
+import           Control.Exception (evaluate, throwIO, SomeException)
 import           Control.Monad
 import           Control.Monad.CatchIO
 import           Control.Monad.Trans
-import           Data.IORef
-import qualified Data.Set as Set
 import           Data.Typeable
 import           Prelude hiding (catch)
 import           Snap.Http.Server
@@ -31,10 +28,8 @@ import           System.Posix.Env
 import           System.Exit
 import           System.IO
 import           System.Process
-import           System.Random
 import           Text.Templating.Heist
 import qualified Text.XHtmlCombinators.Escape as XH
-import           Text.XML.Expat.Cursor
 import           Text.XML.Expat.Tree hiding (Node)
 
 
@@ -127,67 +122,6 @@ catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
 
 bindMarkdownTag :: TemplateState Snap -> IO (TemplateState Snap)
 bindMarkdownTag = return . bindSplice "markdown" markdownSplice
-
-
-bindStaticTag :: TemplateState Snap
-              -> IO (TemplateState Snap, MVar (Map ByteString [Node]))
-bindStaticTag ts = do
-    sr <- newIORef $ Set.empty
-    mv <- newMVar Map.empty
-
-    return $ (addOnLoadHook (assignIds sr) $
-                bindSplice "static" (staticSplice mv) ts,
-              mv)
-
-  where
-    staticSplice mv = do
-        tree <- getParamNode
-        let i = fromJust $ getAttribute tree "id"
-
-        mp <- liftIO $ readMVar mv
-
-        (mp',ns) <- do
-                       let mbn = Map.lookup i mp
-                       case mbn of
-                           Nothing -> do
-                               nodes' <- runNodeList $ getChildren tree
-                               return $! (Map.insert i nodes' mp, nodes')
-                           (Just n) -> do
-                               stopRecursion
-                               return $! (mp,n)
-
-        liftIO $ modifyMVar_ mv (const $ return mp')
-
-        return ns
-
-
-    generateId :: IO Int
-    generateId = getStdRandom random
-
-    assignIds setref = mapM f
-        where
-          f node = g $ fromTree node
-
-          getId = do
-              i  <- liftM (B.pack . show) generateId
-              st <- readIORef setref
-              if Set.member i st
-                then getId
-                else do
-                    writeIORef setref $ Set.insert i st
-                    return i
-
-          g curs = do
-              let node = current curs
-              curs' <- if getName node == "static"
-                         then do
-                             i <- getId
-                             return $ modifyContent (setAttribute "id" i) curs
-                         else return curs
-              let mbc = nextDF curs'
-              maybe (return $ toTree curs') g mbc
-
-
 
 
 data PandocMissingException = PandocMissingException
