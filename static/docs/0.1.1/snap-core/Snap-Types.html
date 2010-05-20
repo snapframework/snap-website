@@ -333,6 +333,22 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3ArouteLocal"
+>routeLocal</A
+> ::  [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a)] -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AgetRequest"
 >getRequest</A
 > :: <A HREF="Snap-Types.html#t%3ASnap"
@@ -2395,6 +2411,56 @@ for HTTP as well as the <TT
        , (&quot;login&quot;,       method POST doLogin) ]
 </PRE
 ></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:routeLocal"
+><A NAME="v%3ArouteLocal"
+></A
+></A
+><B
+>routeLocal</B
+> ::  [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a)] -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Routing.html#routeLocal"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>The <TT
+><A HREF="Snap-Types.html#v%3ArouteLocal"
+>routeLocal</A
+></TT
+> function is the same as <TT
+><A HREF="Snap-Types.html#v%3Aroute"
+>route</A
+></TT
+>, except it doesn't change
+ the request's context path. This is useful if you want to route to a
+ particular handler but you want that handler to receive the <TT
+><A HREF="Snap-Types.html#v%3ArqPathInfo"
+>rqPathInfo</A
+></TT
+> as
+ it is.
+</TD
 ></TR
 ><TR
 ><TD CLASS="s15"

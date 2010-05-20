@@ -425,7 +425,7 @@ span.spaces    { background: white }
 <span class="lineno">  414 </span><span class="decl"><span class="istickedoff">localRequest f m = do</span>
 <span class="lineno">  415 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
 <span class="lineno">  416 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  417 </span><span class="spaces">    </span><span class="istickedoff">runAct req &lt;|&gt; <span class="nottickedoff">(putRequest req &gt;&gt; pass)</span></span>
+<span class="lineno">  417 </span><span class="spaces">    </span><span class="istickedoff">runAct req &lt;|&gt; (putRequest <span class="nottickedoff">req</span> &gt;&gt; pass)</span>
 <span class="lineno">  418 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  419 </span><span class="spaces">  </span><span class="istickedoff">where</span>
 <span class="lineno">  420 </span><span class="spaces">    </span><span class="istickedoff">runAct req = do</span>
