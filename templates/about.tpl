@@ -42,7 +42,7 @@
           Higher-level facilities for building web applications (like
           user/session management, component interfaces, data modeling, etc.)
           are planned but not yet implemented, so this release will mostly be
-          of interest for those who:
+          of interest to those who:
           <ul>
             <li>
               need a fast and minimal HTTP API at roughly the same level of

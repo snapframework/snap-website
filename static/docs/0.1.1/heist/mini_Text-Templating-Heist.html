@@ -41,9 +41,6 @@
 >&nbsp;<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad" TARGET="main"
 >TemplateMonad</A
 > m a</DIV
-> <H2
->FIXME: don't export state fields
-</H2
 > <DIV CLASS="decl"
 ><SPAN CLASS="keyword"
 >data</SPAN
@@ -73,6 +70,26 @@
 ><A HREF="Text-Templating-Heist.html#v%3AlookupTemplate" TARGET="main"
 >lookupTemplate</A
 ></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AaddOnLoadHook" TARGET="main"
+>addOnLoadHook</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AaddPreRunHook" TARGET="main"
+>addPreRunHook</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AaddPostRunHook" TARGET="main"
+>addPostRunHook</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AsetTemplates" TARGET="main"
+>setTemplates</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AloadTemplates" TARGET="main"
+>loadTemplates</A
+></DIV
 > <H1
 >TemplateMonad functions
 </H1
@@ -96,32 +113,43 @@
 >Functions for running splices and templates
 </H1
 > <DIV CLASS="decl"
-><A HREF="Text-Templating-Heist.html#v%3ArunSplice" TARGET="main"
->runSplice</A
-></DIV
-> <DIV CLASS="decl"
 ><A HREF="Text-Templating-Heist.html#v%3ArunTemplate" TARGET="main"
 >runTemplate</A
 ></DIV
 > <DIV CLASS="decl"
-><A HREF="Text-Templating-Heist.html#v%3ArunBareTemplate" TARGET="main"
->runBareTemplate</A
+><A HREF="Text-Templating-Heist.html#v%3AevalTemplate" TARGET="main"
+>evalTemplate</A
 ></DIV
 > <DIV CLASS="decl"
-><A HREF="Text-Templating-Heist.html#v%3AgetDoc" TARGET="main"
->getDoc</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Text-Templating-Heist.html#v%3AloadTemplates" TARGET="main"
->loadTemplates</A
+><A HREF="Text-Templating-Heist.html#v%3AcallTemplate" TARGET="main"
+>callTemplate</A
 ></DIV
 > <DIV CLASS="decl"
 ><A HREF="Text-Templating-Heist.html#v%3ArenderTemplate" TARGET="main"
 >renderTemplate</A
 ></DIV
 > <DIV CLASS="decl"
-><A HREF="Text-Templating-Heist.html#v%3ArenderTemplate%27" TARGET="main"
->renderTemplate'</A
+><A HREF="Text-Templating-Heist.html#v%3AbindStrings" TARGET="main"
+>bindStrings</A
+></DIV
+> <H1
+>Misc functions
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3ArunSplice" TARGET="main"
+>runSplice</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3ArunRawTemplate" TARGET="main"
+>runRawTemplate</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AgetDoc" TARGET="main"
+>getDoc</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AbindStaticTag" TARGET="main"
+>bindStaticTag</A
 ></DIV
 > <DIV CLASS="decl"
 ><A HREF="Text-Templating-Heist.html#v%3AheistExpatOptions" TARGET="main"

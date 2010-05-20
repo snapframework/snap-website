@@ -77,25 +77,25 @@
 <a name="line-69"></a>             <span class='hs-varid'>formatTime</span> <span class='hs-varid'>defaultTimeLocale</span> <span class='hs-str'>"%d/%b/%Y:%H:%M:%S %z"</span> <span class='hs-varid'>now</span>
 <a name="line-70"></a>
 <a name="line-71"></a><a name="dateThread"></a><span class='hs-definition'>dateThread</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>DateState</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-72"></a><span class='hs-definition'>dateThread</span> <span class='hs-layout'>(</span><span class='hs-conid'>DateState</span> <span class='hs-varid'>dateString</span> <span class='hs-varid'>logString</span> <span class='hs-varid'>time</span> <span class='hs-varid'>valueIsOld</span> <span class='hs-varid'>morePlease</span> <span class='hs-varid'>dataAvailable</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span>
-<a name="line-73"></a>    <span class='hs-varid'>forever</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>do</span>
-<a name="line-74"></a>        <span class='hs-comment'>-- a lot of effort to make sure we don't deadlock</span>
-<a name="line-75"></a>
-<a name="line-76"></a>        <span class='hs-varid'>takeMVar</span> <span class='hs-varid'>morePlease</span>
-<a name="line-77"></a>
-<a name="line-78"></a>        <span class='hs-layout'>(</span><span class='hs-varid'>s1</span><span class='hs-layout'>,</span><span class='hs-varid'>s2</span><span class='hs-layout'>,</span><span class='hs-varid'>now</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>fetchTime</span>
-<a name="line-79"></a>        <span class='hs-varid'>atomicModifyIORef</span> <span class='hs-varid'>dateString</span> <span class='hs-varop'>$</span> <span class='hs-varid'>const</span> <span class='hs-layout'>(</span><span class='hs-varid'>s1</span><span class='hs-layout'>,</span><span class='hs-conid'>()</span><span class='hs-layout'>)</span>
-<a name="line-80"></a>        <span class='hs-varid'>atomicModifyIORef</span> <span class='hs-varid'>logString</span> <span class='hs-varop'>$</span> <span class='hs-varid'>const</span> <span class='hs-layout'>(</span><span class='hs-varid'>s2</span><span class='hs-layout'>,</span><span class='hs-conid'>()</span><span class='hs-layout'>)</span>
-<a name="line-81"></a>        <span class='hs-varid'>atomicModifyIORef</span> <span class='hs-varid'>time</span> <span class='hs-varop'>$</span> <span class='hs-varid'>const</span> <span class='hs-layout'>(</span><span class='hs-varid'>now</span><span class='hs-layout'>,</span><span class='hs-conid'>()</span><span class='hs-layout'>)</span>
-<a name="line-82"></a>
-<a name="line-83"></a>        <span class='hs-varid'>writeIORef</span> <span class='hs-varid'>valueIsOld</span> <span class='hs-conid'>False</span>
-<a name="line-84"></a>        <span class='hs-varid'>tryPutMVar</span> <span class='hs-varid'>dataAvailable</span> <span class='hs-conid'>()</span>
-<a name="line-85"></a>
-<a name="line-86"></a>        <span class='hs-varid'>threadDelay</span> <span class='hs-num'>2000000</span>
-<a name="line-87"></a>
-<a name="line-88"></a>        <span class='hs-varid'>takeMVar</span> <span class='hs-varid'>dataAvailable</span>
-<a name="line-89"></a>        <span class='hs-varid'>writeIORef</span> <span class='hs-varid'>valueIsOld</span> <span class='hs-conid'>True</span>
-<a name="line-90"></a>
+<a name="line-72"></a><span class='hs-definition'>dateThread</span> <span class='hs-varid'>ds</span><span class='hs-keyglyph'>@</span><span class='hs-layout'>(</span><span class='hs-conid'>DateState</span> <span class='hs-varid'>dateString</span> <span class='hs-varid'>logString</span> <span class='hs-varid'>time</span> <span class='hs-varid'>valueIsOld</span> <span class='hs-varid'>morePlease</span>
+<a name="line-73"></a>                         <span class='hs-varid'>dataAvailable</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-74"></a>    <span class='hs-comment'>-- a lot of effort to make sure we don't deadlock</span>
+<a name="line-75"></a>    <span class='hs-varid'>takeMVar</span> <span class='hs-varid'>morePlease</span>
+<a name="line-76"></a>
+<a name="line-77"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>s1</span><span class='hs-layout'>,</span><span class='hs-varid'>s2</span><span class='hs-layout'>,</span><span class='hs-varid'>now</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>fetchTime</span>
+<a name="line-78"></a>    <span class='hs-varid'>atomicModifyIORef</span> <span class='hs-varid'>dateString</span> <span class='hs-varop'>$</span> <span class='hs-varid'>const</span> <span class='hs-layout'>(</span><span class='hs-varid'>s1</span><span class='hs-layout'>,</span><span class='hs-conid'>()</span><span class='hs-layout'>)</span>
+<a name="line-79"></a>    <span class='hs-varid'>atomicModifyIORef</span> <span class='hs-varid'>logString</span> <span class='hs-varop'>$</span> <span class='hs-varid'>const</span> <span class='hs-layout'>(</span><span class='hs-varid'>s2</span><span class='hs-layout'>,</span><span class='hs-conid'>()</span><span class='hs-layout'>)</span>
+<a name="line-80"></a>    <span class='hs-varid'>atomicModifyIORef</span> <span class='hs-varid'>time</span> <span class='hs-varop'>$</span> <span class='hs-varid'>const</span> <span class='hs-layout'>(</span><span class='hs-varid'>now</span><span class='hs-layout'>,</span><span class='hs-conid'>()</span><span class='hs-layout'>)</span>
+<a name="line-81"></a>
+<a name="line-82"></a>    <span class='hs-varid'>writeIORef</span> <span class='hs-varid'>valueIsOld</span> <span class='hs-conid'>False</span>
+<a name="line-83"></a>    <span class='hs-varid'>tryPutMVar</span> <span class='hs-varid'>dataAvailable</span> <span class='hs-conid'>()</span>
+<a name="line-84"></a>
+<a name="line-85"></a>    <span class='hs-varid'>threadDelay</span> <span class='hs-num'>2000000</span>
+<a name="line-86"></a>
+<a name="line-87"></a>    <span class='hs-varid'>takeMVar</span> <span class='hs-varid'>dataAvailable</span>
+<a name="line-88"></a>    <span class='hs-varid'>writeIORef</span> <span class='hs-varid'>valueIsOld</span> <span class='hs-conid'>True</span>
+<a name="line-89"></a>
+<a name="line-90"></a>    <span class='hs-varid'>dateThread</span> <span class='hs-varid'>ds</span>
 <a name="line-91"></a>
 <a name="line-92"></a><a name="ensureFreshDate"></a><span class='hs-definition'>ensureFreshDate</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
 <a name="line-93"></a><span class='hs-definition'>ensureFreshDate</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>block</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>do</span>
