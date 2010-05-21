@@ -93,5 +93,6 @@ This means that Happstack's results in this test are not really an
 apples-to-apples comparison with the other frameworks, but they're still
 somewhat meaningful since they reflect a deficiency in the server.
 
-
+See the [raw test output](/bench-raw-results.txt) for more detailed
+information.
 
