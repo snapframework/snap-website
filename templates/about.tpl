@@ -76,8 +76,8 @@
           <p>
             <strong><a href="http://softwaresimply.blogspot.com/">Doug
             Beardsley</a></strong> loves Haskell and has been playing with
-            Haskell web development using Happstack since 2008.  He currently
-            works in the financial industry doing Haskell development.
+            Haskell web development since 2008.  He currently works for a
+            finance company doing Haskell development.
           </p>
           <p>
             <strong><a href="http://rfrn.org/~shu">Shu-yu Guo</a></strong>

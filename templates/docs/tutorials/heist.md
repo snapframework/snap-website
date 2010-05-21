@@ -405,8 +405,10 @@ parameters is cumbersome.  `callTemplate` does this for you.
 example of how Heist can be used.  It demonstrates some of the more
 sophisticated things you can do with Heist such as custom splices,
 dynamic template reloading, and content caching.  In the future much
-of the general purpose code in snap-website will become built-in
-functionality in snap-core.
+of the general purpose code in snap-website will be integrated into
+Snap.  Another good way to learn about programming Heist is to look at
+the [code for the built-in splices](/docs/api/heist).  The code
+for these splices is in the Text.Templating.Heist.Splices module.
 
 NOTE: It should be emphasized that Heist is still in the early stages
 of development, and its interfaces are subject to change.  
