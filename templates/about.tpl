@@ -6,7 +6,7 @@
         <h2>What is the Snap Framework?</h2>
 
         <p><img class="small-logo" src="/media/img/logo-small.png" /><strong>Snap</strong> is a simple web development framework for unix
-          systems, written in <a href="http://www.haskell.org">Haskell</a>
+          systems, written in the <a href="http://www.haskell.org">Haskell</a>
           programming language.
         </p>
 
