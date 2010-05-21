@@ -407,263 +407,246 @@ span.spaces    { background: white }
 <span class="lineno">  396 </span>
 <span class="lineno">  397 </span>
 <span class="lineno">  398 </span>------------------------------------------------------------------------------
-<span class="lineno">  399 </span>-- | See 'rqParam'. Looks up a value for the given named parameter. If more
-<span class="lineno">  400 </span>-- than one value was entered for the given parameter name, 'getParam' gloms
-<span class="lineno">  401 </span>-- the values together with:
-<span class="lineno">  402 </span>--
-<span class="lineno">  403 </span>-- @    'S.intercalate' \&quot; \&quot;@
-<span class="lineno">  404 </span>--
-<span class="lineno">  405 </span>getParam :: ByteString          -- ^ parameter name to look up
-<span class="lineno">  406 </span>         -&gt; Request             -- ^ HTTP request
-<span class="lineno">  407 </span>         -&gt; Maybe ByteString
-<span class="lineno">  408 </span><span class="decl"><span class="nottickedoff">getParam k rq = liftM (S.intercalate &quot; &quot;) $ rqParam k rq</span></span>
-<span class="lineno">  409 </span>
-<span class="lineno">  410 </span>
-<span class="lineno">  411 </span>------------------------------------------------------------------------------
-<span class="lineno">  412 </span>-- | Modifies the parameters mapping (which is a @Map ByteString ByteString@) in
-<span class="lineno">  413 </span>-- a 'Request' using the given function.
-<span class="lineno">  414 </span>rqModifyParams :: (Params -&gt; Params) -&gt; Request -&gt; Request
-<span class="lineno">  415 </span><span class="decl"><span class="istickedoff">rqModifyParams f r = r { rqParams = p }</span>
-<span class="lineno">  416 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  417 </span><span class="spaces">    </span><span class="istickedoff">p = f $ rqParams r</span></span>
-<span class="lineno">  418 </span>{-# INLINE rqModifyParams #-}
-<span class="lineno">  419 </span>
+<span class="lineno">  399 </span>-- | Modifies the parameters mapping (which is a @Map ByteString ByteString@) in
+<span class="lineno">  400 </span>-- a 'Request' using the given function.
+<span class="lineno">  401 </span>rqModifyParams :: (Params -&gt; Params) -&gt; Request -&gt; Request
+<span class="lineno">  402 </span><span class="decl"><span class="istickedoff">rqModifyParams f r = r { rqParams = p }</span>
+<span class="lineno">  403 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  404 </span><span class="spaces">    </span><span class="istickedoff">p = f $ rqParams r</span></span>
+<span class="lineno">  405 </span>{-# INLINE rqModifyParams #-}
+<span class="lineno">  406 </span>
+<span class="lineno">  407 </span>
+<span class="lineno">  408 </span>------------------------------------------------------------------------------
+<span class="lineno">  409 </span>-- | Writes a key-value pair to the parameters mapping within the given request.
+<span class="lineno">  410 </span>rqSetParam :: ByteString        -- ^ parameter name
+<span class="lineno">  411 </span>           -&gt; [ByteString]      -- ^ parameter values
+<span class="lineno">  412 </span>           -&gt; Request           -- ^ request
+<span class="lineno">  413 </span>           -&gt; Request
+<span class="lineno">  414 </span><span class="decl"><span class="istickedoff">rqSetParam k v = rqModifyParams $ Map.insert k v</span></span>
+<span class="lineno">  415 </span>{-# INLINE rqSetParam #-}
+<span class="lineno">  416 </span>
+<span class="lineno">  417 </span>------------------------------------------------------------------------------
+<span class="lineno">  418 </span>-- responses
+<span class="lineno">  419 </span>------------------------------------------------------------------------------
 <span class="lineno">  420 </span>
-<span class="lineno">  421 </span>------------------------------------------------------------------------------
-<span class="lineno">  422 </span>-- | Writes a key-value pair to the parameters mapping within the given request.
-<span class="lineno">  423 </span>rqSetParam :: ByteString        -- ^ parameter name
-<span class="lineno">  424 </span>           -&gt; [ByteString]      -- ^ parameter values
-<span class="lineno">  425 </span>           -&gt; Request           -- ^ request
-<span class="lineno">  426 </span>           -&gt; Request
-<span class="lineno">  427 </span><span class="decl"><span class="istickedoff">rqSetParam k v = rqModifyParams $ Map.insert k v</span></span>
-<span class="lineno">  428 </span>{-# INLINE rqSetParam #-}
-<span class="lineno">  429 </span>
-<span class="lineno">  430 </span>------------------------------------------------------------------------------
-<span class="lineno">  431 </span>-- responses
-<span class="lineno">  432 </span>------------------------------------------------------------------------------
-<span class="lineno">  433 </span>
-<span class="lineno">  434 </span>-- | An empty 'Response'.
-<span class="lineno">  435 </span>emptyResponse       :: Response
-<span class="lineno">  436 </span><span class="decl"><span class="istickedoff">emptyResponse       = Response Map.empty (1,1) Nothing (Enum return) 200 &quot;OK&quot;</span></span>
-<span class="lineno">  437 </span>
-<span class="lineno">  438 </span>
-<span class="lineno">  439 </span>------------------------------------------------------------------------------
-<span class="lineno">  440 </span>-- | Sets an HTTP response body to the given 'Enumerator' value.
-<span class="lineno">  441 </span>setResponseBody     :: (forall a . Enumerator a)  -- ^ new response body
-<span class="lineno">  442 </span>                                                  -- enumerator
-<span class="lineno">  443 </span>                    -&gt; Response                   -- ^ response to modify
-<span class="lineno">  444 </span>                    -&gt; Response
-<span class="lineno">  445 </span><span class="decl"><span class="istickedoff">setResponseBody e r = r { rspBody = Enum e }</span></span>
-<span class="lineno">  446 </span>{-# INLINE setResponseBody #-}
-<span class="lineno">  447 </span>
-<span class="lineno">  448 </span>
-<span class="lineno">  449 </span>------------------------------------------------------------------------------
-<span class="lineno">  450 </span>-- | Sets the HTTP response status.
-<span class="lineno">  451 </span>setResponseStatus   :: Int        -- ^ HTTP response integer code
-<span class="lineno">  452 </span>                    -&gt; ByteString -- ^ HTTP response explanation
-<span class="lineno">  453 </span>                    -&gt; Response   -- ^ Response to be modified
-<span class="lineno">  454 </span>                    -&gt; Response
-<span class="lineno">  455 </span><span class="decl"><span class="istickedoff">setResponseStatus s reason r = r { rspStatus=s, rspStatusReason=reason }</span></span>
-<span class="lineno">  456 </span>{-# INLINE setResponseStatus #-}
-<span class="lineno">  457 </span>
-<span class="lineno">  458 </span>
-<span class="lineno">  459 </span>------------------------------------------------------------------------------
-<span class="lineno">  460 </span>-- | Modifies a response body.
-<span class="lineno">  461 </span>modifyResponseBody  :: (forall a . Enumerator a -&gt; Enumerator a)
-<span class="lineno">  462 </span>                    -&gt; Response
-<span class="lineno">  463 </span>                    -&gt; Response
-<span class="lineno">  464 </span><span class="decl"><span class="istickedoff">modifyResponseBody f r = r { rspBody = rspBodyMap f (rspBody r) }</span></span>
-<span class="lineno">  465 </span>{-# INLINE modifyResponseBody #-}
-<span class="lineno">  466 </span>
-<span class="lineno">  467 </span>
-<span class="lineno">  468 </span>------------------------------------------------------------------------------
-<span class="lineno">  469 </span>-- | Sets the @Content-Type@ in the 'Response' headers.
-<span class="lineno">  470 </span>setContentType      :: ByteString -&gt; Response -&gt; Response
-<span class="lineno">  471 </span><span class="decl"><span class="istickedoff">setContentType = setHeader &quot;Content-Type&quot;</span></span>
-<span class="lineno">  472 </span>{-# INLINE setContentType #-}
-<span class="lineno">  473 </span>
-<span class="lineno">  474 </span>
-<span class="lineno">  475 </span>------------------------------------------------------------------------------
-<span class="lineno">  476 </span>-- | Adds an HTTP 'Cookie' to the 'Response' headers.
-<span class="lineno">  477 </span>addCookie :: Cookie            -- ^ cookie value
-<span class="lineno">  478 </span>          -&gt; Response          -- ^ response to modify
-<span class="lineno">  479 </span>          -&gt; Response
-<span class="lineno">  480 </span><span class="decl"><span class="istickedoff">addCookie (Cookie k v mbExpTime mbDomain mbPath) = updateHeaders f</span>
-<span class="lineno">  481 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  482 </span><span class="spaces">    </span><span class="istickedoff">f       = Map.insertWith' <span class="nottickedoff">(++)</span> &quot;Set-Cookie&quot; [cookie]</span>
-<span class="lineno">  483 </span><span class="spaces">    </span><span class="istickedoff">cookie  = S.concat [k, &quot;=&quot;, v, path, exptime, domain]</span>
-<span class="lineno">  484 </span><span class="spaces">    </span><span class="istickedoff">path    = maybe <span class="nottickedoff">&quot;&quot;</span> (S.append &quot;; path=&quot;) mbPath</span>
-<span class="lineno">  485 </span><span class="spaces">    </span><span class="istickedoff">domain  = maybe <span class="nottickedoff">&quot;&quot;</span> (S.append &quot;; domain=&quot;) mbDomain</span>
-<span class="lineno">  486 </span><span class="spaces">    </span><span class="istickedoff">exptime = maybe <span class="nottickedoff">&quot;&quot;</span> (S.append &quot;; expires=&quot; . fmt) mbExpTime</span>
-<span class="lineno">  487 </span><span class="spaces">    </span><span class="istickedoff">fmt     = fromStr . formatTime defaultTimeLocale &quot;%a, %d-%b-%Y %H:%M:%S GMT&quot;</span></span>
-<span class="lineno">  488 </span>
-<span class="lineno">  489 </span>
-<span class="lineno">  490 </span>------------------------------------------------------------------------------
-<span class="lineno">  491 </span>-- | A note here: if you want to set the @Content-Length@ for the response,
-<span class="lineno">  492 </span>-- Snap forces you to do it with this function rather than by setting it in the
-<span class="lineno">  493 </span>-- headers; the @Content-Length@ in the headers will be ignored.
-<span class="lineno">  494 </span>--
-<span class="lineno">  495 </span>-- The reason for this is that Snap needs to look up the value of
-<span class="lineno">  496 </span>-- @Content-Length@ for each request, and looking the string value up in the
-<span class="lineno">  497 </span>-- headers and parsing the number out of the text will be too expensive.
-<span class="lineno">  498 </span>--
-<span class="lineno">  499 </span>-- If you don't set a content length in your response, HTTP keep-alive will be
-<span class="lineno">  500 </span>-- disabled for HTTP\/1.0 clients, forcing a @Connection: close@. For HTTP\/1.1
-<span class="lineno">  501 </span>-- clients, Snap will switch to the chunked transfer encoding if
-<span class="lineno">  502 </span>-- @Content-Length@ is not specified.
-<span class="lineno">  503 </span>setContentLength    :: Int -&gt; Response -&gt; Response
-<span class="lineno">  504 </span><span class="decl"><span class="istickedoff">setContentLength l r = r { rspContentLength = Just l }</span></span>
-<span class="lineno">  505 </span>{-# INLINE setContentLength #-}
-<span class="lineno">  506 </span>
-<span class="lineno">  507 </span>
-<span class="lineno">  508 </span>------------------------------------------------------------------------------
-<span class="lineno">  509 </span>-- | Removes any @Content-Length@ set in the 'Response'.
-<span class="lineno">  510 </span>clearContentLength :: Response -&gt; Response
-<span class="lineno">  511 </span><span class="decl"><span class="istickedoff">clearContentLength r = r { rspContentLength = Nothing }</span></span>
-<span class="lineno">  512 </span>{-# INLINE clearContentLength #-}
-<span class="lineno">  513 </span>
-<span class="lineno">  514 </span>
-<span class="lineno">  515 </span>------------------------------------------------------------------------------
-<span class="lineno">  516 </span>-- HTTP dates
+<span class="lineno">  421 </span>-- | An empty 'Response'.
+<span class="lineno">  422 </span>emptyResponse       :: Response
+<span class="lineno">  423 </span><span class="decl"><span class="istickedoff">emptyResponse       = Response Map.empty (1,1) Nothing (Enum return) 200 &quot;OK&quot;</span></span>
+<span class="lineno">  424 </span>
+<span class="lineno">  425 </span>
+<span class="lineno">  426 </span>------------------------------------------------------------------------------
+<span class="lineno">  427 </span>-- | Sets an HTTP response body to the given 'Enumerator' value.
+<span class="lineno">  428 </span>setResponseBody     :: (forall a . Enumerator a)  -- ^ new response body
+<span class="lineno">  429 </span>                                                  -- enumerator
+<span class="lineno">  430 </span>                    -&gt; Response                   -- ^ response to modify
+<span class="lineno">  431 </span>                    -&gt; Response
+<span class="lineno">  432 </span><span class="decl"><span class="istickedoff">setResponseBody e r = r { rspBody = Enum e }</span></span>
+<span class="lineno">  433 </span>{-# INLINE setResponseBody #-}
+<span class="lineno">  434 </span>
+<span class="lineno">  435 </span>
+<span class="lineno">  436 </span>------------------------------------------------------------------------------
+<span class="lineno">  437 </span>-- | Sets the HTTP response status.
+<span class="lineno">  438 </span>setResponseStatus   :: Int        -- ^ HTTP response integer code
+<span class="lineno">  439 </span>                    -&gt; ByteString -- ^ HTTP response explanation
+<span class="lineno">  440 </span>                    -&gt; Response   -- ^ Response to be modified
+<span class="lineno">  441 </span>                    -&gt; Response
+<span class="lineno">  442 </span><span class="decl"><span class="istickedoff">setResponseStatus s reason r = r { rspStatus=s, rspStatusReason=reason }</span></span>
+<span class="lineno">  443 </span>{-# INLINE setResponseStatus #-}
+<span class="lineno">  444 </span>
+<span class="lineno">  445 </span>
+<span class="lineno">  446 </span>------------------------------------------------------------------------------
+<span class="lineno">  447 </span>-- | Modifies a response body.
+<span class="lineno">  448 </span>modifyResponseBody  :: (forall a . Enumerator a -&gt; Enumerator a)
+<span class="lineno">  449 </span>                    -&gt; Response
+<span class="lineno">  450 </span>                    -&gt; Response
+<span class="lineno">  451 </span><span class="decl"><span class="istickedoff">modifyResponseBody f r = r { rspBody = rspBodyMap f (rspBody r) }</span></span>
+<span class="lineno">  452 </span>{-# INLINE modifyResponseBody #-}
+<span class="lineno">  453 </span>
+<span class="lineno">  454 </span>
+<span class="lineno">  455 </span>------------------------------------------------------------------------------
+<span class="lineno">  456 </span>-- | Sets the @Content-Type@ in the 'Response' headers.
+<span class="lineno">  457 </span>setContentType      :: ByteString -&gt; Response -&gt; Response
+<span class="lineno">  458 </span><span class="decl"><span class="istickedoff">setContentType = setHeader &quot;Content-Type&quot;</span></span>
+<span class="lineno">  459 </span>{-# INLINE setContentType #-}
+<span class="lineno">  460 </span>
+<span class="lineno">  461 </span>
+<span class="lineno">  462 </span>------------------------------------------------------------------------------
+<span class="lineno">  463 </span>-- | Adds an HTTP 'Cookie' to the 'Response' headers.
+<span class="lineno">  464 </span>addCookie :: Cookie            -- ^ cookie value
+<span class="lineno">  465 </span>          -&gt; Response          -- ^ response to modify
+<span class="lineno">  466 </span>          -&gt; Response
+<span class="lineno">  467 </span><span class="decl"><span class="istickedoff">addCookie (Cookie k v mbExpTime mbDomain mbPath) = updateHeaders f</span>
+<span class="lineno">  468 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  469 </span><span class="spaces">    </span><span class="istickedoff">f       = Map.insertWith' <span class="nottickedoff">(++)</span> &quot;Set-Cookie&quot; [cookie]</span>
+<span class="lineno">  470 </span><span class="spaces">    </span><span class="istickedoff">cookie  = S.concat [k, &quot;=&quot;, v, path, exptime, domain]</span>
+<span class="lineno">  471 </span><span class="spaces">    </span><span class="istickedoff">path    = maybe <span class="nottickedoff">&quot;&quot;</span> (S.append &quot;; path=&quot;) mbPath</span>
+<span class="lineno">  472 </span><span class="spaces">    </span><span class="istickedoff">domain  = maybe <span class="nottickedoff">&quot;&quot;</span> (S.append &quot;; domain=&quot;) mbDomain</span>
+<span class="lineno">  473 </span><span class="spaces">    </span><span class="istickedoff">exptime = maybe <span class="nottickedoff">&quot;&quot;</span> (S.append &quot;; expires=&quot; . fmt) mbExpTime</span>
+<span class="lineno">  474 </span><span class="spaces">    </span><span class="istickedoff">fmt     = fromStr . formatTime defaultTimeLocale &quot;%a, %d-%b-%Y %H:%M:%S GMT&quot;</span></span>
+<span class="lineno">  475 </span>
+<span class="lineno">  476 </span>
+<span class="lineno">  477 </span>------------------------------------------------------------------------------
+<span class="lineno">  478 </span>-- | A note here: if you want to set the @Content-Length@ for the response,
+<span class="lineno">  479 </span>-- Snap forces you to do it with this function rather than by setting it in the
+<span class="lineno">  480 </span>-- headers; the @Content-Length@ in the headers will be ignored.
+<span class="lineno">  481 </span>--
+<span class="lineno">  482 </span>-- The reason for this is that Snap needs to look up the value of
+<span class="lineno">  483 </span>-- @Content-Length@ for each request, and looking the string value up in the
+<span class="lineno">  484 </span>-- headers and parsing the number out of the text will be too expensive.
+<span class="lineno">  485 </span>--
+<span class="lineno">  486 </span>-- If you don't set a content length in your response, HTTP keep-alive will be
+<span class="lineno">  487 </span>-- disabled for HTTP\/1.0 clients, forcing a @Connection: close@. For HTTP\/1.1
+<span class="lineno">  488 </span>-- clients, Snap will switch to the chunked transfer encoding if
+<span class="lineno">  489 </span>-- @Content-Length@ is not specified.
+<span class="lineno">  490 </span>setContentLength    :: Int -&gt; Response -&gt; Response
+<span class="lineno">  491 </span><span class="decl"><span class="istickedoff">setContentLength l r = r { rspContentLength = Just l }</span></span>
+<span class="lineno">  492 </span>{-# INLINE setContentLength #-}
+<span class="lineno">  493 </span>
+<span class="lineno">  494 </span>
+<span class="lineno">  495 </span>------------------------------------------------------------------------------
+<span class="lineno">  496 </span>-- | Removes any @Content-Length@ set in the 'Response'.
+<span class="lineno">  497 </span>clearContentLength :: Response -&gt; Response
+<span class="lineno">  498 </span><span class="decl"><span class="istickedoff">clearContentLength r = r { rspContentLength = Nothing }</span></span>
+<span class="lineno">  499 </span>{-# INLINE clearContentLength #-}
+<span class="lineno">  500 </span>
+<span class="lineno">  501 </span>
+<span class="lineno">  502 </span>------------------------------------------------------------------------------
+<span class="lineno">  503 </span>-- HTTP dates
+<span class="lineno">  504 </span>
+<span class="lineno">  505 </span>{-
+<span class="lineno">  506 </span>-- | Converts a 'ClockTime' into an HTTP timestamp.
+<span class="lineno">  507 </span>formatHttpTime :: UTCTime -&gt; ByteString
+<span class="lineno">  508 </span>formatHttpTime = fromStr . formatTime defaultTimeLocale &quot;%a, %d %b %Y %X GMT&quot;
+<span class="lineno">  509 </span>
+<span class="lineno">  510 </span>-- | Converts an HTTP timestamp into a 'UTCTime'.
+<span class="lineno">  511 </span>parseHttpTime :: ByteString -&gt; Maybe UTCTime
+<span class="lineno">  512 </span>parseHttpTime s' =
+<span class="lineno">  513 </span>    parseTime defaultTimeLocale &quot;%a, %d %b %Y %H:%M:%S GMT&quot; s
+<span class="lineno">  514 </span>  where
+<span class="lineno">  515 </span>    s = toStr s'
+<span class="lineno">  516 </span>-}
 <span class="lineno">  517 </span>
-<span class="lineno">  518 </span>{-
-<span class="lineno">  519 </span>-- | Converts a 'ClockTime' into an HTTP timestamp.
-<span class="lineno">  520 </span>formatHttpTime :: UTCTime -&gt; ByteString
-<span class="lineno">  521 </span>formatHttpTime = fromStr . formatTime defaultTimeLocale &quot;%a, %d %b %Y %X GMT&quot;
-<span class="lineno">  522 </span>
-<span class="lineno">  523 </span>-- | Converts an HTTP timestamp into a 'UTCTime'.
-<span class="lineno">  524 </span>parseHttpTime :: ByteString -&gt; Maybe UTCTime
-<span class="lineno">  525 </span>parseHttpTime s' =
-<span class="lineno">  526 </span>    parseTime defaultTimeLocale &quot;%a, %d %b %Y %H:%M:%S GMT&quot; s
-<span class="lineno">  527 </span>  where
-<span class="lineno">  528 </span>    s = toStr s'
-<span class="lineno">  529 </span>-}
+<span class="lineno">  518 </span>-- | Converts a 'CTime' into an HTTP timestamp.
+<span class="lineno">  519 </span>formatHttpTime :: CTime -&gt; IO ByteString
+<span class="lineno">  520 </span><span class="decl"><span class="istickedoff">formatHttpTime t = allocaBytes 40 $ \ptr -&gt; do</span>
+<span class="lineno">  521 </span><span class="spaces">    </span><span class="istickedoff">c_format_http_time t ptr</span>
+<span class="lineno">  522 </span><span class="spaces">    </span><span class="istickedoff">S.packCString ptr</span></span>
+<span class="lineno">  523 </span>
+<span class="lineno">  524 </span>
+<span class="lineno">  525 </span>------------------------------------------------------------------------------
+<span class="lineno">  526 </span>-- | Converts an HTTP timestamp into a 'CTime'.
+<span class="lineno">  527 </span>parseHttpTime :: ByteString -&gt; IO CTime
+<span class="lineno">  528 </span><span class="decl"><span class="istickedoff">parseHttpTime s = S.useAsCString s $ \ptr -&gt;</span>
+<span class="lineno">  529 </span><span class="spaces">    </span><span class="istickedoff">c_parse_http_time ptr</span></span>
 <span class="lineno">  530 </span>
-<span class="lineno">  531 </span>-- | Converts a 'CTime' into an HTTP timestamp.
-<span class="lineno">  532 </span>formatHttpTime :: CTime -&gt; IO ByteString
-<span class="lineno">  533 </span><span class="decl"><span class="istickedoff">formatHttpTime t = allocaBytes 40 $ \ptr -&gt; do</span>
-<span class="lineno">  534 </span><span class="spaces">    </span><span class="istickedoff">c_format_http_time t ptr</span>
-<span class="lineno">  535 </span><span class="spaces">    </span><span class="istickedoff">S.packCString ptr</span></span>
-<span class="lineno">  536 </span>
-<span class="lineno">  537 </span>
-<span class="lineno">  538 </span>------------------------------------------------------------------------------
-<span class="lineno">  539 </span>-- | Converts an HTTP timestamp into a 'CTime'.
-<span class="lineno">  540 </span>parseHttpTime :: ByteString -&gt; IO CTime
-<span class="lineno">  541 </span><span class="decl"><span class="istickedoff">parseHttpTime s = S.useAsCString s $ \ptr -&gt;</span>
-<span class="lineno">  542 </span><span class="spaces">    </span><span class="istickedoff">c_parse_http_time ptr</span></span>
+<span class="lineno">  531 </span>
+<span class="lineno">  532 </span>------------------------------------------------------------------------------
+<span class="lineno">  533 </span>-- URL ENCODING
+<span class="lineno">  534 </span>------------------------------------------------------------------------------
+<span class="lineno">  535 </span>
+<span class="lineno">  536 </span>parseToCompletion :: Parser a -&gt; ByteString -&gt; Maybe a
+<span class="lineno">  537 </span><span class="decl"><span class="istickedoff">parseToCompletion p s = toResult $ finish r</span>
+<span class="lineno">  538 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  539 </span><span class="spaces">    </span><span class="istickedoff">r = parse p s</span>
+<span class="lineno">  540 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  541 </span><span class="spaces">    </span><span class="istickedoff">toResult (Atto.Done _ c) = Just c</span>
+<span class="lineno">  542 </span><span class="spaces">    </span><span class="istickedoff">toResult _               = Nothing</span></span>
 <span class="lineno">  543 </span>
 <span class="lineno">  544 </span>
 <span class="lineno">  545 </span>------------------------------------------------------------------------------
-<span class="lineno">  546 </span>-- URL ENCODING
-<span class="lineno">  547 </span>------------------------------------------------------------------------------
-<span class="lineno">  548 </span>
-<span class="lineno">  549 </span>parseToCompletion :: Parser a -&gt; ByteString -&gt; Maybe a
-<span class="lineno">  550 </span><span class="decl"><span class="istickedoff">parseToCompletion p s = toResult $ finish r</span>
+<span class="lineno">  546 </span>pUrlEscaped :: Parser ByteString
+<span class="lineno">  547 </span><span class="decl"><span class="istickedoff">pUrlEscaped = do</span>
+<span class="lineno">  548 </span><span class="spaces">    </span><span class="istickedoff">sq &lt;- nextChunk DL.empty</span>
+<span class="lineno">  549 </span><span class="spaces">    </span><span class="istickedoff">return $ S.concat $ DL.toList sq</span>
+<span class="lineno">  550 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  551 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  552 </span><span class="spaces">    </span><span class="istickedoff">r = parse p s</span>
-<span class="lineno">  553 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  554 </span><span class="spaces">    </span><span class="istickedoff">toResult (Atto.Done _ c) = Just c</span>
-<span class="lineno">  555 </span><span class="spaces">    </span><span class="istickedoff">toResult _               = Nothing</span></span>
-<span class="lineno">  556 </span>
-<span class="lineno">  557 </span>
-<span class="lineno">  558 </span>------------------------------------------------------------------------------
-<span class="lineno">  559 </span>pUrlEscaped :: Parser ByteString
-<span class="lineno">  560 </span><span class="decl"><span class="istickedoff">pUrlEscaped = do</span>
-<span class="lineno">  561 </span><span class="spaces">    </span><span class="istickedoff">sq &lt;- nextChunk DL.empty</span>
-<span class="lineno">  562 </span><span class="spaces">    </span><span class="istickedoff">return $ S.concat $ DL.toList sq</span>
-<span class="lineno">  563 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  564 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  565 </span><span class="spaces">    </span><span class="istickedoff">nextChunk :: DList ByteString -&gt; Parser (DList ByteString)</span>
-<span class="lineno">  566 </span><span class="spaces">    </span><span class="istickedoff">nextChunk s = (endOfInput *&gt; pure s) &lt;|&gt; do</span>
-<span class="lineno">  567 </span><span class="spaces">        </span><span class="istickedoff">c &lt;- anyWord8</span>
-<span class="lineno">  568 </span><span class="spaces">        </span><span class="istickedoff">case w2c c of</span>
-<span class="lineno">  569 </span><span class="spaces">          </span><span class="istickedoff">'+' -&gt; plusSpace s</span>
-<span class="lineno">  570 </span><span class="spaces">          </span><span class="istickedoff">'%' -&gt; percentEncoded s</span>
-<span class="lineno">  571 </span><span class="spaces">          </span><span class="istickedoff">_   -&gt; unEncoded c s</span>
-<span class="lineno">  572 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  573 </span><span class="spaces">    </span><span class="istickedoff">percentEncoded :: DList ByteString -&gt; Parser (DList ByteString)</span>
-<span class="lineno">  574 </span><span class="spaces">    </span><span class="istickedoff">percentEncoded l = do</span>
-<span class="lineno">  575 </span><span class="spaces">        </span><span class="istickedoff">hx &lt;- take 2</span>
-<span class="lineno">  576 </span><span class="spaces">        </span><span class="istickedoff">when (S.length hx /= 2 ||</span>
-<span class="lineno">  577 </span><span class="spaces">               </span><span class="istickedoff">(not $ S.all (isHexDigit . w2c) hx)) $</span>
-<span class="lineno">  578 </span><span class="spaces">             </span><span class="istickedoff"><span class="nottickedoff">fail &quot;bad hex in url&quot;</span></span>
-<span class="lineno">  579 </span><span class="spaces">          </span><span class="istickedoff"></span>
-<span class="lineno">  580 </span><span class="spaces">        </span><span class="istickedoff">let code = (Cvt.hex hx) :: Word8</span>
-<span class="lineno">  581 </span><span class="spaces">        </span><span class="istickedoff">nextChunk $ DL.snoc l (S.singleton code)</span>
-<span class="lineno">  582 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  583 </span><span class="spaces">    </span><span class="istickedoff">unEncoded :: Word8 -&gt; DList ByteString -&gt; Parser (DList ByteString)</span>
-<span class="lineno">  584 </span><span class="spaces">    </span><span class="istickedoff">unEncoded c l' = do</span>
-<span class="lineno">  585 </span><span class="spaces">        </span><span class="istickedoff">let l = DL.snoc l' (S.singleton c)</span>
-<span class="lineno">  586 </span><span class="spaces">        </span><span class="istickedoff">bs &lt;- takeTill (flip elem (map c2w &quot;%+&quot;))</span>
-<span class="lineno">  587 </span><span class="spaces">        </span><span class="istickedoff">if S.null bs</span>
-<span class="lineno">  588 </span><span class="spaces">          </span><span class="istickedoff">then nextChunk l</span>
-<span class="lineno">  589 </span><span class="spaces">          </span><span class="istickedoff">else nextChunk $ DL.snoc l bs</span>
-<span class="lineno">  590 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  591 </span><span class="spaces">    </span><span class="istickedoff">plusSpace :: DList ByteString -&gt; Parser (DList ByteString)</span>
-<span class="lineno">  592 </span><span class="spaces">    </span><span class="istickedoff">plusSpace l = nextChunk (DL.snoc l (S.singleton $ c2w ' '))</span></span>
+<span class="lineno">  552 </span><span class="spaces">    </span><span class="istickedoff">nextChunk :: DList ByteString -&gt; Parser (DList ByteString)</span>
+<span class="lineno">  553 </span><span class="spaces">    </span><span class="istickedoff">nextChunk s = (endOfInput *&gt; pure s) &lt;|&gt; do</span>
+<span class="lineno">  554 </span><span class="spaces">        </span><span class="istickedoff">c &lt;- anyWord8</span>
+<span class="lineno">  555 </span><span class="spaces">        </span><span class="istickedoff">case w2c c of</span>
+<span class="lineno">  556 </span><span class="spaces">          </span><span class="istickedoff">'+' -&gt; plusSpace s</span>
+<span class="lineno">  557 </span><span class="spaces">          </span><span class="istickedoff">'%' -&gt; percentEncoded s</span>
+<span class="lineno">  558 </span><span class="spaces">          </span><span class="istickedoff">_   -&gt; unEncoded c s</span>
+<span class="lineno">  559 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  560 </span><span class="spaces">    </span><span class="istickedoff">percentEncoded :: DList ByteString -&gt; Parser (DList ByteString)</span>
+<span class="lineno">  561 </span><span class="spaces">    </span><span class="istickedoff">percentEncoded l = do</span>
+<span class="lineno">  562 </span><span class="spaces">        </span><span class="istickedoff">hx &lt;- take 2</span>
+<span class="lineno">  563 </span><span class="spaces">        </span><span class="istickedoff">when (S.length hx /= 2 ||</span>
+<span class="lineno">  564 </span><span class="spaces">               </span><span class="istickedoff">(not $ S.all (isHexDigit . w2c) hx)) $</span>
+<span class="lineno">  565 </span><span class="spaces">             </span><span class="istickedoff"><span class="nottickedoff">fail &quot;bad hex in url&quot;</span></span>
+<span class="lineno">  566 </span><span class="spaces">          </span><span class="istickedoff"></span>
+<span class="lineno">  567 </span><span class="spaces">        </span><span class="istickedoff">let code = (Cvt.hex hx) :: Word8</span>
+<span class="lineno">  568 </span><span class="spaces">        </span><span class="istickedoff">nextChunk $ DL.snoc l (S.singleton code)</span>
+<span class="lineno">  569 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  570 </span><span class="spaces">    </span><span class="istickedoff">unEncoded :: Word8 -&gt; DList ByteString -&gt; Parser (DList ByteString)</span>
+<span class="lineno">  571 </span><span class="spaces">    </span><span class="istickedoff">unEncoded c l' = do</span>
+<span class="lineno">  572 </span><span class="spaces">        </span><span class="istickedoff">let l = DL.snoc l' (S.singleton c)</span>
+<span class="lineno">  573 </span><span class="spaces">        </span><span class="istickedoff">bs &lt;- takeTill (flip elem (map c2w &quot;%+&quot;))</span>
+<span class="lineno">  574 </span><span class="spaces">        </span><span class="istickedoff">if S.null bs</span>
+<span class="lineno">  575 </span><span class="spaces">          </span><span class="istickedoff">then nextChunk l</span>
+<span class="lineno">  576 </span><span class="spaces">          </span><span class="istickedoff">else nextChunk $ DL.snoc l bs</span>
+<span class="lineno">  577 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  578 </span><span class="spaces">    </span><span class="istickedoff">plusSpace :: DList ByteString -&gt; Parser (DList ByteString)</span>
+<span class="lineno">  579 </span><span class="spaces">    </span><span class="istickedoff">plusSpace l = nextChunk (DL.snoc l (S.singleton $ c2w ' '))</span></span>
+<span class="lineno">  580 </span>
+<span class="lineno">  581 </span>
+<span class="lineno">  582 </span>------------------------------------------------------------------------------
+<span class="lineno">  583 </span>-- | Decodes an URL-escaped string (see
+<span class="lineno">  584 </span>-- &lt;http://tools.ietf.org/html/rfc2396.html#section-2.4&gt;)
+<span class="lineno">  585 </span>urlDecode :: ByteString -&gt; Maybe ByteString
+<span class="lineno">  586 </span><span class="decl"><span class="istickedoff">urlDecode = parseToCompletion pUrlEscaped</span></span>
+<span class="lineno">  587 </span>
+<span class="lineno">  588 </span>
+<span class="lineno">  589 </span>------------------------------------------------------------------------------
+<span class="lineno">  590 </span>-- &quot;...Only alphanumerics [0-9a-zA-Z], the special characters &quot;$-_.+!*'(),&quot;
+<span class="lineno">  591 </span>-- [not including the quotes - ed], and reserved characters used for their
+<span class="lineno">  592 </span>-- reserved purposes may be used unencoded within a URL.&quot;
 <span class="lineno">  593 </span>
-<span class="lineno">  594 </span>
-<span class="lineno">  595 </span>------------------------------------------------------------------------------
-<span class="lineno">  596 </span>-- | Decodes an URL-escaped string (see
-<span class="lineno">  597 </span>-- &lt;http://tools.ietf.org/html/rfc2396.html#section-2.4&gt;)
-<span class="lineno">  598 </span>urlDecode :: ByteString -&gt; Maybe ByteString
-<span class="lineno">  599 </span><span class="decl"><span class="istickedoff">urlDecode = parseToCompletion pUrlEscaped</span></span>
-<span class="lineno">  600 </span>
-<span class="lineno">  601 </span>
-<span class="lineno">  602 </span>------------------------------------------------------------------------------
-<span class="lineno">  603 </span>-- &quot;...Only alphanumerics [0-9a-zA-Z], the special characters &quot;$-_.+!*'(),&quot;
-<span class="lineno">  604 </span>-- [not including the quotes - ed], and reserved characters used for their
-<span class="lineno">  605 </span>-- reserved purposes may be used unencoded within a URL.&quot;
-<span class="lineno">  606 </span>
-<span class="lineno">  607 </span>-- | URL-escapes a string (see
-<span class="lineno">  608 </span>-- &lt;http://tools.ietf.org/html/rfc2396.html#section-2.4&gt;)
-<span class="lineno">  609 </span>urlEncode :: ByteString -&gt; ByteString
-<span class="lineno">  610 </span><span class="decl"><span class="istickedoff">urlEncode = toByteString . S.foldl' f empty</span>
-<span class="lineno">  611 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  612 </span><span class="spaces">    </span><span class="istickedoff">f b c =</span>
-<span class="lineno">  613 </span><span class="spaces">        </span><span class="istickedoff">if c == c2w ' '</span>
-<span class="lineno">  614 </span><span class="spaces">          </span><span class="istickedoff">then b `mappend` singleton (c2w '+')</span>
-<span class="lineno">  615 </span><span class="spaces">          </span><span class="istickedoff">else if isKosher c</span>
-<span class="lineno">  616 </span><span class="spaces">                 </span><span class="istickedoff">then b `mappend` singleton c</span>
-<span class="lineno">  617 </span><span class="spaces">                 </span><span class="istickedoff">else b `mappend` hexd c</span>
-<span class="lineno">  618 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  619 </span><span class="spaces">    </span><span class="istickedoff">isKosher w = any ($ c) [ isAlphaNum</span>
-<span class="lineno">  620 </span><span class="spaces">                           </span><span class="istickedoff">, flip elem ['$', '-', '.', '!', '*'</span>
-<span class="lineno">  621 </span><span class="spaces">                                       </span><span class="istickedoff">, '\'', '(', ')', ',' ]]</span>
-<span class="lineno">  622 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  623 </span><span class="spaces">        </span><span class="istickedoff">c = w2c w</span></span>
-<span class="lineno">  624 </span>
-<span class="lineno">  625 </span>
-<span class="lineno">  626 </span>------------------------------------------------------------------------------
-<span class="lineno">  627 </span>hexd :: Word8 -&gt; Builder
-<span class="lineno">  628 </span><span class="decl"><span class="istickedoff">hexd c = singleton (c2w '%') `mappend` singleton hi `mappend` singleton low</span>
-<span class="lineno">  629 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  630 </span><span class="spaces">    </span><span class="istickedoff">d   = c2w . intToDigit</span>
-<span class="lineno">  631 </span><span class="spaces">    </span><span class="istickedoff">low = d $ fromEnum $ c .&amp;. 0xf</span>
-<span class="lineno">  632 </span><span class="spaces">    </span><span class="istickedoff">hi  = d $ fromEnum $ (c .&amp;. 0xf0) `shift` (-4)</span></span>
+<span class="lineno">  594 </span>-- | URL-escapes a string (see
+<span class="lineno">  595 </span>-- &lt;http://tools.ietf.org/html/rfc2396.html#section-2.4&gt;)
+<span class="lineno">  596 </span>urlEncode :: ByteString -&gt; ByteString
+<span class="lineno">  597 </span><span class="decl"><span class="istickedoff">urlEncode = toByteString . S.foldl' f empty</span>
+<span class="lineno">  598 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  599 </span><span class="spaces">    </span><span class="istickedoff">f b c =</span>
+<span class="lineno">  600 </span><span class="spaces">        </span><span class="istickedoff">if c == c2w ' '</span>
+<span class="lineno">  601 </span><span class="spaces">          </span><span class="istickedoff">then b `mappend` singleton (c2w '+')</span>
+<span class="lineno">  602 </span><span class="spaces">          </span><span class="istickedoff">else if isKosher c</span>
+<span class="lineno">  603 </span><span class="spaces">                 </span><span class="istickedoff">then b `mappend` singleton c</span>
+<span class="lineno">  604 </span><span class="spaces">                 </span><span class="istickedoff">else b `mappend` hexd c</span>
+<span class="lineno">  605 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  606 </span><span class="spaces">    </span><span class="istickedoff">isKosher w = any ($ c) [ isAlphaNum</span>
+<span class="lineno">  607 </span><span class="spaces">                           </span><span class="istickedoff">, flip elem ['$', '-', '.', '!', '*'</span>
+<span class="lineno">  608 </span><span class="spaces">                                       </span><span class="istickedoff">, '\'', '(', ')', ',' ]]</span>
+<span class="lineno">  609 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  610 </span><span class="spaces">        </span><span class="istickedoff">c = w2c w</span></span>
+<span class="lineno">  611 </span>
+<span class="lineno">  612 </span>
+<span class="lineno">  613 </span>------------------------------------------------------------------------------
+<span class="lineno">  614 </span>hexd :: Word8 -&gt; Builder
+<span class="lineno">  615 </span><span class="decl"><span class="istickedoff">hexd c = singleton (c2w '%') `mappend` singleton hi `mappend` singleton low</span>
+<span class="lineno">  616 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  617 </span><span class="spaces">    </span><span class="istickedoff">d   = c2w . intToDigit</span>
+<span class="lineno">  618 </span><span class="spaces">    </span><span class="istickedoff">low = d $ fromEnum $ c .&amp;. 0xf</span>
+<span class="lineno">  619 </span><span class="spaces">    </span><span class="istickedoff">hi  = d $ fromEnum $ (c .&amp;. 0xf0) `shift` (-4)</span></span>
+<span class="lineno">  620 </span>
+<span class="lineno">  621 </span>
+<span class="lineno">  622 </span>------------------------------------------------------------------------------
+<span class="lineno">  623 </span>finish :: Atto.Result a -&gt; Atto.Result a
+<span class="lineno">  624 </span><span class="decl"><span class="istickedoff">finish (Atto.Partial f) = flip feed &quot;&quot; $ f &quot;&quot;</span>
+<span class="lineno">  625 </span><span class="spaces"></span><span class="istickedoff">finish x                = <span class="nottickedoff">x</span></span></span>
+<span class="lineno">  626 </span>
+<span class="lineno">  627 </span>
+<span class="lineno">  628 </span>------------------------------------------------------------------------------
+<span class="lineno">  629 </span>-- local definitions
+<span class="lineno">  630 </span>fromStr :: String -&gt; ByteString
+<span class="lineno">  631 </span><span class="decl"><span class="istickedoff">fromStr = S.pack . map c2w</span></span>
+<span class="lineno">  632 </span>{-# INLINE fromStr #-}
 <span class="lineno">  633 </span>
-<span class="lineno">  634 </span>
-<span class="lineno">  635 </span>------------------------------------------------------------------------------
-<span class="lineno">  636 </span>finish :: Atto.Result a -&gt; Atto.Result a
-<span class="lineno">  637 </span><span class="decl"><span class="istickedoff">finish (Atto.Partial f) = flip feed &quot;&quot; $ f &quot;&quot;</span>
-<span class="lineno">  638 </span><span class="spaces"></span><span class="istickedoff">finish x                = <span class="nottickedoff">x</span></span></span>
-<span class="lineno">  639 </span>
-<span class="lineno">  640 </span>
-<span class="lineno">  641 </span>------------------------------------------------------------------------------
-<span class="lineno">  642 </span>char :: Char -&gt; Parser Word8
-<span class="lineno">  643 </span><span class="decl"><span class="nottickedoff">char = word8 . c2w</span></span>
-<span class="lineno">  644 </span>
-<span class="lineno">  645 </span>------------------------------------------------------------------------------
-<span class="lineno">  646 </span>-- local definitions
-<span class="lineno">  647 </span>fromStr :: String -&gt; ByteString
-<span class="lineno">  648 </span><span class="decl"><span class="istickedoff">fromStr = S.pack . map c2w</span></span>
-<span class="lineno">  649 </span>{-# INLINE fromStr #-}
-<span class="lineno">  650 </span>
-<span class="lineno">  651 </span>------------------------------------------------------------------------------
-<span class="lineno">  652 </span>-- private helper functions
-<span class="lineno">  653 </span>toStr :: ByteString -&gt; String
-<span class="lineno">  654 </span><span class="decl"><span class="istickedoff">toStr = map w2c . S.unpack</span></span>
-<span class="lineno">  655 </span>
+<span class="lineno">  634 </span>------------------------------------------------------------------------------
+<span class="lineno">  635 </span>-- private helper functions
+<span class="lineno">  636 </span>toStr :: ByteString -&gt; String
+<span class="lineno">  637 </span><span class="decl"><span class="istickedoff">toStr = map w2c . S.unpack</span></span>
+<span class="lineno">  638 </span>
 
 </pre>
 </html>

@@ -32,258 +32,246 @@ span.spaces    { background: white }
 <span class="lineno">   21 </span>import           Data.Map (Map)
 <span class="lineno">   22 </span>import qualified Data.Map as Map
 <span class="lineno">   23 </span>import           Data.Maybe (fromMaybe)
-<span class="lineno">   24 </span>import           Foreign.C.Types
-<span class="lineno">   25 </span>import           System.Directory
-<span class="lineno">   26 </span>import           System.FilePath
-<span class="lineno">   27 </span>import           System.Posix.Files
-<span class="lineno">   28 </span>import           System.Time
-<span class="lineno">   29 </span>
-<span class="lineno">   30 </span>------------------------------------------------------------------------------
-<span class="lineno">   31 </span>import           Snap.Types
-<span class="lineno">   32 </span>
-<span class="lineno">   33 </span>
-<span class="lineno">   34 </span>------------------------------------------------------------------------------
-<span class="lineno">   35 </span>-- | A type alias for MIME type 
-<span class="lineno">   36 </span>type MimeMap = Map FilePath ByteString
-<span class="lineno">   37 </span>
-<span class="lineno">   38 </span>
-<span class="lineno">   39 </span>------------------------------------------------------------------------------
-<span class="lineno">   40 </span>-- | The default set of mime type mappings we use when serving files. Its
-<span class="lineno">   41 </span>-- value:
-<span class="lineno">   42 </span>--
-<span class="lineno">   43 </span>-- &gt; Map.fromList [
-<span class="lineno">   44 </span>-- &gt;   ( &quot;.asc&quot;     , &quot;text/plain&quot;                        ),
-<span class="lineno">   45 </span>-- &gt;   ( &quot;.asf&quot;     , &quot;video/x-ms-asf&quot;                    ),
-<span class="lineno">   46 </span>-- &gt;   ( &quot;.asx&quot;     , &quot;video/x-ms-asf&quot;                    ),
-<span class="lineno">   47 </span>-- &gt;   ( &quot;.avi&quot;     , &quot;video/x-msvideo&quot;                   ),
-<span class="lineno">   48 </span>-- &gt;   ( &quot;.bz2&quot;     , &quot;application/x-bzip&quot;                ),
-<span class="lineno">   49 </span>-- &gt;   ( &quot;.c&quot;       , &quot;text/plain&quot;                        ),
-<span class="lineno">   50 </span>-- &gt;   ( &quot;.class&quot;   , &quot;application/octet-stream&quot;          ),
-<span class="lineno">   51 </span>-- &gt;   ( &quot;.conf&quot;    , &quot;text/plain&quot;                        ),
-<span class="lineno">   52 </span>-- &gt;   ( &quot;.cpp&quot;     , &quot;text/plain&quot;                        ),
-<span class="lineno">   53 </span>-- &gt;   ( &quot;.css&quot;     , &quot;text/css&quot;                          ),
-<span class="lineno">   54 </span>-- &gt;   ( &quot;.cxx&quot;     , &quot;text/plain&quot;                        ),
-<span class="lineno">   55 </span>-- &gt;   ( &quot;.dtd&quot;     , &quot;text/xml&quot;                          ),
-<span class="lineno">   56 </span>-- &gt;   ( &quot;.dvi&quot;     , &quot;application/x-dvi&quot;                 ),
-<span class="lineno">   57 </span>-- &gt;   ( &quot;.gif&quot;     , &quot;image/gif&quot;                         ),
-<span class="lineno">   58 </span>-- &gt;   ( &quot;.gz&quot;      , &quot;application/x-gzip&quot;                ),
-<span class="lineno">   59 </span>-- &gt;   ( &quot;.hs&quot;      , &quot;text/plain&quot;                        ),
-<span class="lineno">   60 </span>-- &gt;   ( &quot;.htm&quot;     , &quot;text/html&quot;                         ),
-<span class="lineno">   61 </span>-- &gt;   ( &quot;.html&quot;    , &quot;text/html&quot;                         ),
-<span class="lineno">   62 </span>-- &gt;   ( &quot;.jar&quot;     , &quot;application/x-java-archive&quot;        ),
-<span class="lineno">   63 </span>-- &gt;   ( &quot;.jpeg&quot;    , &quot;image/jpeg&quot;                        ),
-<span class="lineno">   64 </span>-- &gt;   ( &quot;.jpg&quot;     , &quot;image/jpeg&quot;                        ),
-<span class="lineno">   65 </span>-- &gt;   ( &quot;.js&quot;      , &quot;text/javascript&quot;                   ),
-<span class="lineno">   66 </span>-- &gt;   ( &quot;.log&quot;     , &quot;text/plain&quot;                        ),
-<span class="lineno">   67 </span>-- &gt;   ( &quot;.m3u&quot;     , &quot;audio/x-mpegurl&quot;                   ),
-<span class="lineno">   68 </span>-- &gt;   ( &quot;.mov&quot;     , &quot;video/quicktime&quot;                   ),
-<span class="lineno">   69 </span>-- &gt;   ( &quot;.mp3&quot;     , &quot;audio/mpeg&quot;                        ),
-<span class="lineno">   70 </span>-- &gt;   ( &quot;.mpeg&quot;    , &quot;video/mpeg&quot;                        ),
-<span class="lineno">   71 </span>-- &gt;   ( &quot;.mpg&quot;     , &quot;video/mpeg&quot;                        ),
-<span class="lineno">   72 </span>-- &gt;   ( &quot;.ogg&quot;     , &quot;application/ogg&quot;                   ),
-<span class="lineno">   73 </span>-- &gt;   ( &quot;.pac&quot;     , &quot;application/x-ns-proxy-autoconfig&quot; ),
-<span class="lineno">   74 </span>-- &gt;   ( &quot;.pdf&quot;     , &quot;application/pdf&quot;                   ),
-<span class="lineno">   75 </span>-- &gt;   ( &quot;.png&quot;     , &quot;image/png&quot;                         ),
-<span class="lineno">   76 </span>-- &gt;   ( &quot;.ps&quot;      , &quot;application/postscript&quot;            ),
-<span class="lineno">   77 </span>-- &gt;   ( &quot;.qt&quot;      , &quot;video/quicktime&quot;                   ),
-<span class="lineno">   78 </span>-- &gt;   ( &quot;.sig&quot;     , &quot;application/pgp-signature&quot;         ),
-<span class="lineno">   79 </span>-- &gt;   ( &quot;.spl&quot;     , &quot;application/futuresplash&quot;          ),
-<span class="lineno">   80 </span>-- &gt;   ( &quot;.swf&quot;     , &quot;application/x-shockwave-flash&quot;     ),
-<span class="lineno">   81 </span>-- &gt;   ( &quot;.tar&quot;     , &quot;application/x-tar&quot;                 ),
-<span class="lineno">   82 </span>-- &gt;   ( &quot;.tar.bz2&quot; , &quot;application/x-bzip-compressed-tar&quot; ),
-<span class="lineno">   83 </span>-- &gt;   ( &quot;.tar.gz&quot;  , &quot;application/x-tgz&quot;                 ),
-<span class="lineno">   84 </span>-- &gt;   ( &quot;.tbz&quot;     , &quot;application/x-bzip-compressed-tar&quot; ),
-<span class="lineno">   85 </span>-- &gt;   ( &quot;.text&quot;    , &quot;text/plain&quot;                        ),
-<span class="lineno">   86 </span>-- &gt;   ( &quot;.tgz&quot;     , &quot;application/x-tgz&quot;                 ),
-<span class="lineno">   87 </span>-- &gt;   ( &quot;.torrent&quot; , &quot;application/x-bittorrent&quot;          ),
-<span class="lineno">   88 </span>-- &gt;   ( &quot;.txt&quot;     , &quot;text/plain&quot;                        ),
-<span class="lineno">   89 </span>-- &gt;   ( &quot;.wav&quot;     , &quot;audio/x-wav&quot;                       ),
-<span class="lineno">   90 </span>-- &gt;   ( &quot;.wax&quot;     , &quot;audio/x-ms-wax&quot;                    ),
-<span class="lineno">   91 </span>-- &gt;   ( &quot;.wma&quot;     , &quot;audio/x-ms-wma&quot;                    ),
-<span class="lineno">   92 </span>-- &gt;   ( &quot;.wmv&quot;     , &quot;video/x-ms-wmv&quot;                    ),
-<span class="lineno">   93 </span>-- &gt;   ( &quot;.xbm&quot;     , &quot;image/x-xbitmap&quot;                   ),
-<span class="lineno">   94 </span>-- &gt;   ( &quot;.xml&quot;     , &quot;text/xml&quot;                          ),
-<span class="lineno">   95 </span>-- &gt;   ( &quot;.xpm&quot;     , &quot;image/x-xpixmap&quot;                   ),
-<span class="lineno">   96 </span>-- &gt;   ( &quot;.xwd&quot;     , &quot;image/x-xwindowdump&quot;               ),
-<span class="lineno">   97 </span>-- &gt;   ( &quot;.zip&quot;     , &quot;application/zip&quot;                   ) ]
-<span class="lineno">   98 </span>--
-<span class="lineno">   99 </span>defaultMimeTypes :: MimeMap
-<span class="lineno">  100 </span><span class="decl"><span class="istickedoff">defaultMimeTypes = Map.fromList [</span>
-<span class="lineno">  101 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.asc&quot;     , &quot;text/plain&quot;                        ),</span>
-<span class="lineno">  102 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.asf&quot;     , &quot;video/x-ms-asf&quot;                    ),</span>
-<span class="lineno">  103 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.asx&quot;     , &quot;video/x-ms-asf&quot;                    ),</span>
-<span class="lineno">  104 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.avi&quot;     , &quot;video/x-msvideo&quot;                   ),</span>
-<span class="lineno">  105 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.bz2&quot;     , &quot;application/x-bzip&quot;                ),</span>
-<span class="lineno">  106 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.c&quot;       , &quot;text/plain&quot;                        ),</span>
-<span class="lineno">  107 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.class&quot;   , &quot;application/octet-stream&quot;          ),</span>
-<span class="lineno">  108 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.conf&quot;    , &quot;text/plain&quot;                        ),</span>
-<span class="lineno">  109 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.cpp&quot;     , &quot;text/plain&quot;                        ),</span>
-<span class="lineno">  110 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.css&quot;     , &quot;text/css&quot;                          ),</span>
-<span class="lineno">  111 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.cxx&quot;     , &quot;text/plain&quot;                        ),</span>
-<span class="lineno">  112 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.dtd&quot;     , &quot;text/xml&quot;                          ),</span>
-<span class="lineno">  113 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.dvi&quot;     , &quot;application/x-dvi&quot;                 ),</span>
-<span class="lineno">  114 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.gif&quot;     , &quot;image/gif&quot;                         ),</span>
-<span class="lineno">  115 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.gz&quot;      , &quot;application/x-gzip&quot;                ),</span>
-<span class="lineno">  116 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.hs&quot;      , &quot;text/plain&quot;                        ),</span>
-<span class="lineno">  117 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.htm&quot;     , &quot;text/html&quot;                         ),</span>
-<span class="lineno">  118 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.html&quot;    , &quot;text/html&quot;                         ),</span>
-<span class="lineno">  119 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.jar&quot;     , &quot;application/x-java-archive&quot;        ),</span>
-<span class="lineno">  120 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.jpeg&quot;    , &quot;image/jpeg&quot;                        ),</span>
-<span class="lineno">  121 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.jpg&quot;     , &quot;image/jpeg&quot;                        ),</span>
-<span class="lineno">  122 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.js&quot;      , &quot;text/javascript&quot;                   ),</span>
-<span class="lineno">  123 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.log&quot;     , &quot;text/plain&quot;                        ),</span>
-<span class="lineno">  124 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.m3u&quot;     , &quot;audio/x-mpegurl&quot;                   ),</span>
-<span class="lineno">  125 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.mov&quot;     , &quot;video/quicktime&quot;                   ),</span>
-<span class="lineno">  126 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.mp3&quot;     , &quot;audio/mpeg&quot;                        ),</span>
-<span class="lineno">  127 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.mpeg&quot;    , &quot;video/mpeg&quot;                        ),</span>
-<span class="lineno">  128 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.mpg&quot;     , &quot;video/mpeg&quot;                        ),</span>
-<span class="lineno">  129 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.ogg&quot;     , &quot;application/ogg&quot;                   ),</span>
-<span class="lineno">  130 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.pac&quot;     , &quot;application/x-ns-proxy-autoconfig&quot; ),</span>
-<span class="lineno">  131 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.pdf&quot;     , &quot;application/pdf&quot;                   ),</span>
-<span class="lineno">  132 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.png&quot;     , &quot;image/png&quot;                         ),</span>
-<span class="lineno">  133 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.ps&quot;      , &quot;application/postscript&quot;            ),</span>
-<span class="lineno">  134 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.qt&quot;      , &quot;video/quicktime&quot;                   ),</span>
-<span class="lineno">  135 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.sig&quot;     , &quot;application/pgp-signature&quot;         ),</span>
-<span class="lineno">  136 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.spl&quot;     , &quot;application/futuresplash&quot;          ),</span>
-<span class="lineno">  137 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.swf&quot;     , &quot;application/x-shockwave-flash&quot;     ),</span>
-<span class="lineno">  138 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.tar&quot;     , &quot;application/x-tar&quot;                 ),</span>
-<span class="lineno">  139 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.tar.bz2&quot; , &quot;application/x-bzip-compressed-tar&quot; ),</span>
-<span class="lineno">  140 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.tar.gz&quot;  , &quot;application/x-tgz&quot;                 ),</span>
-<span class="lineno">  141 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.tbz&quot;     , &quot;application/x-bzip-compressed-tar&quot; ),</span>
-<span class="lineno">  142 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.text&quot;    , &quot;text/plain&quot;                        ),</span>
-<span class="lineno">  143 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.tgz&quot;     , &quot;application/x-tgz&quot;                 ),</span>
-<span class="lineno">  144 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.torrent&quot; , &quot;application/x-bittorrent&quot;          ),</span>
-<span class="lineno">  145 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.ttf&quot;     , &quot;application/x-font-truetype&quot;       ),</span>
-<span class="lineno">  146 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.txt&quot;     , &quot;text/plain&quot;                        ),</span>
-<span class="lineno">  147 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.wav&quot;     , &quot;audio/x-wav&quot;                       ),</span>
-<span class="lineno">  148 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.wax&quot;     , &quot;audio/x-ms-wax&quot;                    ),</span>
-<span class="lineno">  149 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.wma&quot;     , &quot;audio/x-ms-wma&quot;                    ),</span>
-<span class="lineno">  150 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.wmv&quot;     , &quot;video/x-ms-wmv&quot;                    ),</span>
-<span class="lineno">  151 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.xbm&quot;     , &quot;image/x-xbitmap&quot;                   ),</span>
-<span class="lineno">  152 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.xml&quot;     , &quot;text/xml&quot;                          ),</span>
-<span class="lineno">  153 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.xpm&quot;     , &quot;image/x-xpixmap&quot;                   ),</span>
-<span class="lineno">  154 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.xwd&quot;     , &quot;image/x-xwindowdump&quot;               ),</span>
-<span class="lineno">  155 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.zip&quot;     , &quot;application/zip&quot;                   ) ]</span></span>
-<span class="lineno">  156 </span>
-<span class="lineno">  157 </span>------------------------------------------------------------------------------
-<span class="lineno">  158 </span>-- | Gets a path from the 'Request' using 'rqPathInfo' and makes sure it is
-<span class="lineno">  159 </span>-- safe to use for opening files.  A path is safe if it is a relative path
-<span class="lineno">  160 </span>-- and has no &quot;..&quot; elements to escape the intended directory structure.
-<span class="lineno">  161 </span>getSafePath :: Snap FilePath
-<span class="lineno">  162 </span><span class="decl"><span class="istickedoff">getSafePath = do</span>
-<span class="lineno">  163 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
-<span class="lineno">  164 </span><span class="spaces">    </span><span class="istickedoff">let p = S.unpack $ rqPathInfo req</span>
-<span class="lineno">  165 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  166 </span><span class="spaces">    </span><span class="istickedoff">-- relative paths only!</span>
-<span class="lineno">  167 </span><span class="spaces">    </span><span class="istickedoff">-- Given that p comes from rqPathInfo, is this check really</span>
-<span class="lineno">  168 </span><span class="spaces">    </span><span class="istickedoff">-- necessary?</span>
-<span class="lineno">  169 </span><span class="spaces">    </span><span class="istickedoff">when (not $ isRelative p) pass</span>
-<span class="lineno">  170 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  171 </span><span class="spaces">    </span><span class="istickedoff">-- check that we don't have any sneaky .. paths</span>
-<span class="lineno">  172 </span><span class="spaces">    </span><span class="istickedoff">let dirs = splitDirectories p</span>
-<span class="lineno">  173 </span><span class="spaces">    </span><span class="istickedoff">when (elem &quot;..&quot; dirs) pass</span>
-<span class="lineno">  174 </span><span class="spaces">    </span><span class="istickedoff">return p</span></span>
-<span class="lineno">  175 </span>
-<span class="lineno">  176 </span>
-<span class="lineno">  177 </span>------------------------------------------------------------------------------
-<span class="lineno">  178 </span>-- | Serves files out of the given directory. The relative path given in
-<span class="lineno">  179 </span>-- 'rqPathInfo' is searched for the given file, and the file is served with the
-<span class="lineno">  180 </span>-- appropriate mime type if it is found. Absolute paths and \&quot;@..@\&quot; are prohibited
-<span class="lineno">  181 </span>-- to prevent files from being served from outside the sandbox.
-<span class="lineno">  182 </span>--
-<span class="lineno">  183 </span>-- Uses 'defaultMimeTypes' to determine the @Content-Type@ based on the file's
-<span class="lineno">  184 </span>-- extension.
-<span class="lineno">  185 </span>fileServe :: FilePath  -- ^ root directory
-<span class="lineno">  186 </span>          -&gt; Snap ()
-<span class="lineno">  187 </span><span class="decl"><span class="istickedoff">fileServe = fileServe' defaultMimeTypes</span></span>
-<span class="lineno">  188 </span>{-# INLINE fileServe #-}
-<span class="lineno">  189 </span>
-<span class="lineno">  190 </span>
-<span class="lineno">  191 </span>------------------------------------------------------------------------------
-<span class="lineno">  192 </span>-- | Same as 'fileServe', with control over the MIME mapping used.
-<span class="lineno">  193 </span>fileServe' :: MimeMap           -- ^ MIME type mapping
-<span class="lineno">  194 </span>           -&gt; FilePath          -- ^ root directory
-<span class="lineno">  195 </span>           -&gt; Snap ()
-<span class="lineno">  196 </span><span class="decl"><span class="istickedoff">fileServe' mm root = do</span>
-<span class="lineno">  197 </span><span class="spaces">    </span><span class="istickedoff">sp &lt;- getSafePath</span>
-<span class="lineno">  198 </span><span class="spaces">    </span><span class="istickedoff">let fp   = root &lt;/&gt; sp</span>
-<span class="lineno">  199 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  200 </span><span class="spaces">    </span><span class="istickedoff">-- check that the file exists</span>
-<span class="lineno">  201 </span><span class="spaces">    </span><span class="istickedoff">liftIO (doesFileExist fp) &gt;&gt;= flip unless pass</span>
-<span class="lineno">  202 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  203 </span><span class="spaces">    </span><span class="istickedoff">let fn   = takeFileName fp</span>
-<span class="lineno">  204 </span><span class="spaces">    </span><span class="istickedoff">let mime = fileType mm fn</span>
-<span class="lineno">  205 </span><span class="spaces">    </span><span class="istickedoff">fileServeSingle' mime fp</span></span>
-<span class="lineno">  206 </span>{-# INLINE fileServe' #-}
-<span class="lineno">  207 </span>
-<span class="lineno">  208 </span>
-<span class="lineno">  209 </span>------------------------------------------------------------------------------
-<span class="lineno">  210 </span>-- | Serves a single file specified by a full or relative path.  The
-<span class="lineno">  211 </span>-- path restrictions on fileServe don't apply to this function since
-<span class="lineno">  212 </span>-- the path is not being supplied by the user.
-<span class="lineno">  213 </span>fileServeSingle :: FilePath          -- ^ path to file
-<span class="lineno">  214 </span>                -&gt; Snap ()
-<span class="lineno">  215 </span><span class="decl"><span class="nottickedoff">fileServeSingle fp =</span>
-<span class="lineno">  216 </span><span class="spaces">    </span><span class="nottickedoff">fileServeSingle' (fileType defaultMimeTypes (takeFileName fp)) fp</span></span>
-<span class="lineno">  217 </span>{-# INLINE fileServeSingle #-}
-<span class="lineno">  218 </span>
-<span class="lineno">  219 </span>
-<span class="lineno">  220 </span>------------------------------------------------------------------------------
-<span class="lineno">  221 </span>-- | Same as 'fileServeSingle', with control over the MIME mapping used.
-<span class="lineno">  222 </span>fileServeSingle' :: ByteString        -- ^ MIME type mapping
-<span class="lineno">  223 </span>                 -&gt; FilePath          -- ^ path to file
-<span class="lineno">  224 </span>                 -&gt; Snap ()
-<span class="lineno">  225 </span><span class="decl"><span class="istickedoff">fileServeSingle' mime fp = do</span>
-<span class="lineno">  226 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
-<span class="lineno">  227 </span><span class="spaces">    </span><span class="istickedoff"></span>
-<span class="lineno">  228 </span><span class="spaces">    </span><span class="istickedoff">let mbH = getHeader &quot;if-modified-since&quot; req</span>
-<span class="lineno">  229 </span><span class="spaces">    </span><span class="istickedoff">mbIfModified &lt;- liftIO $ case mbH of</span>
-<span class="lineno">  230 </span><span class="spaces">                               </span><span class="istickedoff">Nothing  -&gt; return Nothing</span>
-<span class="lineno">  231 </span><span class="spaces">                               </span><span class="istickedoff">(Just s) -&gt; liftM Just $ parseHttpTime s</span>
-<span class="lineno">  232 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  233 </span><span class="spaces">    </span><span class="istickedoff">-- check modification time and bug out early if the file is not modified.</span>
-<span class="lineno">  234 </span><span class="spaces">    </span><span class="istickedoff">mt &lt;- liftIO $ liftM clock2time $ getModificationTime fp</span>
-<span class="lineno">  235 </span><span class="spaces">    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) (chkModificationTime mt) mbIfModified</span>
-<span class="lineno">  236 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  237 </span><span class="spaces">    </span><span class="istickedoff">sz &lt;- liftIO $ liftM (fromEnum . fileSize) $ getFileStatus fp</span>
+<span class="lineno">   24 </span>import           System.Directory
+<span class="lineno">   25 </span>import           System.FilePath
+<span class="lineno">   26 </span>import           System.Posix.Files
+<span class="lineno">   27 </span>
+<span class="lineno">   28 </span>------------------------------------------------------------------------------
+<span class="lineno">   29 </span>import           Snap.Types
+<span class="lineno">   30 </span>
+<span class="lineno">   31 </span>
+<span class="lineno">   32 </span>------------------------------------------------------------------------------
+<span class="lineno">   33 </span>-- | A type alias for MIME type 
+<span class="lineno">   34 </span>type MimeMap = Map FilePath ByteString
+<span class="lineno">   35 </span>
+<span class="lineno">   36 </span>
+<span class="lineno">   37 </span>------------------------------------------------------------------------------
+<span class="lineno">   38 </span>-- | The default set of mime type mappings we use when serving files. Its
+<span class="lineno">   39 </span>-- value:
+<span class="lineno">   40 </span>--
+<span class="lineno">   41 </span>-- &gt; Map.fromList [
+<span class="lineno">   42 </span>-- &gt;   ( &quot;.asc&quot;     , &quot;text/plain&quot;                        ),
+<span class="lineno">   43 </span>-- &gt;   ( &quot;.asf&quot;     , &quot;video/x-ms-asf&quot;                    ),
+<span class="lineno">   44 </span>-- &gt;   ( &quot;.asx&quot;     , &quot;video/x-ms-asf&quot;                    ),
+<span class="lineno">   45 </span>-- &gt;   ( &quot;.avi&quot;     , &quot;video/x-msvideo&quot;                   ),
+<span class="lineno">   46 </span>-- &gt;   ( &quot;.bz2&quot;     , &quot;application/x-bzip&quot;                ),
+<span class="lineno">   47 </span>-- &gt;   ( &quot;.c&quot;       , &quot;text/plain&quot;                        ),
+<span class="lineno">   48 </span>-- &gt;   ( &quot;.class&quot;   , &quot;application/octet-stream&quot;          ),
+<span class="lineno">   49 </span>-- &gt;   ( &quot;.conf&quot;    , &quot;text/plain&quot;                        ),
+<span class="lineno">   50 </span>-- &gt;   ( &quot;.cpp&quot;     , &quot;text/plain&quot;                        ),
+<span class="lineno">   51 </span>-- &gt;   ( &quot;.css&quot;     , &quot;text/css&quot;                          ),
+<span class="lineno">   52 </span>-- &gt;   ( &quot;.cxx&quot;     , &quot;text/plain&quot;                        ),
+<span class="lineno">   53 </span>-- &gt;   ( &quot;.dtd&quot;     , &quot;text/xml&quot;                          ),
+<span class="lineno">   54 </span>-- &gt;   ( &quot;.dvi&quot;     , &quot;application/x-dvi&quot;                 ),
+<span class="lineno">   55 </span>-- &gt;   ( &quot;.gif&quot;     , &quot;image/gif&quot;                         ),
+<span class="lineno">   56 </span>-- &gt;   ( &quot;.gz&quot;      , &quot;application/x-gzip&quot;                ),
+<span class="lineno">   57 </span>-- &gt;   ( &quot;.hs&quot;      , &quot;text/plain&quot;                        ),
+<span class="lineno">   58 </span>-- &gt;   ( &quot;.htm&quot;     , &quot;text/html&quot;                         ),
+<span class="lineno">   59 </span>-- &gt;   ( &quot;.html&quot;    , &quot;text/html&quot;                         ),
+<span class="lineno">   60 </span>-- &gt;   ( &quot;.jar&quot;     , &quot;application/x-java-archive&quot;        ),
+<span class="lineno">   61 </span>-- &gt;   ( &quot;.jpeg&quot;    , &quot;image/jpeg&quot;                        ),
+<span class="lineno">   62 </span>-- &gt;   ( &quot;.jpg&quot;     , &quot;image/jpeg&quot;                        ),
+<span class="lineno">   63 </span>-- &gt;   ( &quot;.js&quot;      , &quot;text/javascript&quot;                   ),
+<span class="lineno">   64 </span>-- &gt;   ( &quot;.log&quot;     , &quot;text/plain&quot;                        ),
+<span class="lineno">   65 </span>-- &gt;   ( &quot;.m3u&quot;     , &quot;audio/x-mpegurl&quot;                   ),
+<span class="lineno">   66 </span>-- &gt;   ( &quot;.mov&quot;     , &quot;video/quicktime&quot;                   ),
+<span class="lineno">   67 </span>-- &gt;   ( &quot;.mp3&quot;     , &quot;audio/mpeg&quot;                        ),
+<span class="lineno">   68 </span>-- &gt;   ( &quot;.mpeg&quot;    , &quot;video/mpeg&quot;                        ),
+<span class="lineno">   69 </span>-- &gt;   ( &quot;.mpg&quot;     , &quot;video/mpeg&quot;                        ),
+<span class="lineno">   70 </span>-- &gt;   ( &quot;.ogg&quot;     , &quot;application/ogg&quot;                   ),
+<span class="lineno">   71 </span>-- &gt;   ( &quot;.pac&quot;     , &quot;application/x-ns-proxy-autoconfig&quot; ),
+<span class="lineno">   72 </span>-- &gt;   ( &quot;.pdf&quot;     , &quot;application/pdf&quot;                   ),
+<span class="lineno">   73 </span>-- &gt;   ( &quot;.png&quot;     , &quot;image/png&quot;                         ),
+<span class="lineno">   74 </span>-- &gt;   ( &quot;.ps&quot;      , &quot;application/postscript&quot;            ),
+<span class="lineno">   75 </span>-- &gt;   ( &quot;.qt&quot;      , &quot;video/quicktime&quot;                   ),
+<span class="lineno">   76 </span>-- &gt;   ( &quot;.sig&quot;     , &quot;application/pgp-signature&quot;         ),
+<span class="lineno">   77 </span>-- &gt;   ( &quot;.spl&quot;     , &quot;application/futuresplash&quot;          ),
+<span class="lineno">   78 </span>-- &gt;   ( &quot;.swf&quot;     , &quot;application/x-shockwave-flash&quot;     ),
+<span class="lineno">   79 </span>-- &gt;   ( &quot;.tar&quot;     , &quot;application/x-tar&quot;                 ),
+<span class="lineno">   80 </span>-- &gt;   ( &quot;.tar.bz2&quot; , &quot;application/x-bzip-compressed-tar&quot; ),
+<span class="lineno">   81 </span>-- &gt;   ( &quot;.tar.gz&quot;  , &quot;application/x-tgz&quot;                 ),
+<span class="lineno">   82 </span>-- &gt;   ( &quot;.tbz&quot;     , &quot;application/x-bzip-compressed-tar&quot; ),
+<span class="lineno">   83 </span>-- &gt;   ( &quot;.text&quot;    , &quot;text/plain&quot;                        ),
+<span class="lineno">   84 </span>-- &gt;   ( &quot;.tgz&quot;     , &quot;application/x-tgz&quot;                 ),
+<span class="lineno">   85 </span>-- &gt;   ( &quot;.torrent&quot; , &quot;application/x-bittorrent&quot;          ),
+<span class="lineno">   86 </span>-- &gt;   ( &quot;.txt&quot;     , &quot;text/plain&quot;                        ),
+<span class="lineno">   87 </span>-- &gt;   ( &quot;.wav&quot;     , &quot;audio/x-wav&quot;                       ),
+<span class="lineno">   88 </span>-- &gt;   ( &quot;.wax&quot;     , &quot;audio/x-ms-wax&quot;                    ),
+<span class="lineno">   89 </span>-- &gt;   ( &quot;.wma&quot;     , &quot;audio/x-ms-wma&quot;                    ),
+<span class="lineno">   90 </span>-- &gt;   ( &quot;.wmv&quot;     , &quot;video/x-ms-wmv&quot;                    ),
+<span class="lineno">   91 </span>-- &gt;   ( &quot;.xbm&quot;     , &quot;image/x-xbitmap&quot;                   ),
+<span class="lineno">   92 </span>-- &gt;   ( &quot;.xml&quot;     , &quot;text/xml&quot;                          ),
+<span class="lineno">   93 </span>-- &gt;   ( &quot;.xpm&quot;     , &quot;image/x-xpixmap&quot;                   ),
+<span class="lineno">   94 </span>-- &gt;   ( &quot;.xwd&quot;     , &quot;image/x-xwindowdump&quot;               ),
+<span class="lineno">   95 </span>-- &gt;   ( &quot;.zip&quot;     , &quot;application/zip&quot;                   ) ]
+<span class="lineno">   96 </span>--
+<span class="lineno">   97 </span>defaultMimeTypes :: MimeMap
+<span class="lineno">   98 </span><span class="decl"><span class="istickedoff">defaultMimeTypes = Map.fromList [</span>
+<span class="lineno">   99 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.asc&quot;     , &quot;text/plain&quot;                        ),</span>
+<span class="lineno">  100 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.asf&quot;     , &quot;video/x-ms-asf&quot;                    ),</span>
+<span class="lineno">  101 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.asx&quot;     , &quot;video/x-ms-asf&quot;                    ),</span>
+<span class="lineno">  102 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.avi&quot;     , &quot;video/x-msvideo&quot;                   ),</span>
+<span class="lineno">  103 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.bz2&quot;     , &quot;application/x-bzip&quot;                ),</span>
+<span class="lineno">  104 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.c&quot;       , &quot;text/plain&quot;                        ),</span>
+<span class="lineno">  105 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.class&quot;   , &quot;application/octet-stream&quot;          ),</span>
+<span class="lineno">  106 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.conf&quot;    , &quot;text/plain&quot;                        ),</span>
+<span class="lineno">  107 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.cpp&quot;     , &quot;text/plain&quot;                        ),</span>
+<span class="lineno">  108 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.css&quot;     , &quot;text/css&quot;                          ),</span>
+<span class="lineno">  109 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.cxx&quot;     , &quot;text/plain&quot;                        ),</span>
+<span class="lineno">  110 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.dtd&quot;     , &quot;text/xml&quot;                          ),</span>
+<span class="lineno">  111 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.dvi&quot;     , &quot;application/x-dvi&quot;                 ),</span>
+<span class="lineno">  112 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.gif&quot;     , &quot;image/gif&quot;                         ),</span>
+<span class="lineno">  113 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.gz&quot;      , &quot;application/x-gzip&quot;                ),</span>
+<span class="lineno">  114 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.hs&quot;      , &quot;text/plain&quot;                        ),</span>
+<span class="lineno">  115 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.htm&quot;     , &quot;text/html&quot;                         ),</span>
+<span class="lineno">  116 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.html&quot;    , &quot;text/html&quot;                         ),</span>
+<span class="lineno">  117 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.jar&quot;     , &quot;application/x-java-archive&quot;        ),</span>
+<span class="lineno">  118 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.jpeg&quot;    , &quot;image/jpeg&quot;                        ),</span>
+<span class="lineno">  119 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.jpg&quot;     , &quot;image/jpeg&quot;                        ),</span>
+<span class="lineno">  120 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.js&quot;      , &quot;text/javascript&quot;                   ),</span>
+<span class="lineno">  121 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.log&quot;     , &quot;text/plain&quot;                        ),</span>
+<span class="lineno">  122 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.m3u&quot;     , &quot;audio/x-mpegurl&quot;                   ),</span>
+<span class="lineno">  123 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.mov&quot;     , &quot;video/quicktime&quot;                   ),</span>
+<span class="lineno">  124 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.mp3&quot;     , &quot;audio/mpeg&quot;                        ),</span>
+<span class="lineno">  125 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.mpeg&quot;    , &quot;video/mpeg&quot;                        ),</span>
+<span class="lineno">  126 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.mpg&quot;     , &quot;video/mpeg&quot;                        ),</span>
+<span class="lineno">  127 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.ogg&quot;     , &quot;application/ogg&quot;                   ),</span>
+<span class="lineno">  128 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.pac&quot;     , &quot;application/x-ns-proxy-autoconfig&quot; ),</span>
+<span class="lineno">  129 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.pdf&quot;     , &quot;application/pdf&quot;                   ),</span>
+<span class="lineno">  130 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.png&quot;     , &quot;image/png&quot;                         ),</span>
+<span class="lineno">  131 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.ps&quot;      , &quot;application/postscript&quot;            ),</span>
+<span class="lineno">  132 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.qt&quot;      , &quot;video/quicktime&quot;                   ),</span>
+<span class="lineno">  133 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.sig&quot;     , &quot;application/pgp-signature&quot;         ),</span>
+<span class="lineno">  134 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.spl&quot;     , &quot;application/futuresplash&quot;          ),</span>
+<span class="lineno">  135 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.swf&quot;     , &quot;application/x-shockwave-flash&quot;     ),</span>
+<span class="lineno">  136 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.tar&quot;     , &quot;application/x-tar&quot;                 ),</span>
+<span class="lineno">  137 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.tar.bz2&quot; , &quot;application/x-bzip-compressed-tar&quot; ),</span>
+<span class="lineno">  138 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.tar.gz&quot;  , &quot;application/x-tgz&quot;                 ),</span>
+<span class="lineno">  139 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.tbz&quot;     , &quot;application/x-bzip-compressed-tar&quot; ),</span>
+<span class="lineno">  140 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.text&quot;    , &quot;text/plain&quot;                        ),</span>
+<span class="lineno">  141 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.tgz&quot;     , &quot;application/x-tgz&quot;                 ),</span>
+<span class="lineno">  142 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.torrent&quot; , &quot;application/x-bittorrent&quot;          ),</span>
+<span class="lineno">  143 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.ttf&quot;     , &quot;application/x-font-truetype&quot;       ),</span>
+<span class="lineno">  144 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.txt&quot;     , &quot;text/plain&quot;                        ),</span>
+<span class="lineno">  145 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.wav&quot;     , &quot;audio/x-wav&quot;                       ),</span>
+<span class="lineno">  146 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.wax&quot;     , &quot;audio/x-ms-wax&quot;                    ),</span>
+<span class="lineno">  147 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.wma&quot;     , &quot;audio/x-ms-wma&quot;                    ),</span>
+<span class="lineno">  148 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.wmv&quot;     , &quot;video/x-ms-wmv&quot;                    ),</span>
+<span class="lineno">  149 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.xbm&quot;     , &quot;image/x-xbitmap&quot;                   ),</span>
+<span class="lineno">  150 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.xml&quot;     , &quot;text/xml&quot;                          ),</span>
+<span class="lineno">  151 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.xpm&quot;     , &quot;image/x-xpixmap&quot;                   ),</span>
+<span class="lineno">  152 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.xwd&quot;     , &quot;image/x-xwindowdump&quot;               ),</span>
+<span class="lineno">  153 </span><span class="spaces">  </span><span class="istickedoff">( &quot;.zip&quot;     , &quot;application/zip&quot;                   ) ]</span></span>
+<span class="lineno">  154 </span>
+<span class="lineno">  155 </span>------------------------------------------------------------------------------
+<span class="lineno">  156 </span>-- | Gets a path from the 'Request' using 'rqPathInfo' and makes sure it is
+<span class="lineno">  157 </span>-- safe to use for opening files.  A path is safe if it is a relative path
+<span class="lineno">  158 </span>-- and has no &quot;..&quot; elements to escape the intended directory structure.
+<span class="lineno">  159 </span>getSafePath :: Snap FilePath
+<span class="lineno">  160 </span><span class="decl"><span class="istickedoff">getSafePath = do</span>
+<span class="lineno">  161 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
+<span class="lineno">  162 </span><span class="spaces">    </span><span class="istickedoff">let p = S.unpack $ rqPathInfo req</span>
+<span class="lineno">  163 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  164 </span><span class="spaces">    </span><span class="istickedoff">-- check that we don't have any sneaky .. paths</span>
+<span class="lineno">  165 </span><span class="spaces">    </span><span class="istickedoff">let dirs = splitDirectories p</span>
+<span class="lineno">  166 </span><span class="spaces">    </span><span class="istickedoff">when (elem &quot;..&quot; dirs) pass</span>
+<span class="lineno">  167 </span><span class="spaces">    </span><span class="istickedoff">return p</span></span>
+<span class="lineno">  168 </span>
+<span class="lineno">  169 </span>
+<span class="lineno">  170 </span>------------------------------------------------------------------------------
+<span class="lineno">  171 </span>-- | Serves files out of the given directory. The relative path given in
+<span class="lineno">  172 </span>-- 'rqPathInfo' is searched for the given file, and the file is served with the
+<span class="lineno">  173 </span>-- appropriate mime type if it is found. Absolute paths and \&quot;@..@\&quot; are prohibited
+<span class="lineno">  174 </span>-- to prevent files from being served from outside the sandbox.
+<span class="lineno">  175 </span>--
+<span class="lineno">  176 </span>-- Uses 'defaultMimeTypes' to determine the @Content-Type@ based on the file's
+<span class="lineno">  177 </span>-- extension.
+<span class="lineno">  178 </span>fileServe :: FilePath  -- ^ root directory
+<span class="lineno">  179 </span>          -&gt; Snap ()
+<span class="lineno">  180 </span><span class="decl"><span class="istickedoff">fileServe = fileServe' defaultMimeTypes</span></span>
+<span class="lineno">  181 </span>{-# INLINE fileServe #-}
+<span class="lineno">  182 </span>
+<span class="lineno">  183 </span>
+<span class="lineno">  184 </span>------------------------------------------------------------------------------
+<span class="lineno">  185 </span>-- | Same as 'fileServe', with control over the MIME mapping used.
+<span class="lineno">  186 </span>fileServe' :: MimeMap           -- ^ MIME type mapping
+<span class="lineno">  187 </span>           -&gt; FilePath          -- ^ root directory
+<span class="lineno">  188 </span>           -&gt; Snap ()
+<span class="lineno">  189 </span><span class="decl"><span class="istickedoff">fileServe' mm root = do</span>
+<span class="lineno">  190 </span><span class="spaces">    </span><span class="istickedoff">sp &lt;- getSafePath</span>
+<span class="lineno">  191 </span><span class="spaces">    </span><span class="istickedoff">let fp   = root &lt;/&gt; sp</span>
+<span class="lineno">  192 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  193 </span><span class="spaces">    </span><span class="istickedoff">-- check that the file exists</span>
+<span class="lineno">  194 </span><span class="spaces">    </span><span class="istickedoff">liftIO (doesFileExist fp) &gt;&gt;= flip unless pass</span>
+<span class="lineno">  195 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  196 </span><span class="spaces">    </span><span class="istickedoff">let fn   = takeFileName fp</span>
+<span class="lineno">  197 </span><span class="spaces">    </span><span class="istickedoff">let mime = fileType mm fn</span>
+<span class="lineno">  198 </span><span class="spaces">    </span><span class="istickedoff">fileServeSingle' mime fp</span></span>
+<span class="lineno">  199 </span>{-# INLINE fileServe' #-}
+<span class="lineno">  200 </span>
+<span class="lineno">  201 </span>
+<span class="lineno">  202 </span>------------------------------------------------------------------------------
+<span class="lineno">  203 </span>-- | Serves a single file specified by a full or relative path.  The
+<span class="lineno">  204 </span>-- path restrictions on fileServe don't apply to this function since
+<span class="lineno">  205 </span>-- the path is not being supplied by the user.
+<span class="lineno">  206 </span>fileServeSingle :: FilePath          -- ^ path to file
+<span class="lineno">  207 </span>                -&gt; Snap ()
+<span class="lineno">  208 </span><span class="decl"><span class="nottickedoff">fileServeSingle fp =</span>
+<span class="lineno">  209 </span><span class="spaces">    </span><span class="nottickedoff">fileServeSingle' (fileType defaultMimeTypes (takeFileName fp)) fp</span></span>
+<span class="lineno">  210 </span>{-# INLINE fileServeSingle #-}
+<span class="lineno">  211 </span>
+<span class="lineno">  212 </span>
+<span class="lineno">  213 </span>------------------------------------------------------------------------------
+<span class="lineno">  214 </span>-- | Same as 'fileServeSingle', with control over the MIME mapping used.
+<span class="lineno">  215 </span>fileServeSingle' :: ByteString        -- ^ MIME type mapping
+<span class="lineno">  216 </span>                 -&gt; FilePath          -- ^ path to file
+<span class="lineno">  217 </span>                 -&gt; Snap ()
+<span class="lineno">  218 </span><span class="decl"><span class="istickedoff">fileServeSingle' mime fp = do</span>
+<span class="lineno">  219 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
+<span class="lineno">  220 </span><span class="spaces">    </span><span class="istickedoff"></span>
+<span class="lineno">  221 </span><span class="spaces">    </span><span class="istickedoff">let mbH = getHeader &quot;if-modified-since&quot; req</span>
+<span class="lineno">  222 </span><span class="spaces">    </span><span class="istickedoff">mbIfModified &lt;- liftIO $ case mbH of</span>
+<span class="lineno">  223 </span><span class="spaces">                               </span><span class="istickedoff">Nothing  -&gt; return Nothing</span>
+<span class="lineno">  224 </span><span class="spaces">                               </span><span class="istickedoff">(Just s) -&gt; liftM Just $ parseHttpTime s</span>
+<span class="lineno">  225 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  226 </span><span class="spaces">    </span><span class="istickedoff">-- check modification time and bug out early if the file is not modified.</span>
+<span class="lineno">  227 </span><span class="spaces">    </span><span class="istickedoff">filestat &lt;- liftIO $ getFileStatus fp</span>
+<span class="lineno">  228 </span><span class="spaces">    </span><span class="istickedoff">let mt = modificationTime filestat</span>
+<span class="lineno">  229 </span><span class="spaces">    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) (chkModificationTime mt) mbIfModified</span>
+<span class="lineno">  230 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  231 </span><span class="spaces">    </span><span class="istickedoff">let sz = fromEnum $ fileSize filestat</span>
+<span class="lineno">  232 </span><span class="spaces">    </span><span class="istickedoff">lm &lt;- liftIO $ formatHttpTime mt</span>
+<span class="lineno">  233 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  234 </span><span class="spaces">    </span><span class="istickedoff">modifyResponse $ setHeader &quot;Last-Modified&quot; lm</span>
+<span class="lineno">  235 </span><span class="spaces">                   </span><span class="istickedoff">. setContentType mime</span>
+<span class="lineno">  236 </span><span class="spaces">                   </span><span class="istickedoff">. setContentLength sz</span>
+<span class="lineno">  237 </span><span class="spaces">    </span><span class="istickedoff">sendFile fp</span>
 <span class="lineno">  238 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  239 </span><span class="spaces">    </span><span class="istickedoff">lm &lt;- liftIO $ formatHttpTime mt</span>
-<span class="lineno">  240 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  241 </span><span class="spaces">    </span><span class="istickedoff">modifyResponse $ setHeader &quot;Last-Modified&quot; lm</span>
-<span class="lineno">  242 </span><span class="spaces">                   </span><span class="istickedoff">. setContentType mime</span>
-<span class="lineno">  243 </span><span class="spaces">                   </span><span class="istickedoff">. setContentLength sz</span>
-<span class="lineno">  244 </span><span class="spaces">    </span><span class="istickedoff">sendFile fp</span>
-<span class="lineno">  245 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  246 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  247 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  248 </span><span class="spaces">    </span><span class="istickedoff">chkModificationTime mt lt = when (mt &lt;= lt) notModified</span>
-<span class="lineno">  249 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  250 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  251 </span><span class="spaces">    </span><span class="istickedoff">notModified = finishWith $</span>
-<span class="lineno">  252 </span><span class="spaces">                  </span><span class="istickedoff">setResponseStatus 304 &quot;Not Modified&quot; emptyResponse</span></span>
-<span class="lineno">  253 </span>
-<span class="lineno">  254 </span>
-<span class="lineno">  255 </span>------------------------------------------------------------------------------
-<span class="lineno">  256 </span>fileType :: MimeMap -&gt; FilePath -&gt; ByteString
-<span class="lineno">  257 </span><span class="decl"><span class="istickedoff">fileType mm f =</span>
-<span class="lineno">  258 </span><span class="spaces">    </span><span class="istickedoff">if null ext</span>
-<span class="lineno">  259 </span><span class="spaces">      </span><span class="istickedoff">then defaultMimeType</span>
-<span class="lineno">  260 </span><span class="spaces">      </span><span class="istickedoff">else fromMaybe (fileType mm (drop 1 ext))</span>
-<span class="lineno">  261 </span><span class="spaces">                     </span><span class="istickedoff">mbe</span>
-<span class="lineno">  262 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  263 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  264 </span><span class="spaces">    </span><span class="istickedoff">ext             = takeExtensions f</span>
-<span class="lineno">  265 </span><span class="spaces">    </span><span class="istickedoff">mbe             = Map.lookup ext mm</span></span>
-<span class="lineno">  266 </span>
-<span class="lineno">  267 </span>
-<span class="lineno">  268 </span>------------------------------------------------------------------------------
-<span class="lineno">  269 </span>defaultMimeType :: ByteString
-<span class="lineno">  270 </span><span class="decl"><span class="istickedoff">defaultMimeType = &quot;application/octet-stream&quot;</span></span>
-<span class="lineno">  271 </span>
-<span class="lineno">  272 </span>
-<span class="lineno">  273 </span>------------------------------------------------------------------------------
-<span class="lineno">  274 </span>clock2time :: ClockTime -&gt; CTime
-<span class="lineno">  275 </span><span class="decl"><span class="istickedoff">clock2time (TOD x _) = fromInteger x</span></span>
+<span class="lineno">  239 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  240 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  241 </span><span class="spaces">    </span><span class="istickedoff">chkModificationTime mt lt = when (mt &lt;= lt) notModified</span>
+<span class="lineno">  242 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  243 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  244 </span><span class="spaces">    </span><span class="istickedoff">notModified = finishWith $</span>
+<span class="lineno">  245 </span><span class="spaces">                  </span><span class="istickedoff">setResponseStatus 304 &quot;Not Modified&quot; emptyResponse</span></span>
+<span class="lineno">  246 </span>
+<span class="lineno">  247 </span>
+<span class="lineno">  248 </span>------------------------------------------------------------------------------
+<span class="lineno">  249 </span>fileType :: MimeMap -&gt; FilePath -&gt; ByteString
+<span class="lineno">  250 </span><span class="decl"><span class="istickedoff">fileType mm f =</span>
+<span class="lineno">  251 </span><span class="spaces">    </span><span class="istickedoff">if null ext</span>
+<span class="lineno">  252 </span><span class="spaces">      </span><span class="istickedoff">then defaultMimeType</span>
+<span class="lineno">  253 </span><span class="spaces">      </span><span class="istickedoff">else fromMaybe (fileType mm (drop 1 ext))</span>
+<span class="lineno">  254 </span><span class="spaces">                     </span><span class="istickedoff">mbe</span>
+<span class="lineno">  255 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  256 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  257 </span><span class="spaces">    </span><span class="istickedoff">ext             = takeExtensions f</span>
+<span class="lineno">  258 </span><span class="spaces">    </span><span class="istickedoff">mbe             = Map.lookup ext mm</span></span>
+<span class="lineno">  259 </span>
+<span class="lineno">  260 </span>
+<span class="lineno">  261 </span>------------------------------------------------------------------------------
+<span class="lineno">  262 </span>defaultMimeType :: ByteString
+<span class="lineno">  263 </span><span class="decl"><span class="istickedoff">defaultMimeType = &quot;application/octet-stream&quot;</span></span>
 
 </pre>
 </html>

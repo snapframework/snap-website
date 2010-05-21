@@ -32,293 +32,329 @@ span.spaces    { background: white }
 <span class="lineno">   21 </span>import           System.IO.Unsafe
 <span class="lineno">   22 </span>
 <span class="lineno">   23 </span>import           Text.Templating.Heist
-<span class="lineno">   24 </span>import           Text.XML.Expat.Cursor
-<span class="lineno">   25 </span>import           Text.XML.Expat.Format
-<span class="lineno">   26 </span>import qualified Text.XML.Expat.Tree as X
-<span class="lineno">   27 </span>
-<span class="lineno">   28 </span>tests :: [Test]
-<span class="lineno">   29 </span><span class="decl"><span class="istickedoff">tests = [ testProperty &quot;simpleBindTest&quot; $ monadicIO $ forAllM arbitrary prop_simpleBindTest</span>
-<span class="lineno">   30 </span><span class="spaces">        </span><span class="istickedoff">, testProperty &quot;simpleApplyTest&quot; $ monadicIO $ forAllM arbitrary prop_simpleApplyTest</span>
-<span class="lineno">   31 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;stateMonoidTest&quot; monoidTest</span>
-<span class="lineno">   32 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;templateAddTest&quot; addTest</span>
-<span class="lineno">   33 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;getDocTest&quot; getDocTest</span>
-<span class="lineno">   34 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;loadTest&quot; loadTest</span>
-<span class="lineno">   35 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;fsLoadTest&quot; fsLoadTest</span>
-<span class="lineno">   36 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;renderNoNameTest&quot; renderNoNameTest</span>
-<span class="lineno">   37 </span><span class="spaces">        </span><span class="istickedoff">]</span></span>
-<span class="lineno">   38 </span>
-<span class="lineno">   39 </span>monoidTest :: IO ()
-<span class="lineno">   40 </span><span class="decl"><span class="istickedoff">monoidTest = do</span>
-<span class="lineno">   41 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;left monoid identity&quot;</span> $ mempty `mappend` es == es</span>
-<span class="lineno">   42 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;right monoid identity&quot;</span> $ es `mappend` mempty == es</span>
-<span class="lineno">   43 </span><span class="spaces">  </span><span class="istickedoff">where es = emptyTemplateState :: TemplateState IO</span></span>
-<span class="lineno">   44 </span>
-<span class="lineno">   45 </span>addTest :: IO ()
-<span class="lineno">   46 </span><span class="decl"><span class="istickedoff">addTest = do</span>
-<span class="lineno">   47 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;lookup test&quot;</span> $ Just [] == (fmap fst $ lookupTemplate &quot;aoeu&quot; ts)</span>
-<span class="lineno">   48 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;splice touched&quot;</span> $ Map.size (_spliceMap ts) == 0</span>
-<span class="lineno">   49 </span><span class="spaces">  </span><span class="istickedoff">where ts = addTemplate &quot;aoeu&quot; [] (mempty::TemplateState IO)</span></span>
-<span class="lineno">   50 </span>
-<span class="lineno">   51 </span>isLeft :: Either a b -&gt; Bool
-<span class="lineno">   52 </span><span class="decl"><span class="istickedoff">isLeft (Left _) = True</span>
-<span class="lineno">   53 </span><span class="spaces"></span><span class="istickedoff">isLeft (Right _) = False</span></span>
-<span class="lineno">   54 </span>
-<span class="lineno">   55 </span>loadTest :: H.Assertion
-<span class="lineno">   56 </span><span class="decl"><span class="istickedoff">loadTest = do</span>
-<span class="lineno">   57 </span><span class="spaces">  </span><span class="istickedoff">ets &lt;- loadTemplates &quot;templates&quot; :: IO (Either String (TemplateState IO))</span>
-<span class="lineno">   58 </span><span class="spaces">  </span><span class="istickedoff">either <span class="nottickedoff">(error &quot;Error loading templates&quot;)</span></span>
-<span class="lineno">   59 </span><span class="spaces">         </span><span class="istickedoff">(\ts -&gt; do let tm = _templateMap ts</span>
-<span class="lineno">   60 </span><span class="spaces">                    </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;loadTest size&quot;</span> $ Map.size tm == 12</span>
-<span class="lineno">   61 </span><span class="spaces">         </span><span class="istickedoff">) ets</span></span>
-<span class="lineno">   62 </span>
-<span class="lineno">   63 </span>renderNoNameTest :: H.Assertion
-<span class="lineno">   64 </span><span class="decl"><span class="istickedoff">renderNoNameTest = do</span>
-<span class="lineno">   65 </span><span class="spaces">  </span><span class="istickedoff">ets &lt;- loadTemplates &quot;templates&quot; :: IO (Either String (TemplateState IO))</span>
-<span class="lineno">   66 </span><span class="spaces">  </span><span class="istickedoff">either <span class="nottickedoff">(error &quot;Error loading templates&quot;)</span></span>
-<span class="lineno">   67 </span><span class="spaces">         </span><span class="istickedoff">(\ts -&gt; do t &lt;- renderTemplate ts &quot;&quot;</span>
-<span class="lineno">   68 </span><span class="spaces">                    </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;renderNoName&quot;</span> $ t == Nothing</span>
-<span class="lineno">   69 </span><span class="spaces">         </span><span class="istickedoff">) ets</span></span>
-<span class="lineno">   70 </span>
-<span class="lineno">   71 </span>getDocTest :: H.Assertion
-<span class="lineno">   72 </span><span class="decl"><span class="istickedoff">getDocTest = do</span>
-<span class="lineno">   73 </span><span class="spaces">  </span><span class="istickedoff">d &lt;- getDoc &quot;bkteoar&quot;</span>
-<span class="lineno">   74 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;non-existent doc&quot;</span> $ isLeft d</span>
-<span class="lineno">   75 </span><span class="spaces">  </span><span class="istickedoff">f &lt;- getDoc &quot;templates/index.tpl&quot;</span>
-<span class="lineno">   76 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;index doc&quot;</span> $ not $ isLeft f</span></span>
-<span class="lineno">   77 </span>
-<span class="lineno">   78 </span>fsLoadTest :: H.Assertion
-<span class="lineno">   79 </span><span class="decl"><span class="istickedoff">fsLoadTest = do</span>
-<span class="lineno">   80 </span><span class="spaces">  </span><span class="istickedoff">ets &lt;- loadTemplates &quot;templates&quot; :: IO (Either String (TemplateState IO))</span>
-<span class="lineno">   81 </span><span class="spaces">  </span><span class="istickedoff">let tm = either <span class="nottickedoff">(error &quot;Error loading templates&quot;)</span> _templateMap ets</span>
-<span class="lineno">   82 </span><span class="spaces">  </span><span class="istickedoff">let ts = emptyTemplateState {_templateMap = tm} :: TemplateState IO</span>
-<span class="lineno">   83 </span><span class="spaces">      </span><span class="istickedoff">f p n = H.assertBool <span class="nottickedoff">(&quot;loading template &quot;++n)</span> $ p $ lookupTemplate (B.pack n) ts</span>
-<span class="lineno">   84 </span><span class="spaces">  </span><span class="istickedoff">f isNothing &quot;abc/def/xyz&quot;</span>
-<span class="lineno">   85 </span><span class="spaces">  </span><span class="istickedoff">f isJust &quot;a&quot;</span>
-<span class="lineno">   86 </span><span class="spaces">  </span><span class="istickedoff">f isJust &quot;bar/a&quot;</span></span>
-<span class="lineno">   87 </span>
-<span class="lineno">   88 </span>identStartChar :: [Char]
-<span class="lineno">   89 </span><span class="decl"><span class="istickedoff">identStartChar = ['a'..'z']</span></span>
-<span class="lineno">   90 </span>identChar :: [Char]
-<span class="lineno">   91 </span><span class="decl"><span class="istickedoff">identChar = '_' : identStartChar</span></span>
+<span class="lineno">   24 </span>import           Text.Templating.Heist.Internal
+<span class="lineno">   25 </span>import           Text.XML.Expat.Cursor
+<span class="lineno">   26 </span>import           Text.XML.Expat.Format
+<span class="lineno">   27 </span>import qualified Text.XML.Expat.Tree as X
+<span class="lineno">   28 </span>
+<span class="lineno">   29 </span>tests :: [Test]
+<span class="lineno">   30 </span><span class="decl"><span class="istickedoff">tests = [ testProperty &quot;simpleBindTest&quot; $ monadicIO $ forAllM arbitrary prop_simpleBindTest</span>
+<span class="lineno">   31 </span><span class="spaces">        </span><span class="istickedoff">, testProperty &quot;simpleApplyTest&quot; $ monadicIO $ forAllM arbitrary prop_simpleApplyTest</span>
+<span class="lineno">   32 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;stateMonoidTest&quot; monoidTest</span>
+<span class="lineno">   33 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;templateAddTest&quot; addTest</span>
+<span class="lineno">   34 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;getDocTest&quot; getDocTest</span>
+<span class="lineno">   35 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;loadTest&quot; loadTest</span>
+<span class="lineno">   36 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;fsLoadTest&quot; fsLoadTest</span>
+<span class="lineno">   37 </span><span class="spaces">        </span><span class="istickedoff">, testCase &quot;renderNoNameTest&quot; renderNoNameTest</span>
+<span class="lineno">   38 </span><span class="spaces">        </span><span class="istickedoff">]</span></span>
+<span class="lineno">   39 </span>
+<span class="lineno">   40 </span>monoidTest :: IO ()
+<span class="lineno">   41 </span><span class="decl"><span class="istickedoff">monoidTest = do</span>
+<span class="lineno">   42 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;left monoid identity&quot;</span> $ mempty `mappend` es == es</span>
+<span class="lineno">   43 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;right monoid identity&quot;</span> $ es `mappend` mempty == es</span>
+<span class="lineno">   44 </span><span class="spaces">  </span><span class="istickedoff">where es = emptyTemplateState :: TemplateState IO</span></span>
+<span class="lineno">   45 </span>
+<span class="lineno">   46 </span>addTest :: IO ()
+<span class="lineno">   47 </span><span class="decl"><span class="istickedoff">addTest = do</span>
+<span class="lineno">   48 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;lookup test&quot;</span> $ Just [] == (fmap fst $ lookupTemplate &quot;aoeu&quot; ts)</span>
+<span class="lineno">   49 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;splice touched&quot;</span> $ Map.size (_spliceMap ts) == 0</span>
+<span class="lineno">   50 </span><span class="spaces">  </span><span class="istickedoff">where ts = addTemplate &quot;aoeu&quot; [] (mempty::TemplateState IO)</span></span>
+<span class="lineno">   51 </span>
+<span class="lineno">   52 </span>isLeft :: Either a b -&gt; Bool
+<span class="lineno">   53 </span><span class="decl"><span class="istickedoff">isLeft (Left _) = True</span>
+<span class="lineno">   54 </span><span class="spaces"></span><span class="istickedoff">isLeft (Right _) = False</span></span>
+<span class="lineno">   55 </span>
+<span class="lineno">   56 </span>
+<span class="lineno">   57 </span>loadT :: String -&gt; IO (Either String (TemplateState IO))
+<span class="lineno">   58 </span><span class="decl"><span class="istickedoff">loadT s = loadTemplates s emptyTemplateState</span></span>
+<span class="lineno">   59 </span>
+<span class="lineno">   60 </span>loadTest :: H.Assertion
+<span class="lineno">   61 </span><span class="decl"><span class="istickedoff">loadTest = do</span>
+<span class="lineno">   62 </span><span class="spaces">  </span><span class="istickedoff">ets &lt;- loadT &quot;templates&quot;</span>
+<span class="lineno">   63 </span><span class="spaces">  </span><span class="istickedoff">either <span class="nottickedoff">(error &quot;Error loading templates&quot;)</span></span>
+<span class="lineno">   64 </span><span class="spaces">         </span><span class="istickedoff">(\ts -&gt; do let tm = _templateMap ts</span>
+<span class="lineno">   65 </span><span class="spaces">                    </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;loadTest size&quot;</span> $ Map.size tm == 12</span>
+<span class="lineno">   66 </span><span class="spaces">         </span><span class="istickedoff">) ets</span></span>
+<span class="lineno">   67 </span>
+<span class="lineno">   68 </span>renderNoNameTest :: H.Assertion
+<span class="lineno">   69 </span><span class="decl"><span class="istickedoff">renderNoNameTest = do</span>
+<span class="lineno">   70 </span><span class="spaces">  </span><span class="istickedoff">ets &lt;- loadT &quot;templates&quot;</span>
+<span class="lineno">   71 </span><span class="spaces">  </span><span class="istickedoff">either <span class="nottickedoff">(error &quot;Error loading templates&quot;)</span></span>
+<span class="lineno">   72 </span><span class="spaces">         </span><span class="istickedoff">(\ts -&gt; do t &lt;- renderTemplate ts &quot;&quot;</span>
+<span class="lineno">   73 </span><span class="spaces">                    </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;renderNoName&quot;</span> $ t == Nothing</span>
+<span class="lineno">   74 </span><span class="spaces">         </span><span class="istickedoff">) ets</span></span>
+<span class="lineno">   75 </span>
+<span class="lineno">   76 </span>getDocTest :: H.Assertion
+<span class="lineno">   77 </span><span class="decl"><span class="istickedoff">getDocTest = do</span>
+<span class="lineno">   78 </span><span class="spaces">  </span><span class="istickedoff">d &lt;- getDoc &quot;bkteoar&quot;</span>
+<span class="lineno">   79 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;non-existent doc&quot;</span> $ isLeft d</span>
+<span class="lineno">   80 </span><span class="spaces">  </span><span class="istickedoff">f &lt;- getDoc &quot;templates/index.tpl&quot;</span>
+<span class="lineno">   81 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;index doc&quot;</span> $ not $ isLeft f</span></span>
+<span class="lineno">   82 </span>
+<span class="lineno">   83 </span>fsLoadTest :: H.Assertion
+<span class="lineno">   84 </span><span class="decl"><span class="istickedoff">fsLoadTest = do</span>
+<span class="lineno">   85 </span><span class="spaces">  </span><span class="istickedoff">ets &lt;- loadT &quot;templates&quot;</span>
+<span class="lineno">   86 </span><span class="spaces">  </span><span class="istickedoff">let tm = either <span class="nottickedoff">(error &quot;Error loading templates&quot;)</span> _templateMap ets</span>
+<span class="lineno">   87 </span><span class="spaces">  </span><span class="istickedoff">let ts = setTemplates tm emptyTemplateState :: TemplateState IO</span>
+<span class="lineno">   88 </span><span class="spaces">      </span><span class="istickedoff">f p n = H.assertBool <span class="nottickedoff">(&quot;loading template &quot;++n)</span> $ p $ lookupTemplate (B.pack n) ts</span>
+<span class="lineno">   89 </span><span class="spaces">  </span><span class="istickedoff">f isNothing &quot;abc/def/xyz&quot;</span>
+<span class="lineno">   90 </span><span class="spaces">  </span><span class="istickedoff">f isJust &quot;a&quot;</span>
+<span class="lineno">   91 </span><span class="spaces">  </span><span class="istickedoff">f isJust &quot;bar/a&quot;</span></span>
 <span class="lineno">   92 </span>
-<span class="lineno">   93 </span>newtype <span class="istickedoff">Name</span> = Name { unName :: B.ByteString } deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>)
-<span class="lineno">   94 </span>
-<span class="lineno">   95 </span>instance Arbitrary Name where
-<span class="lineno">   96 </span>  <span class="decl"><span class="istickedoff">arbitrary = do</span>
-<span class="lineno">   97 </span><span class="spaces">    </span><span class="istickedoff">first &lt;- elements identStartChar</span>
-<span class="lineno">   98 </span><span class="spaces">    </span><span class="istickedoff">n &lt;- choose (4,10)</span>
-<span class="lineno">   99 </span><span class="spaces">    </span><span class="istickedoff">rest &lt;- vectorOf n $ elements identChar</span>
-<span class="lineno">  100 </span><span class="spaces">    </span><span class="istickedoff">return $ Name $ B.pack $ first : rest</span></span>
-<span class="lineno">  101 </span>
-<span class="lineno">  102 </span>instance Arbitrary Node where
-<span class="lineno">  103 </span>  <span class="decl"><span class="istickedoff">arbitrary = limitedDepth 3</span></span>
-<span class="lineno">  104 </span>  <span class="decl"><span class="nottickedoff">shrink (X.Text _) = []</span>
-<span class="lineno">  105 </span><span class="spaces">  </span><span class="nottickedoff">shrink (X.Element _ [] []) = []</span>
-<span class="lineno">  106 </span><span class="spaces">  </span><span class="nottickedoff">shrink (X.Element n [] (_:cs)) = [X.Element n [] cs]</span>
-<span class="lineno">  107 </span><span class="spaces">  </span><span class="nottickedoff">shrink (X.Element n (_:as) []) = [X.Element n as []]</span>
-<span class="lineno">  108 </span><span class="spaces">  </span><span class="nottickedoff">shrink (X.Element n as cs) = [X.Element n as (tail cs), X.Element n (tail as) cs]</span></span>
-<span class="lineno">  109 </span>
-<span class="lineno">  110 </span>textGen :: Gen [Char]
-<span class="lineno">  111 </span><span class="decl"><span class="istickedoff">textGen = listOf $ elements ((replicate 5 ' ') ++ identStartChar)</span></span>
-<span class="lineno">  112 </span>
-<span class="lineno">  113 </span>limitedDepth :: Int -&gt; Gen Node
-<span class="lineno">  114 </span><span class="decl"><span class="istickedoff">limitedDepth 0 = liftM (X.Text . B.pack) textGen</span>
-<span class="lineno">  115 </span><span class="spaces"></span><span class="istickedoff">limitedDepth n = oneof [ liftM (X.Text . B.pack) textGen</span>
-<span class="lineno">  116 </span><span class="spaces">                       </span><span class="istickedoff">, liftM3 X.Element arbitrary</span>
-<span class="lineno">  117 </span><span class="spaces">                                          </span><span class="istickedoff">(liftM (take 2) arbitrary)</span>
-<span class="lineno">  118 </span><span class="spaces">                                          </span><span class="istickedoff">(liftM (take 3) $ listOf $ limitedDepth (n-1))</span>
-<span class="lineno">  119 </span><span class="spaces">                       </span><span class="istickedoff">]</span></span>
-<span class="lineno">  120 </span>
-<span class="lineno">  121 </span>instance Arbitrary B.ByteString where
-<span class="lineno">  122 </span>  <span class="decl"><span class="istickedoff">arbitrary = liftM unName arbitrary</span></span>
-<span class="lineno">  123 </span>
-<span class="lineno">  124 </span>{-
-<span class="lineno">  125 </span> - Code for inserting nodes into any point of a tree
-<span class="lineno">  126 </span> -}
-<span class="lineno">  127 </span>
-<span class="lineno">  128 </span>type Loc = Cursor B.ByteString B.ByteString
-<span class="lineno">  129 </span>type Insert a = State Int a
-<span class="lineno">  130 </span>
-<span class="lineno">  131 </span>{-
-<span class="lineno">  132 </span> - Returns the number of unique insertion points in the tree.
-<span class="lineno">  133 </span> - If h = insertAt f n g&quot;, the following property holds:
-<span class="lineno">  134 </span> - insSize h == (insSize f) + (insSize g) - 1
-<span class="lineno">  135 </span> -}
-<span class="lineno">  136 </span>insSize :: [X.Node tag text] -&gt; Int
-<span class="lineno">  137 </span><span class="decl"><span class="istickedoff">insSize ns = 1 + (sum $ map nodeSize ns)</span>
-<span class="lineno">  138 </span><span class="spaces">  </span><span class="istickedoff">where nodeSize (X.Text _) = 1</span>
-<span class="lineno">  139 </span><span class="spaces">        </span><span class="istickedoff">nodeSize (X.Element _ _ c) = 1 + (insSize c)</span></span>
-<span class="lineno">  140 </span>
-<span class="lineno">  141 </span>insertAt :: [Node] -&gt; Int -&gt; [Node] -&gt; [Node]
-<span class="lineno">  142 </span><span class="decl"><span class="istickedoff">insertAt elems 0 ns = elems ++ ns</span>
-<span class="lineno">  143 </span><span class="spaces"></span><span class="istickedoff">insertAt elems _ [] = <span class="nottickedoff">elems</span></span>
-<span class="lineno">  144 </span><span class="spaces"></span><span class="istickedoff">insertAt elems n list = maybe <span class="nottickedoff">[]</span> (toForest . root) $</span>
-<span class="lineno">  145 </span><span class="spaces">  </span><span class="istickedoff">evalState (processNode elems $ fromJust $ fromForest list) n</span></span>
-<span class="lineno">  146 </span>
-<span class="lineno">  147 </span>move :: Insert ()
-<span class="lineno">  148 </span><span class="decl"><span class="istickedoff">move = modify (\x -&gt; x-1)</span></span>
-<span class="lineno">  149 </span>
-<span class="lineno">  150 </span>processNode :: [Node] -&gt; Loc -&gt; Insert (Maybe Loc)
-<span class="lineno">  151 </span><span class="decl"><span class="istickedoff">processNode elems loc = liftM2 mplus (move &gt;&gt; goDown loc) (move &gt;&gt; goRight loc)</span>
-<span class="lineno">  152 </span><span class="spaces">  </span><span class="istickedoff">where goDown l = case current l of</span>
-<span class="lineno">  153 </span><span class="spaces">          </span><span class="istickedoff">X.Text _        -&gt; modify (+1) &gt;&gt; return Nothing</span>
-<span class="lineno">  154 </span><span class="spaces">          </span><span class="istickedoff">X.Element _ _ _ -&gt; doneCheck (insertManyFirstChild elems) firstChild l</span>
-<span class="lineno">  155 </span><span class="spaces">        </span><span class="istickedoff">goRight = doneCheck (Just . insertManyRight elems) right</span>
-<span class="lineno">  156 </span><span class="spaces">        </span><span class="istickedoff">doneCheck insertFunc next l = do</span>
-<span class="lineno">  157 </span><span class="spaces">          </span><span class="istickedoff">s &lt;- get</span>
-<span class="lineno">  158 </span><span class="spaces">          </span><span class="istickedoff">if s == 0</span>
-<span class="lineno">  159 </span><span class="spaces">            </span><span class="istickedoff">then return $ insertFunc l</span>
-<span class="lineno">  160 </span><span class="spaces">            </span><span class="istickedoff">else maybe (return Nothing) (processNode elems) $ next l</span></span>
-<span class="lineno">  161 </span>
-<span class="lineno">  162 </span>{-
-<span class="lineno">  163 </span> - &lt;bind&gt; tests
-<span class="lineno">  164 </span> -}
-<span class="lineno">  165 </span>
-<span class="lineno">  166 </span>-- Data type encapsulating the parameters for a bind operation
-<span class="lineno">  167 </span>data <span class="nottickedoff">Bind</span> = Bind {
-<span class="lineno">  168 </span>  _bindElemName :: Name,
-<span class="lineno">  169 </span>  _bindChildren :: [Node],
-<span class="lineno">  170 </span>  _bindDoc :: [Node],
-<span class="lineno">  171 </span>  _bindPos :: Int,
-<span class="lineno">  172 </span>  _bindRefPos :: Int
-<span class="lineno">  173 </span>} -- deriving (Show)
-<span class="lineno">  174 </span>
-<span class="lineno">  175 </span>instance Show Bind where
-<span class="lineno">  176 </span>  <span class="decl"><span class="nottickedoff">show b@(Bind e c d p r) = unlines</span>
-<span class="lineno">  177 </span><span class="spaces">    </span><span class="nottickedoff">[&quot;\n&quot;</span>
-<span class="lineno">  178 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Bind element name: &quot;++(show e)</span>
-<span class="lineno">  179 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Bind pos: &quot;++(show p)</span>
-<span class="lineno">  180 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Bind ref pos: &quot;++(show r)</span>
-<span class="lineno">  181 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Bind document:&quot;</span>
-<span class="lineno">  182 </span><span class="spaces">    </span><span class="nottickedoff">,L.unpack $ L.concat $ map formatNode d</span>
-<span class="lineno">  183 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Bind children:&quot;</span>
-<span class="lineno">  184 </span><span class="spaces">    </span><span class="nottickedoff">,L.unpack $ L.concat $ map formatNode c</span>
-<span class="lineno">  185 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Result:&quot;</span>
-<span class="lineno">  186 </span><span class="spaces">    </span><span class="nottickedoff">,L.unpack $ L.concat $ map formatNode $ buildResult b</span>
-<span class="lineno">  187 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Splice result:&quot;</span>
-<span class="lineno">  188 </span><span class="spaces">    </span><span class="nottickedoff">,L.unpack $ L.concat $ map formatNode $ unsafePerformIO $ runBareTemplate $ buildBindTemplate b</span>
-<span class="lineno">  189 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Template:&quot;</span>
-<span class="lineno">  190 </span><span class="spaces">    </span><span class="nottickedoff">,L.unpack $ L.concat $ map formatNode $ buildBindTemplate b</span>
-<span class="lineno">  191 </span><span class="spaces">    </span><span class="nottickedoff">]</span></span>
-<span class="lineno">  192 </span>
-<span class="lineno">  193 </span>buildNode :: B.ByteString -&gt; B.ByteString -&gt; Bind -&gt; Node
-<span class="lineno">  194 </span><span class="decl"><span class="istickedoff">buildNode tag attr (Bind s c _ _ _) = X.Element tag [(attr, unName s)] c</span></span>
-<span class="lineno">  195 </span>
-<span class="lineno">  196 </span>buildBind :: Bind -&gt; Node
-<span class="lineno">  197 </span><span class="decl"><span class="istickedoff">buildBind = buildNode &quot;bind&quot; &quot;tag&quot;</span></span>
+<span class="lineno">   93 </span>identStartChar :: [Char]
+<span class="lineno">   94 </span><span class="decl"><span class="istickedoff">identStartChar = ['a'..'z']</span></span>
+<span class="lineno">   95 </span>identChar :: [Char]
+<span class="lineno">   96 </span><span class="decl"><span class="istickedoff">identChar = '_' : identStartChar</span></span>
+<span class="lineno">   97 </span>
+<span class="lineno">   98 </span>newtype <span class="istickedoff">Name</span> = Name { unName :: B.ByteString } deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>)
+<span class="lineno">   99 </span>
+<span class="lineno">  100 </span>instance Arbitrary Name where
+<span class="lineno">  101 </span>  <span class="decl"><span class="istickedoff">arbitrary = do</span>
+<span class="lineno">  102 </span><span class="spaces">    </span><span class="istickedoff">first &lt;- elements identStartChar</span>
+<span class="lineno">  103 </span><span class="spaces">    </span><span class="istickedoff">n &lt;- choose (4,10)</span>
+<span class="lineno">  104 </span><span class="spaces">    </span><span class="istickedoff">rest &lt;- vectorOf n $ elements identChar</span>
+<span class="lineno">  105 </span><span class="spaces">    </span><span class="istickedoff">return $ Name $ B.pack $ first : rest</span></span>
+<span class="lineno">  106 </span>
+<span class="lineno">  107 </span>instance Arbitrary Node where
+<span class="lineno">  108 </span>  <span class="decl"><span class="istickedoff">arbitrary = limitedDepth 3</span></span>
+<span class="lineno">  109 </span>  <span class="decl"><span class="nottickedoff">shrink (X.Text _) = []</span>
+<span class="lineno">  110 </span><span class="spaces">  </span><span class="nottickedoff">shrink (X.Element _ [] []) = []</span>
+<span class="lineno">  111 </span><span class="spaces">  </span><span class="nottickedoff">shrink (X.Element n [] (_:cs)) = [X.Element n [] cs]</span>
+<span class="lineno">  112 </span><span class="spaces">  </span><span class="nottickedoff">shrink (X.Element n (_:as) []) = [X.Element n as []]</span>
+<span class="lineno">  113 </span><span class="spaces">  </span><span class="nottickedoff">shrink (X.Element n as cs) = [X.Element n as (tail cs), X.Element n (tail as) cs]</span></span>
+<span class="lineno">  114 </span>
+<span class="lineno">  115 </span>textGen :: Gen [Char]
+<span class="lineno">  116 </span><span class="decl"><span class="istickedoff">textGen = listOf $ elements ((replicate 5 ' ') ++ identStartChar)</span></span>
+<span class="lineno">  117 </span>
+<span class="lineno">  118 </span>limitedDepth :: Int -&gt; Gen Node
+<span class="lineno">  119 </span><span class="decl"><span class="istickedoff">limitedDepth 0 = liftM (X.Text . B.pack) textGen</span>
+<span class="lineno">  120 </span><span class="spaces"></span><span class="istickedoff">limitedDepth n = oneof [ liftM (X.Text . B.pack) textGen</span>
+<span class="lineno">  121 </span><span class="spaces">                       </span><span class="istickedoff">, liftM3 X.Element arbitrary</span>
+<span class="lineno">  122 </span><span class="spaces">                                          </span><span class="istickedoff">(liftM (take 2) arbitrary)</span>
+<span class="lineno">  123 </span><span class="spaces">                                          </span><span class="istickedoff">(liftM (take 3) $ listOf $ limitedDepth (n-1))</span>
+<span class="lineno">  124 </span><span class="spaces">                       </span><span class="istickedoff">]</span></span>
+<span class="lineno">  125 </span>
+<span class="lineno">  126 </span>instance Arbitrary B.ByteString where
+<span class="lineno">  127 </span>  <span class="decl"><span class="istickedoff">arbitrary = liftM unName arbitrary</span></span>
+<span class="lineno">  128 </span>
+<span class="lineno">  129 </span>{-
+<span class="lineno">  130 </span> - Code for inserting nodes into any point of a tree
+<span class="lineno">  131 </span> -}
+<span class="lineno">  132 </span>
+<span class="lineno">  133 </span>type Loc = Cursor B.ByteString B.ByteString
+<span class="lineno">  134 </span>type Insert a = State Int a
+<span class="lineno">  135 </span>
+<span class="lineno">  136 </span>{-
+<span class="lineno">  137 </span> - Returns the number of unique insertion points in the tree.
+<span class="lineno">  138 </span> - If h = insertAt f n g&quot;, the following property holds:
+<span class="lineno">  139 </span> - insSize h == (insSize f) + (insSize g) - 1
+<span class="lineno">  140 </span> -}
+<span class="lineno">  141 </span>insSize :: [X.Node tag text] -&gt; Int
+<span class="lineno">  142 </span><span class="decl"><span class="istickedoff">insSize ns = 1 + (sum $ map nodeSize ns)</span>
+<span class="lineno">  143 </span><span class="spaces">  </span><span class="istickedoff">where nodeSize (X.Text _) = 1</span>
+<span class="lineno">  144 </span><span class="spaces">        </span><span class="istickedoff">nodeSize (X.Element _ _ c) = 1 + (insSize c)</span></span>
+<span class="lineno">  145 </span>
+<span class="lineno">  146 </span>insertAt :: [Node] -&gt; Int -&gt; [Node] -&gt; [Node]
+<span class="lineno">  147 </span><span class="decl"><span class="istickedoff">insertAt elems 0 ns = elems ++ ns</span>
+<span class="lineno">  148 </span><span class="spaces"></span><span class="istickedoff">insertAt elems _ [] = <span class="nottickedoff">elems</span></span>
+<span class="lineno">  149 </span><span class="spaces"></span><span class="istickedoff">insertAt elems n list = maybe <span class="nottickedoff">[]</span> (toForest . root) $</span>
+<span class="lineno">  150 </span><span class="spaces">  </span><span class="istickedoff">evalState (processNode elems $ fromJust $ fromForest list) n</span></span>
+<span class="lineno">  151 </span>
+<span class="lineno">  152 </span>move :: Insert ()
+<span class="lineno">  153 </span><span class="decl"><span class="istickedoff">move = modify (\x -&gt; x-1)</span></span>
+<span class="lineno">  154 </span>
+<span class="lineno">  155 </span>processNode :: [Node] -&gt; Loc -&gt; Insert (Maybe Loc)
+<span class="lineno">  156 </span><span class="decl"><span class="istickedoff">processNode elems loc = liftM2 mplus (move &gt;&gt; goDown loc) (move &gt;&gt; goRight loc)</span>
+<span class="lineno">  157 </span><span class="spaces">  </span><span class="istickedoff">where goDown l = case current l of</span>
+<span class="lineno">  158 </span><span class="spaces">          </span><span class="istickedoff">X.Text _        -&gt; modify (+1) &gt;&gt; return Nothing</span>
+<span class="lineno">  159 </span><span class="spaces">          </span><span class="istickedoff">X.Element _ _ _ -&gt; doneCheck (insertManyFirstChild elems) firstChild l</span>
+<span class="lineno">  160 </span><span class="spaces">        </span><span class="istickedoff">goRight = doneCheck (Just . insertManyRight elems) right</span>
+<span class="lineno">  161 </span><span class="spaces">        </span><span class="istickedoff">doneCheck insertFunc next l = do</span>
+<span class="lineno">  162 </span><span class="spaces">          </span><span class="istickedoff">s &lt;- get</span>
+<span class="lineno">  163 </span><span class="spaces">          </span><span class="istickedoff">if s == 0</span>
+<span class="lineno">  164 </span><span class="spaces">            </span><span class="istickedoff">then return $ insertFunc l</span>
+<span class="lineno">  165 </span><span class="spaces">            </span><span class="istickedoff">else maybe (return Nothing) (processNode elems) $ next l</span></span>
+<span class="lineno">  166 </span>
+<span class="lineno">  167 </span>{-
+<span class="lineno">  168 </span> - &lt;bind&gt; tests
+<span class="lineno">  169 </span> -}
+<span class="lineno">  170 </span>
+<span class="lineno">  171 </span>-- Data type encapsulating the parameters for a bind operation
+<span class="lineno">  172 </span>data <span class="nottickedoff">Bind</span> = Bind {
+<span class="lineno">  173 </span>  _bindElemName :: Name,
+<span class="lineno">  174 </span>  _bindChildren :: [Node],
+<span class="lineno">  175 </span>  _bindDoc :: [Node],
+<span class="lineno">  176 </span>  _bindPos :: Int,
+<span class="lineno">  177 </span>  _bindRefPos :: Int
+<span class="lineno">  178 </span>} -- deriving (Show)
+<span class="lineno">  179 </span>
+<span class="lineno">  180 </span>instance Show Bind where
+<span class="lineno">  181 </span>  <span class="decl"><span class="nottickedoff">show b@(Bind e c d p r) = unlines</span>
+<span class="lineno">  182 </span><span class="spaces">    </span><span class="nottickedoff">[&quot;\n&quot;</span>
+<span class="lineno">  183 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Bind element name: &quot;++(show e)</span>
+<span class="lineno">  184 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Bind pos: &quot;++(show p)</span>
+<span class="lineno">  185 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Bind ref pos: &quot;++(show r)</span>
+<span class="lineno">  186 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Bind document:&quot;</span>
+<span class="lineno">  187 </span><span class="spaces">    </span><span class="nottickedoff">,L.unpack $ L.concat $ map formatNode d</span>
+<span class="lineno">  188 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Bind children:&quot;</span>
+<span class="lineno">  189 </span><span class="spaces">    </span><span class="nottickedoff">,L.unpack $ L.concat $ map formatNode c</span>
+<span class="lineno">  190 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Result:&quot;</span>
+<span class="lineno">  191 </span><span class="spaces">    </span><span class="nottickedoff">,L.unpack $ L.concat $ map formatNode $ buildResult b</span>
+<span class="lineno">  192 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Splice result:&quot;</span>
+<span class="lineno">  193 </span><span class="spaces">    </span><span class="nottickedoff">,L.unpack $ L.concat $ map formatNode $ unsafePerformIO $</span>
+<span class="lineno">  194 </span><span class="spaces">        </span><span class="nottickedoff">runRawTemplate emptyTemplateState $ buildBindTemplate b</span>
+<span class="lineno">  195 </span><span class="spaces">    </span><span class="nottickedoff">,&quot;Template:&quot;</span>
+<span class="lineno">  196 </span><span class="spaces">    </span><span class="nottickedoff">,L.unpack $ L.concat $ map formatNode $ buildBindTemplate b</span>
+<span class="lineno">  197 </span><span class="spaces">    </span><span class="nottickedoff">]</span></span>
 <span class="lineno">  198 </span>
-<span class="lineno">  199 </span>instance Arbitrary Bind where
-<span class="lineno">  200 </span>  <span class="decl"><span class="istickedoff">arbitrary = do</span>
-<span class="lineno">  201 </span><span class="spaces">    </span><span class="istickedoff">name &lt;- arbitrary</span>
-<span class="lineno">  202 </span><span class="spaces">    </span><span class="istickedoff">kids &lt;- liftM (take 3) arbitrary</span>
-<span class="lineno">  203 </span><span class="spaces">    </span><span class="istickedoff">doc &lt;- liftM (take 5) arbitrary</span>
-<span class="lineno">  204 </span><span class="spaces">    </span><span class="istickedoff">let s = insSize doc</span>
-<span class="lineno">  205 </span><span class="spaces">    </span><span class="istickedoff">loc &lt;- choose (0, s-1)</span>
-<span class="lineno">  206 </span><span class="spaces">    </span><span class="istickedoff">loc2 &lt;- choose (0, s-loc-1)</span>
-<span class="lineno">  207 </span><span class="spaces">    </span><span class="istickedoff">return $ Bind name kids doc loc loc2</span></span>
-<span class="lineno">  208 </span>  <span class="decl"><span class="nottickedoff">shrink (Bind e [c] (_:ds) p r) = [Bind e [c] ds p r]</span>
-<span class="lineno">  209 </span><span class="spaces">  </span><span class="nottickedoff">shrink (Bind e (_:cs) d p r) = [Bind e cs d p r]</span>
-<span class="lineno">  210 </span><span class="spaces">  </span><span class="nottickedoff">shrink _ = []</span></span>
-<span class="lineno">  211 </span>
-<span class="lineno">  212 </span>empty :: tag -&gt; X.Node tag text
-<span class="lineno">  213 </span><span class="decl"><span class="istickedoff">empty n = X.Element n [] <span class="nottickedoff">[]</span></span></span>
-<span class="lineno">  214 </span>
-<span class="lineno">  215 </span>buildBindTemplate :: Bind -&gt; [Node]
-<span class="lineno">  216 </span><span class="decl"><span class="istickedoff">buildBindTemplate s@(Bind n _ d b r) =</span>
-<span class="lineno">  217 </span><span class="spaces">  </span><span class="istickedoff">insertAt [empty $ unName $ n] pos $ withBind</span>
-<span class="lineno">  218 </span><span class="spaces">  </span><span class="istickedoff">where bind = [buildBind s]</span>
-<span class="lineno">  219 </span><span class="spaces">        </span><span class="istickedoff">bindSize = insSize bind</span>
-<span class="lineno">  220 </span><span class="spaces">        </span><span class="istickedoff">withBind = insertAt bind b d</span>
-<span class="lineno">  221 </span><span class="spaces">        </span><span class="istickedoff">pos = b + bindSize - 1 + r</span></span>
-<span class="lineno">  222 </span>
-<span class="lineno">  223 </span>buildResult :: Bind -&gt; [Node]
-<span class="lineno">  224 </span><span class="decl"><span class="istickedoff">buildResult (Bind _ c d b r) = insertAt c (b+r) d</span></span>
-<span class="lineno">  225 </span>
-<span class="lineno">  226 </span>prop_simpleBindTest :: Bind -&gt; PropertyM IO ()
-<span class="lineno">  227 </span><span class="decl"><span class="istickedoff">prop_simpleBindTest bind = do</span>
-<span class="lineno">  228 </span><span class="spaces">  </span><span class="istickedoff">let template = buildBindTemplate bind</span>
-<span class="lineno">  229 </span><span class="spaces">      </span><span class="istickedoff">result = buildResult bind</span>
-<span class="lineno">  230 </span><span class="spaces">  </span><span class="istickedoff">spliceResult &lt;- run $ runBareTemplate template</span>
-<span class="lineno">  231 </span><span class="spaces">  </span><span class="istickedoff">assert $ result == spliceResult</span></span>
-<span class="lineno">  232 </span>
-<span class="lineno">  233 </span>{-
-<span class="lineno">  234 </span> - &lt;apply&gt; tests
-<span class="lineno">  235 </span> -}
-<span class="lineno">  236 </span>
-<span class="lineno">  237 </span>data <span class="nottickedoff">Apply</span> = Apply {
-<span class="lineno">  238 </span>  _applyName :: Name,
-<span class="lineno">  239 </span>  _applyCaller :: [Node],
-<span class="lineno">  240 </span>  _applyCallee :: Template,
-<span class="lineno">  241 </span>  _applyChildren :: [Node],
-<span class="lineno">  242 </span>  _applyPos :: Int
-<span class="lineno">  243 </span>} deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>)
-<span class="lineno">  244 </span>
-<span class="lineno">  245 </span>instance Arbitrary Apply where
-<span class="lineno">  246 </span>  <span class="decl"><span class="istickedoff">arbitrary = do</span>
-<span class="lineno">  247 </span><span class="spaces">    </span><span class="istickedoff">name &lt;- arbitrary</span>
-<span class="lineno">  248 </span><span class="spaces">    </span><span class="istickedoff">kids &lt;- liftM (take 3) $ listOf $ limitedDepth 2</span>
-<span class="lineno">  249 </span><span class="spaces">    </span><span class="istickedoff">caller &lt;- liftM (take 5) arbitrary</span>
-<span class="lineno">  250 </span><span class="spaces">    </span><span class="istickedoff">callee &lt;- liftM (take 1) $ listOf $ limitedDepth 3</span>
-<span class="lineno">  251 </span><span class="spaces">    </span><span class="istickedoff">let s = insSize caller</span>
-<span class="lineno">  252 </span><span class="spaces">    </span><span class="istickedoff">loc &lt;- choose (0, s-1)</span>
-<span class="lineno">  253 </span><span class="spaces">    </span><span class="istickedoff">return $ Apply name caller callee kids loc</span></span>
-<span class="lineno">  254 </span>
-<span class="lineno">  255 </span>buildApplyCaller :: Apply -&gt; [Node]
-<span class="lineno">  256 </span><span class="decl"><span class="istickedoff">buildApplyCaller (Apply name caller _ kids pos) =</span>
-<span class="lineno">  257 </span><span class="spaces">  </span><span class="istickedoff">insertAt [X.Element &quot;apply&quot; [(&quot;template&quot;, unName name)] kids] pos caller</span></span>
-<span class="lineno">  258 </span>
-<span class="lineno">  259 </span>calcCorrect :: Apply -&gt; [Node]
-<span class="lineno">  260 </span><span class="decl"><span class="istickedoff">calcCorrect (Apply _ caller callee _ pos) = insertAt callee pos caller</span></span>
-<span class="lineno">  261 </span>
-<span class="lineno">  262 </span>calcResult :: (Monad m) =&gt; Apply -&gt; m [Node]
-<span class="lineno">  263 </span><span class="decl"><span class="istickedoff">calcResult apply@(Apply name _ callee _ _) =</span>
-<span class="lineno">  264 </span><span class="spaces">  </span><span class="istickedoff">runTemplate ts $ buildApplyCaller apply</span>
-<span class="lineno">  265 </span><span class="spaces">  </span><span class="istickedoff">where ts = emptyTemplateState { _templateMap = Map.singleton [unName name] callee }</span></span>
-<span class="lineno">  266 </span>
-<span class="lineno">  267 </span>prop_simpleApplyTest :: Apply -&gt; PropertyM IO ()
-<span class="lineno">  268 </span><span class="decl"><span class="istickedoff">prop_simpleApplyTest apply = do</span>
-<span class="lineno">  269 </span><span class="spaces">  </span><span class="istickedoff">let correct = calcCorrect apply</span>
-<span class="lineno">  270 </span><span class="spaces">  </span><span class="istickedoff">result &lt;- run $ calcResult apply</span>
-<span class="lineno">  271 </span><span class="spaces">  </span><span class="istickedoff">assert $ correct == result</span></span>
+<span class="lineno">  199 </span>buildNode :: B.ByteString -&gt; B.ByteString -&gt; Bind -&gt; Node
+<span class="lineno">  200 </span><span class="decl"><span class="istickedoff">buildNode tag attr (Bind s c _ _ _) = X.Element tag [(attr, unName s)] c</span></span>
+<span class="lineno">  201 </span>
+<span class="lineno">  202 </span>buildBind :: Bind -&gt; Node
+<span class="lineno">  203 </span><span class="decl"><span class="istickedoff">buildBind = buildNode &quot;bind&quot; &quot;tag&quot;</span></span>
+<span class="lineno">  204 </span>
+<span class="lineno">  205 </span>instance Arbitrary Bind where
+<span class="lineno">  206 </span>  <span class="decl"><span class="istickedoff">arbitrary = do</span>
+<span class="lineno">  207 </span><span class="spaces">    </span><span class="istickedoff">name &lt;- arbitrary</span>
+<span class="lineno">  208 </span><span class="spaces">    </span><span class="istickedoff">kids &lt;- liftM (take 3) arbitrary</span>
+<span class="lineno">  209 </span><span class="spaces">    </span><span class="istickedoff">doc &lt;- liftM (take 5) arbitrary</span>
+<span class="lineno">  210 </span><span class="spaces">    </span><span class="istickedoff">let s = insSize doc</span>
+<span class="lineno">  211 </span><span class="spaces">    </span><span class="istickedoff">loc &lt;- choose (0, s-1)</span>
+<span class="lineno">  212 </span><span class="spaces">    </span><span class="istickedoff">loc2 &lt;- choose (0, s-loc-1)</span>
+<span class="lineno">  213 </span><span class="spaces">    </span><span class="istickedoff">return $ Bind name kids doc loc loc2</span></span>
+<span class="lineno">  214 </span>  <span class="decl"><span class="nottickedoff">shrink (Bind e [c] (_:ds) p r) = [Bind e [c] ds p r]</span>
+<span class="lineno">  215 </span><span class="spaces">  </span><span class="nottickedoff">shrink (Bind e (_:cs) d p r) = [Bind e cs d p r]</span>
+<span class="lineno">  216 </span><span class="spaces">  </span><span class="nottickedoff">shrink _ = []</span></span>
+<span class="lineno">  217 </span>
+<span class="lineno">  218 </span>empty :: tag -&gt; X.Node tag text
+<span class="lineno">  219 </span><span class="decl"><span class="istickedoff">empty n = X.Element n [] <span class="nottickedoff">[]</span></span></span>
+<span class="lineno">  220 </span>
+<span class="lineno">  221 </span>buildBindTemplate :: Bind -&gt; [Node]
+<span class="lineno">  222 </span><span class="decl"><span class="istickedoff">buildBindTemplate s@(Bind n _ d b r) =</span>
+<span class="lineno">  223 </span><span class="spaces">  </span><span class="istickedoff">insertAt [empty $ unName $ n] pos $ withBind</span>
+<span class="lineno">  224 </span><span class="spaces">  </span><span class="istickedoff">where bind = [buildBind s]</span>
+<span class="lineno">  225 </span><span class="spaces">        </span><span class="istickedoff">bindSize = insSize bind</span>
+<span class="lineno">  226 </span><span class="spaces">        </span><span class="istickedoff">withBind = insertAt bind b d</span>
+<span class="lineno">  227 </span><span class="spaces">        </span><span class="istickedoff">pos = b + bindSize - 1 + r</span></span>
+<span class="lineno">  228 </span>
+<span class="lineno">  229 </span>buildResult :: Bind -&gt; [Node]
+<span class="lineno">  230 </span><span class="decl"><span class="istickedoff">buildResult (Bind _ c d b r) = insertAt c (b+r) d</span></span>
+<span class="lineno">  231 </span>
+<span class="lineno">  232 </span>prop_simpleBindTest :: Bind -&gt; PropertyM IO ()
+<span class="lineno">  233 </span><span class="decl"><span class="istickedoff">prop_simpleBindTest bind = do</span>
+<span class="lineno">  234 </span><span class="spaces">  </span><span class="istickedoff">let template = buildBindTemplate bind</span>
+<span class="lineno">  235 </span><span class="spaces">      </span><span class="istickedoff">result = buildResult bind</span>
+<span class="lineno">  236 </span><span class="spaces">  </span><span class="istickedoff">spliceResult &lt;- run $ runRawTemplate emptyTemplateState template</span>
+<span class="lineno">  237 </span><span class="spaces">  </span><span class="istickedoff">assert $ result == spliceResult</span></span>
+<span class="lineno">  238 </span>
+<span class="lineno">  239 </span>{-
+<span class="lineno">  240 </span> - &lt;apply&gt; tests
+<span class="lineno">  241 </span> -}
+<span class="lineno">  242 </span>
+<span class="lineno">  243 </span>data <span class="nottickedoff">Apply</span> = Apply {
+<span class="lineno">  244 </span>  _applyName :: Name,
+<span class="lineno">  245 </span>  _applyCaller :: [Node],
+<span class="lineno">  246 </span>  _applyCallee :: Template,
+<span class="lineno">  247 </span>  _applyChildren :: [Node],
+<span class="lineno">  248 </span>  _applyPos :: Int
+<span class="lineno">  249 </span>} deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>)
+<span class="lineno">  250 </span>
+<span class="lineno">  251 </span>instance Arbitrary Apply where
+<span class="lineno">  252 </span>  <span class="decl"><span class="istickedoff">arbitrary = do</span>
+<span class="lineno">  253 </span><span class="spaces">    </span><span class="istickedoff">name &lt;- arbitrary</span>
+<span class="lineno">  254 </span><span class="spaces">    </span><span class="istickedoff">kids &lt;- liftM (take 3) $ listOf $ limitedDepth 2</span>
+<span class="lineno">  255 </span><span class="spaces">    </span><span class="istickedoff">caller &lt;- liftM (take 5) arbitrary</span>
+<span class="lineno">  256 </span><span class="spaces">    </span><span class="istickedoff">callee &lt;- liftM (take 1) $ listOf $ limitedDepth 3</span>
+<span class="lineno">  257 </span><span class="spaces">    </span><span class="istickedoff">let s = insSize caller</span>
+<span class="lineno">  258 </span><span class="spaces">    </span><span class="istickedoff">loc &lt;- choose (0, s-1)</span>
+<span class="lineno">  259 </span><span class="spaces">    </span><span class="istickedoff">return $ Apply name caller callee kids loc</span></span>
+<span class="lineno">  260 </span>
+<span class="lineno">  261 </span>buildApplyCaller :: Apply -&gt; [Node]
+<span class="lineno">  262 </span><span class="decl"><span class="istickedoff">buildApplyCaller (Apply name caller _ kids pos) =</span>
+<span class="lineno">  263 </span><span class="spaces">  </span><span class="istickedoff">insertAt [X.Element &quot;apply&quot; [(&quot;template&quot;, unName name)] kids] pos caller</span></span>
+<span class="lineno">  264 </span>
+<span class="lineno">  265 </span>calcCorrect :: Apply -&gt; [Node]
+<span class="lineno">  266 </span><span class="decl"><span class="istickedoff">calcCorrect (Apply _ caller callee _ pos) = insertAt callee pos caller</span></span>
+<span class="lineno">  267 </span>
+<span class="lineno">  268 </span>calcResult :: (Monad m) =&gt; Apply -&gt; m [Node]
+<span class="lineno">  269 </span><span class="decl"><span class="istickedoff">calcResult apply@(Apply name _ callee _ _) =</span>
+<span class="lineno">  270 </span><span class="spaces">  </span><span class="istickedoff">runRawTemplate ts $ buildApplyCaller apply</span>
+<span class="lineno">  271 </span><span class="spaces">  </span><span class="istickedoff">where ts = setTemplates (Map.singleton [unName name] callee) emptyTemplateState</span></span>
 <span class="lineno">  272 </span>
-<span class="lineno">  273 </span>
-<span class="lineno">  274 </span>{-
-<span class="lineno">  275 </span> - Convenience code for manual ghci experimentation
-<span class="lineno">  276 </span> -}
-<span class="lineno">  277 </span>
-<span class="lineno">  278 </span>--html :: [Node] -&gt; Node
-<span class="lineno">  279 </span>--html c = X.Element &quot;html&quot; [] [hhead, body c]
-<span class="lineno">  280 </span>--hhead :: Node
-<span class="lineno">  281 </span>--hhead = X.Element &quot;head&quot; [] [title, X.Element &quot;script&quot; [] []]
-<span class="lineno">  282 </span>--title :: Node
-<span class="lineno">  283 </span>--title = X.Element &quot;title&quot; [] [X.Text &quot;Test Page&quot;]
-<span class="lineno">  284 </span>--body :: [Node] -&gt; Node
-<span class="lineno">  285 </span>--body = X.Element &quot;body&quot; []
-<span class="lineno">  286 </span>--
-<span class="lineno">  287 </span>--para :: Int -&gt; Node
-<span class="lineno">  288 </span>--para n = X.Element &quot;p&quot; [] [X.Text $ B.pack $ &quot;This is paragraph &quot; ++ show n]
-<span class="lineno">  289 </span>--para2 :: B.ByteString -&gt; Node
-<span class="lineno">  290 </span>--para2 c = X.Element &quot;p&quot; [] [X.Text c]
-<span class="lineno">  291 </span>--para3 :: Node
-<span class="lineno">  292 </span>--para3 = X.Element &quot;p&quot; [] [X.Text &quot;AHA!&quot;]
-<span class="lineno">  293 </span>--
-<span class="lineno">  294 </span>--foo :: Int -&gt; [Node]
-<span class="lineno">  295 </span>--foo n = insertAt [X.Element &quot;NEW&quot; [] []] n [html [para 1, para 2]]
-<span class="lineno">  296 </span>--
-<span class="lineno">  297 </span>--tdoc :: [Node]
-<span class="lineno">  298 </span>--tdoc = [para 1, para 2, para 3, para 4]
-<span class="lineno">  299 </span>--
-<span class="lineno">  300 </span>--bindElem :: [Node] -&gt; Int -&gt; Int -&gt; Bind
-<span class="lineno">  301 </span>--bindElem = Bind (Name &quot;mytag&quot;) [para2 &quot;bound paragraph&quot;]
-<span class="lineno">  302 </span>--
-<span class="lineno">  303 </span>--addBind :: Bind -&gt; [Node] -&gt; [Node]
-<span class="lineno">  304 </span>--addBind b = insertAt [buildBind b] 0 . insertAt [empty $ unName $ _bindElemName b] 2
-<span class="lineno">  305 </span>--
-<span class="lineno">  306 </span>--prn :: Node -&gt; IO ()
-<span class="lineno">  307 </span>--prn = L.putStrLn . formatNode
-<span class="lineno">  308 </span>--runTests :: IO ()
-<span class="lineno">  309 </span>--runTests = defaultMain tests
-<span class="lineno">  310 </span>
+<span class="lineno">  273 </span>prop_simpleApplyTest :: Apply -&gt; PropertyM IO ()
+<span class="lineno">  274 </span><span class="decl"><span class="istickedoff">prop_simpleApplyTest apply = do</span>
+<span class="lineno">  275 </span><span class="spaces">  </span><span class="istickedoff">let correct = calcCorrect apply</span>
+<span class="lineno">  276 </span><span class="spaces">  </span><span class="istickedoff">result &lt;- run $ calcResult apply</span>
+<span class="lineno">  277 </span><span class="spaces">  </span><span class="istickedoff">assert $ correct == result</span></span>
+<span class="lineno">  278 </span>
+<span class="lineno">  279 </span>
+<span class="lineno">  280 </span>{-
+<span class="lineno">  281 </span>-- The beginning of some future tests for hook functions.
+<span class="lineno">  282 </span>
+<span class="lineno">  283 </span>p :: ByteString -&gt; Node
+<span class="lineno">  284 </span>p t = X.Element &quot;p&quot; [] [X.Text t]
+<span class="lineno">  285 </span>
+<span class="lineno">  286 </span>hookG :: Monad m =&gt; ByteString -&gt; Template -&gt; m Template
+<span class="lineno">  287 </span>hookG str t = return $ (p str) : t
+<span class="lineno">  288 </span>
+<span class="lineno">  289 </span>onLoad = hookG &quot;Inserted on load&quot;
+<span class="lineno">  290 </span>preRun = hookG &quot;Inserted on preRun&quot;
+<span class="lineno">  291 </span>postRun = hookG &quot;Inserted on postRun&quot;
+<span class="lineno">  292 </span>
+<span class="lineno">  293 </span>ts :: IO (Either String (TemplateState IO))
+<span class="lineno">  294 </span>ts = loadTemplates &quot;test/templates&quot; $
+<span class="lineno">  295 </span>    foldr ($) emptyTemplateState
+<span class="lineno">  296 </span>    [setOnLoadHook onLoad
+<span class="lineno">  297 </span>    ,setPreRunHook preRun
+<span class="lineno">  298 </span>    ,setPostRunHook postRun
+<span class="lineno">  299 </span>    ]
+<span class="lineno">  300 </span>
+<span class="lineno">  301 </span>r name etm = do
+<span class="lineno">  302 </span>    let ts = either (error &quot;Danger Will Robinson!&quot;) id etm
+<span class="lineno">  303 </span>    ns &lt;- runTemplate ts name
+<span class="lineno">  304 </span>    return $ (Just . formatList') =&lt;&lt; ns
+<span class="lineno">  305 </span>
+<span class="lineno">  306 </span>
+<span class="lineno">  307 </span>-}
+<span class="lineno">  308 </span>
+<span class="lineno">  309 </span>
+<span class="lineno">  310 </span>{-
+<span class="lineno">  311 </span> - Convenience code for manual ghci experimentation
+<span class="lineno">  312 </span> -}
+<span class="lineno">  313 </span>
+<span class="lineno">  314 </span>--html :: [Node] -&gt; Node
+<span class="lineno">  315 </span>--html c = X.Element &quot;html&quot; [] [hhead, body c]
+<span class="lineno">  316 </span>--hhead :: Node
+<span class="lineno">  317 </span>--hhead = X.Element &quot;head&quot; [] [title, X.Element &quot;script&quot; [] []]
+<span class="lineno">  318 </span>--title :: Node
+<span class="lineno">  319 </span>--title = X.Element &quot;title&quot; [] [X.Text &quot;Test Page&quot;]
+<span class="lineno">  320 </span>--body :: [Node] -&gt; Node
+<span class="lineno">  321 </span>--body = X.Element &quot;body&quot; []
+<span class="lineno">  322 </span>--
+<span class="lineno">  323 </span>--para :: Int -&gt; Node
+<span class="lineno">  324 </span>--para n = X.Element &quot;p&quot; [] [X.Text $ B.pack $ &quot;This is paragraph &quot; ++ show n]
+<span class="lineno">  325 </span>--para2 :: B.ByteString -&gt; Node
+<span class="lineno">  326 </span>--para2 c = X.Element &quot;p&quot; [] [X.Text c]
+<span class="lineno">  327 </span>--para3 :: Node
+<span class="lineno">  328 </span>--para3 = X.Element &quot;p&quot; [] [X.Text &quot;AHA!&quot;]
+<span class="lineno">  329 </span>--
+<span class="lineno">  330 </span>--foo :: Int -&gt; [Node]
+<span class="lineno">  331 </span>--foo n = insertAt [X.Element &quot;NEW&quot; [] []] n [html [para 1, para 2]]
+<span class="lineno">  332 </span>--
+<span class="lineno">  333 </span>--tdoc :: [Node]
+<span class="lineno">  334 </span>--tdoc = [para 1, para 2, para 3, para 4]
+<span class="lineno">  335 </span>--
+<span class="lineno">  336 </span>--bindElem :: [Node] -&gt; Int -&gt; Int -&gt; Bind
+<span class="lineno">  337 </span>--bindElem = Bind (Name &quot;mytag&quot;) [para2 &quot;bound paragraph&quot;]
+<span class="lineno">  338 </span>--
+<span class="lineno">  339 </span>--addBind :: Bind -&gt; [Node] -&gt; [Node]
+<span class="lineno">  340 </span>--addBind b = insertAt [buildBind b] 0 . insertAt [empty $ unName $ _bindElemName b] 2
+<span class="lineno">  341 </span>--
+<span class="lineno">  342 </span>--prn :: Node -&gt; IO ()
+<span class="lineno">  343 </span>--prn = L.putStrLn . formatNode
+<span class="lineno">  344 </span>--runTests :: IO ()
+<span class="lineno">  345 </span>--runTests = defaultMain tests
+<span class="lineno">  346 </span>
 
 </pre>
 </html>
