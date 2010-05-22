@@ -30,7 +30,8 @@ don't take an inordinate amount of effort to set up.
 ### Pong Benchmark
 
 The pong benchmark is quite simple, but there was a large amount of variation
-in performance.  Here is a chart of the results:
+in performance.  Here is a chart of responses per second (higher numbers
+are better):
 
 ![](/media/img/pong-bench.png)
 
