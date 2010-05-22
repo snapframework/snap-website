@@ -20,6 +20,13 @@ ran it with "+RTS -A4M -N4 -qg0 -qb -g1".  Using more than four threads caused
 the performance to decrease.  This is certainly a good area for future
 improvement in Snap.
 
+Disclaimer: We are not experts at optimizing these web frameworks.  It
+is almost certain that the results for other frameworks are unfairly
+low.  If you're interested in the details, the code we used is in a
+[github repository](http://github.com/snapframework/snap-benchmarks).
+We always willing to update our benchmarks with optimizations that
+don't take an inordinate amount of effort to set up.
+
 ### Pong Benchmark
 
 The pong benchmark is quite simple, but there was a large amount of variation
@@ -94,5 +101,5 @@ apples-to-apples comparison with the other frameworks, but they're still
 somewhat meaningful since they reflect a deficiency in the server.
 
 See the [raw test output](/bench-raw-results.txt) for more detailed
-information.
+httperf output.
 
