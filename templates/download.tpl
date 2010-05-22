@@ -21,7 +21,7 @@ $ cabal install snap-server</pre>
           the <a href="http://hackage.haskell.org/platform/">Haskell Platform</a>
           binary installer.</p>
 
-        <p>After Snap is installed, check out the <a href="/quickstart">quick
+        <p>After Snap is installed, check out the <a href="/docs/quickstart">quick
             start</a> for instructions on getting your project started.</p>
       </div>
     </div>
