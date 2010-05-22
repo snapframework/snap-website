@@ -589,7 +589,7 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     font-family: "PT Sans", sans-serif;
     font-size: 0.75em;
     text-align: right;
- 
+    background: #f5f9ff;
     vertical-align: middle;
 }
 #footer img{
