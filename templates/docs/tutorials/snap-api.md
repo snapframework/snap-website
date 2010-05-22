@@ -276,8 +276,8 @@ Moving on, let's write `echoHandler`, which should just spit back `s`.
 ~~~~~~~~~~~~~~~ {.haskell}
 echoHandler :: Snap ()
 echoHandler = do
-    req <- getRequest
-    writeBS $ maybe "" id (getParam "s" req)
+    s <- getParam "s"
+    writeBS $ maybe "" id s
 ~~~~~~~~~~~~~~~
 
 Let's build our toy application and run it again. Now we have a perfectly
@@ -310,10 +310,10 @@ Let's rewrite our `echoHandler` as follows.
 ~~~~~~~~~~~~~~~ {.haskell}
 echoHandler :: Snap ()
 echoHandler = do
-    req <- getRequest
-    case (getParam "s" req) of
-        Just s -> if (B.length s == 4) then badWord else (writeBS s)
-        _      -> writeBS ""
+	s <- getParam "s"
+    case s of
+        Just s' -> if (B.length s' == 4) then badWord else (writeBS s')
+        _       -> writeBS ""
   where
     badWord = do
         putResponse $
