@@ -377,5 +377,5 @@ take a look at the [API documentation](/docs/latest/snap-core/index.html),
 which explains many of the concepts and functions here in further detail.
 
 You can also come hang out in
-[`#snap-framework`](http://webchat.freenode.net/?channels=snapframework&uio=d4)
+[`#snapframework`](http://webchat.freenode.net/?channels=snapframework&uio=d4)
 on [`freenode`](http://freenode.net/).
