@@ -310,7 +310,7 @@ Let's rewrite our `echoHandler` as follows.
 ~~~~~~~~~~~~~~~ {.haskell}
 echoHandler :: Snap ()
 echoHandler = do
-	s <- getParam "s"
+    s <- getParam "s"
     case s of
         Just s' -> if (B.length s' == 4) then badWord else (writeBS s')
         _       -> writeBS ""
