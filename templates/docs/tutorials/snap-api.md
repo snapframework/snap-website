@@ -223,7 +223,7 @@ are as follows:
 - [`<|>`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3A%3C%7C%3E) `:: Snap a -> Snap a -> Snap a`
 - [`ifTop`](/docs/latest/snap-core/Snap-Types.html#v%3AifTop) `:: Snap a -> Snap a`
 - [`dir`](/docs/latest/snap-core/Snap-Types.html#v%3Adir) `:: ByteString -> Snap a -> Snap a`
-- [`method`]((/docs/latest/snap-core/Snap-Types.html#v%3Amethod) `:: Method -> Snap a -> Snap a`
+- [`method`](/docs/latest/snap-core/Snap-Types.html#v%3Amethod) `:: Method -> Snap a -> Snap a`
 
 These do exactly what you might think they do. Calling `ifTop`:
 
