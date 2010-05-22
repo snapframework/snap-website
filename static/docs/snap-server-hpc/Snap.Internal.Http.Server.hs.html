@@ -118,7 +118,7 @@ span.spaces    { background: white }
 <span class="lineno">  107 </span><span class="spaces">                </span><span class="istickedoff">(\xs -&gt; do</span>
 <span class="lineno">  108 </span><span class="spaces">                     </span><span class="istickedoff">logE elog &quot;Server.httpServe: SHUTDOWN&quot;</span>
 <span class="lineno">  109 </span><span class="spaces">                     </span><span class="istickedoff">mapM_ (Backend.stop . fst) xs</span>
-<span class="lineno">  110 </span><span class="spaces">                     </span><span class="istickedoff">logE elog <span class="nottickedoff">&quot;Server.httpServe: BACKEND STOPPED&quot;</span>)</span>
+<span class="lineno">  110 </span><span class="spaces">                     </span><span class="istickedoff">logE elog &quot;Server.httpServe: BACKEND STOPPED&quot;)</span>
 <span class="lineno">  111 </span><span class="spaces">                </span><span class="istickedoff">(runAll alog elog)</span>
 <span class="lineno">  112 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  113 </span><span class="spaces"></span><span class="istickedoff"></span>
@@ -145,8 +145,8 @@ span.spaces    { background: white }
 <span class="lineno">  134 </span><span class="spaces">                    </span><span class="istickedoff">return (alog, elog))</span>
 <span class="lineno">  135 </span><span class="spaces">                </span><span class="istickedoff">(\(alog, elog) -&gt; do</span>
 <span class="lineno">  136 </span><span class="spaces">                    </span><span class="istickedoff">threadDelay 1000000</span>
-<span class="lineno">  137 </span><span class="spaces">                    </span><span class="istickedoff"><span class="nottickedoff">maybe (return ()) stopLogger alog</span></span>
-<span class="lineno">  138 </span><span class="spaces">                    </span><span class="istickedoff"><span class="nottickedoff">maybe (return ()) stopLogger elog</span>)</span>
+<span class="lineno">  137 </span><span class="spaces">                    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) stopLogger alog</span>
+<span class="lineno">  138 </span><span class="spaces">                    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) stopLogger elog)</span>
 <span class="lineno">  139 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  140 </span><span class="spaces">    </span><span class="istickedoff">labelMe :: String -&gt; IO ()</span>
 <span class="lineno">  141 </span><span class="spaces">    </span><span class="istickedoff">labelMe s = do</span>
@@ -189,7 +189,7 @@ span.spaces    { background: white }
 <span class="lineno">  178 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">throwIO e</span></span>
 <span class="lineno">  179 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  180 </span><span class="spaces">        </span><span class="istickedoff">, Handler $ \(e :: Backend.BackendTerminatedException) -&gt; do</span>
-<span class="lineno">  181 </span><span class="spaces">              </span><span class="istickedoff">logE elog $ <span class="nottickedoff">&quot;Server.httpServe.go: got backend terminated, waiting for cleanup&quot;</span></span>
+<span class="lineno">  181 </span><span class="spaces">              </span><span class="istickedoff">logE elog $ &quot;Server.httpServe.go: got backend terminated, waiting for cleanup&quot;</span>
 <span class="lineno">  182 </span><span class="spaces">              </span><span class="istickedoff">throwIO <span class="nottickedoff">e</span></span>
 <span class="lineno">  183 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  184 </span><span class="spaces">        </span><span class="istickedoff">, <span class="nottickedoff">Handler $ \(e :: IOException) -&gt; do</span></span>

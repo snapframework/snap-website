@@ -239,14 +239,14 @@ span.spaces    { background: white }
 <span class="lineno">  228 </span>
 <span class="lineno">  229 </span>
 <span class="lineno">  230 </span>ioCallback :: MVar () -&gt; MVar () -&gt; IoCallback
-<span class="lineno">  231 </span><span class="decl"><span class="nottickedoff">ioCallback ra wa _loopPtr _ioPtr event = do</span>
-<span class="lineno">  232 </span><span class="spaces">    </span><span class="nottickedoff">-- send notifications to the worker thread</span>
-<span class="lineno">  233 </span><span class="spaces">    </span><span class="nottickedoff">when isRead  $ tryPutMVar ra () &gt;&gt; return ()</span>
-<span class="lineno">  234 </span><span class="spaces">    </span><span class="nottickedoff">when isWrite $ tryPutMVar wa () &gt;&gt; return ()</span>
-<span class="lineno">  235 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  236 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
-<span class="lineno">  237 </span><span class="spaces">    </span><span class="nottickedoff">isRead  = (event .&amp;. ev_read) /= 0</span>
-<span class="lineno">  238 </span><span class="spaces">    </span><span class="nottickedoff">isWrite = (event .&amp;. ev_write) /= 0</span></span>
+<span class="lineno">  231 </span><span class="decl"><span class="istickedoff">ioCallback ra wa _loopPtr _ioPtr event = do</span>
+<span class="lineno">  232 </span><span class="spaces">    </span><span class="istickedoff">-- send notifications to the worker thread</span>
+<span class="lineno">  233 </span><span class="spaces">    </span><span class="istickedoff">when isRead  $ tryPutMVar ra <span class="nottickedoff">()</span> &gt;&gt; return <span class="nottickedoff">()</span></span>
+<span class="lineno">  234 </span><span class="spaces">    </span><span class="istickedoff">when isWrite $ tryPutMVar wa <span class="nottickedoff">()</span> &gt;&gt; return ()</span>
+<span class="lineno">  235 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  236 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  237 </span><span class="spaces">    </span><span class="istickedoff">isRead  = (event .&amp;. ev_read) /= 0</span>
+<span class="lineno">  238 </span><span class="spaces">    </span><span class="istickedoff">isWrite = (event .&amp;. ev_write) /= 0</span></span>
 <span class="lineno">  239 </span>
 <span class="lineno">  240 </span>
 <span class="lineno">  241 </span>seconds :: Int -&gt; Int
@@ -453,7 +453,7 @@ span.spaces    { background: white }
 <span class="lineno">  442 </span><span class="spaces">        </span><span class="istickedoff">evTimerInit tmr tcb 20 0</span>
 <span class="lineno">  443 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  444 </span><span class="spaces">        </span><span class="istickedoff">evio &lt;- mkEvIo</span>
-<span class="lineno">  445 </span><span class="spaces">        </span><span class="istickedoff">iocb &lt;- mkIoCallback $ <span class="nottickedoff">ioCallback ra wa</span></span>
+<span class="lineno">  445 </span><span class="spaces">        </span><span class="istickedoff">iocb &lt;- mkIoCallback $ ioCallback ra wa</span>
 <span class="lineno">  446 </span><span class="spaces">        </span><span class="istickedoff">evIoInit evio iocb fd (ev_read .|. ev_write)</span>
 <span class="lineno">  447 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  448 </span><span class="spaces">        </span><span class="istickedoff">-- take ev_loop lock, start timer and io watchers</span>
@@ -558,7 +558,7 @@ span.spaces    { background: white }
 <span class="lineno">  547 </span><span class="spaces">    </span><span class="istickedoff">sz &lt;- throwErrnoIfMinus1RetryMayBlock</span>
 <span class="lineno">  548 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">&quot;recvData&quot;</span></span>
 <span class="lineno">  549 </span><span class="spaces">              </span><span class="istickedoff">(c_read fd cstr (toEnum n))</span>
-<span class="lineno">  550 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">waitForLock</span></span>
+<span class="lineno">  550 </span><span class="spaces">              </span><span class="istickedoff">waitForLock</span>
 <span class="lineno">  551 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  552 </span><span class="spaces">    </span><span class="istickedoff">dbg $ <span class="nottickedoff">&quot;sz returned &quot; ++ show sz</span></span>
 <span class="lineno">  553 </span><span class="spaces"></span><span class="istickedoff"></span>
@@ -570,10 +570,10 @@ span.spaces    { background: white }
 <span class="lineno">  559 </span><span class="spaces">    </span><span class="istickedoff">dbg s = debug $ <span class="nottickedoff">&quot;Backend.recvData(&quot; ++ show (_socketFd conn) ++ &quot;): &quot; ++ s</span></span>
 <span class="lineno">  560 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  561 </span><span class="spaces">    </span><span class="istickedoff">fd          = _socketFd conn</span>
-<span class="lineno">  562 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">lock        = _readAvailable conn</span></span>
-<span class="lineno">  563 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">waitForLock = do</span></span>
-<span class="lineno">  564 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">dbg &quot;waitForLock&quot;</span></span>
-<span class="lineno">  565 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">takeMVar lock</span></span></span>
+<span class="lineno">  562 </span><span class="spaces">    </span><span class="istickedoff">lock        = _readAvailable conn</span>
+<span class="lineno">  563 </span><span class="spaces">    </span><span class="istickedoff">waitForLock = do</span>
+<span class="lineno">  564 </span><span class="spaces">        </span><span class="istickedoff">dbg <span class="nottickedoff">&quot;waitForLock&quot;</span></span>
+<span class="lineno">  565 </span><span class="spaces">        </span><span class="istickedoff">takeMVar lock</span></span>
 <span class="lineno">  566 </span>
 <span class="lineno">  567 </span>
 <span class="lineno">  568 </span>sendData :: Connection -&gt; ByteString -&gt; IO ()

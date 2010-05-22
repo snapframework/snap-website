@@ -1,4 +1,6 @@
+VERSION=0.1.2
 
 all:
 	rm -f static/docs/latest
-	ln -s 0.1.1 static/docs/latest
+	mkdir -p static/docs/${VERSION}
+	ln -s ${VERSION} static/docs/latest
