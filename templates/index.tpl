@@ -11,23 +11,29 @@
               <p class="blurb">
                 a web framework for the
                 <a href="http://www.haskell.org"><strong>Haskell</strong></a> 
-                programming language.
+                "programming language".
               </p>
             </div>
 
             <div class="content" style="display: none;">
               <img src="/media/img/splash-img-2.png" title="Snap Framework" />
               <p class="blurb">
-                Build faster web applications that are easy to maintain.
+Built for speed from the bottom up. look, we even have <a href="/benchmarks">graphs and stuff</a>!
               </p>
             </div>
 
             <div class="content" style="display: none;">
+              <pre class="code code-example">$ cabal update
+$ cabal install snap-server
+$ mkdir foo; cd foo; snap init</pre>
               <img src="/media/img/splash-img-3.png" title="Snap Framework" />
-              <p class="blurb">
-                Some more text here.
+              <p class="blurb">Snap is easy to <a href="/download"
+              >install</a>!  Get up and running
+              with just a few quick steps!
               </p>
             </div>
+
+
           </div>
 
           <div id="pager"> </div>

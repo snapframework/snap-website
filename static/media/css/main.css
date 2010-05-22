@@ -8,8 +8,9 @@ body,html{
     font-family: "Droid Serif", "Georgia", "Arial", "Helvetica", sans-serif;
     line-height: 29px;
     color:#0c1a30;
-    margin:0;
     padding:0;
+    height: 100%;
+    margin: 0 0 1px;
 }
 
 tt, code, pre {
@@ -232,6 +233,7 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 
 #content.subpage{
     margin-top: 20px;
+    padding-bottom: 20px;
 }
 #content.subpage .inner-page{
         padding: 0px;
@@ -246,6 +248,9 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     margin: 0;
     padding: 0;
     width:100%;
+    min-height: 100%;
+    margin-bottom: -34px;
+
     /*background: #FFFFFF;*/
 }
 
@@ -297,14 +302,22 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     opacity: 0.4;
     margin: 0 2px;
     -moz-border-radius: 2px;
-    -webkit-border-radius: 2px
-;
+    -webkit-border-radius: 2px;
     display: -moz-inline-stack;
     display: inline-block;
     zoom: 1; /*IE HACK*/
     *display: inline; /* IE HACK */
-
-
+}
+.slideshow .content{
+    display: relative;
+}
+.slideshow .code-example{
+    position: absolute;
+    width: 300px;
+    top: 50%;
+    bottom: 50%;
+    height: 6em;
+    margin-top: -4em;
 }
 
 #splash #pager a.activeSlide{ opacity: 0.9 }
@@ -567,4 +580,19 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 .photo{
     float: left;
     margin-right: 10px;
+}
+
+#footer{
+    border-top: 1px solid #C2D1E1;
+    color: #a0acba;
+    padding: 2px 20px;
+    font-family: "PT Sans", sans-serif;
+    font-size: 0.75em;
+    text-align: right;
+ 
+    vertical-align: middle;
+}
+#footer img{
+    vertical-align: middle;
+    padding-left: 10px;
 }
