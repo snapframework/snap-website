@@ -82,86 +82,85 @@
 <a name="line-74"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>emptyTemplateState</span>
 <a name="line-75"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>bindSplice</span>
 <a name="line-76"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>lookupSplice</span>
-<a name="line-77"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>lookupTemplate</span>
-<a name="line-78"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>setTemplates</span>
-<a name="line-79"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>loadTemplates</span>
-<a name="line-80"></a>
-<a name="line-81"></a>    <span class='hs-comment'>-- * Hook functions</span>
-<a name="line-82"></a>    <span class='hs-comment'>-- $hookDoc</span>
-<a name="line-83"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>addOnLoadHook</span>
-<a name="line-84"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>addPreRunHook</span>
-<a name="line-85"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>addPostRunHook</span>
-<a name="line-86"></a>
-<a name="line-87"></a>    <span class='hs-comment'>-- * TemplateMonad functions</span>
-<a name="line-88"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>stopRecursion</span>
-<a name="line-89"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>getParamNode</span>
-<a name="line-90"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>runNodeList</span>
-<a name="line-91"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>getContext</span>
-<a name="line-92"></a>
-<a name="line-93"></a>    <span class='hs-comment'>-- * Functions for running splices and templates</span>
-<a name="line-94"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>runTemplate</span>
-<a name="line-95"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>evalTemplate</span>
-<a name="line-96"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>callTemplate</span>
-<a name="line-97"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>renderTemplate</span>
-<a name="line-98"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>bindStrings</span>
-<a name="line-99"></a>
-<a name="line-100"></a>    <span class='hs-comment'>-- * Misc functions</span>
-<a name="line-101"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>runSplice</span>
-<a name="line-102"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>runRawTemplate</span>
-<a name="line-103"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>getDoc</span>
-<a name="line-104"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>bindStaticTag</span>
-<a name="line-105"></a>
-<a name="line-106"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>heistExpatOptions</span>
-<a name="line-107"></a>  <span class='hs-layout'>,</span> <span class='hs-keyword'>module</span> <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Constants</span>
-<a name="line-108"></a>  <span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
-<a name="line-109"></a>
-<a name="line-110"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Trans</span>
-<a name="line-111"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Map</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Map</span>
-<a name="line-112"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span>
-<a name="line-113"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Constants</span>
-<a name="line-114"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Splices</span>
+<a name="line-77"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>setTemplates</span>
+<a name="line-78"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>loadTemplates</span>
+<a name="line-79"></a>
+<a name="line-80"></a>    <span class='hs-comment'>-- * Hook functions</span>
+<a name="line-81"></a>    <span class='hs-comment'>-- $hookDoc</span>
+<a name="line-82"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>addOnLoadHook</span>
+<a name="line-83"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>addPreRunHook</span>
+<a name="line-84"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>addPostRunHook</span>
+<a name="line-85"></a>
+<a name="line-86"></a>    <span class='hs-comment'>-- * TemplateMonad functions</span>
+<a name="line-87"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>stopRecursion</span>
+<a name="line-88"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>getParamNode</span>
+<a name="line-89"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>runNodeList</span>
+<a name="line-90"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>getContext</span>
+<a name="line-91"></a>
+<a name="line-92"></a>    <span class='hs-comment'>-- * Functions for running splices and templates</span>
+<a name="line-93"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>runTemplate</span>
+<a name="line-94"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>evalTemplate</span>
+<a name="line-95"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>callTemplate</span>
+<a name="line-96"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>renderTemplate</span>
+<a name="line-97"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>bindStrings</span>
+<a name="line-98"></a>
+<a name="line-99"></a>    <span class='hs-comment'>-- * Misc functions</span>
+<a name="line-100"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>runSplice</span>
+<a name="line-101"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>runRawTemplate</span>
+<a name="line-102"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>getDoc</span>
+<a name="line-103"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>bindStaticTag</span>
+<a name="line-104"></a>
+<a name="line-105"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>heistExpatOptions</span>
+<a name="line-106"></a>  <span class='hs-layout'>,</span> <span class='hs-keyword'>module</span> <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Constants</span>
+<a name="line-107"></a>  <span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
+<a name="line-108"></a>
+<a name="line-109"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Trans</span>
+<a name="line-110"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Map</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Map</span>
+<a name="line-111"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span>
+<a name="line-112"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Constants</span>
+<a name="line-113"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Splices</span>
+<a name="line-114"></a>
 <a name="line-115"></a>
-<a name="line-116"></a>
-<a name="line-117"></a><a name="defaultSpliceMap"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-118"></a><span class='hs-comment'>-- | The default set of built-in splices.</span>
-<a name="line-119"></a><span class='hs-definition'>defaultSpliceMap</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>MonadIO</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>SpliceMap</span> <span class='hs-varid'>m</span>
-<a name="line-120"></a><span class='hs-definition'>defaultSpliceMap</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Map</span><span class='hs-varop'>.</span><span class='hs-varid'>fromList</span>
-<a name="line-121"></a>    <span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-varid'>applyTag</span><span class='hs-layout'>,</span> <span class='hs-varid'>applyImpl</span><span class='hs-layout'>)</span>
-<a name="line-122"></a>    <span class='hs-layout'>,</span><span class='hs-layout'>(</span><span class='hs-varid'>bindTag</span><span class='hs-layout'>,</span> <span class='hs-varid'>bindImpl</span><span class='hs-layout'>)</span>
-<a name="line-123"></a>    <span class='hs-layout'>,</span><span class='hs-layout'>(</span><span class='hs-varid'>ignoreTag</span><span class='hs-layout'>,</span> <span class='hs-varid'>ignoreImpl</span><span class='hs-layout'>)</span>
-<a name="line-124"></a>    <span class='hs-layout'>,</span><span class='hs-layout'>(</span><span class='hs-varid'>markdownTag</span><span class='hs-layout'>,</span> <span class='hs-varid'>markdownSplice</span><span class='hs-layout'>)</span>
-<a name="line-125"></a>    <span class='hs-keyglyph'>]</span>
+<a name="line-116"></a><a name="defaultSpliceMap"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-117"></a><span class='hs-comment'>-- | The default set of built-in splices.</span>
+<a name="line-118"></a><span class='hs-definition'>defaultSpliceMap</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>MonadIO</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>SpliceMap</span> <span class='hs-varid'>m</span>
+<a name="line-119"></a><span class='hs-definition'>defaultSpliceMap</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Map</span><span class='hs-varop'>.</span><span class='hs-varid'>fromList</span>
+<a name="line-120"></a>    <span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-varid'>applyTag</span><span class='hs-layout'>,</span> <span class='hs-varid'>applyImpl</span><span class='hs-layout'>)</span>
+<a name="line-121"></a>    <span class='hs-layout'>,</span><span class='hs-layout'>(</span><span class='hs-varid'>bindTag</span><span class='hs-layout'>,</span> <span class='hs-varid'>bindImpl</span><span class='hs-layout'>)</span>
+<a name="line-122"></a>    <span class='hs-layout'>,</span><span class='hs-layout'>(</span><span class='hs-varid'>ignoreTag</span><span class='hs-layout'>,</span> <span class='hs-varid'>ignoreImpl</span><span class='hs-layout'>)</span>
+<a name="line-123"></a>    <span class='hs-layout'>,</span><span class='hs-layout'>(</span><span class='hs-varid'>markdownTag</span><span class='hs-layout'>,</span> <span class='hs-varid'>markdownSplice</span><span class='hs-layout'>)</span>
+<a name="line-124"></a>    <span class='hs-keyglyph'>]</span>
+<a name="line-125"></a>
 <a name="line-126"></a>
-<a name="line-127"></a>
-<a name="line-128"></a><a name="emptyTemplateState"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-129"></a><span class='hs-comment'>-- | An empty template state, with Heist's default splices (@\&lt;bind\&gt;@ and</span>
-<a name="line-130"></a><span class='hs-comment'>-- @\&lt;apply\&gt;@) mapped.</span>
-<a name="line-131"></a><span class='hs-definition'>emptyTemplateState</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>MonadIO</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>TemplateState</span> <span class='hs-varid'>m</span>
-<a name="line-132"></a><span class='hs-definition'>emptyTemplateState</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>TemplateState</span> <span class='hs-varid'>defaultSpliceMap</span> <span class='hs-conid'>Map</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span> <span class='hs-conid'>True</span> <span class='hs-conid'>[]</span> <span class='hs-num'>0</span>
-<a name="line-133"></a>                                   <span class='hs-varid'>return</span> <span class='hs-varid'>return</span> <span class='hs-varid'>return</span>
+<a name="line-127"></a><a name="emptyTemplateState"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-128"></a><span class='hs-comment'>-- | An empty template state, with Heist's default splices (@\&lt;bind\&gt;@ and</span>
+<a name="line-129"></a><span class='hs-comment'>-- @\&lt;apply\&gt;@) mapped.</span>
+<a name="line-130"></a><span class='hs-definition'>emptyTemplateState</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>MonadIO</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>TemplateState</span> <span class='hs-varid'>m</span>
+<a name="line-131"></a><span class='hs-definition'>emptyTemplateState</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>TemplateState</span> <span class='hs-varid'>defaultSpliceMap</span> <span class='hs-conid'>Map</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span> <span class='hs-conid'>True</span> <span class='hs-conid'>[]</span> <span class='hs-num'>0</span>
+<a name="line-132"></a>                                   <span class='hs-varid'>return</span> <span class='hs-varid'>return</span> <span class='hs-varid'>return</span>
+<a name="line-133"></a>
 <a name="line-134"></a>
-<a name="line-135"></a>
-<a name="line-136"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-137"></a><span class='hs-comment'>-- | Reloads the templates from disk and renders the specified</span>
-<a name="line-138"></a><span class='hs-comment'>-- template.  (Old convenience code.)</span>
-<a name="line-139"></a><span class='hs-comment'>--renderTemplate' :: FilePath -&gt; ByteString -&gt; IO (Maybe ByteString)</span>
-<a name="line-140"></a><span class='hs-comment'>--renderTemplate' baseDir name = do</span>
-<a name="line-141"></a><span class='hs-comment'>--    etm &lt;- loadTemplates baseDir emptyTemplateState</span>
-<a name="line-142"></a><span class='hs-comment'>--    let ts = either (const emptyTemplateState) id etm</span>
-<a name="line-143"></a><span class='hs-comment'>--    ns &lt;- runTemplate ts name</span>
-<a name="line-144"></a><span class='hs-comment'>--    return $ (Just . formatList') =&lt;&lt; ns</span>
+<a name="line-135"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-136"></a><span class='hs-comment'>-- | Reloads the templates from disk and renders the specified</span>
+<a name="line-137"></a><span class='hs-comment'>-- template.  (Old convenience code.)</span>
+<a name="line-138"></a><span class='hs-comment'>--renderTemplate' :: FilePath -&gt; ByteString -&gt; IO (Maybe ByteString)</span>
+<a name="line-139"></a><span class='hs-comment'>--renderTemplate' baseDir name = do</span>
+<a name="line-140"></a><span class='hs-comment'>--    etm &lt;- loadTemplates baseDir emptyTemplateState</span>
+<a name="line-141"></a><span class='hs-comment'>--    let ts = either (const emptyTemplateState) id etm</span>
+<a name="line-142"></a><span class='hs-comment'>--    ns &lt;- runTemplate ts name</span>
+<a name="line-143"></a><span class='hs-comment'>--    return $ (Just . formatList') =&lt;&lt; ns</span>
+<a name="line-144"></a>
 <a name="line-145"></a>
-<a name="line-146"></a>
-<a name="line-147"></a><span class='hs-comment'>-- $hookDoc</span>
-<a name="line-148"></a><span class='hs-comment'>-- Heist hooks allow you to modify templates when they are loaded and before</span>
-<a name="line-149"></a><span class='hs-comment'>-- and after they are run.  Every time you call one of the addAbcHook</span>
-<a name="line-150"></a><span class='hs-comment'>-- functions the hook is added to onto the processing pipeline.  The hooks</span>
-<a name="line-151"></a><span class='hs-comment'>-- processes the template in the order that they were added to the</span>
-<a name="line-152"></a><span class='hs-comment'>-- TemplateState.</span>
-<a name="line-153"></a><span class='hs-comment'>--</span>
-<a name="line-154"></a><span class='hs-comment'>-- The pre-run and post-run hooks are run before and after every template is</span>
-<a name="line-155"></a><span class='hs-comment'>-- run/rendered.  You should be careful what code you put in these hooks</span>
-<a name="line-156"></a><span class='hs-comment'>-- because it can significantly affect the performance of your site.</span>
-<a name="line-157"></a>
+<a name="line-146"></a><span class='hs-comment'>-- $hookDoc</span>
+<a name="line-147"></a><span class='hs-comment'>-- Heist hooks allow you to modify templates when they are loaded and before</span>
+<a name="line-148"></a><span class='hs-comment'>-- and after they are run.  Every time you call one of the addAbcHook</span>
+<a name="line-149"></a><span class='hs-comment'>-- functions the hook is added to onto the processing pipeline.  The hooks</span>
+<a name="line-150"></a><span class='hs-comment'>-- processes the template in the order that they were added to the</span>
+<a name="line-151"></a><span class='hs-comment'>-- TemplateState.</span>
+<a name="line-152"></a><span class='hs-comment'>--</span>
+<a name="line-153"></a><span class='hs-comment'>-- The pre-run and post-run hooks are run before and after every template is</span>
+<a name="line-154"></a><span class='hs-comment'>-- run/rendered.  You should be careful what code you put in these hooks</span>
+<a name="line-155"></a><span class='hs-comment'>-- because it can significantly affect the performance of your site.</span>
+<a name="line-156"></a>
 </pre></body>
 </html>

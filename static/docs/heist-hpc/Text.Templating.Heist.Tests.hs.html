@@ -276,7 +276,7 @@ span.spaces    { background: white }
 <span class="lineno">  265 </span>calcCorrect :: Apply -&gt; [Node]
 <span class="lineno">  266 </span><span class="decl"><span class="istickedoff">calcCorrect (Apply _ caller callee _ pos) = insertAt callee pos caller</span></span>
 <span class="lineno">  267 </span>
-<span class="lineno">  268 </span>calcResult :: (Monad m) =&gt; Apply -&gt; m [Node]
+<span class="lineno">  268 </span>calcResult :: (MonadIO m) =&gt; Apply -&gt; m [Node]
 <span class="lineno">  269 </span><span class="decl"><span class="istickedoff">calcResult apply@(Apply name _ callee _ _) =</span>
 <span class="lineno">  270 </span><span class="spaces">  </span><span class="istickedoff">runRawTemplate ts $ buildApplyCaller apply</span>
 <span class="lineno">  271 </span><span class="spaces">  </span><span class="istickedoff">where ts = setTemplates (Map.singleton [unName name] callee) emptyTemplateState</span></span>

@@ -15,136 +15,156 @@ span.spaces    { background: white }
 <span class="lineno">    4 </span>
 <span class="lineno">    5 </span>  This module contains the core definitions for the Heist template system.
 <span class="lineno">    6 </span>
-<span class="lineno">    7 </span>  FIXME: this intro could be a lot better
-<span class="lineno">    8 </span>
-<span class="lineno">    9 </span>  The Heist template system is based on XML\/xhtml; templates are parsed in as
-<span class="lineno">   10 </span>  XML trees, and we define substitutions (or \&quot;splices\&quot;) on certain tag names
-<span class="lineno">   11 </span>  that take 'Node' values in and substitute them with replacement text.
-<span class="lineno">   12 </span>
-<span class="lineno">   13 </span>  In Heist nomenclature a \&quot;splice\&quot; is a program that, given a 'Node' from a
-<span class="lineno">   14 </span>  template's XML tree, transforms it and gives you a result to be \&quot;spliced\&quot;
-<span class="lineno">   15 </span>  back into the document. Each tag name in a template XML document is looked up
-<span class="lineno">   16 </span>  in a \&quot;splice table\&quot;, held within a 'TemplateState', and if there's a match
-<span class="lineno">   17 </span>  the tag and its contents are passed to the 'Splice' for processing.
+<span class="lineno">    7 </span>  The Heist template system is based on XML\/xhtml.  It allows you to build
+<span class="lineno">    8 </span>  custom XML-based markup languages.  With Heist you can define your own
+<span class="lineno">    9 </span>  domain-specific XML tags implemented with Haskell and use them in your
+<span class="lineno">   10 </span>  templates.  
+<span class="lineno">   11 </span>
+<span class="lineno">   12 </span>  The most important concept in Heist is the 'Splice'.  Splices can be thought
+<span class="lineno">   13 </span>  of as functions that transform a node into a list of nodes.  Heist then
+<span class="lineno">   14 </span>  substitutes the resulting list of nodes into your template in place of the
+<span class="lineno">   15 </span>  input node.  'Splice' is implemented as a type synonym @type Splice m =
+<span class="lineno">   16 </span>  TemplateMonad m [Node]@, and 'TemplateMonad' has a function 'getParamNode'
+<span class="lineno">   17 </span>  that lets you get the input node.
 <span class="lineno">   18 </span>
-<span class="lineno">   19 </span>  In the following example, we'll define a substitution for @\&lt;foo/\&gt;@ nodes that
-<span class="lineno">   20 </span>  causes the node to be replaced by the text \&quot;Testing 1-2-3\&quot;:
-<span class="lineno">   21 </span>
-<span class="lineno">   22 </span>  &gt;
-<span class="lineno">   23 </span>  &gt; import Text.XML.Expat.Tree
-<span class="lineno">   24 </span>  &gt;
-<span class="lineno">   25 </span>  &gt; fooSplice :: Monad m =&gt; Splice m
-<span class="lineno">   26 </span>  &gt; fooSplice = return $ Text &quot;Testing 1-2-3&quot;
+<span class="lineno">   19 </span>  Suppose you have a place on your page where you want to display a link with
+<span class="lineno">   20 </span>  the text \&quot;Logout username\&quot; if the user is currently logged in or a link to
+<span class="lineno">   21 </span>  the login page if no user is logged in.  Assume you have a function
+<span class="lineno">   22 </span>  @getUser :: MyAppMonad (Maybe ByteString)@ that gets the current user.
+<span class="lineno">   23 </span>  You can implement this functionality with a 'Splice' as follows:
+<span class="lineno">   24 </span>
+<span class="lineno">   25 </span>  &gt;
+<span class="lineno">   26 </span>  &gt; import Text.XML.Expat.Tree
 <span class="lineno">   27 </span>  &gt;
-<span class="lineno">   28 </span>  &gt; go :: Monad m =&gt; m [Node]
-<span class="lineno">   29 </span>  &gt; go = runRawTemplate st template
-<span class="lineno">   30 </span>  &gt;   where
-<span class="lineno">   31 </span>  &gt;     st = bindSplice &quot;foo&quot; fooSplice emptyTemplateState 
-<span class="lineno">   32 </span>  &gt;     template = Element &quot;root&quot; [] [Element &quot;foo&quot; [] []]
-<span class="lineno">   33 </span>  &gt;
-<span class="lineno">   34 </span>
-<span class="lineno">   35 </span>  Running \&quot;go\&quot; will result in the tree
-<span class="lineno">   36 </span>
-<span class="lineno">   37 </span>  &gt; Element &quot;root&quot; [] [Text &quot;Testing 1-2-3&quot;]
-<span class="lineno">   38 </span>
-<span class="lineno">   39 </span>  'Splice' is a type synonym:
-<span class="lineno">   40 </span>
+<span class="lineno">   28 </span>  &gt; link :: ByteString -&gt; ByteString -&gt; Node
+<span class="lineno">   29 </span>  &gt; link target text = X.Element &quot;a&quot; [(&quot;href&quot;, target)] [X.Text text]
+<span class="lineno">   30 </span>  &gt; 
+<span class="lineno">   31 </span>  &gt; loginLink :: Node
+<span class="lineno">   32 </span>  &gt; loginLink = link &quot;/login&quot; &quot;Login&quot;
+<span class="lineno">   33 </span>  &gt; 
+<span class="lineno">   34 </span>  &gt; logoutLink :: ByteString -&gt; Node
+<span class="lineno">   35 </span>  &gt; logoutLink user = link &quot;/logout&quot; (B.append &quot;Logout &quot; user)
+<span class="lineno">   36 </span>  &gt; 
+<span class="lineno">   37 </span>  &gt; loginLogoutSplice :: Splice MyAppMonad
+<span class="lineno">   38 </span>  &gt; loginLogoutSplice = do
+<span class="lineno">   39 </span>  &gt;     user &lt;- lift getUser
+<span class="lineno">   40 </span>  &gt;     return $ [maybe loginLink logoutLink user]
 <span class="lineno">   41 </span>  &gt;
-<span class="lineno">   42 </span>  &gt; type Splice m = TemplateMonad m [Node]
-<span class="lineno">   43 </span>  &gt;
-<span class="lineno">   44 </span>
-<span class="lineno">   45 </span>  where 'TemplateMonad' is a monad transformer that gives you access to the
-<span class="lineno">   46 </span>  'Node' being processed (it's a \&quot;Reader\&quot; monad) as well as holding the
-<span class="lineno">   47 </span>  'TemplateState' that contains splice and template mappings.
-<span class="lineno">   48 </span>
-<span class="lineno">   49 </span>  TODO:
-<span class="lineno">   50 </span>
-<span class="lineno">   51 </span>  &gt; * describe template loading and mapping
-<span class="lineno">   52 </span>  &gt;
-<span class="lineno">   53 </span>  &gt; * template contexts and subtrees
-<span class="lineno">   54 </span>  &gt;
-<span class="lineno">   55 </span>  &gt; * describe recursion / substitution process
-<span class="lineno">   56 </span>-}
-<span class="lineno">   57 </span>
-<span class="lineno">   58 </span>module Text.Templating.Heist
-<span class="lineno">   59 </span>  (
-<span class="lineno">   60 </span>    -- * Types
-<span class="lineno">   61 </span>    Node
-<span class="lineno">   62 </span>  , Splice
-<span class="lineno">   63 </span>  , Template
-<span class="lineno">   64 </span>  , TemplateMonad
-<span class="lineno">   65 </span>  , TemplateState
-<span class="lineno">   66 </span>
-<span class="lineno">   67 </span>    -- * Functions and declarations on TemplateState values
-<span class="lineno">   68 </span>  , addTemplate
-<span class="lineno">   69 </span>  , emptyTemplateState
-<span class="lineno">   70 </span>  , bindSplice
-<span class="lineno">   71 </span>  , lookupSplice
-<span class="lineno">   72 </span>  , lookupTemplate
-<span class="lineno">   73 </span>  , addOnLoadHook
-<span class="lineno">   74 </span>  , addPreRunHook
-<span class="lineno">   75 </span>  , addPostRunHook
-<span class="lineno">   76 </span>  , setTemplates
-<span class="lineno">   77 </span>  , loadTemplates
-<span class="lineno">   78 </span>
-<span class="lineno">   79 </span>    -- * TemplateMonad functions
-<span class="lineno">   80 </span>  , stopRecursion
-<span class="lineno">   81 </span>  , getParamNode
-<span class="lineno">   82 </span>  , runNodeList
-<span class="lineno">   83 </span>  , getContext
-<span class="lineno">   84 </span>
-<span class="lineno">   85 </span>    -- * Functions for running splices and templates
-<span class="lineno">   86 </span>  , runTemplate
-<span class="lineno">   87 </span>  , evalTemplate
-<span class="lineno">   88 </span>  , callTemplate
-<span class="lineno">   89 </span>  , renderTemplate
-<span class="lineno">   90 </span>  , bindStrings
+<span class="lineno">   42 </span>
+<span class="lineno">   43 </span>  Next, you need to bind that splice to an XML tag.  Heist stores information
+<span class="lineno">   44 </span>  about splices and templates in the 'TemplateState' data structure.  The
+<span class="lineno">   45 </span>  following code demonstrates how this splice would be used.
+<span class="lineno">   46 </span>
+<span class="lineno">   47 </span>  &gt; mySplices = [ (&quot;loginLogout&quot;, loginLogoutSplice) ]
+<span class="lineno">   48 </span>  &gt; 
+<span class="lineno">   49 </span>  &gt; main = do
+<span class="lineno">   50 </span>  &gt;     ets &lt;- loadTemplates &quot;templates&quot; $
+<span class="lineno">   51 </span>  &gt;            foldr (uncurry bindSplice) emptyTemplateState mySplices
+<span class="lineno">   52 </span>  &gt;     let ts = either error id ets
+<span class="lineno">   53 </span>  &gt;     t &lt;- runMyAppMonad $ renderTemplate ts &quot;index&quot;
+<span class="lineno">   54 </span>  &gt;     print $ maybe &quot;Page not found&quot; id t
+<span class="lineno">   55 </span>
+<span class="lineno">   56 </span>  Here we build up our 'TemplateState' by starting with emptyTemplateState and
+<span class="lineno">   57 </span>  applying bindSplice for all the splices we want to add.  Then we pass this
+<span class="lineno">   58 </span>  to loadTemplates our final 'TemplateState' wrapped in an Either to handle
+<span class="lineno">   59 </span>  errors.  Then we use this 'TemplateState' to render our templates.
+<span class="lineno">   60 </span>
+<span class="lineno">   61 </span>-}
+<span class="lineno">   62 </span>
+<span class="lineno">   63 </span>module Text.Templating.Heist
+<span class="lineno">   64 </span>  (
+<span class="lineno">   65 </span>    -- * Types
+<span class="lineno">   66 </span>    Node
+<span class="lineno">   67 </span>  , Splice
+<span class="lineno">   68 </span>  , Template
+<span class="lineno">   69 </span>  , TemplateMonad
+<span class="lineno">   70 </span>  , TemplateState
+<span class="lineno">   71 </span>
+<span class="lineno">   72 </span>    -- * Functions and declarations on TemplateState values
+<span class="lineno">   73 </span>  , addTemplate
+<span class="lineno">   74 </span>  , emptyTemplateState
+<span class="lineno">   75 </span>  , bindSplice
+<span class="lineno">   76 </span>  , lookupSplice
+<span class="lineno">   77 </span>  , setTemplates
+<span class="lineno">   78 </span>  , loadTemplates
+<span class="lineno">   79 </span>
+<span class="lineno">   80 </span>    -- * Hook functions
+<span class="lineno">   81 </span>    -- $hookDoc
+<span class="lineno">   82 </span>  , addOnLoadHook
+<span class="lineno">   83 </span>  , addPreRunHook
+<span class="lineno">   84 </span>  , addPostRunHook
+<span class="lineno">   85 </span>
+<span class="lineno">   86 </span>    -- * TemplateMonad functions
+<span class="lineno">   87 </span>  , stopRecursion
+<span class="lineno">   88 </span>  , getParamNode
+<span class="lineno">   89 </span>  , runNodeList
+<span class="lineno">   90 </span>  , getContext
 <span class="lineno">   91 </span>
-<span class="lineno">   92 </span>    -- * Misc functions
-<span class="lineno">   93 </span>  , runSplice
-<span class="lineno">   94 </span>  , runRawTemplate
-<span class="lineno">   95 </span>  , getDoc
-<span class="lineno">   96 </span>  , bindStaticTag
-<span class="lineno">   97 </span>
-<span class="lineno">   98 </span>  , heistExpatOptions
-<span class="lineno">   99 </span>  , module Text.Templating.Heist.Constants
-<span class="lineno">  100 </span>  ) where
-<span class="lineno">  101 </span>
-<span class="lineno">  102 </span>import qualified Data.Map as Map
-<span class="lineno">  103 </span>import           Text.Templating.Heist.Internal
-<span class="lineno">  104 </span>import           Text.Templating.Heist.Constants
-<span class="lineno">  105 </span>import           Text.Templating.Heist.Splices
-<span class="lineno">  106 </span>
-<span class="lineno">  107 </span>
-<span class="lineno">  108 </span>------------------------------------------------------------------------------
-<span class="lineno">  109 </span>-- | The default set of built-in splices.
-<span class="lineno">  110 </span>defaultSpliceMap :: Monad m =&gt; SpliceMap m
-<span class="lineno">  111 </span><span class="decl"><span class="istickedoff">defaultSpliceMap = Map.fromList</span>
-<span class="lineno">  112 </span><span class="spaces">    </span><span class="istickedoff">[(applyTag, applyImpl)</span>
-<span class="lineno">  113 </span><span class="spaces">    </span><span class="istickedoff">,(bindTag, bindImpl)</span>
-<span class="lineno">  114 </span><span class="spaces">    </span><span class="istickedoff">,(ignoreTag, <span class="nottickedoff">ignoreImpl</span>)</span>
-<span class="lineno">  115 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
-<span class="lineno">  116 </span>
-<span class="lineno">  117 </span>
-<span class="lineno">  118 </span>------------------------------------------------------------------------------
-<span class="lineno">  119 </span>-- | An empty template state, with Heist's default splices (@\&lt;bind\&gt;@ and
-<span class="lineno">  120 </span>-- @\&lt;apply\&gt;@) mapped.
-<span class="lineno">  121 </span>emptyTemplateState :: Monad m =&gt; TemplateState m
-<span class="lineno">  122 </span><span class="decl"><span class="istickedoff">emptyTemplateState = TemplateState defaultSpliceMap Map.empty True [] 0</span>
-<span class="lineno">  123 </span><span class="spaces">                                   </span><span class="istickedoff">return return return</span></span>
-<span class="lineno">  124 </span>
+<span class="lineno">   92 </span>    -- * Functions for running splices and templates
+<span class="lineno">   93 </span>  , runTemplate
+<span class="lineno">   94 </span>  , evalTemplate
+<span class="lineno">   95 </span>  , callTemplate
+<span class="lineno">   96 </span>  , renderTemplate
+<span class="lineno">   97 </span>  , bindStrings
+<span class="lineno">   98 </span>
+<span class="lineno">   99 </span>    -- * Misc functions
+<span class="lineno">  100 </span>  , runSplice
+<span class="lineno">  101 </span>  , runRawTemplate
+<span class="lineno">  102 </span>  , getDoc
+<span class="lineno">  103 </span>  , bindStaticTag
+<span class="lineno">  104 </span>
+<span class="lineno">  105 </span>  , heistExpatOptions
+<span class="lineno">  106 </span>  , module Text.Templating.Heist.Constants
+<span class="lineno">  107 </span>  ) where
+<span class="lineno">  108 </span>
+<span class="lineno">  109 </span>import           Control.Monad.Trans
+<span class="lineno">  110 </span>import qualified Data.Map as Map
+<span class="lineno">  111 </span>import           Text.Templating.Heist.Internal
+<span class="lineno">  112 </span>import           Text.Templating.Heist.Constants
+<span class="lineno">  113 </span>import           Text.Templating.Heist.Splices
+<span class="lineno">  114 </span>
+<span class="lineno">  115 </span>
+<span class="lineno">  116 </span>------------------------------------------------------------------------------
+<span class="lineno">  117 </span>-- | The default set of built-in splices.
+<span class="lineno">  118 </span>defaultSpliceMap :: MonadIO m =&gt; SpliceMap m
+<span class="lineno">  119 </span><span class="decl"><span class="istickedoff">defaultSpliceMap = Map.fromList</span>
+<span class="lineno">  120 </span><span class="spaces">    </span><span class="istickedoff">[(applyTag, applyImpl)</span>
+<span class="lineno">  121 </span><span class="spaces">    </span><span class="istickedoff">,(bindTag, bindImpl)</span>
+<span class="lineno">  122 </span><span class="spaces">    </span><span class="istickedoff">,(ignoreTag, <span class="nottickedoff">ignoreImpl</span>)</span>
+<span class="lineno">  123 </span><span class="spaces">    </span><span class="istickedoff">,(markdownTag, <span class="nottickedoff">markdownSplice</span>)</span>
+<span class="lineno">  124 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
 <span class="lineno">  125 </span>
-<span class="lineno">  126 </span>------------------------------------------------------------------------------
-<span class="lineno">  127 </span>-- | Reloads the templates from disk and renders the specified
-<span class="lineno">  128 </span>-- template.  (Old convenience code.)
-<span class="lineno">  129 </span>--renderTemplate' :: FilePath -&gt; ByteString -&gt; IO (Maybe ByteString)
-<span class="lineno">  130 </span>--renderTemplate' baseDir name = do
-<span class="lineno">  131 </span>--    etm &lt;- loadTemplates baseDir emptyTemplateState
-<span class="lineno">  132 </span>--    let ts = either (const emptyTemplateState) id etm
-<span class="lineno">  133 </span>--    ns &lt;- runTemplate ts name
-<span class="lineno">  134 </span>--    return $ (Just . formatList') =&lt;&lt; ns
-<span class="lineno">  135 </span>
-<span class="lineno">  136 </span>
+<span class="lineno">  126 </span>
+<span class="lineno">  127 </span>------------------------------------------------------------------------------
+<span class="lineno">  128 </span>-- | An empty template state, with Heist's default splices (@\&lt;bind\&gt;@ and
+<span class="lineno">  129 </span>-- @\&lt;apply\&gt;@) mapped.
+<span class="lineno">  130 </span>emptyTemplateState :: MonadIO m =&gt; TemplateState m
+<span class="lineno">  131 </span><span class="decl"><span class="istickedoff">emptyTemplateState = TemplateState defaultSpliceMap Map.empty True [] 0</span>
+<span class="lineno">  132 </span><span class="spaces">                                   </span><span class="istickedoff">return return return</span></span>
+<span class="lineno">  133 </span>
+<span class="lineno">  134 </span>
+<span class="lineno">  135 </span>------------------------------------------------------------------------------
+<span class="lineno">  136 </span>-- | Reloads the templates from disk and renders the specified
+<span class="lineno">  137 </span>-- template.  (Old convenience code.)
+<span class="lineno">  138 </span>--renderTemplate' :: FilePath -&gt; ByteString -&gt; IO (Maybe ByteString)
+<span class="lineno">  139 </span>--renderTemplate' baseDir name = do
+<span class="lineno">  140 </span>--    etm &lt;- loadTemplates baseDir emptyTemplateState
+<span class="lineno">  141 </span>--    let ts = either (const emptyTemplateState) id etm
+<span class="lineno">  142 </span>--    ns &lt;- runTemplate ts name
+<span class="lineno">  143 </span>--    return $ (Just . formatList') =&lt;&lt; ns
+<span class="lineno">  144 </span>
+<span class="lineno">  145 </span>
+<span class="lineno">  146 </span>-- $hookDoc
+<span class="lineno">  147 </span>-- Heist hooks allow you to modify templates when they are loaded and before
+<span class="lineno">  148 </span>-- and after they are run.  Every time you call one of the addAbcHook
+<span class="lineno">  149 </span>-- functions the hook is added to onto the processing pipeline.  The hooks
+<span class="lineno">  150 </span>-- processes the template in the order that they were added to the
+<span class="lineno">  151 </span>-- TemplateState.
+<span class="lineno">  152 </span>--
+<span class="lineno">  153 </span>-- The pre-run and post-run hooks are run before and after every template is
+<span class="lineno">  154 </span>-- run/rendered.  You should be careful what code you put in these hooks
+<span class="lineno">  155 </span>-- because it can significantly affect the performance of your site.
+<span class="lineno">  156 </span>
 
 </pre>
 </html>
