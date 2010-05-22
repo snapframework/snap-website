@@ -529,19 +529,36 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     content: "";
 }
 
-#packages dt{
+#packages dt {
     height: 28px;
     border-bottom: 1px dotted #C2D1E1;
     font-family: "PT Sans", sans-serif;
     letter-spacing: 2px;
 }
-#packages dd{
+
+#docdls dt {
+    height: 28px;
+    border-bottom: 1px dotted #C2D1E1;
+    font-family: "PT Sans", sans-serif;
+    letter-spacing: 2px;
+}
+
+#packages dd, #docdls dd {
     padding: 29px 0 ;
-    padding-left: 110px;
     font-size:1em;
-    background: url(package.png) no-repeat center left;
     line-height: 28px;
 }
+
+#packages dd{
+    background: url(package.png) no-repeat center left;
+    padding-left: 110px;
+}
+
+#docdls dd{
+    background: url(book.png) no-repeat 0 19px;
+    padding-left: 80px;
+}
+
 
 .small-logo{
     float:left;

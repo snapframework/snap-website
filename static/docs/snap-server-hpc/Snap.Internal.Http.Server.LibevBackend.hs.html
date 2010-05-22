@@ -239,14 +239,14 @@ span.spaces    { background: white }
 <span class="lineno">  228 </span>
 <span class="lineno">  229 </span>
 <span class="lineno">  230 </span>ioCallback :: MVar () -&gt; MVar () -&gt; IoCallback
-<span class="lineno">  231 </span><span class="decl"><span class="istickedoff">ioCallback ra wa _loopPtr _ioPtr event = do</span>
-<span class="lineno">  232 </span><span class="spaces">    </span><span class="istickedoff">-- send notifications to the worker thread</span>
-<span class="lineno">  233 </span><span class="spaces">    </span><span class="istickedoff">when isRead  $ <span class="nottickedoff">tryPutMVar ra () &gt;&gt; return ()</span></span>
-<span class="lineno">  234 </span><span class="spaces">    </span><span class="istickedoff">when isWrite $ tryPutMVar wa <span class="nottickedoff">()</span> &gt;&gt; return ()</span>
-<span class="lineno">  235 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  236 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  237 </span><span class="spaces">    </span><span class="istickedoff">isRead  = (event .&amp;. ev_read) /= 0</span>
-<span class="lineno">  238 </span><span class="spaces">    </span><span class="istickedoff">isWrite = (event .&amp;. ev_write) /= 0</span></span>
+<span class="lineno">  231 </span><span class="decl"><span class="nottickedoff">ioCallback ra wa _loopPtr _ioPtr event = do</span>
+<span class="lineno">  232 </span><span class="spaces">    </span><span class="nottickedoff">-- send notifications to the worker thread</span>
+<span class="lineno">  233 </span><span class="spaces">    </span><span class="nottickedoff">when isRead  $ tryPutMVar ra () &gt;&gt; return ()</span>
+<span class="lineno">  234 </span><span class="spaces">    </span><span class="nottickedoff">when isWrite $ tryPutMVar wa () &gt;&gt; return ()</span>
+<span class="lineno">  235 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  236 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
+<span class="lineno">  237 </span><span class="spaces">    </span><span class="nottickedoff">isRead  = (event .&amp;. ev_read) /= 0</span>
+<span class="lineno">  238 </span><span class="spaces">    </span><span class="nottickedoff">isWrite = (event .&amp;. ev_write) /= 0</span></span>
 <span class="lineno">  239 </span>
 <span class="lineno">  240 </span>
 <span class="lineno">  241 </span>seconds :: Int -&gt; Int
@@ -303,9 +303,9 @@ span.spaces    { background: white }
 <span class="lineno">  292 </span><span class="spaces">    </span><span class="istickedoff">threadSet = _connectionThreads backend</span>
 <span class="lineno">  293 </span><span class="spaces">    </span><span class="istickedoff">wait = do</span>
 <span class="lineno">  294 </span><span class="spaces">        </span><span class="istickedoff">threads &lt;- readMVar threadSet</span>
-<span class="lineno">  295 </span><span class="spaces">        </span><span class="istickedoff">if (Set.null threads)</span>
+<span class="lineno">  295 </span><span class="spaces">        </span><span class="istickedoff">if <span class="tickonlytrue">(Set.null threads)</span></span>
 <span class="lineno">  296 </span><span class="spaces">          </span><span class="istickedoff">then return <span class="nottickedoff">()</span></span>
-<span class="lineno">  297 </span><span class="spaces">          </span><span class="istickedoff">else threadDelay (seconds 1) &gt;&gt; wait</span></span>
+<span class="lineno">  297 </span><span class="spaces">          </span><span class="istickedoff">else <span class="nottickedoff">threadDelay (seconds 1) &gt;&gt; wait</span></span></span>
 <span class="lineno">  298 </span>
 <span class="lineno">  299 </span>
 <span class="lineno">  300 </span>
@@ -453,7 +453,7 @@ span.spaces    { background: white }
 <span class="lineno">  442 </span><span class="spaces">        </span><span class="istickedoff">evTimerInit tmr tcb 20 0</span>
 <span class="lineno">  443 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  444 </span><span class="spaces">        </span><span class="istickedoff">evio &lt;- mkEvIo</span>
-<span class="lineno">  445 </span><span class="spaces">        </span><span class="istickedoff">iocb &lt;- mkIoCallback $ ioCallback <span class="nottickedoff">ra</span> wa</span>
+<span class="lineno">  445 </span><span class="spaces">        </span><span class="istickedoff">iocb &lt;- mkIoCallback $ <span class="nottickedoff">ioCallback ra wa</span></span>
 <span class="lineno">  446 </span><span class="spaces">        </span><span class="istickedoff">evIoInit evio iocb fd (ev_read .|. ev_write)</span>
 <span class="lineno">  447 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  448 </span><span class="spaces">        </span><span class="istickedoff">-- take ev_loop lock, start timer and io watchers</span>
