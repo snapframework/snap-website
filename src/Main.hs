@@ -115,7 +115,8 @@ catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
     writeBS "\n</pre></body></html>"
 
   where
-    r = setResponseStatus 500 "Internal Server Error" emptyResponse
+    r = setContentType "text/html" $
+        setResponseStatus 500 "Internal Server Error" emptyResponse
 
 
 apidoc :: MVar (TemplateState Snap) -> Snap ()
