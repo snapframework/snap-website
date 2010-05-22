@@ -1,4 +1,5 @@
 <apply template="wrap">
+<bind tag="subtitle">: Home</bind>
 <div class="front-page">
 
 
