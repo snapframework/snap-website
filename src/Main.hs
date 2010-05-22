@@ -130,6 +130,7 @@ apidoc mvar = do
     let ts' = bindSplice "docframe" (docframe href) $
               bindSplice "subtitle" (return [mkText title]) ts
 
+    modifyResponse $ setContentType "text/html"
     maybe pass writeBS =<< renderTemplate ts' "docs/api"
 
   where
