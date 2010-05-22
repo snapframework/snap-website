@@ -26,6 +26,9 @@
           <dl>
             <dt><a href="docs/style-guide">Haskell Style Guide</a></dt>
             <dd>A guide to the Haskell source style we're using for the project.</dd>
+            <dt><a href="/benchmarks">Benchmarks</a></dt>
+            <dd>Some benchmark results comparing Snap to several other
+              web frameworks.</dd>
           </dl>
         </div>
       </div>
