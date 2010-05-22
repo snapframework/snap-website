@@ -14,7 +14,7 @@
       </div><!--end main-->
         <div id="footer">
 
-This work by is licensed under
+This work is licensed under
 a <a rel="license"
      href="http://creativecommons.org/licenses/by-nd/3.0/">Creative Commons
             Attribution-NoDerivs 3.0 Unported
