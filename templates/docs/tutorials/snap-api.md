@@ -33,6 +33,9 @@ To generate a skeleton Snap web application, the `snap-core` package
 installs an executable `snap` into `$HOME/.cabal/bin`. We can use that to
 create our "Hello Snap" application.
 
+(If you did not install `heist`, you should execute `snap init -b` instead of
+`snap init` for a bare-bones skeleton that does not depend on `heist`.)
+
 ~~~~~~ {.shell}
 $ mkdir hello-snap
 $ cd hello-snap
@@ -159,7 +162,7 @@ returns another iteratee, which when "run" (by feeding it with EOF, because
 iteratees are forced to go into the "Done" state when they receive EOF), causes
 a series of data chunks to be written to `f`. These functions are the producers
 of data, they take some iteratee as input and keep feeding it data until the
-iteratee says it is done or the enumerator runs of data to feed the
+iteratee says it is done or the enumerator runs out of data to feed the
 iteratee. In this sense enumerators may be more naturally thought of as
 _iteratee transformers_.
 
