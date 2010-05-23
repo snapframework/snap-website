@@ -33,6 +33,9 @@ To generate a skeleton Snap web application, the `snap-core` package
 installs an executable `snap` into `$HOME/.cabal/bin`. We can use that to
 create our "Hello Snap" application.
 
+(If you did not install `heist`, you should execute `snap init -b` instead of
+`snap init` for a bare-bones skeleton that does not depend on `heist`.)
+
 ~~~~~~ {.shell}
 $ mkdir hello-snap
 $ cd hello-snap
