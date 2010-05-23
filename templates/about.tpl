@@ -70,7 +70,8 @@
             <strong><a href="http://gregorycollins.net/">Gregory
             Collins</a></strong> is a programmer from Toronto, Canada. He holds
             an MSc in Computer Science from Yale University and he works
-            at <a href="http://www.sysomos.com/">Sysomos</a>, a social media
+            at <a title="Sysomos - Social Media Monitoring and Analytics"
+                  href="http://www.sysomos.com/">Sysomos</a>, a social media
             analytics startup.
           </p>
           <p>
