@@ -99,101 +99,97 @@ span.spaces    { background: white }
 <span class="lineno">   88 </span>-- set to \&quot;@\/foo\/bar\/quux\/@\&quot; and 'rqPathInfo' set to
 <span class="lineno">   89 </span>-- \&quot;@...anything...@\&quot;.
 <span class="lineno">   90 </span>--
-<span class="lineno">   91 </span>-- @FIXME@\/@TODO@: we need a version with and without the context path setting
-<span class="lineno">   92 </span>-- behaviour; if the route is \&quot;@article\/:id\/print@\&quot;, we probably want the
-<span class="lineno">   93 </span>-- contextPath to be \&quot;@\/article@\&quot; instead of \&quot;@\/article\/whatever\/print@\&quot;.
-<span class="lineno">   94 </span>--
-<span class="lineno">   95 </span>-- A path component within an URL entry point beginning with a colon (\&quot;@:@\&quot;)
-<span class="lineno">   96 </span>-- is treated as a /variable capture/; the corresponding path component within
-<span class="lineno">   97 </span>-- the request URI will be entered into the 'rqParams' parameters mapping with
-<span class="lineno">   98 </span>-- the given name. For instance, if the routes were:
-<span class="lineno">   99 </span>--
-<span class="lineno">  100 </span>-- &gt; route [ (&quot;foo/:bar/baz&quot;, fooBazHandler) ]
-<span class="lineno">  101 </span>--
-<span class="lineno">  102 </span>-- Then a request for \&quot;@\/foo\/saskatchewan\/baz@\&quot; would be routed to
-<span class="lineno">  103 </span>-- @fooBazHandler@ with a mapping for:
+<span class="lineno">   91 </span>-- A path component within an URL entry point beginning with a colon (\&quot;@:@\&quot;)
+<span class="lineno">   92 </span>-- is treated as a /variable capture/; the corresponding path component within
+<span class="lineno">   93 </span>-- the request URI will be entered into the 'rqParams' parameters mapping with
+<span class="lineno">   94 </span>-- the given name. For instance, if the routes were:
+<span class="lineno">   95 </span>--
+<span class="lineno">   96 </span>-- &gt; route [ (&quot;foo/:bar/baz&quot;, fooBazHandler) ]
+<span class="lineno">   97 </span>--
+<span class="lineno">   98 </span>-- Then a request for \&quot;@\/foo\/saskatchewan\/baz@\&quot; would be routed to
+<span class="lineno">   99 </span>-- @fooBazHandler@ with a mapping for:
+<span class="lineno">  100 </span>--
+<span class="lineno">  101 </span>-- &gt; &quot;bar&quot; =&gt; &quot;saskatchewan&quot;
+<span class="lineno">  102 </span>--
+<span class="lineno">  103 </span>-- in its parameters table.
 <span class="lineno">  104 </span>--
-<span class="lineno">  105 </span>-- &gt; &quot;bar&quot; =&gt; &quot;saskatchewan&quot;
-<span class="lineno">  106 </span>--
-<span class="lineno">  107 </span>-- in its parameters table.
-<span class="lineno">  108 </span>--
-<span class="lineno">  109 </span>-- Longer paths are matched first, and specific routes are matched before
-<span class="lineno">  110 </span>-- captures. That is, if given routes:
-<span class="lineno">  111 </span>--
-<span class="lineno">  112 </span>-- &gt; [ (&quot;a&quot;, h1), (&quot;a/b&quot;, h2), (&quot;a/:x&quot;, h3) ]
-<span class="lineno">  113 </span>--
-<span class="lineno">  114 </span>-- a request for \&quot;@\/a\/b@\&quot; will go to @h2@, \&quot;@\/a\/s@\&quot; for any /s/ will go
-<span class="lineno">  115 </span>-- to @h3@, and \&quot;@\/a@\&quot; will go to @h1@.
-<span class="lineno">  116 </span>--
-<span class="lineno">  117 </span>-- The following example matches \&quot;@\/article@\&quot; to an article index,
-<span class="lineno">  118 </span>-- \&quot;@\/login@\&quot; to a login, and \&quot;@\/article\/...@\&quot; to an article renderer.
+<span class="lineno">  105 </span>-- Longer paths are matched first, and specific routes are matched before
+<span class="lineno">  106 </span>-- captures. That is, if given routes:
+<span class="lineno">  107 </span>--
+<span class="lineno">  108 </span>-- &gt; [ (&quot;a&quot;, h1), (&quot;a/b&quot;, h2), (&quot;a/:x&quot;, h3) ]
+<span class="lineno">  109 </span>--
+<span class="lineno">  110 </span>-- a request for \&quot;@\/a\/b@\&quot; will go to @h2@, \&quot;@\/a\/s@\&quot; for any /s/ will go
+<span class="lineno">  111 </span>-- to @h3@, and \&quot;@\/a@\&quot; will go to @h1@.
+<span class="lineno">  112 </span>--
+<span class="lineno">  113 </span>-- The following example matches \&quot;@\/article@\&quot; to an article index,
+<span class="lineno">  114 </span>-- \&quot;@\/login@\&quot; to a login, and \&quot;@\/article\/...@\&quot; to an article renderer.
+<span class="lineno">  115 </span>--
+<span class="lineno">  116 </span>-- &gt; route [ (&quot;article&quot;,     renderIndex)
+<span class="lineno">  117 </span>-- &gt;       , (&quot;article/:id&quot;, renderArticle)
+<span class="lineno">  118 </span>-- &gt;       , (&quot;login&quot;,       method POST doLogin) ]
 <span class="lineno">  119 </span>--
-<span class="lineno">  120 </span>-- &gt; route [ (&quot;article&quot;,     renderIndex)
-<span class="lineno">  121 </span>-- &gt;       , (&quot;article/:id&quot;, renderArticle)
-<span class="lineno">  122 </span>-- &gt;       , (&quot;login&quot;,       method POST doLogin) ]
-<span class="lineno">  123 </span>--
-<span class="lineno">  124 </span>route :: [(ByteString, Snap a)] -&gt; Snap a
-<span class="lineno">  125 </span><span class="decl"><span class="istickedoff">route rts = route' (return <span class="nottickedoff">()</span>) rts' []</span>
-<span class="lineno">  126 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  127 </span><span class="spaces">    </span><span class="istickedoff">rts' = mconcat (map pRoute rts)</span></span>
-<span class="lineno">  128 </span>
-<span class="lineno">  129 </span>
-<span class="lineno">  130 </span>------------------------------------------------------------------------------
-<span class="lineno">  131 </span>-- | The 'routeLocal' function is the same as 'route', except it doesn't change
-<span class="lineno">  132 </span>-- the request's context path. This is useful if you want to route to a
-<span class="lineno">  133 </span>-- particular handler but you want that handler to receive the 'rqPathInfo' as
-<span class="lineno">  134 </span>-- it is.
-<span class="lineno">  135 </span>routeLocal :: [(ByteString, Snap a)] -&gt; Snap a
-<span class="lineno">  136 </span><span class="decl"><span class="istickedoff">routeLocal rts' = do</span>
-<span class="lineno">  137 </span><span class="spaces">    </span><span class="istickedoff">req    &lt;- getRequest</span>
-<span class="lineno">  138 </span><span class="spaces">    </span><span class="istickedoff">let ctx = rqContextPath req</span>
-<span class="lineno">  139 </span><span class="spaces">    </span><span class="istickedoff">let p   = rqPathInfo req</span>
-<span class="lineno">  140 </span><span class="spaces">    </span><span class="istickedoff">let md  = modifyRequest $ \r -&gt; r {rqContextPath=ctx, rqPathInfo=p}</span>
-<span class="lineno">  141 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  142 </span><span class="spaces">    </span><span class="istickedoff">route' md rts <span class="nottickedoff">[]</span>   &lt;|&gt;   (md &gt;&gt; pass)</span>
-<span class="lineno">  143 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  144 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  145 </span><span class="spaces">    </span><span class="istickedoff">rts = mconcat (map pRoute rts')</span></span>
-<span class="lineno">  146 </span>
-<span class="lineno">  147 </span>          
-<span class="lineno">  148 </span>------------------------------------------------------------------------------
-<span class="lineno">  149 </span>pRoute :: (ByteString, Snap a) -&gt; Route a
-<span class="lineno">  150 </span><span class="decl"><span class="istickedoff">pRoute (r, a) = foldr f (Action a) hier</span>
-<span class="lineno">  151 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  152 </span><span class="spaces">    </span><span class="istickedoff">hier   = filter (not . B.null) $ B.splitWith (== (c2w '/')) r</span>
-<span class="lineno">  153 </span><span class="spaces">    </span><span class="istickedoff">f s rt = if B.head s == c2w ':'</span>
-<span class="lineno">  154 </span><span class="spaces">        </span><span class="istickedoff">then Capture (B.tail s) rt NoRoute</span>
-<span class="lineno">  155 </span><span class="spaces">        </span><span class="istickedoff">else Dir (Map.fromList [(s, rt)]) NoRoute</span></span>
-<span class="lineno">  156 </span>
-<span class="lineno">  157 </span>
-<span class="lineno">  158 </span>------------------------------------------------------------------------------
-<span class="lineno">  159 </span>route' :: Snap ()               -- ^ an action to be run before any user
-<span class="lineno">  160 </span>                                -- handler
-<span class="lineno">  161 </span>       -&gt; Route a               -- ^ currently active routing table
-<span class="lineno">  162 </span>       -&gt; [Route a]             -- ^ list of fallback routing tables in case
-<span class="lineno">  163 </span>                                -- the current table fails
-<span class="lineno">  164 </span>       -&gt; Snap a
-<span class="lineno">  165 </span><span class="decl"><span class="istickedoff">route' pre (Action action) _ = pre &gt;&gt; action</span>
-<span class="lineno">  166 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  167 </span><span class="spaces"></span><span class="istickedoff">route' pre (Capture param rt fb) fbs = do</span>
-<span class="lineno">  168 </span><span class="spaces">    </span><span class="istickedoff">cwd &lt;- getRequest &gt;&gt;= return . B.takeWhile (/= (c2w '/')) . rqPathInfo</span>
-<span class="lineno">  169 </span><span class="spaces">    </span><span class="istickedoff">if B.null cwd</span>
-<span class="lineno">  170 </span><span class="spaces">      </span><span class="istickedoff">then route' pre fb fbs</span>
-<span class="lineno">  171 </span><span class="spaces">      </span><span class="istickedoff">else do localRequest (updateContextPath (B.length cwd) . (f cwd)) $</span>
-<span class="lineno">  172 </span><span class="spaces">                           </span><span class="istickedoff">route' pre rt (fb:fbs)</span>
-<span class="lineno">  173 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  174 </span><span class="spaces">    </span><span class="istickedoff">f v req = req { rqParams = Map.insertWith (++) param [v] (rqParams req) }</span>
-<span class="lineno">  175 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  176 </span><span class="spaces"></span><span class="istickedoff">route' pre (Dir rtm fb) fbs = do</span>
-<span class="lineno">  177 </span><span class="spaces">    </span><span class="istickedoff">cwd &lt;- getRequest &gt;&gt;= return . B.takeWhile (/= (c2w '/')) . rqPathInfo</span>
-<span class="lineno">  178 </span><span class="spaces">    </span><span class="istickedoff">case Map.lookup cwd rtm of</span>
-<span class="lineno">  179 </span><span class="spaces">      </span><span class="istickedoff">Just rt -&gt; do</span>
-<span class="lineno">  180 </span><span class="spaces">          </span><span class="istickedoff">localRequest (updateContextPath (B.length cwd)) $</span>
-<span class="lineno">  181 </span><span class="spaces">                       </span><span class="istickedoff">route' pre rt (fb:fbs)</span>
-<span class="lineno">  182 </span><span class="spaces">      </span><span class="istickedoff">Nothing -&gt; route' pre fb fbs</span>
-<span class="lineno">  183 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  184 </span><span class="spaces"></span><span class="istickedoff">route' _ NoRoute       []   = pass</span>
-<span class="lineno">  185 </span><span class="spaces"></span><span class="istickedoff">route' pre NoRoute (fb:fbs) = route' pre fb fbs</span></span>
+<span class="lineno">  120 </span>route :: [(ByteString, Snap a)] -&gt; Snap a
+<span class="lineno">  121 </span><span class="decl"><span class="istickedoff">route rts = route' (return <span class="nottickedoff">()</span>) rts' []</span>
+<span class="lineno">  122 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  123 </span><span class="spaces">    </span><span class="istickedoff">rts' = mconcat (map pRoute rts)</span></span>
+<span class="lineno">  124 </span>
+<span class="lineno">  125 </span>
+<span class="lineno">  126 </span>------------------------------------------------------------------------------
+<span class="lineno">  127 </span>-- | The 'routeLocal' function is the same as 'route', except it doesn't change
+<span class="lineno">  128 </span>-- the request's context path. This is useful if you want to route to a
+<span class="lineno">  129 </span>-- particular handler but you want that handler to receive the 'rqPathInfo' as
+<span class="lineno">  130 </span>-- it is.
+<span class="lineno">  131 </span>routeLocal :: [(ByteString, Snap a)] -&gt; Snap a
+<span class="lineno">  132 </span><span class="decl"><span class="istickedoff">routeLocal rts' = do</span>
+<span class="lineno">  133 </span><span class="spaces">    </span><span class="istickedoff">req    &lt;- getRequest</span>
+<span class="lineno">  134 </span><span class="spaces">    </span><span class="istickedoff">let ctx = rqContextPath req</span>
+<span class="lineno">  135 </span><span class="spaces">    </span><span class="istickedoff">let p   = rqPathInfo req</span>
+<span class="lineno">  136 </span><span class="spaces">    </span><span class="istickedoff">let md  = modifyRequest $ \r -&gt; r {rqContextPath=ctx, rqPathInfo=p}</span>
+<span class="lineno">  137 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  138 </span><span class="spaces">    </span><span class="istickedoff">route' md rts <span class="nottickedoff">[]</span>   &lt;|&gt;   (md &gt;&gt; pass)</span>
+<span class="lineno">  139 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  140 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  141 </span><span class="spaces">    </span><span class="istickedoff">rts = mconcat (map pRoute rts')</span></span>
+<span class="lineno">  142 </span>
+<span class="lineno">  143 </span>          
+<span class="lineno">  144 </span>------------------------------------------------------------------------------
+<span class="lineno">  145 </span>pRoute :: (ByteString, Snap a) -&gt; Route a
+<span class="lineno">  146 </span><span class="decl"><span class="istickedoff">pRoute (r, a) = foldr f (Action a) hier</span>
+<span class="lineno">  147 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  148 </span><span class="spaces">    </span><span class="istickedoff">hier   = filter (not . B.null) $ B.splitWith (== (c2w '/')) r</span>
+<span class="lineno">  149 </span><span class="spaces">    </span><span class="istickedoff">f s rt = if B.head s == c2w ':'</span>
+<span class="lineno">  150 </span><span class="spaces">        </span><span class="istickedoff">then Capture (B.tail s) rt NoRoute</span>
+<span class="lineno">  151 </span><span class="spaces">        </span><span class="istickedoff">else Dir (Map.fromList [(s, rt)]) NoRoute</span></span>
+<span class="lineno">  152 </span>
+<span class="lineno">  153 </span>
+<span class="lineno">  154 </span>------------------------------------------------------------------------------
+<span class="lineno">  155 </span>route' :: Snap ()               -- ^ an action to be run before any user
+<span class="lineno">  156 </span>                                -- handler
+<span class="lineno">  157 </span>       -&gt; Route a               -- ^ currently active routing table
+<span class="lineno">  158 </span>       -&gt; [Route a]             -- ^ list of fallback routing tables in case
+<span class="lineno">  159 </span>                                -- the current table fails
+<span class="lineno">  160 </span>       -&gt; Snap a
+<span class="lineno">  161 </span><span class="decl"><span class="istickedoff">route' pre (Action action) _ = pre &gt;&gt; action</span>
+<span class="lineno">  162 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  163 </span><span class="spaces"></span><span class="istickedoff">route' pre (Capture param rt fb) fbs = do</span>
+<span class="lineno">  164 </span><span class="spaces">    </span><span class="istickedoff">cwd &lt;- getRequest &gt;&gt;= return . B.takeWhile (/= (c2w '/')) . rqPathInfo</span>
+<span class="lineno">  165 </span><span class="spaces">    </span><span class="istickedoff">if B.null cwd</span>
+<span class="lineno">  166 </span><span class="spaces">      </span><span class="istickedoff">then route' pre fb fbs</span>
+<span class="lineno">  167 </span><span class="spaces">      </span><span class="istickedoff">else do localRequest (updateContextPath (B.length cwd) . (f cwd)) $</span>
+<span class="lineno">  168 </span><span class="spaces">                           </span><span class="istickedoff">route' pre rt (fb:fbs)</span>
+<span class="lineno">  169 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  170 </span><span class="spaces">    </span><span class="istickedoff">f v req = req { rqParams = Map.insertWith (++) param [v] (rqParams req) }</span>
+<span class="lineno">  171 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  172 </span><span class="spaces"></span><span class="istickedoff">route' pre (Dir rtm fb) fbs = do</span>
+<span class="lineno">  173 </span><span class="spaces">    </span><span class="istickedoff">cwd &lt;- getRequest &gt;&gt;= return . B.takeWhile (/= (c2w '/')) . rqPathInfo</span>
+<span class="lineno">  174 </span><span class="spaces">    </span><span class="istickedoff">case Map.lookup cwd rtm of</span>
+<span class="lineno">  175 </span><span class="spaces">      </span><span class="istickedoff">Just rt -&gt; do</span>
+<span class="lineno">  176 </span><span class="spaces">          </span><span class="istickedoff">localRequest (updateContextPath (B.length cwd)) $</span>
+<span class="lineno">  177 </span><span class="spaces">                       </span><span class="istickedoff">route' pre rt (fb:fbs)</span>
+<span class="lineno">  178 </span><span class="spaces">      </span><span class="istickedoff">Nothing -&gt; route' pre fb fbs</span>
+<span class="lineno">  179 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  180 </span><span class="spaces"></span><span class="istickedoff">route' _ NoRoute       []   = pass</span>
+<span class="lineno">  181 </span><span class="spaces"></span><span class="istickedoff">route' pre NoRoute (fb:fbs) = route' pre fb fbs</span></span>
 
 </pre>
 </html>

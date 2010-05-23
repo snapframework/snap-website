@@ -143,28 +143,17 @@ span.spaces    { background: white }
 <span class="lineno">  132 </span><span class="spaces">                                   </span><span class="istickedoff">return return return</span></span>
 <span class="lineno">  133 </span>
 <span class="lineno">  134 </span>
-<span class="lineno">  135 </span>------------------------------------------------------------------------------
-<span class="lineno">  136 </span>-- | Reloads the templates from disk and renders the specified
-<span class="lineno">  137 </span>-- template.  (Old convenience code.)
-<span class="lineno">  138 </span>--renderTemplate' :: FilePath -&gt; ByteString -&gt; IO (Maybe ByteString)
-<span class="lineno">  139 </span>--renderTemplate' baseDir name = do
-<span class="lineno">  140 </span>--    etm &lt;- loadTemplates baseDir emptyTemplateState
-<span class="lineno">  141 </span>--    let ts = either (const emptyTemplateState) id etm
-<span class="lineno">  142 </span>--    ns &lt;- runTemplate ts name
-<span class="lineno">  143 </span>--    return $ (Just . formatList') =&lt;&lt; ns
-<span class="lineno">  144 </span>
+<span class="lineno">  135 </span>-- $hookDoc
+<span class="lineno">  136 </span>-- Heist hooks allow you to modify templates when they are loaded and before
+<span class="lineno">  137 </span>-- and after they are run.  Every time you call one of the addAbcHook
+<span class="lineno">  138 </span>-- functions the hook is added to onto the processing pipeline.  The hooks
+<span class="lineno">  139 </span>-- processes the template in the order that they were added to the
+<span class="lineno">  140 </span>-- TemplateState.
+<span class="lineno">  141 </span>--
+<span class="lineno">  142 </span>-- The pre-run and post-run hooks are run before and after every template is
+<span class="lineno">  143 </span>-- run/rendered.  You should be careful what code you put in these hooks
+<span class="lineno">  144 </span>-- because it can significantly affect the performance of your site.
 <span class="lineno">  145 </span>
-<span class="lineno">  146 </span>-- $hookDoc
-<span class="lineno">  147 </span>-- Heist hooks allow you to modify templates when they are loaded and before
-<span class="lineno">  148 </span>-- and after they are run.  Every time you call one of the addAbcHook
-<span class="lineno">  149 </span>-- functions the hook is added to onto the processing pipeline.  The hooks
-<span class="lineno">  150 </span>-- processes the template in the order that they were added to the
-<span class="lineno">  151 </span>-- TemplateState.
-<span class="lineno">  152 </span>--
-<span class="lineno">  153 </span>-- The pre-run and post-run hooks are run before and after every template is
-<span class="lineno">  154 </span>-- run/rendered.  You should be careful what code you put in these hooks
-<span class="lineno">  155 </span>-- because it can significantly affect the performance of your site.
-<span class="lineno">  156 </span>
 
 </pre>
 </html>
