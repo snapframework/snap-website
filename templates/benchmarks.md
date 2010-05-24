@@ -24,7 +24,7 @@ Disclaimer: We are not experts at optimizing these web frameworks.  It
 is almost certain that the results for other frameworks are unfairly
 low.  If you're interested in the details, the code we used is in a
 [github repository](http://github.com/snapframework/snap-benchmarks).
-We always willing to update our benchmarks with optimizations that
+We're always willing to update our benchmarks with optimizations that
 don't take an inordinate amount of effort to set up.
 
 ### Pong Benchmark
