@@ -591,8 +591,14 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     text-align: right;
     background: #f5f9ff;
     vertical-align: middle;
+    line-height: 15px;
 }
 #footer img{
     vertical-align: middle;
     padding-left: 10px;
+}
+
+#footer p{
+    margin: 0;
+    padding: 0;
 }

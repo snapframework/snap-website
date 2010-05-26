@@ -143,6 +143,9 @@ apidoc mvar = do
     docframe src = return [ mkElement "frame" [ ("id" , "docframe")
                                               , ("src", src       ) ] [] ]
 
+serverVersion :: Splice Snap
+serverVersion = return $ [Text (B.append "Snap-" snapServerVersion)]
+
 
 main :: IO ()
 main = do
@@ -153,7 +156,9 @@ main = do
 
     setLocaleToUTF8
 
-    (origTs,staticState) <- bindStaticTag emptyTemplateState
+    (origTs,staticState) <- bindStaticTag .
+                            bindSplice "server" serverVersion
+                            $ emptyTemplateState
 
     ets <- loadTemplates "templates" origTs
     let ts = either error id ets

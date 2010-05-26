@@ -13,12 +13,16 @@
 
       </div><!--end main-->
         <div id="footer">
-
+<p>
 This work is licensed under
 a <a rel="license"
      href="http://creativecommons.org/licenses/by-nd/3.0/">Creative Commons
             Attribution-NoDerivs 3.0 Unported
                 License</a>
+</p>
+<p>
+Powered by <server/>
+</p>
         </div><!--end footer-->
 
 
