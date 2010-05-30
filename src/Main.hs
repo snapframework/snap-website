@@ -114,6 +114,7 @@ catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
     writeText $ XH.escape t
     writeBS "\n</pre></body></html>"
 
+    logError $ B.concat [ "caught exception: ", B.pack $ show e ]
   where
     r = setContentType "text/html" $
         setResponseStatus 500 "Internal Server Error" emptyResponse
