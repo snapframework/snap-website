@@ -145,7 +145,7 @@ apidoc mvar = do
                                               , ("src", src       ) ] [] ]
 
 serverVersion :: Splice Snap
-serverVersion = return $ [Text (B.append "Snap-" snapServerVersion)]
+serverVersion = return $ [Text snapServerVersion]
 
 
 main :: IO ()
@@ -158,7 +158,7 @@ main = do
     setLocaleToUTF8
 
     (origTs,staticState) <- bindStaticTag .
-                            bindSplice "server" serverVersion
+                            bindSplice "snap-version" serverVersion
                             $ emptyTemplateState
 
     ets <- loadTemplates "templates" origTs
