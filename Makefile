@@ -1,4 +1,4 @@
-VERSION=0.2.1
+VERSION=0.2.4
 
 all:
 	rm -f static/docs/latest
