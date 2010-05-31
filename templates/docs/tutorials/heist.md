@@ -62,6 +62,28 @@ The full company name will be substituted at every occurrance of the
 `<longname/>` tag.  This eliminates repetition and makes it easier to
 make changes.
 
+#### Attribute Substitution
+
+Heist also provides attribute string substitution using the same mechanism as
+tag substitution.  The syntax is different for attributes since the angle
+bracket tag syntax is not allowed.  Within the value of an attribute, use the
+delimiter `$(...)` for variable substitution.
+
+~~~~~~~~~~~~~~~ {.html}
+  <bind tag="foo">dynamic_name</bind>
+  <p name="$(foo)">A paragraph</p>
+~~~~~~~~~~~~~~~
+
+The foo identifier is substituted into the name attribute of the paragraph
+tag.  The output looks like this:
+
+~~~~~~~~~~~~~~~ {.html}
+  <p name="dynamic_name">A paragraph</p>
+~~~~~~~~~~~~~~~
+
+This only works if the bind tag's first child is a text node.  If the first
+child is not a text node, then the empty string will be substituted.
+
 ### The `<apply ...>` tag
 
 The `apply` tag loads one of your application templates and inserts it
@@ -347,6 +369,10 @@ This returns a new `TemplateState` with factSplice bound to the
 `<fact>` tag.  Now, in any of your templates the XML snippet
 `<fact>5</fact>` will render as `120`.
 
+The contents of splices can also be used in attributes using the `$()` syntax
+mentioned above.  As above, the first element of the returned list must be a
+text node.  This works because a `<bind>` tag is really just a splice that
+returns a constant node list.
 
 ### Hooks
 
