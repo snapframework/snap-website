@@ -7,15 +7,27 @@
         <div id="docdls">
           <dl>
             <dt><a href="docs/quickstart">Quick Start</a></dt>
-            <dd>A guide to getting Snap installed.</dd>
+            <dd>
+              <a class="book" href="docs/quickstart">
+                <img src="/media/css/book.png" />
+              </a>
+              A guide to getting Snap installed.</dd>
 
             <dt><a href="docs/tutorials/snap-api">Snap API Introduction</a></dt>
-            <dd>An in-depth tutorial on the Snap API. Covers installation,
+            <dd>
+              <a class="book" href="docs/tutorials/snap-api">
+                <img src="/media/css/book.png" />
+              </a>
+              An in-depth tutorial on the Snap API. Covers installation,
               iteratee I/O, the &ldquo;snap&rdquo; command-line tool, the Snap
               monad, and URL routing.</dd>
 
             <dt><a href="docs/tutorials/heist">Heist Template Tutorial</a></dt>
-            <dd>A tutorial for the Heist xhtml templating library.</dd>
+            <dd>
+              <a class="book" href="docs/tutorials/heist">
+                <img src="/media/css/book.png" />
+              </a>
+              A tutorial for the Heist xhtml templating library.</dd>
           </dl>
         </div>
       </div>
@@ -25,9 +37,17 @@
         <div id="docdls">
           <dl>
             <dt><a href="docs/style-guide">Haskell Style Guide</a></dt>
-            <dd>A guide to the Haskell source style we're using for the project.</dd>
+            <dd>
+              <a class="book" href="docs/style-guide">
+                <img src="/media/css/book.png" />
+              </a>
+              A guide to the Haskell source style we're using for the project.</dd>
             <dt><a href="/benchmarks">Benchmarks</a></dt>
-            <dd>Some benchmark results comparing Snap to several other
+            <dd>
+              <a class="book" href="/benchmarks">
+                <img src="/media/css/book.png" />
+              </a>
+              Some benchmark results comparing Snap to several other
               web frameworks.</dd>
           </dl>
         </div>
@@ -41,14 +61,26 @@
         <div id="docdls">
           <dl>
             <dt><a href="docs/api/snap-core">snap-core</a></dt>
-            <dd>Core type definitions (<tt>Snap</tt> monad, HTTP types, etc) and
+            <dd>
+              <a class="book" href="docs/api/snap-core">
+                <img src="/media/css/book.png" />
+              </a>
+              Core type definitions (<tt>Snap</tt> monad, HTTP types, etc) and
               utilities for web handlers.</dd>
             <dt><a href="docs/api/snap-server">snap-server</a></dt>
-            <dd>An iteratee-based HTTP server library, which runs <tt>Snap</tt>
+            <dd>
+              <a class="book" href="docs/api/snap-server">
+                <img src="/media/css/book.png" />
+              </a>
+              An iteratee-based HTTP server library, which runs <tt>Snap</tt>
               web handlers.</dd>
             <dt><a href="docs/api/heist">heist</a>
               <em>(experimental)</em></dt>
-            <dd>An xhtml-based templating engine, allowing Haskell functions to
+            <dd>
+              <a class="book" href="docs/api/heist">
+                <img src="/media/css/book.png" />
+              </a>
+              An xhtml-based templating engine, allowing Haskell functions to
               be bound to XML tags.</dd>
           </dl>
         </div>

@@ -13,7 +13,6 @@ $(document).ready(function(){
   }else{
     $('.nav .home').addClass('active');
   }
-
 });
 
 

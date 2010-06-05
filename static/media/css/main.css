@@ -249,7 +249,7 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     padding: 0;
     width:100%;
     min-height: 100%;
-    margin-bottom: -34px;
+    margin-bottom: -40px;
 
     /*background: #FFFFFF;*/
 }
@@ -275,11 +275,10 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     font-size: 1.7em;
     width: 50%;
     line-height: 1.2em;
-    font-family: "PT Sans";
-    letter-spacing: 0.01em;
+    font-family: "PT Sans Italic";
+    letter-spacing: 0.05em;
     text-shadow: 1px 1px #DAE6F5;
     color: #1f4986;
-    font-style: italic;
 }
 #splash .slideshow{
     margin: 0px auto;
@@ -552,8 +551,10 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 #docdls dt {
     height: 28px;
     border-bottom: 1px dotted #C2D1E1;
+
     font-family: "PT Sans", sans-serif;
     letter-spacing: 2px;
+    padding: 0 5px;
 }
 
 #packages dd, #docdls dd {
@@ -568,10 +569,17 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 }
 
 #docdls dd{
-    background: url(book.png) no-repeat 0 19px;
-    padding-left: 80px;
+    overflow: hidden;
+    width: 100%;
+    height: 100px;
+    padding-right: 10px;
 }
-
+#docdls dd a.book{
+    float: left;
+    margin-top: -5px;
+    margin-right: 20px;
+    height: 100px;
+}
 
 .small-logo{
     float:left;
@@ -585,13 +593,18 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 #footer{
     border-top: 1px solid #C2D1E1;
     color: #a0acba;
-    padding: 13px 20px;
+    padding: 4px 20px;
+    height: 31px;
     font-family: "PT Sans", sans-serif;
     font-size: 0.75em;
     text-align: right;
     background: #f5f9ff;
     vertical-align: middle;
-    line-height: 15px;
+    line-height: 31px;
+    overflow: hidden;
+}
+#footer b{
+    font-family: "PT Sans Bold", sans-serif;
 }
 #footer img{
     vertical-align: middle;
@@ -601,4 +614,10 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 #footer p{
     margin: 0;
     padding: 0;
+}
+#footer p.part-1{
+    float:left;
+}
+#footer p.part-2{
+    float:right;
 }
