@@ -11,4 +11,3 @@ w2/builder.o
 .hpc
 Setup.hs
 dist
-static/docs/latest
