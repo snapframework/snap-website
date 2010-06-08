@@ -1,14 +1,14 @@
 ## Examining Hello World
 
-In the [Quick Start Guide](/docs/quickstart), installed Snap and created a
+In the [Quick Start Guide](/docs/quickstart), we installed Snap and created a
 template "hello world" application.  Here we'll look at what's inside the
 application and describe basic use of Snap's web server API.
 
-`snap init` creates two files in the `src` directory, General.hs and Main.hs.
-General.hs contains general-purpose code that will eventually be integrated
+`snap init` creates two files in the `src` directory, Common.hs and Main.hs.
+Common.hs contains general-purpose code that will eventually be integrated
 into the Snap framework so you won't have to carry this code with your
 application.  For now, we've left it out to avoid unnecessary project
-dependencies.  You don't need to worry about General.hs unless you want an
+dependencies.  You don't need to worry about Common.hs unless you want an
 in-depth understanding of the infrastructure.  Here's the important code in
 Main.hs:
 
