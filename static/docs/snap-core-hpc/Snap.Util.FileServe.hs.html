@@ -240,7 +240,7 @@ span.spaces    { background: white }
 <span class="lineno">  229 </span><span class="spaces">    </span><span class="istickedoff">let mt = modificationTime filestat</span>
 <span class="lineno">  230 </span><span class="spaces">    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) (chkModificationTime mt) mbIfModified</span>
 <span class="lineno">  231 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  232 </span><span class="spaces">    </span><span class="istickedoff">let sz = fromEnum $ fileSize filestat</span>
+<span class="lineno">  232 </span><span class="spaces">    </span><span class="istickedoff">let sz = fromIntegral $ fileSize filestat</span>
 <span class="lineno">  233 </span><span class="spaces">    </span><span class="istickedoff">lm &lt;- liftIO $ formatHttpTime mt</span>
 <span class="lineno">  234 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  235 </span><span class="spaces">    </span><span class="istickedoff">modifyResponse $ setHeader &quot;Last-Modified&quot; lm</span>
