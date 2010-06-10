@@ -22,6 +22,9 @@
           <li class="docs">
             <a href="/docs">Docs</a>
           </li>
+          <li class="faq">
+            <a href="/faq">FAQ</a>
+          </li>
         </ul>
         </div>
     </div>
