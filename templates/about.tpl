@@ -55,8 +55,9 @@
           </ul>
         </p>
         <p>
-          Snap currently only runs on Unix platforms; it has been tested on
-          Linux and Mac OSX Snow Leopard.
+          Snap runs on *nix platforms; it has been tested on Linux and Mac OSX
+          Snow Leopard.  Windows support was added more recently, but it not
+          as well-tested.
         </p>
 
       </div>
