@@ -81,8 +81,8 @@ tag.  The output looks like this:
   <p name="dynamic_name">A paragraph</p>
 ~~~~~~~~~~~~~~~
 
-This only works if the bind tag's first child is a text node.  If the first
-child is not a text node, then the empty string will be substituted.
+If there are non-text nodes in the bind tag's children, they are converted
+to text nodes and their concatenation will be substituted.
 
 ### The `<apply ...>` tag
 
