@@ -66,6 +66,8 @@ li{
     list-style-type: none;
 }
 
+li p:first-child { display: inline; }
+
 li:before {
     content: "» ";
 }
@@ -112,6 +114,81 @@ pre.code, pre.sourceCode, pre.shell {
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
 }
+
+#blog-index table {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+#blog-index h2 a {
+    vertical-align: middle;
+}
+
+#blog-post .post-content {
+    margin-bottom: 29px;
+}
+
+#blog-post div.post-meta {
+    width: 226px;
+    padding: 0 22px 0 0;
+    float: left;
+}
+
+#blog-post div.post-date {
+    line-height: 29px;
+    font-size: 70%;
+    margin-bottom: 29px;
+}
+
+#blog-post div.post-summary {
+    line-height: 29px;
+    color: #666;
+}
+
+#blog-post div.post-content {
+    width: 680px;
+    padding-right: 8px;
+    float: left;
+}
+
+#blog-post div.post-content hr {
+    width: 66%;
+    margin: 2.5em auto;
+}
+
+
+
+
+
+
+tr.post {
+    /*font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;*/
+    font-family: "PT Sans", "Arial", sans-serif;
+}
+
+tr.post td { padding-bottom: 1.5em; }
+
+td.date {
+    width:118px;
+    padding-right:12px;
+    font-size:0.8em;
+    text-align:left;
+}
+
+td.summary {
+    color: #222;
+    font-size: 0.8em;
+    font-family: "Droid Serif", "Georgia", "Arial", "Helvetica", sans-serif;
+    width:388px;
+    padding-left: 12px;
+    margin-bottom: 1em;
+}
+
+td.title {
+    font-size: 1.2em;
+    width: 430px;
+}
+
 
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode, table.sourceCode pre 
    { margin: 0; padding: 0; border: 0; vertical-align: baseline; border: none; }
@@ -189,7 +266,7 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     margin: 0;
 }
 
-.newspaper .inner h2, .singlecolumn h2
+.newspaper .inner h2, .singlecolumn h2, #blog-post h2, #blog-index h2
 {
     margin:0;
     border-bottom: 1px solid #c2d1e1;
@@ -249,7 +326,6 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     padding: 0;
     width:100%;
     min-height: 100%;
-    margin-bottom: -40px;
 
     /*background: #FFFFFF;*/
 }
@@ -591,9 +667,14 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 }
 
 #footer{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    clear: both;
     border-top: 1px solid #C2D1E1;
     color: #a0acba;
-    padding: 4px 20px;
+    padding: 4px 0px;
     height: 31px;
     font-family: "PT Sans", sans-serif;
     font-size: 0.75em;
@@ -612,8 +693,8 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 }
 
 #footer p{
+    padding: 0 20px;
     margin: 0;
-    padding: 0;
 }
 #footer p.part-1{
     float:left;

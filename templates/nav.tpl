@@ -16,6 +16,9 @@
           <li class="about">
             <a href="/about">About</a>
           </li>
+          <li class="blog">
+            <a href="/blog">Blog</a>
+          </li>
           <li class="download">
             <a href="/download">Download</a>
           </li>
