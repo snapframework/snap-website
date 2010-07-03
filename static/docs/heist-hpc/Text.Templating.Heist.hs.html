@@ -84,72 +84,82 @@ span.spaces    { background: white }
 <span class="lineno">   73 </span>  , addTemplate
 <span class="lineno">   74 </span>  , emptyTemplateState
 <span class="lineno">   75 </span>  , bindSplice
-<span class="lineno">   76 </span>  , lookupSplice
-<span class="lineno">   77 </span>  , setTemplates
-<span class="lineno">   78 </span>  , loadTemplates
-<span class="lineno">   79 </span>
-<span class="lineno">   80 </span>    -- * Hook functions
-<span class="lineno">   81 </span>    -- $hookDoc
-<span class="lineno">   82 </span>  , addOnLoadHook
-<span class="lineno">   83 </span>  , addPreRunHook
-<span class="lineno">   84 </span>  , addPostRunHook
-<span class="lineno">   85 </span>
-<span class="lineno">   86 </span>    -- * TemplateMonad functions
-<span class="lineno">   87 </span>  , stopRecursion
-<span class="lineno">   88 </span>  , getParamNode
-<span class="lineno">   89 </span>  , runNodeList
-<span class="lineno">   90 </span>  , getContext
-<span class="lineno">   91 </span>
-<span class="lineno">   92 </span>    -- * Functions for running splices and templates
-<span class="lineno">   93 </span>  , evalTemplate
-<span class="lineno">   94 </span>  , callTemplate
-<span class="lineno">   95 </span>  , renderTemplate
-<span class="lineno">   96 </span>  , bindStrings
-<span class="lineno">   97 </span>
-<span class="lineno">   98 </span>    -- * Misc functions
-<span class="lineno">   99 </span>  , getDoc
-<span class="lineno">  100 </span>  , bindStaticTag
-<span class="lineno">  101 </span>
-<span class="lineno">  102 </span>  ) where
-<span class="lineno">  103 </span>
-<span class="lineno">  104 </span>import           Control.Monad.Trans
-<span class="lineno">  105 </span>import qualified Data.Map as Map
-<span class="lineno">  106 </span>import           Text.Templating.Heist.Internal
-<span class="lineno">  107 </span>import           Text.Templating.Heist.Splices
-<span class="lineno">  108 </span>import           Text.Templating.Heist.Types
-<span class="lineno">  109 </span>
-<span class="lineno">  110 </span>
-<span class="lineno">  111 </span>------------------------------------------------------------------------------
-<span class="lineno">  112 </span>-- | The default set of built-in splices.
-<span class="lineno">  113 </span>defaultSpliceMap :: MonadIO m =&gt; SpliceMap m
-<span class="lineno">  114 </span><span class="decl"><span class="istickedoff">defaultSpliceMap = Map.fromList</span>
-<span class="lineno">  115 </span><span class="spaces">    </span><span class="istickedoff">[(applyTag, applyImpl)</span>
-<span class="lineno">  116 </span><span class="spaces">    </span><span class="istickedoff">,(bindTag, bindImpl)</span>
-<span class="lineno">  117 </span><span class="spaces">    </span><span class="istickedoff">,(ignoreTag, <span class="nottickedoff">ignoreImpl</span>)</span>
-<span class="lineno">  118 </span><span class="spaces">    </span><span class="istickedoff">,(markdownTag, <span class="nottickedoff">markdownSplice</span>)</span>
-<span class="lineno">  119 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
+<span class="lineno">   76 </span>  , bindSplices
+<span class="lineno">   77 </span>  , lookupSplice
+<span class="lineno">   78 </span>  , setTemplates
+<span class="lineno">   79 </span>  , loadTemplates
+<span class="lineno">   80 </span>  , hasTemplate
+<span class="lineno">   81 </span>
+<span class="lineno">   82 </span>    -- * Hook functions
+<span class="lineno">   83 </span>    -- $hookDoc
+<span class="lineno">   84 </span>  , addOnLoadHook
+<span class="lineno">   85 </span>  , addPreRunHook
+<span class="lineno">   86 </span>  , addPostRunHook
+<span class="lineno">   87 </span>
+<span class="lineno">   88 </span>    -- * TemplateMonad functions
+<span class="lineno">   89 </span>  , stopRecursion
+<span class="lineno">   90 </span>  , getParamNode
+<span class="lineno">   91 </span>  , runNodeList
+<span class="lineno">   92 </span>  , getContext
+<span class="lineno">   93 </span>
+<span class="lineno">   94 </span>  , localParamNode
+<span class="lineno">   95 </span>  , getsTS
+<span class="lineno">   96 </span>  , getTS
+<span class="lineno">   97 </span>  , putTS
+<span class="lineno">   98 </span>  , modifyTS
+<span class="lineno">   99 </span>  , restoreTS
+<span class="lineno">  100 </span>
+<span class="lineno">  101 </span>    -- * Functions for running splices and templates
+<span class="lineno">  102 </span>  , evalTemplate
+<span class="lineno">  103 </span>  , callTemplate
+<span class="lineno">  104 </span>  , renderTemplate
+<span class="lineno">  105 </span>  , bindStrings
+<span class="lineno">  106 </span>
+<span class="lineno">  107 </span>    -- * Misc functions
+<span class="lineno">  108 </span>  , getDoc
+<span class="lineno">  109 </span>  , parseDoc
+<span class="lineno">  110 </span>  , bindStaticTag
+<span class="lineno">  111 </span>
+<span class="lineno">  112 </span>  ) where
+<span class="lineno">  113 </span>
+<span class="lineno">  114 </span>import           Control.Monad.Trans
+<span class="lineno">  115 </span>import qualified Data.Map as Map
+<span class="lineno">  116 </span>import           Text.Templating.Heist.Internal
+<span class="lineno">  117 </span>import           Text.Templating.Heist.Splices
+<span class="lineno">  118 </span>import           Text.Templating.Heist.Types
+<span class="lineno">  119 </span>
 <span class="lineno">  120 </span>
-<span class="lineno">  121 </span>
-<span class="lineno">  122 </span>------------------------------------------------------------------------------
-<span class="lineno">  123 </span>-- | An empty template state, with Heist's default splices (@\&lt;apply\&gt;@,
-<span class="lineno">  124 </span>-- @\&lt;bind\&gt;@, @\&lt;ignore\&gt;@, and @\&lt;markdown\&gt;@) mapped.  The static tag is
-<span class="lineno">  125 </span>-- not mapped here because it must be mapped manually in your application.
-<span class="lineno">  126 </span>emptyTemplateState :: MonadIO m =&gt; TemplateState m
-<span class="lineno">  127 </span><span class="decl"><span class="istickedoff">emptyTemplateState = TemplateState defaultSpliceMap Map.empty True [] 0</span>
-<span class="lineno">  128 </span><span class="spaces">                                   </span><span class="istickedoff">return return return []</span></span>
-<span class="lineno">  129 </span>
+<span class="lineno">  121 </span>------------------------------------------------------------------------------
+<span class="lineno">  122 </span>-- | The default set of built-in splices.
+<span class="lineno">  123 </span>defaultSpliceMap :: MonadIO m =&gt; SpliceMap m
+<span class="lineno">  124 </span><span class="decl"><span class="istickedoff">defaultSpliceMap = Map.fromList</span>
+<span class="lineno">  125 </span><span class="spaces">    </span><span class="istickedoff">[(applyTag, applyImpl)</span>
+<span class="lineno">  126 </span><span class="spaces">    </span><span class="istickedoff">,(bindTag, bindImpl)</span>
+<span class="lineno">  127 </span><span class="spaces">    </span><span class="istickedoff">,(ignoreTag, <span class="nottickedoff">ignoreImpl</span>)</span>
+<span class="lineno">  128 </span><span class="spaces">    </span><span class="istickedoff">,(markdownTag, <span class="nottickedoff">markdownSplice</span>)</span>
+<span class="lineno">  129 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
 <span class="lineno">  130 </span>
-<span class="lineno">  131 </span>-- $hookDoc
-<span class="lineno">  132 </span>-- Heist hooks allow you to modify templates when they are loaded and before
-<span class="lineno">  133 </span>-- and after they are run.  Every time you call one of the addAbcHook
-<span class="lineno">  134 </span>-- functions the hook is added to onto the processing pipeline.  The hooks
-<span class="lineno">  135 </span>-- processes the template in the order that they were added to the
-<span class="lineno">  136 </span>-- TemplateState.
-<span class="lineno">  137 </span>--
-<span class="lineno">  138 </span>-- The pre-run and post-run hooks are run before and after every template is
-<span class="lineno">  139 </span>-- run/rendered.  You should be careful what code you put in these hooks
-<span class="lineno">  140 </span>-- because it can significantly affect the performance of your site.
-<span class="lineno">  141 </span>
+<span class="lineno">  131 </span>
+<span class="lineno">  132 </span>------------------------------------------------------------------------------
+<span class="lineno">  133 </span>-- | An empty template state, with Heist's default splices (@\&lt;apply\&gt;@,
+<span class="lineno">  134 </span>-- @\&lt;bind\&gt;@, @\&lt;ignore\&gt;@, and @\&lt;markdown\&gt;@) mapped.  The static tag is
+<span class="lineno">  135 </span>-- not mapped here because it must be mapped manually in your application.
+<span class="lineno">  136 </span>emptyTemplateState :: MonadIO m =&gt; TemplateState m
+<span class="lineno">  137 </span><span class="decl"><span class="istickedoff">emptyTemplateState = TemplateState defaultSpliceMap Map.empty True [] 0</span>
+<span class="lineno">  138 </span><span class="spaces">                                   </span><span class="istickedoff">return return return []</span></span>
+<span class="lineno">  139 </span>
+<span class="lineno">  140 </span>
+<span class="lineno">  141 </span>-- $hookDoc
+<span class="lineno">  142 </span>-- Heist hooks allow you to modify templates when they are loaded and before
+<span class="lineno">  143 </span>-- and after they are run.  Every time you call one of the addAbcHook
+<span class="lineno">  144 </span>-- functions the hook is added to onto the processing pipeline.  The hooks
+<span class="lineno">  145 </span>-- processes the template in the order that they were added to the
+<span class="lineno">  146 </span>-- TemplateState.
+<span class="lineno">  147 </span>--
+<span class="lineno">  148 </span>-- The pre-run and post-run hooks are run before and after every template is
+<span class="lineno">  149 </span>-- run/rendered.  You should be careful what code you put in these hooks
+<span class="lineno">  150 </span>-- because it can significantly affect the performance of your site.
+<span class="lineno">  151 </span>
 
 </pre>
 </html>

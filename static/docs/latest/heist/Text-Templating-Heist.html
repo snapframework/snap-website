@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->heist-0.2.0: An xhtml templating system</TD
+>heist-0.2.3: An xhtml templating system</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Text-Templating-Heist.html"
 >Source code</A
@@ -239,7 +239,9 @@
 >type</SPAN
 > <A HREF="#t%3ANode"
 >Node</A
-> = Node <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> = <A HREF="http://hackage.haskell.org/packages/archive/hexpat/latest/doc/html/Text-XML-Expat-Tree.html#t%3ANode"
+>Node</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 > <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
@@ -311,7 +313,9 @@
 >Monad</A
 > m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; InternalTemplate -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplate"
+>Template</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
@@ -325,7 +329,9 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AemptyTemplateState"
 >emptyTemplateState</A
-> :: MonadIO m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m</TD
 ></TR
@@ -344,6 +350,26 @@
 > -&gt; <A HREF="Text-Templating-Heist.html#t%3ASplice"
 >Splice</A
 > m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AbindSplices"
+>bindSplices</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="Text-Templating-Heist.html#t%3ASplice"
+>Splice</A
+> m)] -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
@@ -408,6 +434,24 @@
 > (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m))</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AhasTemplate"
+>hasTemplate</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -539,6 +583,114 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AlocalParamNode"
+>localParamNode</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; (<A HREF="Text-Templating-Heist.html#t%3ANode"
+>Node</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ANode"
+>Node</A
+>) -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m a -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetsTS"
+>getsTS</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; r) -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m r</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetTS"
+>getTS</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AputTS"
+>putTS</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AmodifyTS"
+>modifyTS</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m) -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ArestoreTS"
+>restoreTS</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AevalTemplate"
 >evalTemplate</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
@@ -641,9 +793,35 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AparseDoc"
+>parseDoc</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
+>Either</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, [<A HREF="Text-Templating-Heist.html#t%3ANode"
+>Node</A
+>]))</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AbindStaticTag"
 >bindStaticTag</A
-> :: MonadIO m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
@@ -690,7 +868,9 @@
 ></A
 ><B
 >Node</B
-> = Node <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> = <A HREF="http://hackage.haskell.org/packages/archive/hexpat/latest/doc/html/Text-XML-Expat-Tree.html#t%3ANode"
+>Node</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 > <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
@@ -836,7 +1016,7 @@
 ></TT
 > processing.  TemplateMonad
  provides &quot;passthrough&quot; instances for many of the monads you might use in
- the inner monad.  
+ the inner monad.
 </TD
 ></TR
 ><TR
@@ -850,25 +1030,39 @@
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
->MonadTrans <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-Trans-Class.html#t%3AMonadTrans"
+>MonadTrans</A
+> <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
 ></TD
 ></TR
 ><TR
 ><TD CLASS="decl"
->MonadError e m =&gt; MonadError e (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Error-Class.html#t%3AMonadError"
+>MonadError</A
+> e m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Error-Class.html#t%3AMonadError"
+>MonadError</A
+> e (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
 > m)</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
->MonadReader r m =&gt; MonadReader r (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Reader-Class.html#t%3AMonadReader"
+>MonadReader</A
+> r m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Reader-Class.html#t%3AMonadReader"
+>MonadReader</A
+> r (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
 > m)</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
->MonadState s m =&gt; MonadState s (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#t%3AMonadState"
+>MonadState</A
+> s m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#t%3AMonadState"
+>MonadState</A
+> s (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
 > m)</TD
 ></TR
@@ -888,6 +1082,16 @@
 >Functor</A
 > m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AFunctor"
 >Functor</A
+> (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m)</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable1"
+>Typeable1</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable1"
+>Typeable1</A
 > (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
 > m)</TD
@@ -938,27 +1142,23 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
->MonadCont m =&gt; MonadCont (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
->TemplateMonad</A
-> m)</TD
-></TR
-><TR
-><TD CLASS="decl"
->MonadIO m =&gt; MonadIO (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
->TemplateMonad</A
-> m)</TD
-></TR
-><TR
-><TD CLASS="decl"
->(<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable1"
->Typeable1</A
-> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable"
->Typeable</A
-> a) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable"
->Typeable</A
+><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
 > (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
-> m a)</TD
+> m)</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Cont-Class.html#t%3AMonadCont"
+>MonadCont</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Cont-Class.html#t%3AMonadCont"
+>MonadCont</A
+> (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m)</TD
 ></TR
 ></TABLE
 ></DIV
@@ -1031,6 +1231,16 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable1"
+>Typeable1</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable"
+>Typeable</A
+> (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m)</TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
 > m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Monoid.html#t%3AMonoid"
@@ -1078,7 +1288,9 @@
 >Monad</A
 > m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; InternalTemplate -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplate"
+>Template</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
@@ -1111,7 +1323,9 @@
 ></A
 ><B
 >emptyTemplateState</B
-> :: MonadIO m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m</TD
 ><TD CLASS="declbut"
@@ -1178,13 +1392,22 @@
 >ByteString</A
 ></TD
 ><TD CLASS="rdoc"
->splice action
+>tag name
 </TD
 ></TR
 ><TR
 ><TD CLASS="arg"
 >-&gt; <A HREF="Text-Templating-Heist.html#t%3ASplice"
 >Splice</A
+> m</TD
+><TD CLASS="rdoc"
+>splice action
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
 > m</TD
 ><TD CLASS="rdoc"
 >source state
@@ -1199,6 +1422,73 @@
 ></TD
 ></TR
 ><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Binds a new splice declaration to a tag name within a <TT
+><A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+></TT
+>.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:bindSplices"
+><A NAME="v%3AbindSplices"
+></A
+></A
+><B
+>bindSplices</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Internal.html#bindSplices"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="Text-Templating-Heist.html#t%3ASplice"
+>Splice</A
+> m)]</TD
+><TD CLASS="rdoc"
+>splices to bind
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m</TD
+><TD CLASS="rdoc"
+>start state
+</TD
+></TR
+><TR
 ><TD CLASS="arg"
 >-&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
@@ -1208,7 +1498,7 @@
 ></TR
 ><TR
 ><TD CLASS="ndoc" COLSPAN="2"
->Bind a new splice declaration to a tag name within a <TT
+>Binds a set of new splice declarations within a <TT
 ><A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 ></TT
@@ -1336,6 +1626,47 @@
  TemplateState by loading all the files with a <A HREF="-tpl.html"
 >.tpl</A
 > extension.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:hasTemplate"
+><A NAME="v%3AhasTemplate"
+></A
+></A
+><B
+>hasTemplate</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Internal.html#hasTemplate"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Returns <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#v%3ATrue"
+>True</A
+></TT
+> if the given template can be found in the template state.
 </TD
 ></TR
 ><TR
@@ -1718,6 +2049,259 @@
 ></TD
 ></TR
 ><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:localParamNode"
+><A NAME="v%3AlocalParamNode"
+></A
+></A
+><B
+>localParamNode</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; (<A HREF="Text-Templating-Heist.html#t%3ANode"
+>Node</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ANode"
+>Node</A
+>) -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m a -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m a</TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Types.html#localParamNode"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>TemplateMonad's <TT
+><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Reader-Class.html#v%3Alocal"
+>local</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getsTS"
+><A NAME="v%3AgetsTS"
+></A
+></A
+><B
+>getsTS</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; r) -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m r</TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Types.html#getsTS"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>TemplateMonad's <TT
+><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#v%3Agets"
+>gets</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getTS"
+><A NAME="v%3AgetTS"
+></A
+></A
+><B
+>getTS</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m)</TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Types.html#getTS"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>TemplateMonad's <TT
+><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#v%3Aget"
+>get</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:putTS"
+><A NAME="v%3AputTS"
+></A
+></A
+><B
+>putTS</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Types.html#putTS"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>TemplateMonad's <TT
+><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#v%3Aput"
+>put</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:modifyTS"
+><A NAME="v%3AmodifyTS"
+></A
+></A
+><B
+>modifyTS</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m) -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Types.html#modifyTS"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>TemplateMonad's <TT
+><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#v%3Amodify"
+>modify</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:restoreTS"
+><A NAME="v%3ArestoreTS"
+></A
+></A
+><B
+>restoreTS</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
+>TemplateMonad</A
+> m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Types.html#restoreTS"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Restores the components of TemplateState that can get modified in
+ template calls.  You should use this function instead of <TT
+>putTS</TT
+> to restore
+ an old state.  Thas was needed because doctypes needs to be in a <A HREF="global
+ scope.html"
+>global
+ scope</A
+> as opposed to the template call <A HREF="local scope.html"
+>local scope</A
+> of state items such
+ as recursionDepth, curContext, and spliceMap.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
 ><TD CLASS="section1"
 ><A NAME="5"
 ><A NAME="5"
@@ -1806,8 +2390,7 @@
 >ByteString</A
 ></TD
 ><TD CLASS="rdoc"
->Association list of
- (name,value) parameter pairs
+>The name of the template
 </TD
 ></TR
 ><TR
@@ -1818,7 +2401,9 @@
 >ByteString</A
 >)]</TD
 ><TD CLASS="rdoc"
-></TD
+>Association list of
+ (name,value) parameter pairs
+</TD
 ></TR
 ><TR
 ><TD CLASS="arg"
@@ -1980,13 +2565,58 @@
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
+><A NAME="v:parseDoc"
+><A NAME="v%3AparseDoc"
+></A
+></A
+><B
+>parseDoc</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
+>Either</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, [<A HREF="Text-Templating-Heist.html#t%3ANode"
+>Node</A
+>]))</TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Internal.html#parseDoc"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Turns an in-memory XML/XHTML bytestring into a (doctype,'[Node]') pair.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
 ><A NAME="v:bindStaticTag"
 ><A NAME="v%3AbindStaticTag"
 ></A
 ></A
 ><B
 >bindStaticTag</B
-> :: MonadIO m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
@@ -2005,9 +2635,14 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Modifies a TemplateState to include a <A HREF="static.html"
->static</A
-> tag.
+>Modifies a TemplateState to include a &quot;static&quot; tag.  The static tag is
+ not bound automatically with the other default Heist tags.  This is because
+ this function also returns StaticTagState, so the user will be able to
+ clear it with the <TT
+><A HREF="Text-Templating-Heist-Splices-Static.html#v%3AclearStaticTagCache"
+>clearStaticTagCache</A
+></TT
+> function.
 </TD
 ></TR
 ><TR
@@ -2018,7 +2653,7 @@
 ><TD CLASS="botbar"
 >Produced by <A HREF="http://www.haskell.org/haddock/"
 >Haddock</A
-> version 2.6.0</TD
+> version 2.6.1</TD
 ></TR
 ></TABLE
 ></BODY

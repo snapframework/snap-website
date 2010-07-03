@@ -72,7 +72,7 @@ span.spaces    { background: white }
 <span class="lineno">   61 </span><span class="decl"><span class="istickedoff">addTest = do</span>
 <span class="lineno">   62 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;lookup test&quot;</span> $ Just [] == (fmap (_itNodes . fst) $ lookupTemplate &quot;aoeu&quot; ts)</span>
 <span class="lineno">   63 </span><span class="spaces">  </span><span class="istickedoff">H.assertBool <span class="nottickedoff">&quot;splice touched&quot;</span> $ Map.size (_spliceMap ts) == 0</span>
-<span class="lineno">   64 </span><span class="spaces">  </span><span class="istickedoff">where ts = addTemplate &quot;aoeu&quot; (InternalTemplate <span class="nottickedoff">Nothing</span> []) (mempty::TemplateState IO)</span></span>
+<span class="lineno">   64 </span><span class="spaces">  </span><span class="istickedoff">where ts = addTemplate &quot;aoeu&quot; [] (mempty::TemplateState IO)</span></span>
 <span class="lineno">   65 </span>
 <span class="lineno">   66 </span>isLeft :: Either a b -&gt; Bool
 <span class="lineno">   67 </span><span class="decl"><span class="istickedoff">isLeft (Left _) = True</span>

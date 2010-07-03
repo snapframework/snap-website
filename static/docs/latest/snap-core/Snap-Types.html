@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.2.7: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.2.7.1: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Types.html"
 >Source code</A
@@ -864,6 +864,36 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AipHeaderFilter"
+>ipHeaderFilter</A
+> :: <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AipHeaderFilter%27"
+>ipHeaderFilter'</A
+> :: <A HREF="Data-CIByteString.html#t%3ACIByteString"
+>CIByteString</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3ArqServerName"
 >rqServerName</A
 > :: <A HREF="Snap-Types.html#t%3ARequest"
@@ -1356,7 +1386,9 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AwriteLazyText"
 >writeLazyText</A
-> :: Text -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text-Lazy.html#t%3AText"
+>Text</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
@@ -1370,7 +1402,9 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AwriteText"
 >writeText</A
-> :: Text -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
@@ -1673,7 +1707,9 @@ for HTTP as well as the <TT
 >IO</A
 ></TT
 > monad through a <TT
->MonadIO</TT
+><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+></TT
 > instance:
 </P
 ><PRE
@@ -1733,6 +1769,14 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#t%3AMonadCatchIO"
+>MonadCatchIO</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AAlternative"
 >Alternative</A
 > <A HREF="Snap-Types.html#t%3ASnap"
@@ -1741,13 +1785,9 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
->MonadIO <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
->MonadCatchIO <A HREF="Snap-Types.html#t%3ASnap"
+><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> <A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 ></TD
 ></TR
@@ -1904,7 +1944,7 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Exception-Base.html#t%3AException"
+><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#t%3AException"
 >Exception</A
 > <A HREF="Snap-Types.html#t%3ANoHandlerException"
 >NoHandlerException</A
@@ -2093,17 +2133,11 @@ for HTTP as well as the <TT
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: </TD
-><TD CLASS="rdoc"
-></TD
-></TR
-><TR
-><TD CLASS="arg"
->=&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ><TD CLASS="rdoc"
->handler to run
+>path to match against
 </TD
 ></TR
 ><TR
@@ -2112,7 +2146,8 @@ for HTTP as well as the <TT
 >Snap</A
 > a</TD
 ><TD CLASS="rdoc"
-></TD
+>handler to run
+</TD
 ></TR
 ><TR
 ><TD CLASS="arg"
@@ -2182,17 +2217,11 @@ for HTTP as well as the <TT
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: </TD
-><TD CLASS="rdoc"
-></TD
-></TR
-><TR
-><TD CLASS="arg"
->=&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ><TD CLASS="rdoc"
->handler to run
+>path component to match
 </TD
 ></TR
 ><TR
@@ -2201,7 +2230,8 @@ for HTTP as well as the <TT
 >Snap</A
 > a</TD
 ><TD CLASS="rdoc"
-></TD
+>handler to run
+</TD
 ></TR
 ><TR
 ><TD CLASS="arg"
@@ -4017,6 +4047,120 @@ for HTTP as well as the <TT
 ></TD
 ></TR
 ><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:ipHeaderFilter"
+><A NAME="v%3AipHeaderFilter"
+></A
+></A
+><B
+>ipHeaderFilter</B
+> :: <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#ipHeaderFilter"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Modifies the <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+> in the state to set the <TT
+><A HREF="Snap-Types.html#v%3ArqRemoteAddr"
+>rqRemoteAddr</A
+></TT
+>
+ field to the value in the X-Forwarded-For header. If the header is
+ not present, this action has no effect.
+</P
+><P
+>This action should be used only when working behind a reverse http
+ proxy that sets the X-Forwarded-For header. This is the only way to
+ ensure the value in the X-Forwarded-For header can be trusted.
+</P
+><P
+>This is provided as a filter so actions that require the remote
+ address can get it in a uniform manner. It has specifically limited
+ functionality to ensure that its transformation can be trusted,
+ when used correctly.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:ipHeaderFilter'"
+><A NAME="v%3AipHeaderFilter%27"
+></A
+></A
+><B
+>ipHeaderFilter'</B
+> :: <A HREF="Data-CIByteString.html#t%3ACIByteString"
+>CIByteString</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#ipHeaderFilter%27"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Modifies the <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+> in the state to set the <TT
+><A HREF="Snap-Types.html#v%3ArqRemoteAddr"
+>rqRemoteAddr</A
+></TT
+>
+ field to the value from the header specified.  If the header
+ specified is not present, this action has no effect.
+</P
+><P
+>This action should be used only when working behind a reverse http
+ proxy that sets the header being looked at. This is the only way to
+ ensure the value in the header can be trusted.
+</P
+><P
+>This is provided as a filter so actions that require the remote
+ address can get it in a uniform manner. It has specifically limited
+ functionality to ensure that its transformation can be trusted,
+ when used correctly.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
 ><TD CLASS="section2"
 ><A NAME="9"
 ><A NAME="9"
@@ -5530,7 +5674,9 @@ for HTTP as well as the <TT
 ></A
 ><B
 >writeLazyText</B
-> :: Text -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text-Lazy.html#t%3AText"
+>Text</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
@@ -5546,7 +5692,9 @@ for HTTP as well as the <TT
 ><TR
 ><TD CLASS="doc"
 >Adds the given lazy <TT
->Text</TT
+><A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text-Lazy.html#t%3AText"
+>Text</A
+></TT
 > to the body of the <TT
 ><A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
@@ -5574,7 +5722,9 @@ for HTTP as well as the <TT
 ></A
 ><B
 >writeText</B
-> :: Text -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
@@ -5590,7 +5740,9 @@ for HTTP as well as the <TT
 ><TR
 ><TD CLASS="doc"
 >Adds the given strict <TT
->Text</TT
+><A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+></TT
 > to the body of the <TT
 ><A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
@@ -5934,7 +6086,7 @@ for HTTP as well as the <TT
 ><TD CLASS="botbar"
 >Produced by <A HREF="http://www.haskell.org/haddock/"
 >Haddock</A
-> version 2.6.0</TD
+> version 2.6.1</TD
 ></TR
 ></TABLE
 ></BODY

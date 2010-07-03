@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.2.7: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.2.7.1: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Internal-Http-Types.html"
 >Source code</A
@@ -1039,7 +1039,9 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AparseToCompletion"
 >parseToCompletion</A
-> ::  Parser a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
@@ -1053,7 +1055,9 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3ApUrlEscaped"
 >pUrlEscaped</A
-> :: Parser <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ></TR
@@ -1097,7 +1101,9 @@
 >hexd</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
-> -&gt; Builder</TD
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/cereal/latest/doc/html/Data-Serialize-Builder.html#t%3ABuilder"
+>Builder</A
+></TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -1107,7 +1113,11 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3Afinish"
 >finish</A
-> ::  Result a -&gt; Result a</TD
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AResult"
+>Result</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AResult"
+>Result</A
+> a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -3704,7 +3714,9 @@
 ></A
 ><B
 >parseToCompletion</B
-> ::  Parser a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
@@ -3732,7 +3744,9 @@
 ></A
 ><B
 >pUrlEscaped</B
-> :: Parser <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ><TD CLASS="declbut"
@@ -3834,7 +3848,9 @@
 >hexd</B
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
-> -&gt; Builder</TD
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/cereal/latest/doc/html/Data-Serialize-Builder.html#t%3ABuilder"
+>Builder</A
+></TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Http-Types.html#hexd"
 >Source</A
@@ -3858,7 +3874,11 @@
 ></A
 ><B
 >finish</B
-> ::  Result a -&gt; Result a</TD
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AResult"
+>Result</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AResult"
+>Result</A
+> a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Http-Types.html#finish"
 >Source</A
@@ -3931,7 +3951,7 @@
 ><TD CLASS="botbar"
 >Produced by <A HREF="http://www.haskell.org/haddock/"
 >Haddock</A
-> version 2.6.0</TD
+> version 2.6.1</TD
 ></TR
 ></TABLE
 ></BODY

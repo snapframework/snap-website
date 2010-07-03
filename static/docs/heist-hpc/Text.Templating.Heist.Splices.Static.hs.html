@@ -51,7 +51,7 @@ span.spaces    { background: white }
 <span class="lineno">   40 </span>
 <span class="lineno">   41 </span>
 <span class="lineno">   42 </span>------------------------------------------------------------------------------
-<span class="lineno">   43 </span>-- | The &quot;static&quot; splice ensures that its contents are evaluated once and then
+<span class="lineno">   43 </span>-- | The \&quot;static\&quot; splice ensures that its contents are evaluated once and then
 <span class="lineno">   44 </span>-- cached.  The cached contents are returned every time the splice is
 <span class="lineno">   45 </span>-- referenced.
 <span class="lineno">   46 </span>staticImpl :: (MonadIO m)
@@ -79,48 +79,51 @@ span.spaces    { background: white }
 <span class="lineno">   68 </span>
 <span class="lineno">   69 </span>
 <span class="lineno">   70 </span>------------------------------------------------------------------------------
-<span class="lineno">   71 </span>-- | Modifies a TemplateState to include a &quot;static&quot; tag.
-<span class="lineno">   72 </span>bindStaticTag :: MonadIO m
-<span class="lineno">   73 </span>              =&gt; TemplateState m
-<span class="lineno">   74 </span>              -&gt; IO (TemplateState m, StaticTagState)
-<span class="lineno">   75 </span><span class="decl"><span class="nottickedoff">bindStaticTag ts = do</span>
-<span class="lineno">   76 </span><span class="spaces">    </span><span class="nottickedoff">sr &lt;- newIORef $ Set.empty</span>
-<span class="lineno">   77 </span><span class="spaces">    </span><span class="nottickedoff">mv &lt;- liftM STS $ newMVar Map.empty</span>
-<span class="lineno">   78 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">   79 </span><span class="spaces">    </span><span class="nottickedoff">return $ (addOnLoadHook (assignIds sr) $</span>
-<span class="lineno">   80 </span><span class="spaces">                </span><span class="nottickedoff">bindSplice &quot;static&quot; (staticImpl mv) ts,</span>
-<span class="lineno">   81 </span><span class="spaces">              </span><span class="nottickedoff">mv)</span>
-<span class="lineno">   82 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">   83 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
-<span class="lineno">   84 </span><span class="spaces">    </span><span class="nottickedoff">generateId :: IO Int</span>
-<span class="lineno">   85 </span><span class="spaces">    </span><span class="nottickedoff">generateId = getStdRandom random</span>
-<span class="lineno">   86 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">   87 </span><span class="spaces">    </span><span class="nottickedoff">assignIds setref = mapM f</span>
-<span class="lineno">   88 </span><span class="spaces">        </span><span class="nottickedoff">where</span>
-<span class="lineno">   89 </span><span class="spaces">          </span><span class="nottickedoff">f node = g $ fromTree node</span>
-<span class="lineno">   90 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">   91 </span><span class="spaces">          </span><span class="nottickedoff">getId = do</span>
-<span class="lineno">   92 </span><span class="spaces">              </span><span class="nottickedoff">i  &lt;- liftM (B.pack . show) generateId</span>
-<span class="lineno">   93 </span><span class="spaces">              </span><span class="nottickedoff">st &lt;- readIORef setref</span>
-<span class="lineno">   94 </span><span class="spaces">              </span><span class="nottickedoff">if Set.member i st</span>
-<span class="lineno">   95 </span><span class="spaces">                </span><span class="nottickedoff">then getId</span>
-<span class="lineno">   96 </span><span class="spaces">                </span><span class="nottickedoff">else do</span>
-<span class="lineno">   97 </span><span class="spaces">                    </span><span class="nottickedoff">writeIORef setref $ Set.insert i st</span>
-<span class="lineno">   98 </span><span class="spaces">                    </span><span class="nottickedoff">return i</span>
-<span class="lineno">   99 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  100 </span><span class="spaces">          </span><span class="nottickedoff">g curs = do</span>
-<span class="lineno">  101 </span><span class="spaces">              </span><span class="nottickedoff">let node = current curs</span>
-<span class="lineno">  102 </span><span class="spaces">              </span><span class="nottickedoff">curs' &lt;- if getName node == &quot;static&quot;</span>
-<span class="lineno">  103 </span><span class="spaces">                         </span><span class="nottickedoff">then do</span>
-<span class="lineno">  104 </span><span class="spaces">                             </span><span class="nottickedoff">i &lt;- getId</span>
-<span class="lineno">  105 </span><span class="spaces">                             </span><span class="nottickedoff">return $ modifyContent (setAttribute &quot;id&quot; i) curs</span>
-<span class="lineno">  106 </span><span class="spaces">                         </span><span class="nottickedoff">else return curs</span>
-<span class="lineno">  107 </span><span class="spaces">              </span><span class="nottickedoff">let mbc = nextDF curs'</span>
-<span class="lineno">  108 </span><span class="spaces">              </span><span class="nottickedoff">maybe (return $ toTree curs') g mbc</span></span>
-<span class="lineno">  109 </span>
-<span class="lineno">  110 </span>
-<span class="lineno">  111 </span>
+<span class="lineno">   71 </span>-- | Modifies a TemplateState to include a \&quot;static\&quot; tag.  The static tag is
+<span class="lineno">   72 </span>-- not bound automatically with the other default Heist tags.  This is because
+<span class="lineno">   73 </span>-- this function also returns StaticTagState, so the user will be able to
+<span class="lineno">   74 </span>-- clear it with the 'clearStaticTagCache' function.
+<span class="lineno">   75 </span>bindStaticTag :: MonadIO m
+<span class="lineno">   76 </span>              =&gt; TemplateState m
+<span class="lineno">   77 </span>              -&gt; IO (TemplateState m, StaticTagState)
+<span class="lineno">   78 </span><span class="decl"><span class="nottickedoff">bindStaticTag ts = do</span>
+<span class="lineno">   79 </span><span class="spaces">    </span><span class="nottickedoff">sr &lt;- newIORef $ Set.empty</span>
+<span class="lineno">   80 </span><span class="spaces">    </span><span class="nottickedoff">mv &lt;- liftM STS $ newMVar Map.empty</span>
+<span class="lineno">   81 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">   82 </span><span class="spaces">    </span><span class="nottickedoff">return $ (addOnLoadHook (assignIds sr) $</span>
+<span class="lineno">   83 </span><span class="spaces">                </span><span class="nottickedoff">bindSplice &quot;static&quot; (staticImpl mv) ts,</span>
+<span class="lineno">   84 </span><span class="spaces">              </span><span class="nottickedoff">mv)</span>
+<span class="lineno">   85 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">   86 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
+<span class="lineno">   87 </span><span class="spaces">    </span><span class="nottickedoff">generateId :: IO Int</span>
+<span class="lineno">   88 </span><span class="spaces">    </span><span class="nottickedoff">generateId = getStdRandom random</span>
+<span class="lineno">   89 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">   90 </span><span class="spaces">    </span><span class="nottickedoff">assignIds setref = mapM f</span>
+<span class="lineno">   91 </span><span class="spaces">        </span><span class="nottickedoff">where</span>
+<span class="lineno">   92 </span><span class="spaces">          </span><span class="nottickedoff">f node = g $ fromTree node</span>
+<span class="lineno">   93 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">   94 </span><span class="spaces">          </span><span class="nottickedoff">getId = do</span>
+<span class="lineno">   95 </span><span class="spaces">              </span><span class="nottickedoff">i  &lt;- liftM (B.pack . show) generateId</span>
+<span class="lineno">   96 </span><span class="spaces">              </span><span class="nottickedoff">st &lt;- readIORef setref</span>
+<span class="lineno">   97 </span><span class="spaces">              </span><span class="nottickedoff">if Set.member i st</span>
+<span class="lineno">   98 </span><span class="spaces">                </span><span class="nottickedoff">then getId</span>
+<span class="lineno">   99 </span><span class="spaces">                </span><span class="nottickedoff">else do</span>
+<span class="lineno">  100 </span><span class="spaces">                    </span><span class="nottickedoff">writeIORef setref $ Set.insert i st</span>
+<span class="lineno">  101 </span><span class="spaces">                    </span><span class="nottickedoff">return i</span>
+<span class="lineno">  102 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  103 </span><span class="spaces">          </span><span class="nottickedoff">g curs = do</span>
+<span class="lineno">  104 </span><span class="spaces">              </span><span class="nottickedoff">let node = current curs</span>
+<span class="lineno">  105 </span><span class="spaces">              </span><span class="nottickedoff">curs' &lt;- if getName node == &quot;static&quot;</span>
+<span class="lineno">  106 </span><span class="spaces">                         </span><span class="nottickedoff">then do</span>
+<span class="lineno">  107 </span><span class="spaces">                             </span><span class="nottickedoff">i &lt;- getId</span>
+<span class="lineno">  108 </span><span class="spaces">                             </span><span class="nottickedoff">return $ modifyContent (setAttribute &quot;id&quot; i) curs</span>
+<span class="lineno">  109 </span><span class="spaces">                         </span><span class="nottickedoff">else return curs</span>
+<span class="lineno">  110 </span><span class="spaces">              </span><span class="nottickedoff">let mbc = nextDF curs'</span>
+<span class="lineno">  111 </span><span class="spaces">              </span><span class="nottickedoff">maybe (return $ toTree curs') g mbc</span></span>
 <span class="lineno">  112 </span>
+<span class="lineno">  113 </span>
+<span class="lineno">  114 </span>
+<span class="lineno">  115 </span>
 
 </pre>
 </html>

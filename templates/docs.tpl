@@ -74,8 +74,7 @@
               </a>
               An iteratee-based HTTP server library, which runs <tt>Snap</tt>
               web handlers.</dd>
-            <dt><a href="docs/api/heist">heist</a>
-              <em>(experimental)</em></dt>
+            <dt><a href="docs/api/heist">heist</a></dt>
             <dd>
               <a class="book" href="docs/api/heist">
                 <img src="/media/css/book.png" />

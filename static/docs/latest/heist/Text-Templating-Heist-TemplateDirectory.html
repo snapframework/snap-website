@@ -1,0 +1,409 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Text.Templating.Heist.TemplateDirectory</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+><SCRIPT TYPE="text/javascript"
+>window.onload = function () {setSynopsis("mini_Text-Templating-Heist-TemplateDirectory.html")};</SCRIPT
+></HEAD
+><BODY
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topbar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
+></TD
+><TD CLASS="title"
+>heist-0.2.3: An xhtml templating system</TD
+><TD CLASS="topbut"
+><A HREF="src/Text-Templating-Heist-TemplateDirectory.html"
+>Source code</A
+></TD
+><TD CLASS="topbut"
+><A HREF="index.html"
+>Contents</A
+></TD
+><TD CLASS="topbut"
+><A HREF="doc-index.html"
+>Index</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="modulebar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><FONT SIZE="6"
+>Text.Templating.Heist.TemplateDirectory</FONT
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Description</TD
+></TR
+><TR
+><TD CLASS="doc"
+>This module defines a TemplateDirectory data structure for convenient
+interaction with templates within web apps.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Synopsis</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A HREF="#t%3ATemplateDirectory"
+>TemplateDirectory</A
+> m</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AnewTemplateDirectory"
+>newTemplateDirectory</A
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; n (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
+>Either</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> (<A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+>TemplateDirectory</A
+> m))</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AnewTemplateDirectory%27"
+>newTemplateDirectory'</A
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; n (<A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+>TemplateDirectory</A
+> m)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetDirectoryTS"
+>getDirectoryTS</A
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+>TemplateDirectory</A
+> m -&gt; n (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AreloadTemplateDirectory"
+>reloadTemplateDirectory</A
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+>TemplateDirectory</A
+> m -&gt; n (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
+>Either</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Documentation</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A NAME="t:TemplateDirectory"
+><A NAME="t%3ATemplateDirectory"
+></A
+></A
+><B
+>TemplateDirectory</B
+> m </TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-TemplateDirectory.html#TemplateDirectory"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+>Structure representing a template directory.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:newTemplateDirectory"
+><A NAME="v%3AnewTemplateDirectory"
+></A
+></A
+><B
+>newTemplateDirectory</B
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; n (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
+>Either</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> (<A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+>TemplateDirectory</A
+> m))</TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-TemplateDirectory.html#newTemplateDirectory"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Creates and returns a new <TT
+><A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+>TemplateDirectory</A
+></TT
+> wrapped in an Either for
+ error handling.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:newTemplateDirectory'"
+><A NAME="v%3AnewTemplateDirectory%27"
+></A
+></A
+><B
+>newTemplateDirectory'</B
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; n (<A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+>TemplateDirectory</A
+> m)</TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-TemplateDirectory.html#newTemplateDirectory%27"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Creates and returns a new <TT
+><A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+>TemplateDirectory</A
+></TT
+>, using the monad's fail
+ function on error.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getDirectoryTS"
+><A NAME="v%3AgetDirectoryTS"
+></A
+></A
+><B
+>getDirectoryTS</B
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+>TemplateDirectory</A
+> m -&gt; n (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m)</TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-TemplateDirectory.html#getDirectoryTS"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Gets the <TT
+><A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+></TT
+> from a TemplateDirectory.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:reloadTemplateDirectory"
+><A NAME="v%3AreloadTemplateDirectory"
+></A
+></A
+><B
+>reloadTemplateDirectory</B
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+>TemplateDirectory</A
+> m -&gt; n (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
+>Either</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-TemplateDirectory.html#reloadTemplateDirectory"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Clears cached content and reloads templates from disk.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="botbar"
+>Produced by <A HREF="http://www.haskell.org/haddock/"
+>Haddock</A
+> version 2.6.1</TD
+></TR
+></TABLE
+></BODY
+></HTML
+>

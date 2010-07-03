@@ -37,7 +37,7 @@ $ cabal install snap-server</pre>
     <div class="section right">
       <div class="inner">
         <h2>Snap Packages</h2>
-        <p>Snap is made up of three separate packages:</p>
+        <p>Snap is made up of a collection of separate packages:</p>
         <div id="packages">
           <dl>
             <dt>snap-core</dt>
@@ -66,7 +66,7 @@ $ cabal install snap-server</pre>
                    >test coverage report</a> ]</span></dd>
 
 
-            <dt>heist <strong>(experimental)</strong></dt>
+            <dt>heist</dt>
             <dd>An xhtml-based templating engine, allowing Haskell functions to be
               bound to XML tags. <br/><span class="linklist">
                 [ <a href="/docs/latest/heist/index.html" >api docs</a> |
@@ -77,6 +77,13 @@ $ cabal install snap-server</pre>
                 <a href="/docs/heist-hpc/hpc_index.html"
                    >test coverage report</a> ]</span></dd>
 
+
+            <dt>snap</dt>
+            <dd>Snap project starter plus hint-based web handler engine
+                (upcoming for 0.3, works with the 0.3 branch of
+                <a href="http://github.com/snapframework/snap-core">snap-core</a>)<br/><span class="linklist">
+                [ <a href="http://github.com/snapframework/snap" >github</a>
+                ]</span></dd>
 
             <dt>snap-website </dt>
             <dd>The source code for this website is a good example of

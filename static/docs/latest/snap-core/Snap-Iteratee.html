@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.2.7: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.2.7.1: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Iteratee.html"
 >Source code</A
@@ -95,7 +95,9 @@
 ><DT
 ><A HREF="#5"
 >Conversion to/from <TT
->WrappedByteString</TT
+><A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+></TT
 >
 </A
 ></DT
@@ -165,7 +167,11 @@
 >type</SPAN
 > <A HREF="#t%3AStream"
 >Stream</A
-> = StreamG WrappedByteString <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> = <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AStreamG"
+>StreamG</A
+> <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 ></TD
 ></TR
@@ -179,7 +185,11 @@
 >type</SPAN
 > <A HREF="#t%3AIterV"
 >IterV</A
-> m = IterGV WrappedByteString <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> m = <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AIterGV"
+>IterGV</A
+> <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 > m</TD
 ></TR
@@ -193,7 +203,11 @@
 >type</SPAN
 > <A HREF="#t%3AIteratee"
 >Iteratee</A
-> m = IterateeG WrappedByteString <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> m = <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AIterateeG"
+>IterateeG</A
+> <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 > m</TD
 ></TR
@@ -212,6 +226,16 @@
 > m a -&gt; m (<A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
 > m a)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>module <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee.html"
+>Data.Iteratee</A
+></TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -275,7 +299,9 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AfromWrap"
 >fromWrap</A
-> :: WrappedByteString <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
 >ByteString</A
@@ -291,7 +317,9 @@
 >toWrap</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
 >ByteString</A
-> -&gt; WrappedByteString <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 ></TD
 ></TR
@@ -303,11 +331,15 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3Adrop%27"
 >drop'</A
-> :: (StreamChunk s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base-StreamChunk.html#t%3AStreamChunk"
+>StreamChunk</A
+> s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
 > m) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
 >Int64</A
-> -&gt; IterateeG s el m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AIterateeG"
+>IterateeG</A
+> s el m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -319,11 +351,15 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AtakeExactly"
 >takeExactly</A
-> :: (StreamChunk s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base-StreamChunk.html#t%3AStreamChunk"
+>StreamChunk</A
+> s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
 > m) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
 >Int64</A
-> -&gt; EnumeratorN s el s el m a</TD
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AEnumeratorN"
+>EnumeratorN</A
+> s el s el m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -333,11 +369,15 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AtakeNoMoreThan"
 >takeNoMoreThan</A
-> :: (StreamChunk s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base-StreamChunk.html#t%3AStreamChunk"
+>StreamChunk</A
+> s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
 > m) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
 >Int64</A
-> -&gt; EnumeratorN s el s el m a</TD
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AEnumeratorN"
+>EnumeratorN</A
+> s el s el m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -488,7 +528,11 @@
 ></A
 ><B
 >Stream</B
-> = StreamG WrappedByteString <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> = <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AStreamG"
+>StreamG</A
+> <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 ></TD
 ><TD CLASS="declbut"
@@ -516,7 +560,11 @@
 ></A
 ><B
 >IterV</B
-> m = IterGV WrappedByteString <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> m = <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AIterGV"
+>IterGV</A
+> <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 > m</TD
 ><TD CLASS="declbut"
@@ -544,7 +592,11 @@
 ></A
 ><B
 >Iteratee</B
-> m = IterateeG WrappedByteString <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> m = <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AIterateeG"
+>IterateeG</A
+> <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 > m</TD
 ><TD CLASS="declbut"
@@ -598,6 +650,16 @@
 >
 </A
 ></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>module <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee.html"
+>Data.Iteratee</A
 ></TD
 ></TR
 ><TR
@@ -741,7 +803,9 @@
 ><A NAME="5"
 ><A NAME="5"
 >Conversion to/from <TT
->WrappedByteString</TT
+><A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+></TT
 >
 </A
 ></A
@@ -762,7 +826,9 @@
 ></A
 ><B
 >fromWrap</B
-> :: WrappedByteString <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> :: <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
 >ByteString</A
@@ -797,7 +863,9 @@
 >toWrap</B
 > :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
 >ByteString</A
-> -&gt; WrappedByteString <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
+>WrappedByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Word.html#t%3AWord8"
 >Word8</A
 ></TD
 ><TD CLASS="declbut"
@@ -841,11 +909,15 @@
 ></A
 ><B
 >drop'</B
-> :: (StreamChunk s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base-StreamChunk.html#t%3AStreamChunk"
+>StreamChunk</A
+> s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
 > m) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
 >Int64</A
-> -&gt; IterateeG s el m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AIterateeG"
+>IterateeG</A
+> s el m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -877,11 +949,15 @@
 ></A
 ><B
 >takeExactly</B
-> :: (StreamChunk s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base-StreamChunk.html#t%3AStreamChunk"
+>StreamChunk</A
+> s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
 > m) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
 >Int64</A
-> -&gt; EnumeratorN s el s el m a</TD
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AEnumeratorN"
+>EnumeratorN</A
+> s el s el m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Iteratee.html#takeExactly"
 >Source</A
@@ -912,11 +988,15 @@
 ></A
 ><B
 >takeNoMoreThan</B
-> :: (StreamChunk s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base-StreamChunk.html#t%3AStreamChunk"
+>StreamChunk</A
+> s el, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
 > m) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
 >Int64</A
-> -&gt; EnumeratorN s el s el m a</TD
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#t%3AEnumeratorN"
+>EnumeratorN</A
+> s el s el m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Iteratee.html#takeNoMoreThan"
 >Source</A
@@ -1206,7 +1286,7 @@
 ><TD CLASS="botbar"
 >Produced by <A HREF="http://www.haskell.org/haddock/"
 >Haddock</A
-> version 2.6.0</TD
+> version 2.6.1</TD
 ></TR
 ></TABLE
 ></BODY
