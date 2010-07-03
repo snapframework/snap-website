@@ -1,4 +1,4 @@
-| title: Announce: Snap Framework 0.2.7
+| title: Announcing: Snap Framework v0.2.7
 | author: Gregory Collins <greg@gregorycollins.net>
 | published: 2010-07-03T01:52:31-0400
 | updated: 2010-07-03T01:52:31-0400
