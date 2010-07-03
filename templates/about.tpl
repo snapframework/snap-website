@@ -104,6 +104,14 @@
             board games he can't afford to devote the necessary time
             to.
           </p>
+          <p>
+            <strong><a href="http://github.com/duairc">Shane O'Brien</a>
+            </strong> is an undergraduate Computer Science student in Dublin,
+            Ireland. He enjoys <a href="http://last.fm/user/Sidragasum">music
+            </a>, Haskell, mathematics, free software,
+            <a href="http://dumpsterdivingdublin.tumblr.com/">freeganism</a>
+            and Lojban.
+          </p>
         </div><!--end developers-->
         <div>
           <h2>Contacting us</h2>
