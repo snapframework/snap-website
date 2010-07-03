@@ -16,8 +16,8 @@ Changes since 0.2.6
 
 ### New features:
 
- - the "snap" project starter was reorganized by new Snap contributors Shane
-   O'Brien (duairc) and Carl Howells (c_wraith).
+ - the "snap" project starter was reorganized by new Snap contributor Shane
+   O'Brien (duairc).
 
  - The HTTP parser in `snap-server` has a couple of new criterion benchmarks
    courtesy of Aycan Irican.
