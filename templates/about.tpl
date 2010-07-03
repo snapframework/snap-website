@@ -98,7 +98,7 @@
           </p>
           <p>
             <strong>Carl Howells</strong> is a veteran of web app
-            development in four different langauges in his time
+            development in four different languages in his time
             at <a href="http://www.janrain.com/">JanRain</a>.  He
             spends his free time trying to become good at video and
             board games he can't afford to devote the necessary time
