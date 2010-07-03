@@ -166,7 +166,10 @@ tr.post {
     font-family: "PT Sans", "Arial", sans-serif;
 }
 
-tr.post td { padding-bottom: 1.5em; }
+tr.post td {
+    padding: 1em 0;
+    border-bottom: 1px dotted #eee;
+}
 
 td.date {
     width:118px;
