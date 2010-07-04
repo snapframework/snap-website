@@ -6,11 +6,9 @@ $(document).ready(function(){
   });  
   $('a').click(function(){ $(this).blur(); });
 
-  var current = $.url.segment(0);
-  console.log(current);
-  if (current) {
-    $('.nav li.'+current).addClass('active');
-  }else{
+  if ($.url.segment(0)) {
+    $('.nav li.'+$.url.segment(0)).addClass('active');
+  } else {
     $('.nav .home').addClass('active');
   }
 });
