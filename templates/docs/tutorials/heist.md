@@ -354,7 +354,7 @@ functionality provided by
 The following is code for a splice that calculates the factorial of a
 number.
 
-~~~~~~~~~~~~~~~ {.hs}
+~~~~~~~~~~~~~~~ {.haskell}
 factSplice :: Splice Snap
 factSplice = do
     input <- getParamNode
@@ -393,7 +393,7 @@ for configuration.  `emptyTemplateState` gives you reasonable defaults
 that you build on to suit your needs.  Let's look at an example to
 illustrate.
 
-~~~~~~~~~~~~~~~ {.hs}
+~~~~~~~~~~~~~~~ {.haskell}
 myHeistState =
     addOnLoadHook onLoad $
     addPreRunHook preRun $

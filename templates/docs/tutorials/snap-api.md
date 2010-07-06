@@ -140,7 +140,7 @@ over" a stream. I like to compare iteratees to the video game character Kirby,
 who changes his state depending on what he consumes. Iteratees are kind of
 like that. You feed an iteratee some input from the stream, it does something
 with it, and the iteratee is either "done" and gives you back some computed
-value, refusing to consume anymore, or gives you back _another_ iteratee
+value (refusing to consume anymore), or gives you back _another_ iteratee
 that's ready for more input (changes into another iteratee, if you will). That
 is, iteratees consume data a chunk at a time, and if it's expecting more, it
 encodes the intermediate state of the computation using all that closure
