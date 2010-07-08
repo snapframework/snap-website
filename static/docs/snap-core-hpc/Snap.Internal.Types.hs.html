@@ -398,205 +398,221 @@ span.spaces    { background: white }
 <span class="lineno">  387 </span>------------------------------------------------------------------------------
 <span class="lineno">  388 </span>-- | Adds the given strict 'ByteString' to the body of the 'Response' stored in
 <span class="lineno">  389 </span>-- the 'Snap' monad state.
-<span class="lineno">  390 </span>writeBS :: ByteString -&gt; Snap ()
-<span class="lineno">  391 </span><span class="decl"><span class="istickedoff">writeBS s = addToOutput $ enumBS s</span></span>
-<span class="lineno">  392 </span>
-<span class="lineno">  393 </span>
-<span class="lineno">  394 </span>------------------------------------------------------------------------------
-<span class="lineno">  395 </span>-- | Adds the given lazy 'L.ByteString' to the body of the 'Response' stored in
-<span class="lineno">  396 </span>-- the 'Snap' monad state.
-<span class="lineno">  397 </span>writeLBS :: L.ByteString -&gt; Snap ()
-<span class="lineno">  398 </span><span class="decl"><span class="istickedoff">writeLBS s = addToOutput $ enumLBS s</span></span>
-<span class="lineno">  399 </span>
-<span class="lineno">  400 </span>
-<span class="lineno">  401 </span>------------------------------------------------------------------------------
-<span class="lineno">  402 </span>-- | Adds the given strict 'T.Text' to the body of the 'Response' stored in the
-<span class="lineno">  403 </span>-- 'Snap' monad state.
-<span class="lineno">  404 </span>writeText :: T.Text -&gt; Snap ()
-<span class="lineno">  405 </span><span class="decl"><span class="nottickedoff">writeText s = writeBS $ T.encodeUtf8 s</span></span>
-<span class="lineno">  406 </span>
+<span class="lineno">  390 </span>--
+<span class="lineno">  391 </span>-- Warning: This function is intentionally non-strict. If any pure
+<span class="lineno">  392 </span>-- exceptions are raised by the expression creating the 'ByteString',
+<span class="lineno">  393 </span>-- the exception won't actually be raised within the Snap handler.
+<span class="lineno">  394 </span>writeBS :: ByteString -&gt; Snap ()
+<span class="lineno">  395 </span><span class="decl"><span class="istickedoff">writeBS s = addToOutput $ enumBS s</span></span>
+<span class="lineno">  396 </span>
+<span class="lineno">  397 </span>
+<span class="lineno">  398 </span>------------------------------------------------------------------------------
+<span class="lineno">  399 </span>-- | Adds the given lazy 'L.ByteString' to the body of the 'Response' stored in
+<span class="lineno">  400 </span>-- the 'Snap' monad state.
+<span class="lineno">  401 </span>--
+<span class="lineno">  402 </span>-- Warning: This function is intentionally non-strict. If any pure
+<span class="lineno">  403 </span>-- exceptions are raised by the expression creating the 'ByteString',
+<span class="lineno">  404 </span>-- the exception won't actually be raised within the Snap handler.
+<span class="lineno">  405 </span>writeLBS :: L.ByteString -&gt; Snap ()
+<span class="lineno">  406 </span><span class="decl"><span class="istickedoff">writeLBS s = addToOutput $ enumLBS s</span></span>
 <span class="lineno">  407 </span>
-<span class="lineno">  408 </span>------------------------------------------------------------------------------
-<span class="lineno">  409 </span>-- | Adds the given lazy 'LT.Text' to the body of the 'Response' stored in the
-<span class="lineno">  410 </span>-- 'Snap' monad state.
-<span class="lineno">  411 </span>writeLazyText :: LT.Text -&gt; Snap ()
-<span class="lineno">  412 </span><span class="decl"><span class="nottickedoff">writeLazyText s = writeLBS $ LT.encodeUtf8 s</span></span>
-<span class="lineno">  413 </span>
-<span class="lineno">  414 </span>
-<span class="lineno">  415 </span>------------------------------------------------------------------------------
-<span class="lineno">  416 </span>-- | Sets the output to be the contents of the specified file.
-<span class="lineno">  417 </span>--
-<span class="lineno">  418 </span>-- Calling 'sendFile' will overwrite any output queued to be sent in the
-<span class="lineno">  419 </span>-- 'Response'. If the response body is not modified after the call to
-<span class="lineno">  420 </span>-- 'sendFile', Snap will use the efficient @sendfile()@ system call on
-<span class="lineno">  421 </span>-- platforms that support it.
-<span class="lineno">  422 </span>--
-<span class="lineno">  423 </span>-- If the response body is modified (using 'modifyResponseBody'), the file will
-<span class="lineno">  424 </span>-- be read using @mmap()@.
-<span class="lineno">  425 </span>sendFile :: FilePath -&gt; Snap ()
-<span class="lineno">  426 </span><span class="decl"><span class="istickedoff">sendFile f = modifyResponse $ \r -&gt; r { rspBody = SendFile f }</span></span>
-<span class="lineno">  427 </span>
-<span class="lineno">  428 </span>
-<span class="lineno">  429 </span>------------------------------------------------------------------------------
-<span class="lineno">  430 </span>-- | Runs a 'Snap' action with a locally-modified 'Request' state
-<span class="lineno">  431 </span>-- object. The 'Request' object in the Snap monad state after the call
-<span class="lineno">  432 </span>-- to localRequest will be unchanged.
-<span class="lineno">  433 </span>localRequest :: (Request -&gt; Request) -&gt; Snap a -&gt; Snap a
-<span class="lineno">  434 </span><span class="decl"><span class="istickedoff">localRequest f m = do</span>
-<span class="lineno">  435 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
-<span class="lineno">  436 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  437 </span><span class="spaces">    </span><span class="istickedoff">runAct req &lt;|&gt; (putRequest <span class="nottickedoff">req</span> &gt;&gt; pass)</span>
-<span class="lineno">  438 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  439 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  440 </span><span class="spaces">    </span><span class="istickedoff">runAct req = do</span>
-<span class="lineno">  441 </span><span class="spaces">        </span><span class="istickedoff">modifyRequest f</span>
-<span class="lineno">  442 </span><span class="spaces">        </span><span class="istickedoff">result &lt;- m</span>
-<span class="lineno">  443 </span><span class="spaces">        </span><span class="istickedoff">putRequest req</span>
-<span class="lineno">  444 </span><span class="spaces">        </span><span class="istickedoff">return result</span></span>
-<span class="lineno">  445 </span>{-# INLINE localRequest #-}
-<span class="lineno">  446 </span>
-<span class="lineno">  447 </span>
-<span class="lineno">  448 </span>------------------------------------------------------------------------------
-<span class="lineno">  449 </span>-- | Fetches the 'Request' from state and hands it to the given action.
-<span class="lineno">  450 </span>withRequest :: (Request -&gt; Snap a) -&gt; Snap a
-<span class="lineno">  451 </span><span class="decl"><span class="nottickedoff">withRequest = (getRequest &gt;&gt;=)</span></span>
-<span class="lineno">  452 </span>{-# INLINE withRequest #-}
-<span class="lineno">  453 </span>
-<span class="lineno">  454 </span>
-<span class="lineno">  455 </span>------------------------------------------------------------------------------
-<span class="lineno">  456 </span>-- | Fetches the 'Response' from state and hands it to the given action.
-<span class="lineno">  457 </span>withResponse :: (Response -&gt; Snap a) -&gt; Snap a
-<span class="lineno">  458 </span><span class="decl"><span class="nottickedoff">withResponse = (getResponse &gt;&gt;=)</span></span>
-<span class="lineno">  459 </span>{-# INLINE withResponse #-}
-<span class="lineno">  460 </span>
-<span class="lineno">  461 </span>
-<span class="lineno">  462 </span>------------------------------------------------------------------------------
-<span class="lineno">  463 </span>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'
-<span class="lineno">  464 </span>-- field to the value in the X-Forwarded-For header. If the header is
-<span class="lineno">  465 </span>-- not present, this action has no effect.
-<span class="lineno">  466 </span>--
-<span class="lineno">  467 </span>-- This action should be used only when working behind a reverse http
-<span class="lineno">  468 </span>-- proxy that sets the X-Forwarded-For header. This is the only way to
-<span class="lineno">  469 </span>-- ensure the value in the X-Forwarded-For header can be trusted.
-<span class="lineno">  470 </span>--
-<span class="lineno">  471 </span>-- This is provided as a filter so actions that require the remote
-<span class="lineno">  472 </span>-- address can get it in a uniform manner. It has specifically limited
-<span class="lineno">  473 </span>-- functionality to ensure that its transformation can be trusted,
-<span class="lineno">  474 </span>-- when used correctly.
-<span class="lineno">  475 </span>ipHeaderFilter :: Snap ()
-<span class="lineno">  476 </span><span class="decl"><span class="nottickedoff">ipHeaderFilter = ipHeaderFilter' &quot;x-forwarded-for&quot;</span></span>
+<span class="lineno">  408 </span>
+<span class="lineno">  409 </span>------------------------------------------------------------------------------
+<span class="lineno">  410 </span>-- | Adds the given strict 'T.Text' to the body of the 'Response' stored in the
+<span class="lineno">  411 </span>-- 'Snap' monad state.
+<span class="lineno">  412 </span>--
+<span class="lineno">  413 </span>-- Warning: This function is intentionally non-strict. If any pure
+<span class="lineno">  414 </span>-- exceptions are raised by the expression creating the 'ByteString',
+<span class="lineno">  415 </span>-- the exception won't actually be raised within the Snap handler.
+<span class="lineno">  416 </span>writeText :: T.Text -&gt; Snap ()
+<span class="lineno">  417 </span><span class="decl"><span class="nottickedoff">writeText s = writeBS $ T.encodeUtf8 s</span></span>
+<span class="lineno">  418 </span>
+<span class="lineno">  419 </span>
+<span class="lineno">  420 </span>------------------------------------------------------------------------------
+<span class="lineno">  421 </span>-- | Adds the given lazy 'LT.Text' to the body of the 'Response' stored in the
+<span class="lineno">  422 </span>-- 'Snap' monad state.
+<span class="lineno">  423 </span>--
+<span class="lineno">  424 </span>-- Warning: This function is intentionally non-strict. If any pure
+<span class="lineno">  425 </span>-- exceptions are raised by the expression creating the 'ByteString',
+<span class="lineno">  426 </span>-- the exception won't actually be raised within the Snap handler.
+<span class="lineno">  427 </span>writeLazyText :: LT.Text -&gt; Snap ()
+<span class="lineno">  428 </span><span class="decl"><span class="nottickedoff">writeLazyText s = writeLBS $ LT.encodeUtf8 s</span></span>
+<span class="lineno">  429 </span>
+<span class="lineno">  430 </span>
+<span class="lineno">  431 </span>------------------------------------------------------------------------------
+<span class="lineno">  432 </span>-- | Sets the output to be the contents of the specified file.
+<span class="lineno">  433 </span>--
+<span class="lineno">  434 </span>-- Calling 'sendFile' will overwrite any output queued to be sent in the
+<span class="lineno">  435 </span>-- 'Response'. If the response body is not modified after the call to
+<span class="lineno">  436 </span>-- 'sendFile', Snap will use the efficient @sendfile()@ system call on
+<span class="lineno">  437 </span>-- platforms that support it.
+<span class="lineno">  438 </span>--
+<span class="lineno">  439 </span>-- If the response body is modified (using 'modifyResponseBody'), the file will
+<span class="lineno">  440 </span>-- be read using @mmap()@.
+<span class="lineno">  441 </span>sendFile :: FilePath -&gt; Snap ()
+<span class="lineno">  442 </span><span class="decl"><span class="istickedoff">sendFile f = modifyResponse $ \r -&gt; r { rspBody = SendFile f }</span></span>
+<span class="lineno">  443 </span>
+<span class="lineno">  444 </span>
+<span class="lineno">  445 </span>------------------------------------------------------------------------------
+<span class="lineno">  446 </span>-- | Runs a 'Snap' action with a locally-modified 'Request' state
+<span class="lineno">  447 </span>-- object. The 'Request' object in the Snap monad state after the call
+<span class="lineno">  448 </span>-- to localRequest will be unchanged.
+<span class="lineno">  449 </span>localRequest :: (Request -&gt; Request) -&gt; Snap a -&gt; Snap a
+<span class="lineno">  450 </span><span class="decl"><span class="istickedoff">localRequest f m = do</span>
+<span class="lineno">  451 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
+<span class="lineno">  452 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  453 </span><span class="spaces">    </span><span class="istickedoff">runAct req &lt;|&gt; (putRequest <span class="nottickedoff">req</span> &gt;&gt; pass)</span>
+<span class="lineno">  454 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  455 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  456 </span><span class="spaces">    </span><span class="istickedoff">runAct req = do</span>
+<span class="lineno">  457 </span><span class="spaces">        </span><span class="istickedoff">modifyRequest f</span>
+<span class="lineno">  458 </span><span class="spaces">        </span><span class="istickedoff">result &lt;- m</span>
+<span class="lineno">  459 </span><span class="spaces">        </span><span class="istickedoff">putRequest req</span>
+<span class="lineno">  460 </span><span class="spaces">        </span><span class="istickedoff">return result</span></span>
+<span class="lineno">  461 </span>{-# INLINE localRequest #-}
+<span class="lineno">  462 </span>
+<span class="lineno">  463 </span>
+<span class="lineno">  464 </span>------------------------------------------------------------------------------
+<span class="lineno">  465 </span>-- | Fetches the 'Request' from state and hands it to the given action.
+<span class="lineno">  466 </span>withRequest :: (Request -&gt; Snap a) -&gt; Snap a
+<span class="lineno">  467 </span><span class="decl"><span class="nottickedoff">withRequest = (getRequest &gt;&gt;=)</span></span>
+<span class="lineno">  468 </span>{-# INLINE withRequest #-}
+<span class="lineno">  469 </span>
+<span class="lineno">  470 </span>
+<span class="lineno">  471 </span>------------------------------------------------------------------------------
+<span class="lineno">  472 </span>-- | Fetches the 'Response' from state and hands it to the given action.
+<span class="lineno">  473 </span>withResponse :: (Response -&gt; Snap a) -&gt; Snap a
+<span class="lineno">  474 </span><span class="decl"><span class="nottickedoff">withResponse = (getResponse &gt;&gt;=)</span></span>
+<span class="lineno">  475 </span>{-# INLINE withResponse #-}
+<span class="lineno">  476 </span>
 <span class="lineno">  477 </span>
-<span class="lineno">  478 </span>
-<span class="lineno">  479 </span>------------------------------------------------------------------------------
-<span class="lineno">  480 </span>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'
-<span class="lineno">  481 </span>-- field to the value from the header specified.  If the header
-<span class="lineno">  482 </span>-- specified is not present, this action has no effect.
-<span class="lineno">  483 </span>--
-<span class="lineno">  484 </span>-- This action should be used only when working behind a reverse http
-<span class="lineno">  485 </span>-- proxy that sets the header being looked at. This is the only way to
-<span class="lineno">  486 </span>-- ensure the value in the header can be trusted.
-<span class="lineno">  487 </span>--
-<span class="lineno">  488 </span>-- This is provided as a filter so actions that require the remote
-<span class="lineno">  489 </span>-- address can get it in a uniform manner. It has specifically limited
-<span class="lineno">  490 </span>-- functionality to ensure that its transformation can be trusted,
-<span class="lineno">  491 </span>-- when used correctly.
-<span class="lineno">  492 </span>ipHeaderFilter' :: CIB.CIByteString -&gt; Snap ()
-<span class="lineno">  493 </span><span class="decl"><span class="nottickedoff">ipHeaderFilter' header = do</span>
-<span class="lineno">  494 </span><span class="spaces">    </span><span class="nottickedoff">headerContents &lt;- getHeader header &lt;$&gt; getRequest</span>
-<span class="lineno">  495 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  496 </span><span class="spaces">    </span><span class="nottickedoff">let whitespace = &quot; \t\r\n&quot;</span>
-<span class="lineno">  497 </span><span class="spaces">        </span><span class="nottickedoff">ipChrs = &quot;.0123456789&quot;</span>
-<span class="lineno">  498 </span><span class="spaces">        </span><span class="nottickedoff">trim f s = f (`elem` s)</span>
-<span class="lineno">  499 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  500 </span><span class="spaces">        </span><span class="nottickedoff">clean = trim S.takeWhile ipChrs . trim S.dropWhile whitespace</span>
-<span class="lineno">  501 </span><span class="spaces">        </span><span class="nottickedoff">setIP ip = modifyRequest $ \rq -&gt; rq { rqRemoteAddr = clean ip }</span>
-<span class="lineno">  502 </span><span class="spaces">    </span><span class="nottickedoff">maybe (return ()) setIP headerContents</span></span>
-<span class="lineno">  503 </span>
-<span class="lineno">  504 </span>
-<span class="lineno">  505 </span>------------------------------------------------------------------------------
-<span class="lineno">  506 </span>-- | This exception is thrown if the handler you supply to 'runSnap' fails.
-<span class="lineno">  507 </span>data NoHandlerException = NoHandlerException
-<span class="lineno">  508 </span>   deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>, <span class="decl"><span class="nottickedoff">Typeable</span></span>)
-<span class="lineno">  509 </span>
-<span class="lineno">  510 </span>
-<span class="lineno">  511 </span>------------------------------------------------------------------------------
-<span class="lineno">  512 </span>instance Show NoHandlerException where
-<span class="lineno">  513 </span>    <span class="decl"><span class="istickedoff">show NoHandlerException = &quot;No handler for request&quot;</span></span>
-<span class="lineno">  514 </span>
-<span class="lineno">  515 </span>
-<span class="lineno">  516 </span>------------------------------------------------------------------------------
-<span class="lineno">  517 </span>instance Exception NoHandlerException
-<span class="lineno">  518 </span>
+<span class="lineno">  478 </span>------------------------------------------------------------------------------
+<span class="lineno">  479 </span>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'
+<span class="lineno">  480 </span>-- field to the value in the X-Forwarded-For header. If the header is
+<span class="lineno">  481 </span>-- not present, this action has no effect.
+<span class="lineno">  482 </span>--
+<span class="lineno">  483 </span>-- This action should be used only when working behind a reverse http
+<span class="lineno">  484 </span>-- proxy that sets the X-Forwarded-For header. This is the only way to
+<span class="lineno">  485 </span>-- ensure the value in the X-Forwarded-For header can be trusted.
+<span class="lineno">  486 </span>--
+<span class="lineno">  487 </span>-- This is provided as a filter so actions that require the remote
+<span class="lineno">  488 </span>-- address can get it in a uniform manner. It has specifically limited
+<span class="lineno">  489 </span>-- functionality to ensure that its transformation can be trusted,
+<span class="lineno">  490 </span>-- when used correctly.
+<span class="lineno">  491 </span>ipHeaderFilter :: Snap ()
+<span class="lineno">  492 </span><span class="decl"><span class="nottickedoff">ipHeaderFilter = ipHeaderFilter' &quot;x-forwarded-for&quot;</span></span>
+<span class="lineno">  493 </span>
+<span class="lineno">  494 </span>
+<span class="lineno">  495 </span>------------------------------------------------------------------------------
+<span class="lineno">  496 </span>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'
+<span class="lineno">  497 </span>-- field to the value from the header specified.  If the header
+<span class="lineno">  498 </span>-- specified is not present, this action has no effect.
+<span class="lineno">  499 </span>--
+<span class="lineno">  500 </span>-- This action should be used only when working behind a reverse http
+<span class="lineno">  501 </span>-- proxy that sets the header being looked at. This is the only way to
+<span class="lineno">  502 </span>-- ensure the value in the header can be trusted.
+<span class="lineno">  503 </span>--
+<span class="lineno">  504 </span>-- This is provided as a filter so actions that require the remote
+<span class="lineno">  505 </span>-- address can get it in a uniform manner. It has specifically limited
+<span class="lineno">  506 </span>-- functionality to ensure that its transformation can be trusted,
+<span class="lineno">  507 </span>-- when used correctly.
+<span class="lineno">  508 </span>ipHeaderFilter' :: CIB.CIByteString -&gt; Snap ()
+<span class="lineno">  509 </span><span class="decl"><span class="nottickedoff">ipHeaderFilter' header = do</span>
+<span class="lineno">  510 </span><span class="spaces">    </span><span class="nottickedoff">headerContents &lt;- getHeader header &lt;$&gt; getRequest</span>
+<span class="lineno">  511 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  512 </span><span class="spaces">    </span><span class="nottickedoff">let whitespace = &quot; \t\r\n&quot;</span>
+<span class="lineno">  513 </span><span class="spaces">        </span><span class="nottickedoff">ipChrs = &quot;.0123456789&quot;</span>
+<span class="lineno">  514 </span><span class="spaces">        </span><span class="nottickedoff">trim f s = f (`elem` s)</span>
+<span class="lineno">  515 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  516 </span><span class="spaces">        </span><span class="nottickedoff">clean = trim S.takeWhile ipChrs . trim S.dropWhile whitespace</span>
+<span class="lineno">  517 </span><span class="spaces">        </span><span class="nottickedoff">setIP ip = modifyRequest $ \rq -&gt; rq { rqRemoteAddr = clean ip }</span>
+<span class="lineno">  518 </span><span class="spaces">    </span><span class="nottickedoff">maybe (return ()) setIP headerContents</span></span>
 <span class="lineno">  519 </span>
-<span class="lineno">  520 </span>------------------------------------------------------------------------------
-<span class="lineno">  521 </span>-- | Runs a 'Snap' monad action in the 'Iteratee IO' monad.
-<span class="lineno">  522 </span>runSnap :: Snap a
-<span class="lineno">  523 </span>        -&gt; (ByteString -&gt; IO ())
-<span class="lineno">  524 </span>        -&gt; Request
-<span class="lineno">  525 </span>        -&gt; Iteratee IO (Request,Response)
-<span class="lineno">  526 </span><span class="decl"><span class="istickedoff">runSnap (Snap m) logerr req = do</span>
-<span class="lineno">  527 </span><span class="spaces">    </span><span class="istickedoff">(r, ss') &lt;- runStateT m ss</span>
-<span class="lineno">  528 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  529 </span><span class="spaces">    </span><span class="istickedoff">e &lt;- maybe (return $ Left fourohfour)</span>
-<span class="lineno">  530 </span><span class="spaces">               </span><span class="istickedoff">return</span>
-<span class="lineno">  531 </span><span class="spaces">               </span><span class="istickedoff">r</span>
-<span class="lineno">  532 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  533 </span><span class="spaces">    </span><span class="istickedoff">-- is this a case of early termination?</span>
-<span class="lineno">  534 </span><span class="spaces">    </span><span class="istickedoff">let resp = case e of</span>
-<span class="lineno">  535 </span><span class="spaces">                 </span><span class="istickedoff">Left x  -&gt; x</span>
-<span class="lineno">  536 </span><span class="spaces">                 </span><span class="istickedoff">Right _ -&gt; _snapResponse ss'</span>
-<span class="lineno">  537 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  538 </span><span class="spaces">    </span><span class="istickedoff">return (_snapRequest ss', resp)</span>
-<span class="lineno">  539 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  540 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  541 </span><span class="spaces">    </span><span class="istickedoff">fourohfour = setContentLength <span class="nottickedoff">3</span> $</span>
-<span class="lineno">  542 </span><span class="spaces">                 </span><span class="istickedoff">setResponseStatus 404 &quot;Not Found&quot; $</span>
-<span class="lineno">  543 </span><span class="spaces">                 </span><span class="istickedoff">modifyResponseBody <span class="nottickedoff">(&gt;. enumBS &quot;404&quot;)</span> $</span>
-<span class="lineno">  544 </span><span class="spaces">                 </span><span class="istickedoff">emptyResponse</span>
-<span class="lineno">  545 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  546 </span><span class="spaces">    </span><span class="istickedoff">dresp = emptyResponse { rspHttpVersion = rqVersion req }</span>
-<span class="lineno">  547 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  548 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req dresp <span class="nottickedoff">logerr</span></span></span>
-<span class="lineno">  549 </span>{-# INLINE runSnap #-}
-<span class="lineno">  550 </span>
-<span class="lineno">  551 </span>
-<span class="lineno">  552 </span>------------------------------------------------------------------------------
-<span class="lineno">  553 </span>evalSnap :: Snap a
-<span class="lineno">  554 </span>         -&gt; (ByteString -&gt; IO ())
-<span class="lineno">  555 </span>         -&gt; Request
-<span class="lineno">  556 </span>         -&gt; Iteratee IO a
-<span class="lineno">  557 </span><span class="decl"><span class="istickedoff">evalSnap (Snap m) logerr req = do</span>
-<span class="lineno">  558 </span><span class="spaces">    </span><span class="istickedoff">(r, _) &lt;- runStateT m ss</span>
-<span class="lineno">  559 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  560 </span><span class="spaces">    </span><span class="istickedoff">e &lt;- maybe (liftIO $ throwIO NoHandlerException)</span>
-<span class="lineno">  561 </span><span class="spaces">               </span><span class="istickedoff">return</span>
-<span class="lineno">  562 </span><span class="spaces">               </span><span class="istickedoff">r</span>
+<span class="lineno">  520 </span>
+<span class="lineno">  521 </span>------------------------------------------------------------------------------
+<span class="lineno">  522 </span>-- | This exception is thrown if the handler you supply to 'runSnap' fails.
+<span class="lineno">  523 </span>data NoHandlerException = NoHandlerException
+<span class="lineno">  524 </span>   deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>, <span class="decl"><span class="nottickedoff">Typeable</span></span>)
+<span class="lineno">  525 </span>
+<span class="lineno">  526 </span>
+<span class="lineno">  527 </span>------------------------------------------------------------------------------
+<span class="lineno">  528 </span>instance Show NoHandlerException where
+<span class="lineno">  529 </span>    <span class="decl"><span class="istickedoff">show NoHandlerException = &quot;No handler for request&quot;</span></span>
+<span class="lineno">  530 </span>
+<span class="lineno">  531 </span>
+<span class="lineno">  532 </span>------------------------------------------------------------------------------
+<span class="lineno">  533 </span>instance Exception NoHandlerException
+<span class="lineno">  534 </span>
+<span class="lineno">  535 </span>
+<span class="lineno">  536 </span>------------------------------------------------------------------------------
+<span class="lineno">  537 </span>-- | Runs a 'Snap' monad action in the 'Iteratee IO' monad.
+<span class="lineno">  538 </span>runSnap :: Snap a
+<span class="lineno">  539 </span>        -&gt; (ByteString -&gt; IO ())
+<span class="lineno">  540 </span>        -&gt; Request
+<span class="lineno">  541 </span>        -&gt; Iteratee IO (Request,Response)
+<span class="lineno">  542 </span><span class="decl"><span class="istickedoff">runSnap (Snap m) logerr req = do</span>
+<span class="lineno">  543 </span><span class="spaces">    </span><span class="istickedoff">(r, ss') &lt;- runStateT m ss</span>
+<span class="lineno">  544 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  545 </span><span class="spaces">    </span><span class="istickedoff">e &lt;- maybe (return $ Left fourohfour)</span>
+<span class="lineno">  546 </span><span class="spaces">               </span><span class="istickedoff">return</span>
+<span class="lineno">  547 </span><span class="spaces">               </span><span class="istickedoff">r</span>
+<span class="lineno">  548 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  549 </span><span class="spaces">    </span><span class="istickedoff">-- is this a case of early termination?</span>
+<span class="lineno">  550 </span><span class="spaces">    </span><span class="istickedoff">let resp = case e of</span>
+<span class="lineno">  551 </span><span class="spaces">                 </span><span class="istickedoff">Left x  -&gt; x</span>
+<span class="lineno">  552 </span><span class="spaces">                 </span><span class="istickedoff">Right _ -&gt; _snapResponse ss'</span>
+<span class="lineno">  553 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  554 </span><span class="spaces">    </span><span class="istickedoff">return (_snapRequest ss', resp)</span>
+<span class="lineno">  555 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  556 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  557 </span><span class="spaces">    </span><span class="istickedoff">fourohfour = setContentLength <span class="nottickedoff">3</span> $</span>
+<span class="lineno">  558 </span><span class="spaces">                 </span><span class="istickedoff">setResponseStatus 404 &quot;Not Found&quot; $</span>
+<span class="lineno">  559 </span><span class="spaces">                 </span><span class="istickedoff">modifyResponseBody <span class="nottickedoff">(&gt;. enumBS &quot;404&quot;)</span> $</span>
+<span class="lineno">  560 </span><span class="spaces">                 </span><span class="istickedoff">emptyResponse</span>
+<span class="lineno">  561 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  562 </span><span class="spaces">    </span><span class="istickedoff">dresp = emptyResponse { rspHttpVersion = rqVersion req }</span>
 <span class="lineno">  563 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  564 </span><span class="spaces">    </span><span class="istickedoff">-- is this a case of early termination?</span>
-<span class="lineno">  565 </span><span class="spaces">    </span><span class="istickedoff">case e of</span>
-<span class="lineno">  566 </span><span class="spaces">      </span><span class="istickedoff">Left _  -&gt; <span class="nottickedoff">liftIO $ throwIO $ ErrorCall &quot;no value&quot;</span></span>
-<span class="lineno">  567 </span><span class="spaces">      </span><span class="istickedoff">Right x -&gt; return x</span>
-<span class="lineno">  568 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  569 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">dresp = emptyResponse { rspHttpVersion = rqVersion req }</span></span>
-<span class="lineno">  570 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req <span class="nottickedoff">dresp</span> <span class="nottickedoff">logerr</span></span></span>
-<span class="lineno">  571 </span>{-# INLINE evalSnap #-}
-<span class="lineno">  572 </span>
-<span class="lineno">  573 </span>
-<span class="lineno">  574 </span>
-<span class="lineno">  575 </span>------------------------------------------------------------------------------
-<span class="lineno">  576 </span>-- | See 'rqParam'. Looks up a value for the given named parameter in the
-<span class="lineno">  577 </span>-- 'Request'. If more than one value was entered for the given parameter name,
-<span class="lineno">  578 </span>-- 'getParam' gloms the values together with:
-<span class="lineno">  579 </span>--
-<span class="lineno">  580 </span>-- @    'S.intercalate' \&quot; \&quot;@
-<span class="lineno">  581 </span>--
-<span class="lineno">  582 </span>getParam :: ByteString          -- ^ parameter name to look up
-<span class="lineno">  583 </span>         -&gt; Snap (Maybe ByteString)
-<span class="lineno">  584 </span><span class="decl"><span class="istickedoff">getParam k = do</span>
-<span class="lineno">  585 </span><span class="spaces">    </span><span class="istickedoff">rq &lt;- getRequest</span>
-<span class="lineno">  586 </span><span class="spaces">    </span><span class="istickedoff">return $ liftM (S.intercalate &quot; &quot;) $ rqParam k rq</span></span>
-<span class="lineno">  587 </span>
+<span class="lineno">  564 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req dresp <span class="nottickedoff">logerr</span></span></span>
+<span class="lineno">  565 </span>{-# INLINE runSnap #-}
+<span class="lineno">  566 </span>
+<span class="lineno">  567 </span>
+<span class="lineno">  568 </span>------------------------------------------------------------------------------
+<span class="lineno">  569 </span>evalSnap :: Snap a
+<span class="lineno">  570 </span>         -&gt; (ByteString -&gt; IO ())
+<span class="lineno">  571 </span>         -&gt; Request
+<span class="lineno">  572 </span>         -&gt; Iteratee IO a
+<span class="lineno">  573 </span><span class="decl"><span class="istickedoff">evalSnap (Snap m) logerr req = do</span>
+<span class="lineno">  574 </span><span class="spaces">    </span><span class="istickedoff">(r, _) &lt;- runStateT m ss</span>
+<span class="lineno">  575 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  576 </span><span class="spaces">    </span><span class="istickedoff">e &lt;- maybe (liftIO $ throwIO NoHandlerException)</span>
+<span class="lineno">  577 </span><span class="spaces">               </span><span class="istickedoff">return</span>
+<span class="lineno">  578 </span><span class="spaces">               </span><span class="istickedoff">r</span>
+<span class="lineno">  579 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  580 </span><span class="spaces">    </span><span class="istickedoff">-- is this a case of early termination?</span>
+<span class="lineno">  581 </span><span class="spaces">    </span><span class="istickedoff">case e of</span>
+<span class="lineno">  582 </span><span class="spaces">      </span><span class="istickedoff">Left _  -&gt; <span class="nottickedoff">liftIO $ throwIO $ ErrorCall &quot;no value&quot;</span></span>
+<span class="lineno">  583 </span><span class="spaces">      </span><span class="istickedoff">Right x -&gt; return x</span>
+<span class="lineno">  584 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  585 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">dresp = emptyResponse { rspHttpVersion = rqVersion req }</span></span>
+<span class="lineno">  586 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req <span class="nottickedoff">dresp</span> <span class="nottickedoff">logerr</span></span></span>
+<span class="lineno">  587 </span>{-# INLINE evalSnap #-}
 <span class="lineno">  588 </span>
+<span class="lineno">  589 </span>
+<span class="lineno">  590 </span>
+<span class="lineno">  591 </span>------------------------------------------------------------------------------
+<span class="lineno">  592 </span>-- | See 'rqParam'. Looks up a value for the given named parameter in the
+<span class="lineno">  593 </span>-- 'Request'. If more than one value was entered for the given parameter name,
+<span class="lineno">  594 </span>-- 'getParam' gloms the values together with:
+<span class="lineno">  595 </span>--
+<span class="lineno">  596 </span>-- @    'S.intercalate' \&quot; \&quot;@
+<span class="lineno">  597 </span>--
+<span class="lineno">  598 </span>getParam :: ByteString          -- ^ parameter name to look up
+<span class="lineno">  599 </span>         -&gt; Snap (Maybe ByteString)
+<span class="lineno">  600 </span><span class="decl"><span class="istickedoff">getParam k = do</span>
+<span class="lineno">  601 </span><span class="spaces">    </span><span class="istickedoff">rq &lt;- getRequest</span>
+<span class="lineno">  602 </span><span class="spaces">    </span><span class="istickedoff">return $ liftM (S.intercalate &quot; &quot;) $ rqParam k rq</span></span>
+<span class="lineno">  603 </span>
+<span class="lineno">  604 </span>
 
 </pre>
 </html>

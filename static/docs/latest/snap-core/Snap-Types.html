@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.2.7.1: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.2.8: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Types.html"
 >Source code</A
@@ -5643,6 +5643,7 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="doc"
+><P
 >Adds the given strict <TT
 ><A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
@@ -5657,7 +5658,17 @@ for HTTP as well as the <TT
 >Snap</A
 ></TT
 > monad state.
-</TD
+</P
+><P
+>Warning: This function is intentionally non-strict. If any pure
+ exceptions are raised by the expression creating the <TT
+><A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TT
+>,
+ the exception won't actually be raised within the Snap handler.
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -5691,6 +5702,7 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="doc"
+><P
 >Adds the given lazy <TT
 ><A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text-Lazy.html#t%3AText"
 >Text</A
@@ -5705,7 +5717,17 @@ for HTTP as well as the <TT
 >Snap</A
 ></TT
 > monad state.
-</TD
+</P
+><P
+>Warning: This function is intentionally non-strict. If any pure
+ exceptions are raised by the expression creating the <TT
+><A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TT
+>,
+ the exception won't actually be raised within the Snap handler.
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -5739,6 +5761,7 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="doc"
+><P
 >Adds the given strict <TT
 ><A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
 >Text</A
@@ -5753,7 +5776,17 @@ for HTTP as well as the <TT
 >Snap</A
 ></TT
 > monad state.
-</TD
+</P
+><P
+>Warning: This function is intentionally non-strict. If any pure
+ exceptions are raised by the expression creating the <TT
+><A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TT
+>,
+ the exception won't actually be raised within the Snap handler.
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -5787,6 +5820,7 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="doc"
+><P
 >Adds the given lazy <TT
 ><A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
 >ByteString</A
@@ -5801,7 +5835,17 @@ for HTTP as well as the <TT
 >Snap</A
 ></TT
 > monad state.
-</TD
+</P
+><P
+>Warning: This function is intentionally non-strict. If any pure
+ exceptions are raised by the expression creating the <TT
+><A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TT
+>,
+ the exception won't actually be raised within the Snap handler.
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
