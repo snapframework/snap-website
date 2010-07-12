@@ -99,7 +99,7 @@
           <p>
             <strong>Carl Howells</strong> is a veteran of web app
             development in four different languages in his time
-            at <a href="http://www.janrain.com/">JanRain</a>.  He
+            at <a href="http://www.janrain.com/">Janrain</a>.  He
             spends his free time trying to become good at video and
             board games he can't afford to devote the necessary time
             to.
@@ -122,7 +122,6 @@
                  ><tt>#snapframework</tt></a>
               channel on the <a href="http://freenode.net/">freenode</a> IRC
               network.</li>
-                                
             <li><b>Email:</b> join
               our <a href="http://mailman-mail5.webfaction.com/listinfo/snap">mailing
               list.</a></li>
