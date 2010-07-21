@@ -95,11 +95,7 @@ interaction with templates within web apps.
 ><TD CLASS="decl"
 ><A HREF="#v%3AnewTemplateDirectory"
 >newTemplateDirectory</A
-> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: (MonadIO m, MonadIO n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
 > -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
@@ -119,11 +115,7 @@ interaction with templates within web apps.
 ><TD CLASS="decl"
 ><A HREF="#v%3AnewTemplateDirectory%27"
 >newTemplateDirectory'</A
-> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: (MonadIO m, MonadIO n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
 > -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
@@ -141,9 +133,7 @@ interaction with templates within web apps.
 >getDirectoryTS</A
 > :: (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+> m, MonadIO n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
 >TemplateDirectory</A
 > m -&gt; n (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
@@ -157,11 +147,7 @@ interaction with templates within web apps.
 ><TD CLASS="decl"
 ><A HREF="#v%3AreloadTemplateDirectory"
 >reloadTemplateDirectory</A
-> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+> :: (MonadIO m, MonadIO n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
 >TemplateDirectory</A
 > m -&gt; n (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
 >Either</A
@@ -234,11 +220,7 @@ interaction with templates within web apps.
 ></A
 ><B
 >newTemplateDirectory</B
-> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: (MonadIO m, MonadIO n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
 > -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
@@ -282,11 +264,7 @@ interaction with templates within web apps.
 ></A
 ><B
 >newTemplateDirectory'</B
-> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: (MonadIO m, MonadIO n) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
 > -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
@@ -328,9 +306,7 @@ interaction with templates within web apps.
 >getDirectoryTS</B
 > :: (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+> m, MonadIO n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
 >TemplateDirectory</A
 > m -&gt; n (<A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
@@ -367,11 +343,7 @@ interaction with templates within web apps.
 ></A
 ><B
 >reloadTemplateDirectory</B
-> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
+> :: (MonadIO m, MonadIO n) =&gt; <A HREF="Text-Templating-Heist-TemplateDirectory.html#t%3ATemplateDirectory"
 >TemplateDirectory</A
 > m -&gt; n (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
 >Either</A
@@ -401,7 +373,7 @@ interaction with templates within web apps.
 ><TD CLASS="botbar"
 >Produced by <A HREF="http://www.haskell.org/haddock/"
 >Haddock</A
-> version 2.6.1</TD
+> version 2.6.0</TD
 ></TR
 ></TABLE
 ></BODY
