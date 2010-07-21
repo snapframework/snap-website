@@ -7,6 +7,7 @@
       <li><a href="#live-sites">Is anyone using Snap in production?</a></li>
       <li><a href="#high-level">Where's the high-level functionality?</a></li>
       <li><a href="#install">Why can't I install Snap?</a></li>
+      <li><a href="#libev">How do I get the libev backend working?</a></li>
       <li><a href="#help">How can I help?</a></li>
     </ol>
 
@@ -42,6 +43,14 @@
     <p>If that didn't work, and you're getting an error that mentions
     monads-fd or transformers, try running "<code>cabal install --reinstall
     monads-fd</code>" (or transformers).</p>
+
+    <h3 id="libev">How do I get the libev backend working?</h3>
+
+    <p><code>cabal install snap-server -flibev</code></p>
+
+    <p>If you get an undefined symbol 'EVFLAG_SIGNALFD' then you'll need to
+    install the latest <a href="http://software.schmorp.de/pkg/libev.html">libev</a>
+    from <a href="http://dist.schmorp.de/libev/">source</a>.</p>
 
     <h3 id="help">How can I help?</h3>
 
