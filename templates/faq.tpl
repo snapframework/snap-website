@@ -19,6 +19,7 @@
     <ul>
       <li><a href="http://snapframework.com">http://snapframework.com</a> (this site)</li>
       <li><a href="http://darcsden.com">http://darcsden.com</a></li>
+      <li><a href="http://ego.fm">http://ego.fm</a></li>
     </ul>
 
     <h3 id="high-level">Where's the high-level functionality?</h3>
