@@ -100,7 +100,7 @@ span.spaces    { background: white }
 <span class="lineno">   89 </span>
 <span class="lineno">   90 </span>
 <span class="lineno">   91 </span>------------------------------------------------------------------------------
-<span class="lineno">   92 </span>data <span class="istickedoff"><span class="nottickedoff">SnapState</span></span> = SnapState
+<span class="lineno">   92 </span>data <span class="istickedoff">SnapState</span> = SnapState
 <span class="lineno">   93 </span>    { _snapRequest  :: Request
 <span class="lineno">   94 </span>    , _snapResponse :: Response
 <span class="lineno">   95 </span>    , _snapLogError :: ByteString -&gt; IO () }
@@ -127,14 +127,14 @@ span.spaces    { background: white }
 <span class="lineno">  116 </span>
 <span class="lineno">  117 </span>------------------------------------------------------------------------------
 <span class="lineno">  118 </span>instance MonadCatchIO Snap where
-<span class="lineno">  119 </span>    <span class="nottickedoff"><span class="decl"><span class="nottickedoff">catch (Snap m) handler = Snap $ do</span>
-<span class="lineno">  120 </span><span class="spaces">        </span><span class="nottickedoff">x &lt;- try m</span>
-<span class="lineno">  121 </span><span class="spaces">        </span><span class="nottickedoff">case x of</span>
-<span class="lineno">  122 </span><span class="spaces">          </span><span class="nottickedoff">(Left e)  -&gt; let (Snap z) = handler e in z</span>
-<span class="lineno">  123 </span><span class="spaces">          </span><span class="nottickedoff">(Right y) -&gt; return y</span></span></span>
+<span class="lineno">  119 </span>    <span class="istickedoff"><span class="decl"><span class="istickedoff">catch (Snap m) handler = Snap $ do</span>
+<span class="lineno">  120 </span><span class="spaces">        </span><span class="istickedoff">x &lt;- try m</span>
+<span class="lineno">  121 </span><span class="spaces">        </span><span class="istickedoff">case x of</span>
+<span class="lineno">  122 </span><span class="spaces">          </span><span class="istickedoff">(Left e)  -&gt; let (Snap z) = handler e in z</span>
+<span class="lineno">  123 </span><span class="spaces">          </span><span class="istickedoff">(Right y) -&gt; return y</span></span></span>
 <span class="lineno">  124 </span>
-<span class="lineno">  125 </span>    <span class="decl"><span class="nottickedoff">block (Snap m) = Snap $ block m</span></span>
-<span class="lineno">  126 </span>    <span class="decl"><span class="nottickedoff">unblock (Snap m) = Snap $ unblock m</span></span>
+<span class="lineno">  125 </span>    <span class="decl"><span class="istickedoff">block (Snap m) = Snap $ block m</span></span>
+<span class="lineno">  126 </span>    <span class="decl"><span class="istickedoff">unblock (Snap m) = Snap $ unblock m</span></span>
 <span class="lineno">  127 </span>
 <span class="lineno">  128 </span>
 <span class="lineno">  129 </span>------------------------------------------------------------------------------
@@ -263,9 +263,9 @@ span.spaces    { background: white }
 <span class="lineno">  252 </span>-- Appends n bytes of the path info to the context path with a
 <span class="lineno">  253 </span>-- trailing slash.
 <span class="lineno">  254 </span>updateContextPath :: Int -&gt; Request -&gt; Request
-<span class="lineno">  255 </span><span class="decl"><span class="istickedoff">updateContextPath n req | <span class="tickonlytrue">n &gt; 0</span>     = req { rqContextPath = ctx</span>
+<span class="lineno">  255 </span><span class="decl"><span class="istickedoff">updateContextPath n req | n &gt; 0     = req { rqContextPath = ctx</span>
 <span class="lineno">  256 </span><span class="spaces">                                          </span><span class="istickedoff">, rqPathInfo    = pinfo }</span>
-<span class="lineno">  257 </span><span class="spaces">                        </span><span class="istickedoff">| <span class="nottickedoff">otherwise</span> = <span class="nottickedoff">req</span></span>
+<span class="lineno">  257 </span><span class="spaces">                        </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = req</span>
 <span class="lineno">  258 </span><span class="spaces">  </span><span class="istickedoff">where</span>
 <span class="lineno">  259 </span><span class="spaces">    </span><span class="istickedoff">ctx'  = S.take n (rqPathInfo req)</span>
 <span class="lineno">  260 </span><span class="spaces">    </span><span class="istickedoff">ctx   = S.concat [rqContextPath req, ctx', &quot;/&quot;]</span>
@@ -282,7 +282,7 @@ span.spaces    { background: white }
 <span class="lineno">  271 </span><span class="decl"><span class="istickedoff">pathWith c p action = do</span>
 <span class="lineno">  272 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
 <span class="lineno">  273 </span><span class="spaces">    </span><span class="istickedoff">unless (c p (rqPathInfo req)) pass</span>
-<span class="lineno">  274 </span><span class="spaces">    </span><span class="istickedoff">localRequest <span class="nottickedoff">(updateContextPath $ S.length p)</span> action</span></span>
+<span class="lineno">  274 </span><span class="spaces">    </span><span class="istickedoff">localRequest (updateContextPath $ S.length p) action</span></span>
 <span class="lineno">  275 </span>
 <span class="lineno">  276 </span>
 <span class="lineno">  277 </span>------------------------------------------------------------------------------
@@ -333,7 +333,7 @@ span.spaces    { background: white }
 <span class="lineno">  322 </span>------------------------------------------------------------------------------
 <span class="lineno">  323 </span>-- | Local Snap monad version of 'modify'.
 <span class="lineno">  324 </span>smodify :: (SnapState -&gt; SnapState) -&gt; Snap ()
-<span class="lineno">  325 </span><span class="decl"><span class="istickedoff">smodify f = Snap $ modify f &gt;&gt; return (Just $ Right <span class="nottickedoff">()</span>)</span></span>
+<span class="lineno">  325 </span><span class="decl"><span class="istickedoff">smodify f = Snap $ modify f &gt;&gt; return (Just $ Right ())</span></span>
 <span class="lineno">  326 </span>{-# INLINE smodify #-}
 <span class="lineno">  327 </span>
 <span class="lineno">  328 </span>
@@ -382,8 +382,8 @@ span.spaces    { background: white }
 <span class="lineno">  371 </span>------------------------------------------------------------------------------
 <span class="lineno">  372 </span>-- | Log an error message in the 'Snap' monad
 <span class="lineno">  373 </span>logError :: ByteString -&gt; Snap ()
-<span class="lineno">  374 </span><span class="decl"><span class="nottickedoff">logError s = Snap $ gets _snapLogError &gt;&gt;= (\l -&gt; liftIO $ l s)</span>
-<span class="lineno">  375 </span><span class="spaces">                                       </span><span class="nottickedoff">&gt;&gt;  return (Just $ Right ())</span></span>
+<span class="lineno">  374 </span><span class="decl"><span class="istickedoff">logError s = Snap $ gets _snapLogError &gt;&gt;= (\l -&gt; liftIO $ l s)</span>
+<span class="lineno">  375 </span><span class="spaces">                                       </span><span class="istickedoff">&gt;&gt;  return (Just $ Right <span class="nottickedoff">()</span>)</span></span>
 <span class="lineno">  376 </span>{-# INLINE logError #-}
 <span class="lineno">  377 </span>
 <span class="lineno">  378 </span>
@@ -425,7 +425,7 @@ span.spaces    { background: white }
 <span class="lineno">  414 </span>-- exceptions are raised by the expression creating the 'ByteString',
 <span class="lineno">  415 </span>-- the exception won't actually be raised within the Snap handler.
 <span class="lineno">  416 </span>writeText :: T.Text -&gt; Snap ()
-<span class="lineno">  417 </span><span class="decl"><span class="nottickedoff">writeText s = writeBS $ T.encodeUtf8 s</span></span>
+<span class="lineno">  417 </span><span class="decl"><span class="istickedoff">writeText s = writeBS $ T.encodeUtf8 s</span></span>
 <span class="lineno">  418 </span>
 <span class="lineno">  419 </span>
 <span class="lineno">  420 </span>------------------------------------------------------------------------------
@@ -436,7 +436,7 @@ span.spaces    { background: white }
 <span class="lineno">  425 </span>-- exceptions are raised by the expression creating the 'ByteString',
 <span class="lineno">  426 </span>-- the exception won't actually be raised within the Snap handler.
 <span class="lineno">  427 </span>writeLazyText :: LT.Text -&gt; Snap ()
-<span class="lineno">  428 </span><span class="decl"><span class="nottickedoff">writeLazyText s = writeLBS $ LT.encodeUtf8 s</span></span>
+<span class="lineno">  428 </span><span class="decl"><span class="istickedoff">writeLazyText s = writeLBS $ LT.encodeUtf8 s</span></span>
 <span class="lineno">  429 </span>
 <span class="lineno">  430 </span>
 <span class="lineno">  431 </span>------------------------------------------------------------------------------
@@ -461,7 +461,7 @@ span.spaces    { background: white }
 <span class="lineno">  450 </span><span class="decl"><span class="istickedoff">localRequest f m = do</span>
 <span class="lineno">  451 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
 <span class="lineno">  452 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  453 </span><span class="spaces">    </span><span class="istickedoff">runAct req &lt;|&gt; (putRequest <span class="nottickedoff">req</span> &gt;&gt; pass)</span>
+<span class="lineno">  453 </span><span class="spaces">    </span><span class="istickedoff">runAct req &lt;|&gt; (putRequest req &gt;&gt; pass)</span>
 <span class="lineno">  454 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  455 </span><span class="spaces">  </span><span class="istickedoff">where</span>
 <span class="lineno">  456 </span><span class="spaces">    </span><span class="istickedoff">runAct req = do</span>
@@ -475,14 +475,14 @@ span.spaces    { background: white }
 <span class="lineno">  464 </span>------------------------------------------------------------------------------
 <span class="lineno">  465 </span>-- | Fetches the 'Request' from state and hands it to the given action.
 <span class="lineno">  466 </span>withRequest :: (Request -&gt; Snap a) -&gt; Snap a
-<span class="lineno">  467 </span><span class="decl"><span class="nottickedoff">withRequest = (getRequest &gt;&gt;=)</span></span>
+<span class="lineno">  467 </span><span class="decl"><span class="istickedoff">withRequest = (getRequest &gt;&gt;=)</span></span>
 <span class="lineno">  468 </span>{-# INLINE withRequest #-}
 <span class="lineno">  469 </span>
 <span class="lineno">  470 </span>
 <span class="lineno">  471 </span>------------------------------------------------------------------------------
 <span class="lineno">  472 </span>-- | Fetches the 'Response' from state and hands it to the given action.
 <span class="lineno">  473 </span>withResponse :: (Response -&gt; Snap a) -&gt; Snap a
-<span class="lineno">  474 </span><span class="decl"><span class="nottickedoff">withResponse = (getResponse &gt;&gt;=)</span></span>
+<span class="lineno">  474 </span><span class="decl"><span class="istickedoff">withResponse = (getResponse &gt;&gt;=)</span></span>
 <span class="lineno">  475 </span>{-# INLINE withResponse #-}
 <span class="lineno">  476 </span>
 <span class="lineno">  477 </span>
@@ -500,7 +500,7 @@ span.spaces    { background: white }
 <span class="lineno">  489 </span>-- functionality to ensure that its transformation can be trusted,
 <span class="lineno">  490 </span>-- when used correctly.
 <span class="lineno">  491 </span>ipHeaderFilter :: Snap ()
-<span class="lineno">  492 </span><span class="decl"><span class="nottickedoff">ipHeaderFilter = ipHeaderFilter' &quot;x-forwarded-for&quot;</span></span>
+<span class="lineno">  492 </span><span class="decl"><span class="istickedoff">ipHeaderFilter = ipHeaderFilter' &quot;x-forwarded-for&quot;</span></span>
 <span class="lineno">  493 </span>
 <span class="lineno">  494 </span>
 <span class="lineno">  495 </span>------------------------------------------------------------------------------
@@ -517,16 +517,16 @@ span.spaces    { background: white }
 <span class="lineno">  506 </span>-- functionality to ensure that its transformation can be trusted,
 <span class="lineno">  507 </span>-- when used correctly.
 <span class="lineno">  508 </span>ipHeaderFilter' :: CIB.CIByteString -&gt; Snap ()
-<span class="lineno">  509 </span><span class="decl"><span class="nottickedoff">ipHeaderFilter' header = do</span>
-<span class="lineno">  510 </span><span class="spaces">    </span><span class="nottickedoff">headerContents &lt;- getHeader header &lt;$&gt; getRequest</span>
-<span class="lineno">  511 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  512 </span><span class="spaces">    </span><span class="nottickedoff">let whitespace = &quot; \t\r\n&quot;</span>
-<span class="lineno">  513 </span><span class="spaces">        </span><span class="nottickedoff">ipChrs = &quot;.0123456789&quot;</span>
-<span class="lineno">  514 </span><span class="spaces">        </span><span class="nottickedoff">trim f s = f (`elem` s)</span>
-<span class="lineno">  515 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  516 </span><span class="spaces">        </span><span class="nottickedoff">clean = trim S.takeWhile ipChrs . trim S.dropWhile whitespace</span>
-<span class="lineno">  517 </span><span class="spaces">        </span><span class="nottickedoff">setIP ip = modifyRequest $ \rq -&gt; rq { rqRemoteAddr = clean ip }</span>
-<span class="lineno">  518 </span><span class="spaces">    </span><span class="nottickedoff">maybe (return ()) setIP headerContents</span></span>
+<span class="lineno">  509 </span><span class="decl"><span class="istickedoff">ipHeaderFilter' header = do</span>
+<span class="lineno">  510 </span><span class="spaces">    </span><span class="istickedoff">headerContents &lt;- getHeader header &lt;$&gt; getRequest</span>
+<span class="lineno">  511 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  512 </span><span class="spaces">    </span><span class="istickedoff">let whitespace = &quot; \t\r\n&quot;</span>
+<span class="lineno">  513 </span><span class="spaces">        </span><span class="istickedoff">ipChrs = &quot;.0123456789&quot;</span>
+<span class="lineno">  514 </span><span class="spaces">        </span><span class="istickedoff">trim f s = f (`elem` s)</span>
+<span class="lineno">  515 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  516 </span><span class="spaces">        </span><span class="istickedoff">clean = trim S.takeWhile ipChrs . trim S.dropWhile whitespace</span>
+<span class="lineno">  517 </span><span class="spaces">        </span><span class="istickedoff">setIP ip = modifyRequest $ \rq -&gt; rq { rqRemoteAddr = clean ip }</span>
+<span class="lineno">  518 </span><span class="spaces">    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) setIP headerContents</span></span>
 <span class="lineno">  519 </span>
 <span class="lineno">  520 </span>
 <span class="lineno">  521 </span>------------------------------------------------------------------------------
@@ -565,14 +565,14 @@ span.spaces    { background: white }
 <span class="lineno">  554 </span><span class="spaces">    </span><span class="istickedoff">return (_snapRequest ss', resp)</span>
 <span class="lineno">  555 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  556 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  557 </span><span class="spaces">    </span><span class="istickedoff">fourohfour = setContentLength <span class="nottickedoff">3</span> $</span>
+<span class="lineno">  557 </span><span class="spaces">    </span><span class="istickedoff">fourohfour = setContentLength 3 $</span>
 <span class="lineno">  558 </span><span class="spaces">                 </span><span class="istickedoff">setResponseStatus 404 &quot;Not Found&quot; $</span>
-<span class="lineno">  559 </span><span class="spaces">                 </span><span class="istickedoff">modifyResponseBody <span class="nottickedoff">(&gt;. enumBS &quot;404&quot;)</span> $</span>
+<span class="lineno">  559 </span><span class="spaces">                 </span><span class="istickedoff">modifyResponseBody (&gt;. enumBS &quot;404&quot;) $</span>
 <span class="lineno">  560 </span><span class="spaces">                 </span><span class="istickedoff">emptyResponse</span>
 <span class="lineno">  561 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  562 </span><span class="spaces">    </span><span class="istickedoff">dresp = emptyResponse { rspHttpVersion = rqVersion req }</span>
 <span class="lineno">  563 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  564 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req dresp <span class="nottickedoff">logerr</span></span></span>
+<span class="lineno">  564 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req dresp logerr</span></span>
 <span class="lineno">  565 </span>{-# INLINE runSnap #-}
 <span class="lineno">  566 </span>
 <span class="lineno">  567 </span>
@@ -590,11 +590,11 @@ span.spaces    { background: white }
 <span class="lineno">  579 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  580 </span><span class="spaces">    </span><span class="istickedoff">-- is this a case of early termination?</span>
 <span class="lineno">  581 </span><span class="spaces">    </span><span class="istickedoff">case e of</span>
-<span class="lineno">  582 </span><span class="spaces">      </span><span class="istickedoff">Left _  -&gt; <span class="nottickedoff">liftIO $ throwIO $ ErrorCall &quot;no value&quot;</span></span>
+<span class="lineno">  582 </span><span class="spaces">      </span><span class="istickedoff">Left _  -&gt; liftIO $ throwIO $ ErrorCall &quot;no value&quot;</span>
 <span class="lineno">  583 </span><span class="spaces">      </span><span class="istickedoff">Right x -&gt; return x</span>
 <span class="lineno">  584 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  585 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">dresp = emptyResponse { rspHttpVersion = rqVersion req }</span></span>
-<span class="lineno">  586 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req <span class="nottickedoff">dresp</span> <span class="nottickedoff">logerr</span></span></span>
+<span class="lineno">  585 </span><span class="spaces">    </span><span class="istickedoff">dresp = emptyResponse { rspHttpVersion = rqVersion req }</span>
+<span class="lineno">  586 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req dresp logerr</span></span>
 <span class="lineno">  587 </span>{-# INLINE evalSnap #-}
 <span class="lineno">  588 </span>
 <span class="lineno">  589 </span>

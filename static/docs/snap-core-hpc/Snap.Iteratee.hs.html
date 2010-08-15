@@ -97,15 +97,15 @@ span.spaces    { background: white }
 <span class="lineno">   86 </span>instance (Functor m, MonadCatchIO m) =&gt;
 <span class="lineno">   87 </span>         MonadCatchIO (IterateeG s el m) where
 <span class="lineno">   88 </span>    --catch  :: Exception  e =&gt; m a -&gt; (e -&gt; m a) -&gt; m a
-<span class="lineno">   89 </span>    <span class="nottickedoff"><span class="decl"><span class="nottickedoff">catch m handler = IterateeG $ \str -&gt; do</span>
-<span class="lineno">   90 </span><span class="spaces">        </span><span class="nottickedoff">ee &lt;- try $ runIter m str</span>
-<span class="lineno">   91 </span><span class="spaces">        </span><span class="nottickedoff">case ee of</span>
-<span class="lineno">   92 </span><span class="spaces">          </span><span class="nottickedoff">(Left e)  -&gt; runIter (handler e) str</span>
-<span class="lineno">   93 </span><span class="spaces">          </span><span class="nottickedoff">(Right v) -&gt; return v</span></span></span>
+<span class="lineno">   89 </span>    <span class="istickedoff"><span class="decl"><span class="istickedoff">catch m handler = IterateeG $ \str -&gt; do</span>
+<span class="lineno">   90 </span><span class="spaces">        </span><span class="istickedoff">ee &lt;- try $ runIter m <span class="nottickedoff">str</span></span>
+<span class="lineno">   91 </span><span class="spaces">        </span><span class="istickedoff">case ee of</span>
+<span class="lineno">   92 </span><span class="spaces">          </span><span class="istickedoff">(Left e)  -&gt; runIter (handler e) <span class="nottickedoff">str</span></span>
+<span class="lineno">   93 </span><span class="spaces">          </span><span class="istickedoff">(Right v) -&gt; return v</span></span></span>
 <span class="lineno">   94 </span>
 <span class="lineno">   95 </span>    --block :: m a -&gt; m a
-<span class="lineno">   96 </span>    <span class="decl"><span class="nottickedoff">block m = IterateeG $ \str -&gt; block $ runIter m str</span></span>
-<span class="lineno">   97 </span>    <span class="decl"><span class="nottickedoff">unblock m = IterateeG $ \str -&gt; unblock $ runIter m str</span></span>
+<span class="lineno">   96 </span>    <span class="decl"><span class="istickedoff">block m = IterateeG $ \str -&gt; block $ runIter m <span class="nottickedoff">str</span></span></span>
+<span class="lineno">   97 </span>    <span class="decl"><span class="istickedoff">unblock m = IterateeG $ \str -&gt; unblock $ runIter m <span class="nottickedoff">str</span></span></span>
 <span class="lineno">   98 </span>
 <span class="lineno">   99 </span>
 <span class="lineno">  100 </span>------------------------------------------------------------------------------
@@ -351,15 +351,15 @@ span.spaces    { background: white }
 <span class="lineno">  340 </span>drop' :: (SC.StreamChunk s el, Monad m)
 <span class="lineno">  341 </span>       =&gt; Int64
 <span class="lineno">  342 </span>       -&gt; IterateeG s el m ()
-<span class="lineno">  343 </span><span class="decl"><span class="nottickedoff">drop' 0 = return ()</span>
-<span class="lineno">  344 </span><span class="spaces"></span><span class="nottickedoff">drop' n = IterateeG step</span>
-<span class="lineno">  345 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
-<span class="lineno">  346 </span><span class="spaces">  </span><span class="nottickedoff">step (Chunk str)</span>
-<span class="lineno">  347 </span><span class="spaces">    </span><span class="nottickedoff">| strlen &lt;= n  = return $ Cont (drop' (n - strlen)) Nothing</span>
-<span class="lineno">  348 </span><span class="spaces">      </span><span class="nottickedoff">where</span>
-<span class="lineno">  349 </span><span class="spaces">        </span><span class="nottickedoff">strlen = fromIntegral $ SC.length str</span>
-<span class="lineno">  350 </span><span class="spaces">  </span><span class="nottickedoff">step (Chunk str) = return $ Done () (Chunk (LL.drop (fromIntegral n) str))</span>
-<span class="lineno">  351 </span><span class="spaces">  </span><span class="nottickedoff">step stream      = return $ Done () stream</span></span>
+<span class="lineno">  343 </span><span class="decl"><span class="istickedoff">drop' 0 = return ()</span>
+<span class="lineno">  344 </span><span class="spaces"></span><span class="istickedoff">drop' n = IterateeG step</span>
+<span class="lineno">  345 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  346 </span><span class="spaces">  </span><span class="istickedoff">step (Chunk str)</span>
+<span class="lineno">  347 </span><span class="spaces">    </span><span class="istickedoff">| strlen &lt;= n  = return $ Cont (drop' (n - strlen)) Nothing</span>
+<span class="lineno">  348 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  349 </span><span class="spaces">        </span><span class="istickedoff">strlen = fromIntegral $ SC.length str</span>
+<span class="lineno">  350 </span><span class="spaces">  </span><span class="istickedoff">step (Chunk str) = return $ Done () (Chunk (LL.drop (fromIntegral n) str))</span>
+<span class="lineno">  351 </span><span class="spaces">  </span><span class="istickedoff">step stream      = <span class="nottickedoff">return $ Done () stream</span></span></span>
 <span class="lineno">  352 </span>
 <span class="lineno">  353 </span>
 <span class="lineno">  354 </span>------------------------------------------------------------------------------

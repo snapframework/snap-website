@@ -91,12 +91,12 @@ span.spaces    { background: white }
 <span class="lineno">   80 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">   81 </span><span class="spaces">    </span><span class="istickedoff">-- If a content-encoding is already set, do nothing. This prevents</span>
 <span class="lineno">   82 </span><span class="spaces">    </span><span class="istickedoff">-- &quot;withCompression $ withCompression m&quot; from ruining your day.</span>
-<span class="lineno">   83 </span><span class="spaces">    </span><span class="istickedoff">if <span class="tickonlyfalse">isJust $ getHeader &quot;Content-Encoding&quot; resp</span></span>
-<span class="lineno">   84 </span><span class="spaces">       </span><span class="istickedoff">then <span class="nottickedoff">return ()</span></span>
+<span class="lineno">   83 </span><span class="spaces">    </span><span class="istickedoff">if isJust $ getHeader &quot;Content-Encoding&quot; resp</span>
+<span class="lineno">   84 </span><span class="spaces">       </span><span class="istickedoff">then return <span class="nottickedoff">()</span></span>
 <span class="lineno">   85 </span><span class="spaces">       </span><span class="istickedoff">else do</span>
 <span class="lineno">   86 </span><span class="spaces">           </span><span class="istickedoff">let mbCt = getHeader &quot;Content-Type&quot; resp</span>
 <span class="lineno">   87 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   88 </span><span class="spaces">           </span><span class="istickedoff">debug $ &quot;withCompression', content-type is &quot; ++ <span class="nottickedoff">show mbCt</span></span>
+<span class="lineno">   88 </span><span class="spaces">           </span><span class="istickedoff">debug $ &quot;withCompression', content-type is &quot; ++ show mbCt</span>
 <span class="lineno">   89 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">   90 </span><span class="spaces">           </span><span class="istickedoff">case mbCt of</span>
 <span class="lineno">   91 </span><span class="spaces">             </span><span class="istickedoff">(Just ct) -&gt; if Set.member ct mimeTable</span>
@@ -113,7 +113,7 @@ span.spaces    { background: white }
 <span class="lineno">  102 </span><span class="spaces">        </span><span class="istickedoff">req &lt;- getRequest</span>
 <span class="lineno">  103 </span><span class="spaces">        </span><span class="istickedoff">debug $ &quot;checking accept-encoding&quot;</span>
 <span class="lineno">  104 </span><span class="spaces">        </span><span class="istickedoff">let mbAcc = getHeader &quot;Accept-Encoding&quot; req</span>
-<span class="lineno">  105 </span><span class="spaces">        </span><span class="istickedoff">debug $ &quot;accept-encoding is &quot; ++ <span class="nottickedoff">show mbAcc</span></span>
+<span class="lineno">  105 </span><span class="spaces">        </span><span class="istickedoff">debug $ &quot;accept-encoding is &quot; ++ show mbAcc</span>
 <span class="lineno">  106 </span><span class="spaces">        </span><span class="istickedoff">let s = fromMaybe <span class="nottickedoff">&quot;&quot;</span> mbAcc</span>
 <span class="lineno">  107 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  108 </span><span class="spaces">        </span><span class="istickedoff">types &lt;- liftIO $ parseAcceptEncoding s</span>
@@ -122,10 +122,10 @@ span.spaces    { background: white }
 <span class="lineno">  111 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  112 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  113 </span><span class="spaces">    </span><span class="istickedoff">chooseType []               = <span class="nottickedoff">return ()</span></span>
-<span class="lineno">  114 </span><span class="spaces">    </span><span class="istickedoff">chooseType (&quot;gzip&quot;:_)       = gzipCompression</span>
-<span class="lineno">  115 </span><span class="spaces">    </span><span class="istickedoff">chooseType (&quot;compress&quot;:_)   = compressCompression</span>
-<span class="lineno">  116 </span><span class="spaces">    </span><span class="istickedoff">chooseType (&quot;x-gzip&quot;:_)     = <span class="nottickedoff">gzipCompression</span></span>
-<span class="lineno">  117 </span><span class="spaces">    </span><span class="istickedoff">chooseType (&quot;x-compress&quot;:_) = <span class="nottickedoff">compressCompression</span></span>
+<span class="lineno">  114 </span><span class="spaces">    </span><span class="istickedoff">chooseType (&quot;gzip&quot;:_)       = gzipCompression &quot;gzip&quot;</span>
+<span class="lineno">  115 </span><span class="spaces">    </span><span class="istickedoff">chooseType (&quot;compress&quot;:_)   = compressCompression &quot;compress&quot;</span>
+<span class="lineno">  116 </span><span class="spaces">    </span><span class="istickedoff">chooseType (&quot;x-gzip&quot;:_)     = gzipCompression &quot;x-gzip&quot;</span>
+<span class="lineno">  117 </span><span class="spaces">    </span><span class="istickedoff">chooseType (&quot;x-compress&quot;:_) = compressCompression &quot;x-compress&quot;</span>
 <span class="lineno">  118 </span><span class="spaces">    </span><span class="istickedoff">chooseType (_:xs)           = chooseType xs</span></span>
 <span class="lineno">  119 </span>
 <span class="lineno">  120 </span>
@@ -148,19 +148,19 @@ span.spaces    { background: white }
 <span class="lineno">  137 </span>
 <span class="lineno">  138 </span>
 <span class="lineno">  139 </span>------------------------------------------------------------------------------
-<span class="lineno">  140 </span>gzipCompression :: Snap ()
-<span class="lineno">  141 </span><span class="decl"><span class="istickedoff">gzipCompression = modifyResponse f</span>
+<span class="lineno">  140 </span>gzipCompression :: ByteString -&gt; Snap ()
+<span class="lineno">  141 </span><span class="decl"><span class="istickedoff">gzipCompression ce = modifyResponse f</span>
 <span class="lineno">  142 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  143 </span><span class="spaces">    </span><span class="istickedoff">f = setHeader <span class="nottickedoff">&quot;Content-Encoding&quot;</span> <span class="nottickedoff">&quot;gzip&quot;</span> .</span>
+<span class="lineno">  143 </span><span class="spaces">    </span><span class="istickedoff">f = setHeader &quot;Content-Encoding&quot; ce .</span>
 <span class="lineno">  144 </span><span class="spaces">        </span><span class="istickedoff">clearContentLength .</span>
 <span class="lineno">  145 </span><span class="spaces">        </span><span class="istickedoff">modifyResponseBody gcompress</span></span>
 <span class="lineno">  146 </span>
 <span class="lineno">  147 </span>
 <span class="lineno">  148 </span>------------------------------------------------------------------------------
-<span class="lineno">  149 </span>compressCompression :: Snap ()
-<span class="lineno">  150 </span><span class="decl"><span class="istickedoff">compressCompression = modifyResponse f</span>
+<span class="lineno">  149 </span>compressCompression :: ByteString -&gt; Snap ()
+<span class="lineno">  150 </span><span class="decl"><span class="istickedoff">compressCompression ce = modifyResponse f</span>
 <span class="lineno">  151 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  152 </span><span class="spaces">    </span><span class="istickedoff">f = setHeader <span class="nottickedoff">&quot;Content-Encoding&quot;</span> <span class="nottickedoff">&quot;compress&quot;</span> .</span>
+<span class="lineno">  152 </span><span class="spaces">    </span><span class="istickedoff">f = setHeader &quot;Content-Encoding&quot; ce .</span>
 <span class="lineno">  153 </span><span class="spaces">        </span><span class="istickedoff">clearContentLength .</span>
 <span class="lineno">  154 </span><span class="spaces">        </span><span class="istickedoff">modifyResponseBody ccompress</span></span>
 <span class="lineno">  155 </span>
@@ -302,19 +302,19 @@ span.spaces    { background: white }
 <span class="lineno">  291 </span><span class="spaces">    </span><span class="istickedoff">qvalue = do</span>
 <span class="lineno">  292 </span><span class="spaces">        </span><span class="istickedoff">skipSpace</span>
 <span class="lineno">  293 </span><span class="spaces">        </span><span class="istickedoff">char ';'</span>
-<span class="lineno">  294 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">skipSpace</span></span>
-<span class="lineno">  295 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">char 'q'</span></span>
-<span class="lineno">  296 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">skipSpace</span></span>
-<span class="lineno">  297 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">char '='</span></span>
-<span class="lineno">  298 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">float</span></span>
-<span class="lineno">  299 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">return ()</span></span>
+<span class="lineno">  294 </span><span class="spaces">        </span><span class="istickedoff">skipSpace</span>
+<span class="lineno">  295 </span><span class="spaces">        </span><span class="istickedoff">char 'q'</span>
+<span class="lineno">  296 </span><span class="spaces">        </span><span class="istickedoff">skipSpace</span>
+<span class="lineno">  297 </span><span class="spaces">        </span><span class="istickedoff">char '='</span>
+<span class="lineno">  298 </span><span class="spaces">        </span><span class="istickedoff">float</span>
+<span class="lineno">  299 </span><span class="spaces">        </span><span class="istickedoff">return <span class="nottickedoff">()</span></span>
 <span class="lineno">  300 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  301 </span><span class="spaces">    </span><span class="istickedoff">coding = string &quot;*&quot; &lt;|&gt; takeWhile isCodingChar</span>
 <span class="lineno">  302 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  303 </span><span class="spaces">    </span><span class="istickedoff">isCodingChar ch = isDigit ch || isAlpha_ascii ch || ch == '-' || ch == '_'</span>
 <span class="lineno">  304 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  305 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">float = takeWhile isDigit &gt;&gt;</span></span>
-<span class="lineno">  306 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">option () (char '.' &gt;&gt; takeWhile isDigit &gt;&gt; pure ())</span></span></span>
+<span class="lineno">  305 </span><span class="spaces">    </span><span class="istickedoff">float = takeWhile isDigit &gt;&gt;</span>
+<span class="lineno">  306 </span><span class="spaces">            </span><span class="istickedoff">option <span class="nottickedoff">()</span> (char '.' &gt;&gt; takeWhile isDigit &gt;&gt; pure <span class="nottickedoff">()</span>)</span></span>
 <span class="lineno">  307 </span>
 <span class="lineno">  308 </span>
 <span class="lineno">  309 </span>------------------------------------------------------------------------------

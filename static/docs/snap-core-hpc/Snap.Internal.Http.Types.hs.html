@@ -111,7 +111,7 @@ span.spaces    { background: white }
 <span class="lineno">  100 </span>-- | Adds a header key-value-pair to the 'HasHeaders' datatype. If a header with
 <span class="lineno">  101 </span>-- the same name already exists, the new value is appended to the headers list.
 <span class="lineno">  102 </span>addHeader :: (HasHeaders a) =&gt; CIByteString -&gt; ByteString -&gt; a -&gt; a
-<span class="lineno">  103 </span><span class="decl"><span class="istickedoff">addHeader k v = updateHeaders $ Map.insertWith' <span class="nottickedoff">(++)</span> k [v]</span></span>
+<span class="lineno">  103 </span><span class="decl"><span class="istickedoff">addHeader k v = updateHeaders $ Map.insertWith' (++) k [v]</span></span>
 <span class="lineno">  104 </span>
 <span class="lineno">  105 </span>
 <span class="lineno">  106 </span>------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ span.spaces    { background: white }
 <span class="lineno">  120 </span>-- | Gets a header value out of a 'HasHeaders' datatype. If many headers came
 <span class="lineno">  121 </span>-- in with the same name, they will be catenated together.
 <span class="lineno">  122 </span>getHeader :: (HasHeaders a) =&gt; CIByteString -&gt; a -&gt; Maybe ByteString
-<span class="lineno">  123 </span><span class="decl"><span class="istickedoff">getHeader k a = liftM (S.intercalate <span class="nottickedoff">&quot; &quot;</span>) (Map.lookup k $ headers a)</span></span>
+<span class="lineno">  123 </span><span class="decl"><span class="istickedoff">getHeader k a = liftM (S.intercalate &quot; &quot;) (Map.lookup k $ headers a)</span></span>
 <span class="lineno">  124 </span>
 <span class="lineno">  125 </span>
 <span class="lineno">  126 </span>------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ span.spaces    { background: white }
 <span class="lineno">  151 </span>
 <span class="lineno">  152 </span>      -- | The cookie path.
 <span class="lineno">  153 </span>    , cookiePath    :: !(Maybe ByteString)
-<span class="lineno">  154 </span>} deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>, <span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>)
+<span class="lineno">  154 </span>} deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>, <span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>)
 <span class="lineno">  155 </span>
 <span class="lineno">  156 </span>
 <span class="lineno">  157 </span>------------------------------------------------------------------------------
@@ -305,7 +305,7 @@ span.spaces    { background: white }
 <span class="lineno">  294 </span><span class="spaces">      </span><span class="istickedoff">beginheaders  = &quot;Headers:\n      ========================================&quot;</span>
 <span class="lineno">  295 </span><span class="spaces">      </span><span class="istickedoff">endheaders    = &quot;  ========================================&quot;</span>
 <span class="lineno">  296 </span><span class="spaces">      </span><span class="istickedoff">hdrs' (a,b)   = (B.unpack $ unCI a) ++ &quot;: &quot; ++ (show (map B.unpack b))</span>
-<span class="lineno">  297 </span><span class="spaces">      </span><span class="istickedoff">hdrs          = &quot;      &quot; ++ (concat $ intersperse <span class="nottickedoff">&quot;\n &quot;</span> $</span>
+<span class="lineno">  297 </span><span class="spaces">      </span><span class="istickedoff">hdrs          = &quot;      &quot; ++ (concat $ intersperse &quot;\n &quot; $</span>
 <span class="lineno">  298 </span><span class="spaces">                                   </span><span class="istickedoff">map hdrs' (Map.toAscList $ rqHeaders r))</span>
 <span class="lineno">  299 </span><span class="spaces">      </span><span class="istickedoff">contentlength = concat [ &quot;content-length: &quot;</span>
 <span class="lineno">  300 </span><span class="spaces">                             </span><span class="istickedoff">, show $ rqContentLength r</span>
@@ -316,8 +316,8 @@ span.spaces    { background: white }
 <span class="lineno">  305 </span><span class="spaces">      </span><span class="istickedoff">version       = concat [ &quot;version: &quot;</span>
 <span class="lineno">  306 </span><span class="spaces">                             </span><span class="istickedoff">, show $ rqVersion r</span>
 <span class="lineno">  307 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
-<span class="lineno">  308 </span><span class="spaces">      </span><span class="istickedoff">cookies' = &quot;      &quot; ++ (concat $ intersperse <span class="nottickedoff">&quot;\n &quot;</span> $</span>
-<span class="lineno">  309 </span><span class="spaces">                              </span><span class="istickedoff">map <span class="nottickedoff">show</span> $ rqCookies r)</span>
+<span class="lineno">  308 </span><span class="spaces">      </span><span class="istickedoff">cookies'      = &quot;      &quot; ++ (concat $ intersperse &quot;\n &quot; $</span>
+<span class="lineno">  309 </span><span class="spaces">                                   </span><span class="istickedoff">map show $ rqCookies r)</span>
 <span class="lineno">  310 </span><span class="spaces">      </span><span class="istickedoff">cookies       = concat [ &quot;cookies:\n&quot;</span>
 <span class="lineno">  311 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;      ========================================\n&quot;</span>
 <span class="lineno">  312 </span><span class="spaces">                             </span><span class="istickedoff">, cookies'</span>
@@ -327,10 +327,10 @@ span.spaces    { background: white }
 <span class="lineno">  316 </span><span class="spaces">      </span><span class="istickedoff">contextpath   = concat [ &quot;contextpath: &quot;, toStr $ rqContextPath r ]</span>
 <span class="lineno">  317 </span><span class="spaces">      </span><span class="istickedoff">snapletpath   = concat [ &quot;snapletpath: &quot;, toStr $ rqSnapletPath r ]</span>
 <span class="lineno">  318 </span><span class="spaces">      </span><span class="istickedoff">uri           = concat [ &quot;URI: &quot;, toStr $ rqURI r ]</span>
-<span class="lineno">  319 </span><span class="spaces">      </span><span class="istickedoff">params' = &quot;      &quot; ++</span>
-<span class="lineno">  320 </span><span class="spaces">          </span><span class="istickedoff">(concat $ intersperse &quot;\n &quot; $</span>
-<span class="lineno">  321 </span><span class="spaces">           </span><span class="istickedoff">map (\ (a,b) -&gt; B.unpack a ++ &quot;: &quot; ++ show b) $</span>
-<span class="lineno">  322 </span><span class="spaces">           </span><span class="istickedoff">Map.toAscList $ rqParams r)</span>
+<span class="lineno">  319 </span><span class="spaces">      </span><span class="istickedoff">params'       = &quot;      &quot; ++</span>
+<span class="lineno">  320 </span><span class="spaces">                      </span><span class="istickedoff">(concat $ intersperse &quot;\n &quot; $</span>
+<span class="lineno">  321 </span><span class="spaces">                       </span><span class="istickedoff">map (\ (a,b) -&gt; B.unpack a ++ &quot;: &quot; ++ show b) $</span>
+<span class="lineno">  322 </span><span class="spaces">                       </span><span class="istickedoff">Map.toAscList $ rqParams r)</span>
 <span class="lineno">  323 </span><span class="spaces">      </span><span class="istickedoff">params        = concat [ &quot;params:\n&quot;</span>
 <span class="lineno">  324 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;      ========================================\n&quot;</span>
 <span class="lineno">  325 </span><span class="spaces">                             </span><span class="istickedoff">, params'</span>
@@ -502,11 +502,11 @@ span.spaces    { background: white }
 <span class="lineno">  491 </span>          -&gt; Response
 <span class="lineno">  492 </span><span class="decl"><span class="istickedoff">addCookie (Cookie k v mbExpTime mbDomain mbPath) = updateHeaders f</span>
 <span class="lineno">  493 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  494 </span><span class="spaces">    </span><span class="istickedoff">f       = Map.insertWith' <span class="nottickedoff">(++)</span> &quot;Set-Cookie&quot; [cookie]</span>
+<span class="lineno">  494 </span><span class="spaces">    </span><span class="istickedoff">f       = Map.insertWith' (++) &quot;Set-Cookie&quot; [cookie]</span>
 <span class="lineno">  495 </span><span class="spaces">    </span><span class="istickedoff">cookie  = S.concat [k, &quot;=&quot;, v, path, exptime, domain]</span>
-<span class="lineno">  496 </span><span class="spaces">    </span><span class="istickedoff">path    = maybe <span class="nottickedoff">&quot;&quot;</span> (S.append &quot;; path=&quot;) mbPath</span>
-<span class="lineno">  497 </span><span class="spaces">    </span><span class="istickedoff">domain  = maybe <span class="nottickedoff">&quot;&quot;</span> (S.append &quot;; domain=&quot;) mbDomain</span>
-<span class="lineno">  498 </span><span class="spaces">    </span><span class="istickedoff">exptime = maybe <span class="nottickedoff">&quot;&quot;</span> (S.append &quot;; expires=&quot; . fmt) mbExpTime</span>
+<span class="lineno">  496 </span><span class="spaces">    </span><span class="istickedoff">path    = maybe &quot;&quot; (S.append &quot;; path=&quot;) mbPath</span>
+<span class="lineno">  497 </span><span class="spaces">    </span><span class="istickedoff">domain  = maybe &quot;&quot; (S.append &quot;; domain=&quot;) mbDomain</span>
+<span class="lineno">  498 </span><span class="spaces">    </span><span class="istickedoff">exptime = maybe &quot;&quot; (S.append &quot;; expires=&quot; . fmt) mbExpTime</span>
 <span class="lineno">  499 </span><span class="spaces">    </span><span class="istickedoff">fmt     = fromStr . formatTime defaultTimeLocale &quot;%a, %d-%b-%Y %H:%M:%S GMT&quot;</span></span>
 <span class="lineno">  500 </span>
 <span class="lineno">  501 </span>
@@ -580,10 +580,10 @@ span.spaces    { background: white }
 <span class="lineno">  569 </span>
 <span class="lineno">  570 </span>#else
 <span class="lineno">  571 </span>
-<span class="lineno">  572 </span><span class="decl"><span class="nottickedoff">formatLogTime t = do</span>
-<span class="lineno">  573 </span><span class="spaces">    </span><span class="nottickedoff">ptr &lt;- mallocBytes 40</span>
-<span class="lineno">  574 </span><span class="spaces">    </span><span class="nottickedoff">c_format_log_time t ptr</span>
-<span class="lineno">  575 </span><span class="spaces">    </span><span class="nottickedoff">S.unsafePackMallocCString ptr</span></span>
+<span class="lineno">  572 </span><span class="decl"><span class="istickedoff">formatLogTime t = do</span>
+<span class="lineno">  573 </span><span class="spaces">    </span><span class="istickedoff">ptr &lt;- mallocBytes 40</span>
+<span class="lineno">  574 </span><span class="spaces">    </span><span class="istickedoff">c_format_log_time t ptr</span>
+<span class="lineno">  575 </span><span class="spaces">    </span><span class="istickedoff">S.unsafePackMallocCString ptr</span></span>
 <span class="lineno">  576 </span>
 <span class="lineno">  577 </span><span class="decl"><span class="istickedoff">formatHttpTime t = do</span>
 <span class="lineno">  578 </span><span class="spaces">    </span><span class="istickedoff">ptr &lt;- mallocBytes 40</span>
@@ -629,7 +629,7 @@ span.spaces    { background: white }
 <span class="lineno">  618 </span><span class="spaces">        </span><span class="istickedoff">hx &lt;- take 2</span>
 <span class="lineno">  619 </span><span class="spaces">        </span><span class="istickedoff">when (S.length hx /= 2 ||</span>
 <span class="lineno">  620 </span><span class="spaces">               </span><span class="istickedoff">(not $ S.all (isHexDigit . w2c) hx)) $</span>
-<span class="lineno">  621 </span><span class="spaces">             </span><span class="istickedoff"><span class="nottickedoff">fail &quot;bad hex in url&quot;</span></span>
+<span class="lineno">  621 </span><span class="spaces">             </span><span class="istickedoff">fail <span class="nottickedoff">&quot;bad hex in url&quot;</span></span>
 <span class="lineno">  622 </span><span class="spaces">          </span><span class="istickedoff"></span>
 <span class="lineno">  623 </span><span class="spaces">        </span><span class="istickedoff">let code = (Cvt.hex hx) :: Word8</span>
 <span class="lineno">  624 </span><span class="spaces">        </span><span class="istickedoff">nextChunk $ DL.snoc l (S.singleton code)</span>
@@ -689,7 +689,7 @@ span.spaces    { background: white }
 <span class="lineno">  678 </span>------------------------------------------------------------------------------
 <span class="lineno">  679 </span>finish :: Atto.Result a -&gt; Atto.Result a
 <span class="lineno">  680 </span><span class="decl"><span class="istickedoff">finish (Atto.Partial f) = flip feed &quot;&quot; $ f &quot;&quot;</span>
-<span class="lineno">  681 </span><span class="spaces"></span><span class="istickedoff">finish x                = <span class="nottickedoff">x</span></span></span>
+<span class="lineno">  681 </span><span class="spaces"></span><span class="istickedoff">finish x                = x</span></span>
 <span class="lineno">  682 </span>
 <span class="lineno">  683 </span>
 <span class="lineno">  684 </span>------------------------------------------------------------------------------

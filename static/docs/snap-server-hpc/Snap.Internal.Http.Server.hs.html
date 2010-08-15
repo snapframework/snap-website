@@ -49,61 +49,61 @@ span.spaces    { background: white }
 <span class="lineno">   38 </span>import           System.FastLogger
 <span class="lineno">   39 </span>import           Snap.Internal.Http.Types hiding (Enumerator)
 <span class="lineno">   40 </span>import           Snap.Internal.Http.Parser
-<span class="lineno">   41 </span>import           Snap.Iteratee hiding (foldl', head, take, FileOffset)
-<span class="lineno">   42 </span>import qualified Snap.Iteratee as I
-<span class="lineno">   43 </span>
-<span class="lineno">   44 </span>#ifdef LIBEV
-<span class="lineno">   45 </span>import qualified Snap.Internal.Http.Server.LibevBackend as Backend
-<span class="lineno">   46 </span>import           Snap.Internal.Http.Server.LibevBackend (debug)
-<span class="lineno">   47 </span>#else
-<span class="lineno">   48 </span>import qualified Snap.Internal.Http.Server.SimpleBackend as Backend
-<span class="lineno">   49 </span>import           Snap.Internal.Http.Server.SimpleBackend (debug)
-<span class="lineno">   50 </span>#endif
-<span class="lineno">   51 </span>
-<span class="lineno">   52 </span>import           Snap.Internal.Http.Server.Date
+<span class="lineno">   41 </span>import           Snap.Internal.Http.Server.Date
+<span class="lineno">   42 </span>import           Snap.Internal.Iteratee.Debug
+<span class="lineno">   43 </span>import           Snap.Iteratee hiding (foldl', head, take, FileOffset)
+<span class="lineno">   44 </span>import qualified Snap.Iteratee as I
+<span class="lineno">   45 </span>
+<span class="lineno">   46 </span>#ifdef LIBEV
+<span class="lineno">   47 </span>import qualified Snap.Internal.Http.Server.LibevBackend as Backend
+<span class="lineno">   48 </span>import           Snap.Internal.Http.Server.LibevBackend (debug)
+<span class="lineno">   49 </span>#else
+<span class="lineno">   50 </span>import qualified Snap.Internal.Http.Server.SimpleBackend as Backend
+<span class="lineno">   51 </span>import           Snap.Internal.Http.Server.SimpleBackend (debug)
+<span class="lineno">   52 </span>#endif
 <span class="lineno">   53 </span>
 <span class="lineno">   54 </span>import qualified Paths_snap_server as V
 <span class="lineno">   55 </span>
-<span class="lineno">   56 </span>------------------------------------------------------------------------------
-<span class="lineno">   57 </span>-- | The handler has to return the request object because we have to clear the
-<span class="lineno">   58 </span>-- HTTP request body before we send the response. If the handler consumes the
-<span class="lineno">   59 </span>-- request body, it is responsible for setting @rqBody=return@ in the returned
-<span class="lineno">   60 </span>-- request (otherwise we will mess up reading the input stream).
-<span class="lineno">   61 </span>--
-<span class="lineno">   62 </span>-- Note that we won't be bothering end users with this -- the details will be
-<span class="lineno">   63 </span>-- hidden inside the Snap monad
-<span class="lineno">   64 </span>type ServerHandler = (ByteString -&gt; IO ())
-<span class="lineno">   65 </span>                   -&gt; Request
-<span class="lineno">   66 </span>                   -&gt; Iteratee IO (Request,Response)
-<span class="lineno">   67 </span>
-<span class="lineno">   68 </span>type ServerMonad = StateT ServerState (Iteratee IO)
-<span class="lineno">   69 </span>
-<span class="lineno">   70 </span>data <span class="istickedoff"><span class="nottickedoff">ServerState</span></span> = ServerState
-<span class="lineno">   71 </span>    { _forceConnectionClose  :: Bool
-<span class="lineno">   72 </span>    , _localHostname         :: ByteString
-<span class="lineno">   73 </span>    , _localAddress          :: ByteString
-<span class="lineno">   74 </span>    , _localPort             :: Int
-<span class="lineno">   75 </span>    , _remoteAddr            :: ByteString
-<span class="lineno">   76 </span>    , _remotePort            :: Int
-<span class="lineno">   77 </span>    , _logAccess             :: Request -&gt; Response -&gt; IO ()
-<span class="lineno">   78 </span>    , _logError              :: ByteString -&gt; IO ()
-<span class="lineno">   79 </span>    }
-<span class="lineno">   80 </span>
+<span class="lineno">   56 </span>
+<span class="lineno">   57 </span>------------------------------------------------------------------------------
+<span class="lineno">   58 </span>-- | The handler has to return the request object because we have to clear the
+<span class="lineno">   59 </span>-- HTTP request body before we send the response. If the handler consumes the
+<span class="lineno">   60 </span>-- request body, it is responsible for setting @rqBody=return@ in the returned
+<span class="lineno">   61 </span>-- request (otherwise we will mess up reading the input stream).
+<span class="lineno">   62 </span>--
+<span class="lineno">   63 </span>-- Note that we won't be bothering end users with this -- the details will be
+<span class="lineno">   64 </span>-- hidden inside the Snap monad
+<span class="lineno">   65 </span>type ServerHandler = (ByteString -&gt; IO ())
+<span class="lineno">   66 </span>                   -&gt; Request
+<span class="lineno">   67 </span>                   -&gt; Iteratee IO (Request,Response)
+<span class="lineno">   68 </span>
+<span class="lineno">   69 </span>type ServerMonad = StateT ServerState (Iteratee IO)
+<span class="lineno">   70 </span>
+<span class="lineno">   71 </span>data <span class="istickedoff"><span class="nottickedoff">ServerState</span></span> = ServerState
+<span class="lineno">   72 </span>    { _forceConnectionClose  :: Bool
+<span class="lineno">   73 </span>    , _localHostname         :: ByteString
+<span class="lineno">   74 </span>    , _localAddress          :: ByteString
+<span class="lineno">   75 </span>    , _localPort             :: Int
+<span class="lineno">   76 </span>    , _remoteAddr            :: ByteString
+<span class="lineno">   77 </span>    , _remotePort            :: Int
+<span class="lineno">   78 </span>    , _logAccess             :: Request -&gt; Response -&gt; IO ()
+<span class="lineno">   79 </span>    , _logError              :: ByteString -&gt; IO ()
+<span class="lineno">   80 </span>    }
 <span class="lineno">   81 </span>
-<span class="lineno">   82 </span>------------------------------------------------------------------------------
-<span class="lineno">   83 </span>runServerMonad :: ByteString                     -- ^ local host name
-<span class="lineno">   84 </span>               -&gt; ByteString                     -- ^ local ip address
-<span class="lineno">   85 </span>               -&gt; Int                            -- ^ local port
-<span class="lineno">   86 </span>               -&gt; ByteString                     -- ^ remote ip address
-<span class="lineno">   87 </span>               -&gt; Int                            -- ^ remote port
-<span class="lineno">   88 </span>               -&gt; (Request -&gt; Response -&gt; IO ()) -- ^ access log function
-<span class="lineno">   89 </span>               -&gt; (ByteString -&gt; IO ())          -- ^ error log function
-<span class="lineno">   90 </span>               -&gt; ServerMonad a                  -- ^ monadic action to run
-<span class="lineno">   91 </span>               -&gt; Iteratee IO a
-<span class="lineno">   92 </span><span class="decl"><span class="istickedoff">runServerMonad lh lip lp rip rp la le m = evalStateT m st</span>
-<span class="lineno">   93 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">   94 </span><span class="spaces">    </span><span class="istickedoff">st = ServerState False lh lip lp rip rp la <span class="nottickedoff">le</span></span></span>
-<span class="lineno">   95 </span>
+<span class="lineno">   82 </span>
+<span class="lineno">   83 </span>------------------------------------------------------------------------------
+<span class="lineno">   84 </span>runServerMonad :: ByteString                     -- ^ local host name
+<span class="lineno">   85 </span>               -&gt; ByteString                     -- ^ local ip address
+<span class="lineno">   86 </span>               -&gt; Int                            -- ^ local port
+<span class="lineno">   87 </span>               -&gt; ByteString                     -- ^ remote ip address
+<span class="lineno">   88 </span>               -&gt; Int                            -- ^ remote port
+<span class="lineno">   89 </span>               -&gt; (Request -&gt; Response -&gt; IO ()) -- ^ access log function
+<span class="lineno">   90 </span>               -&gt; (ByteString -&gt; IO ())          -- ^ error log function
+<span class="lineno">   91 </span>               -&gt; ServerMonad a                  -- ^ monadic action to run
+<span class="lineno">   92 </span>               -&gt; Iteratee IO a
+<span class="lineno">   93 </span><span class="decl"><span class="istickedoff">runServerMonad lh lip lp rip rp la le m = evalStateT m st</span>
+<span class="lineno">   94 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   95 </span><span class="spaces">    </span><span class="istickedoff">st = ServerState False lh lip lp rip rp la <span class="nottickedoff">le</span></span></span>
 <span class="lineno">   96 </span>
 <span class="lineno">   97 </span>
 <span class="lineno">   98 </span>------------------------------------------------------------------------------
@@ -123,579 +123,659 @@ span.spaces    { background: white }
 <span class="lineno">  112 </span><span class="spaces">                </span><span class="istickedoff">(\(alog, elog) -&gt; spawnAll alog elog)</span>
 <span class="lineno">  113 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  114 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  115 </span><span class="spaces">    </span><span class="istickedoff">spawnAll alog elog = {-# SCC &quot;httpServe/spawnAll&quot; #-} do</span>
-<span class="lineno">  116 </span><span class="spaces">        </span><span class="istickedoff">logE elog $ S.concat [ &quot;Server.httpServe: START (&quot;</span>
-<span class="lineno">  117 </span><span class="spaces">                             </span><span class="istickedoff">, Backend.name, &quot;)&quot;]</span>
-<span class="lineno">  118 </span><span class="spaces">        </span><span class="istickedoff">let n = numCapabilities</span>
-<span class="lineno">  119 </span><span class="spaces">        </span><span class="istickedoff">bracket (spawn n)</span>
-<span class="lineno">  120 </span><span class="spaces">                </span><span class="istickedoff">(\xs -&gt; do</span>
-<span class="lineno">  121 </span><span class="spaces">                     </span><span class="istickedoff">logE elog &quot;Server.httpServe: SHUTDOWN&quot;</span>
-<span class="lineno">  122 </span><span class="spaces">                     </span><span class="istickedoff">mapM_ (Backend.stop . fst) xs</span>
-<span class="lineno">  123 </span><span class="spaces">                     </span><span class="istickedoff">logE elog &quot;Server.httpServe: BACKEND STOPPED&quot;)</span>
-<span class="lineno">  124 </span><span class="spaces">                </span><span class="istickedoff">(runAll alog elog)</span>
-<span class="lineno">  125 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  115 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  116 </span><span class="spaces">    </span><span class="istickedoff">spawnAll alog elog = {-# SCC &quot;httpServe/spawnAll&quot; #-} do</span>
+<span class="lineno">  117 </span><span class="spaces">        </span><span class="istickedoff">logE elog $ S.concat [ &quot;Server.httpServe: START (&quot;</span>
+<span class="lineno">  118 </span><span class="spaces">                             </span><span class="istickedoff">, Backend.name, &quot;)&quot;]</span>
+<span class="lineno">  119 </span><span class="spaces">        </span><span class="istickedoff">let n = numCapabilities</span>
+<span class="lineno">  120 </span><span class="spaces">        </span><span class="istickedoff">bracket (spawn n)</span>
+<span class="lineno">  121 </span><span class="spaces">                </span><span class="istickedoff">(\xs -&gt; do</span>
+<span class="lineno">  122 </span><span class="spaces">                     </span><span class="istickedoff">logE elog &quot;Server.httpServe: SHUTDOWN&quot;</span>
+<span class="lineno">  123 </span><span class="spaces">                     </span><span class="istickedoff">mapM_ (Backend.stop . fst) xs</span>
+<span class="lineno">  124 </span><span class="spaces">                     </span><span class="istickedoff">logE elog &quot;Server.httpServe: BACKEND STOPPED&quot;)</span>
+<span class="lineno">  125 </span><span class="spaces">                </span><span class="istickedoff">(runAll alog elog)</span>
 <span class="lineno">  126 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  127 </span><span class="spaces">    </span><span class="istickedoff">runAll alog elog xs = {-# SCC &quot;httpServe/runAll&quot; #-} do</span>
-<span class="lineno">  128 </span><span class="spaces">        </span><span class="istickedoff">mapM_ f $ xs `zip` [0..]</span>
-<span class="lineno">  129 </span><span class="spaces">        </span><span class="istickedoff">mapM_ (takeMVar . snd) xs</span>
-<span class="lineno">  130 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  131 </span><span class="spaces">        </span><span class="istickedoff">f ((backend,mvar),cpu) =</span>
-<span class="lineno">  132 </span><span class="spaces">            </span><span class="istickedoff">forkOnIO cpu $ do</span>
-<span class="lineno">  133 </span><span class="spaces">                </span><span class="istickedoff">labelMe $ map w2c $ S.unpack $</span>
-<span class="lineno">  134 </span><span class="spaces">                          </span><span class="istickedoff">S.concat [&quot;accThread &quot;, l2s $ show cpu]</span>
-<span class="lineno">  135 </span><span class="spaces">                </span><span class="istickedoff">(try $ (goooo alog elog backend cpu)) :: IO (Either SomeException ())</span>
-<span class="lineno">  136 </span><span class="spaces">                </span><span class="istickedoff">putMVar mvar <span class="nottickedoff">()</span></span>
-<span class="lineno">  137 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  138 </span><span class="spaces">    </span><span class="istickedoff">goooo alog elog backend cpu =</span>
-<span class="lineno">  139 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;httpServe/goooo&quot; #-}</span>
-<span class="lineno">  140 </span><span class="spaces">        </span><span class="istickedoff">let loop = go alog elog backend cpu &gt;&gt; loop</span>
-<span class="lineno">  141 </span><span class="spaces">        </span><span class="istickedoff">in loop</span>
-<span class="lineno">  142 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  143 </span><span class="spaces">    </span><span class="istickedoff">maybeSpawnLogger = maybe (return Nothing) $ (liftM Just) . newLogger</span>
-<span class="lineno">  144 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  145 </span><span class="spaces">    </span><span class="istickedoff">withLoggers afp efp =</span>
-<span class="lineno">  146 </span><span class="spaces">        </span><span class="istickedoff">bracket (do alog &lt;- maybeSpawnLogger afp</span>
-<span class="lineno">  147 </span><span class="spaces">                    </span><span class="istickedoff">elog &lt;- maybeSpawnLogger efp</span>
-<span class="lineno">  148 </span><span class="spaces">                    </span><span class="istickedoff">return (alog, elog))</span>
-<span class="lineno">  149 </span><span class="spaces">                </span><span class="istickedoff">(\(alog, elog) -&gt; do</span>
-<span class="lineno">  150 </span><span class="spaces">                    </span><span class="istickedoff">threadDelay 1000000</span>
-<span class="lineno">  151 </span><span class="spaces">                    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) stopLogger alog</span>
-<span class="lineno">  152 </span><span class="spaces">                    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) stopLogger elog)</span>
-<span class="lineno">  153 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  154 </span><span class="spaces">    </span><span class="istickedoff">labelMe :: String -&gt; IO ()</span>
-<span class="lineno">  155 </span><span class="spaces">    </span><span class="istickedoff">labelMe s = do</span>
-<span class="lineno">  156 </span><span class="spaces">        </span><span class="istickedoff">tid &lt;- myThreadId</span>
-<span class="lineno">  157 </span><span class="spaces">        </span><span class="istickedoff">labelThread tid s</span>
-<span class="lineno">  158 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  159 </span><span class="spaces">    </span><span class="istickedoff">spawn n = do</span>
-<span class="lineno">  160 </span><span class="spaces">        </span><span class="istickedoff">sock &lt;- Backend.bindIt bindAddress bindPort</span>
-<span class="lineno">  161 </span><span class="spaces">        </span><span class="istickedoff">backends &lt;- mapM (Backend.new sock) $ [0..(n-1)]</span>
-<span class="lineno">  162 </span><span class="spaces">        </span><span class="istickedoff">mvars &lt;- replicateM n newEmptyMVar</span>
-<span class="lineno">  163 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  164 </span><span class="spaces">        </span><span class="istickedoff">return (backends `zip` mvars)</span>
-<span class="lineno">  165 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  166 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  167 </span><span class="spaces">    </span><span class="istickedoff">runOne alog elog backend cpu =</span>
-<span class="lineno">  168 </span><span class="spaces">        </span><span class="istickedoff">Backend.withConnection backend cpu $ \conn -&gt;</span>
-<span class="lineno">  169 </span><span class="spaces">          </span><span class="istickedoff">{-# SCC &quot;httpServe/runOne&quot; #-} do</span>
-<span class="lineno">  170 </span><span class="spaces">            </span><span class="istickedoff">debug <span class="nottickedoff">&quot;Server.httpServe.runOne: entered&quot;</span></span>
-<span class="lineno">  171 </span><span class="spaces">            </span><span class="istickedoff">let readEnd = Backend.getReadEnd conn</span>
-<span class="lineno">  172 </span><span class="spaces">            </span><span class="istickedoff">let writeEnd = Backend.getWriteEnd conn</span>
-<span class="lineno">  173 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  174 </span><span class="spaces">            </span><span class="istickedoff">let raddr = Backend.getRemoteAddr conn</span>
-<span class="lineno">  175 </span><span class="spaces">            </span><span class="istickedoff">let rport = Backend.getRemotePort conn</span>
-<span class="lineno">  176 </span><span class="spaces">            </span><span class="istickedoff">let laddr = Backend.getLocalAddr conn</span>
-<span class="lineno">  177 </span><span class="spaces">            </span><span class="istickedoff">let lport = Backend.getLocalPort conn</span>
-<span class="lineno">  178 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  179 </span><span class="spaces">            </span><span class="istickedoff">runHTTP localHostname laddr lport raddr rport</span>
-<span class="lineno">  180 </span><span class="spaces">                    </span><span class="istickedoff">alog <span class="nottickedoff">elog</span> readEnd writeEnd</span>
-<span class="lineno">  181 </span><span class="spaces">                    </span><span class="istickedoff">(Backend.sendFile conn)</span>
-<span class="lineno">  182 </span><span class="spaces">                    </span><span class="istickedoff">(Backend.tickleTimeout conn) handler</span>
-<span class="lineno">  183 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  184 </span><span class="spaces">            </span><span class="istickedoff">debug <span class="nottickedoff">&quot;Server.httpServe.runHTTP: finished&quot;</span></span>
+<span class="lineno">  127 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  128 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  129 </span><span class="spaces">    </span><span class="istickedoff">runAll alog elog xs = {-# SCC &quot;httpServe/runAll&quot; #-} do</span>
+<span class="lineno">  130 </span><span class="spaces">        </span><span class="istickedoff">mapM_ f $ xs `zip` [0..]</span>
+<span class="lineno">  131 </span><span class="spaces">        </span><span class="istickedoff">mapM_ (takeMVar . snd) xs</span>
+<span class="lineno">  132 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  133 </span><span class="spaces">        </span><span class="istickedoff">f ((backend,mvar),cpu) = forkOnIO cpu $ do</span>
+<span class="lineno">  134 </span><span class="spaces">            </span><span class="istickedoff">labelMe $ map w2c $ S.unpack $</span>
+<span class="lineno">  135 </span><span class="spaces">                      </span><span class="istickedoff">S.concat [&quot;accThread &quot;, l2s $ show cpu]</span>
+<span class="lineno">  136 </span><span class="spaces">            </span><span class="istickedoff">(try $ goooo alog elog backend cpu) :: IO (Either SomeException ())</span>
+<span class="lineno">  137 </span><span class="spaces">            </span><span class="istickedoff">putMVar mvar <span class="nottickedoff">()</span></span>
+<span class="lineno">  138 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  139 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  140 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  141 </span><span class="spaces">    </span><span class="istickedoff">goooo alog elog backend cpu =</span>
+<span class="lineno">  142 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;httpServe/goooo&quot; #-}</span>
+<span class="lineno">  143 </span><span class="spaces">        </span><span class="istickedoff">let loop = go alog elog backend cpu &gt;&gt; loop</span>
+<span class="lineno">  144 </span><span class="spaces">        </span><span class="istickedoff">in loop</span>
+<span class="lineno">  145 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  146 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  147 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  148 </span><span class="spaces">    </span><span class="istickedoff">maybeSpawnLogger = maybe (return Nothing) $ (liftM Just) . newLogger</span>
+<span class="lineno">  149 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  150 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  151 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  152 </span><span class="spaces">    </span><span class="istickedoff">withLoggers afp efp =</span>
+<span class="lineno">  153 </span><span class="spaces">        </span><span class="istickedoff">bracket (do alog &lt;- maybeSpawnLogger afp</span>
+<span class="lineno">  154 </span><span class="spaces">                    </span><span class="istickedoff">elog &lt;- maybeSpawnLogger efp</span>
+<span class="lineno">  155 </span><span class="spaces">                    </span><span class="istickedoff">return (alog, elog))</span>
+<span class="lineno">  156 </span><span class="spaces">                </span><span class="istickedoff">(\(alog, elog) -&gt; do</span>
+<span class="lineno">  157 </span><span class="spaces">                    </span><span class="istickedoff">threadDelay 1000000</span>
+<span class="lineno">  158 </span><span class="spaces">                    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) stopLogger alog</span>
+<span class="lineno">  159 </span><span class="spaces">                    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) stopLogger elog)</span>
+<span class="lineno">  160 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  161 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  162 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  163 </span><span class="spaces">    </span><span class="istickedoff">labelMe :: String -&gt; IO ()</span>
+<span class="lineno">  164 </span><span class="spaces">    </span><span class="istickedoff">labelMe s = do</span>
+<span class="lineno">  165 </span><span class="spaces">        </span><span class="istickedoff">tid &lt;- myThreadId</span>
+<span class="lineno">  166 </span><span class="spaces">        </span><span class="istickedoff">labelThread tid s</span>
+<span class="lineno">  167 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  168 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  169 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  170 </span><span class="spaces">    </span><span class="istickedoff">spawn n = do</span>
+<span class="lineno">  171 </span><span class="spaces">        </span><span class="istickedoff">sock &lt;- Backend.bindIt bindAddress bindPort</span>
+<span class="lineno">  172 </span><span class="spaces">        </span><span class="istickedoff">backends &lt;- mapM (Backend.new sock) $ [0..(n-1)]</span>
+<span class="lineno">  173 </span><span class="spaces">        </span><span class="istickedoff">mvars &lt;- replicateM n newEmptyMVar</span>
+<span class="lineno">  174 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  175 </span><span class="spaces">        </span><span class="istickedoff">return (backends `zip` mvars)</span>
+<span class="lineno">  176 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  177 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  178 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  179 </span><span class="spaces">    </span><span class="istickedoff">runOne alog elog backend cpu =</span>
+<span class="lineno">  180 </span><span class="spaces">        </span><span class="istickedoff">Backend.withConnection backend cpu $ \conn -&gt;</span>
+<span class="lineno">  181 </span><span class="spaces">          </span><span class="istickedoff">{-# SCC &quot;httpServe/runOne&quot; #-} do</span>
+<span class="lineno">  182 </span><span class="spaces">            </span><span class="istickedoff">debug <span class="nottickedoff">&quot;Server.httpServe.runOne: entered&quot;</span></span>
+<span class="lineno">  183 </span><span class="spaces">            </span><span class="istickedoff">let readEnd = Backend.getReadEnd conn</span>
+<span class="lineno">  184 </span><span class="spaces">            </span><span class="istickedoff">let writeEnd = Backend.getWriteEnd conn</span>
 <span class="lineno">  185 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  186 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  187 </span><span class="spaces">    </span><span class="istickedoff">go alog elog backend cpu = runOne alog <span class="nottickedoff">elog</span> backend cpu</span>
-<span class="lineno">  188 </span><span class="spaces">        </span><span class="istickedoff">`catches`</span>
-<span class="lineno">  189 </span><span class="spaces">        </span><span class="istickedoff">[ Handler $ <span class="nottickedoff">\(_ :: Backend.TimeoutException) -&gt; return ()</span></span>
+<span class="lineno">  186 </span><span class="spaces">            </span><span class="istickedoff">let raddr = Backend.getRemoteAddr conn</span>
+<span class="lineno">  187 </span><span class="spaces">            </span><span class="istickedoff">let rport = Backend.getRemotePort conn</span>
+<span class="lineno">  188 </span><span class="spaces">            </span><span class="istickedoff">let laddr = Backend.getLocalAddr conn</span>
+<span class="lineno">  189 </span><span class="spaces">            </span><span class="istickedoff">let lport = Backend.getLocalPort conn</span>
 <span class="lineno">  190 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  191 </span><span class="spaces">        </span><span class="istickedoff">, Handler $ <span class="nottickedoff">\(e :: AsyncException) -&gt; do</span></span>
-<span class="lineno">  192 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">logE elog $</span></span>
-<span class="lineno">  193 </span><span class="spaces">                   </span><span class="istickedoff"><span class="nottickedoff">S.concat [ &quot;Server.httpServe.go: got async exception, &quot;</span></span>
-<span class="lineno">  194 </span><span class="spaces">                            </span><span class="istickedoff"><span class="nottickedoff">, &quot;terminating:\n&quot;, bshow e ]</span></span>
-<span class="lineno">  195 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">throwIO e</span></span>
-<span class="lineno">  196 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  197 </span><span class="spaces">        </span><span class="istickedoff">, Handler $ \(e :: Backend.BackendTerminatedException) -&gt; do</span>
-<span class="lineno">  198 </span><span class="spaces">              </span><span class="istickedoff">logE elog $ &quot;Server.httpServe.go: got backend terminated, waiting for cleanup&quot;</span>
-<span class="lineno">  199 </span><span class="spaces">              </span><span class="istickedoff">throwIO <span class="nottickedoff">e</span></span>
-<span class="lineno">  200 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  201 </span><span class="spaces">        </span><span class="istickedoff">, <span class="nottickedoff">Handler $ \(e :: IOException) -&gt; do</span></span>
-<span class="lineno">  202 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">logE elog $ S.concat [ &quot;Server.httpServe.go: got io exception: &quot;</span></span>
-<span class="lineno">  203 </span><span class="spaces">                                   </span><span class="istickedoff"><span class="nottickedoff">, bshow e ]</span></span>
-<span class="lineno">  204 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  205 </span><span class="spaces">        </span><span class="istickedoff">, <span class="nottickedoff">Handler $ \(e :: SomeException) -&gt; do</span></span>
-<span class="lineno">  206 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">logE elog $ S.concat [ &quot;Server.httpServe.go: got someexception: &quot;</span></span>
-<span class="lineno">  207 </span><span class="spaces">                                   </span><span class="istickedoff"><span class="nottickedoff">, bshow e ]</span> ]</span></span>
-<span class="lineno">  208 </span>
-<span class="lineno">  209 </span>------------------------------------------------------------------------------
-<span class="lineno">  210 </span>debugE :: (MonadIO m) =&gt; ByteString -&gt; m ()
-<span class="lineno">  211 </span><span class="decl"><span class="istickedoff">debugE s = debug $ <span class="nottickedoff">&quot;Server: &quot; ++ (map w2c $ S.unpack s)</span></span></span>
-<span class="lineno">  212 </span>
-<span class="lineno">  213 </span>
-<span class="lineno">  214 </span>------------------------------------------------------------------------------
-<span class="lineno">  215 </span>logE :: Maybe Logger -&gt; ByteString -&gt; IO ()
-<span class="lineno">  216 </span><span class="decl"><span class="istickedoff">logE elog = maybe debugE (\l s -&gt; debugE <span class="nottickedoff">s</span> &gt;&gt; logE' l s) elog</span></span>
-<span class="lineno">  217 </span>
-<span class="lineno">  218 </span>logE' :: Logger -&gt; ByteString -&gt; IO ()
-<span class="lineno">  219 </span><span class="decl"><span class="istickedoff">logE' logger s = (timestampedLogEntry s) &gt;&gt;= logMsg logger</span></span>
-<span class="lineno">  220 </span>
-<span class="lineno">  221 </span>
-<span class="lineno">  222 </span>bshow :: (Prelude.Show a) =&gt; a -&gt; ByteString
-<span class="lineno">  223 </span><span class="decl"><span class="istickedoff">bshow = toBS . Prelude.show</span></span>
-<span class="lineno">  224 </span>
-<span class="lineno">  225 </span>------------------------------------------------------------------------------
-<span class="lineno">  226 </span>logA ::Maybe Logger -&gt; Request -&gt; Response -&gt; IO ()
-<span class="lineno">  227 </span><span class="decl"><span class="istickedoff">logA alog = maybe (\_ _ -&gt; return <span class="nottickedoff">()</span>) logA' alog</span></span>
-<span class="lineno">  228 </span>
-<span class="lineno">  229 </span>logA' :: Logger -&gt; Request -&gt; Response -&gt; IO ()
-<span class="lineno">  230 </span><span class="decl"><span class="istickedoff">logA' logger req rsp = do</span>
-<span class="lineno">  231 </span><span class="spaces">    </span><span class="istickedoff">let hdrs      = rqHeaders req</span>
-<span class="lineno">  232 </span><span class="spaces">    </span><span class="istickedoff">let host      = rqRemoteAddr req</span>
-<span class="lineno">  233 </span><span class="spaces">    </span><span class="istickedoff">let user      = Nothing -- TODO we don't do authentication yet</span>
-<span class="lineno">  234 </span><span class="spaces">    </span><span class="istickedoff">let (v, v')   = rqVersion req</span>
-<span class="lineno">  235 </span><span class="spaces">    </span><span class="istickedoff">let ver       = S.concat [ &quot;HTTP/&quot;, bshow v, &quot;.&quot;, bshow v' ]</span>
-<span class="lineno">  236 </span><span class="spaces">    </span><span class="istickedoff">let method    = toBS $ Prelude.show (rqMethod req)</span>
-<span class="lineno">  237 </span><span class="spaces">    </span><span class="istickedoff">let reql      = S.intercalate &quot; &quot; [ method, rqURI req, ver ]</span>
-<span class="lineno">  238 </span><span class="spaces">    </span><span class="istickedoff">let status    = rspStatus rsp</span>
-<span class="lineno">  239 </span><span class="spaces">    </span><span class="istickedoff">let cl        = rspContentLength rsp</span>
-<span class="lineno">  240 </span><span class="spaces">    </span><span class="istickedoff">let referer   = maybe Nothing <span class="nottickedoff">(Just . head)</span> $ Map.lookup &quot;referer&quot; hdrs</span>
-<span class="lineno">  241 </span><span class="spaces">    </span><span class="istickedoff">let userAgent = maybe <span class="nottickedoff">&quot;-&quot;</span> head $ Map.lookup &quot;user-agent&quot; hdrs</span>
-<span class="lineno">  242 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  243 </span><span class="spaces">    </span><span class="istickedoff">msg &lt;- combinedLogEntry host user reql status cl referer userAgent</span>
-<span class="lineno">  244 </span><span class="spaces">    </span><span class="istickedoff">logMsg logger msg</span></span>
+<span class="lineno">  191 </span><span class="spaces">            </span><span class="istickedoff">runHTTP localHostname laddr lport raddr rport</span>
+<span class="lineno">  192 </span><span class="spaces">                    </span><span class="istickedoff">alog <span class="nottickedoff">elog</span> readEnd writeEnd</span>
+<span class="lineno">  193 </span><span class="spaces">                    </span><span class="istickedoff">(Backend.sendFile conn)</span>
+<span class="lineno">  194 </span><span class="spaces">                    </span><span class="istickedoff">(Backend.tickleTimeout conn) handler</span>
+<span class="lineno">  195 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  196 </span><span class="spaces">            </span><span class="istickedoff">debug <span class="nottickedoff">&quot;Server.httpServe.runHTTP: finished&quot;</span></span>
+<span class="lineno">  197 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  198 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  199 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  200 </span><span class="spaces">    </span><span class="istickedoff">go alog elog backend cpu = runOne alog <span class="nottickedoff">elog</span> backend cpu</span>
+<span class="lineno">  201 </span><span class="spaces">        </span><span class="istickedoff">`catches`</span>
+<span class="lineno">  202 </span><span class="spaces">        </span><span class="istickedoff">[ Handler $ <span class="nottickedoff">\(_ :: Backend.TimeoutException) -&gt; return ()</span></span>
+<span class="lineno">  203 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  204 </span><span class="spaces">        </span><span class="istickedoff">, Handler $ <span class="nottickedoff">\(e :: AsyncException) -&gt; do</span></span>
+<span class="lineno">  205 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">logE elog $</span></span>
+<span class="lineno">  206 </span><span class="spaces">                   </span><span class="istickedoff"><span class="nottickedoff">S.concat [ &quot;Server.httpServe.go: got async exception, &quot;</span></span>
+<span class="lineno">  207 </span><span class="spaces">                            </span><span class="istickedoff"><span class="nottickedoff">, &quot;terminating:\n&quot;, bshow e ]</span></span>
+<span class="lineno">  208 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">throwIO e</span></span>
+<span class="lineno">  209 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  210 </span><span class="spaces">        </span><span class="istickedoff">, Handler $ \(e :: Backend.BackendTerminatedException) -&gt; do</span>
+<span class="lineno">  211 </span><span class="spaces">              </span><span class="istickedoff">logE elog $</span>
+<span class="lineno">  212 </span><span class="spaces">                   </span><span class="istickedoff">S.concat [&quot;Server.httpServe.go: got backend terminated, &quot;</span>
+<span class="lineno">  213 </span><span class="spaces">                            </span><span class="istickedoff">, &quot;waiting for cleanup&quot; ]</span>
+<span class="lineno">  214 </span><span class="spaces">              </span><span class="istickedoff">throwIO <span class="nottickedoff">e</span></span>
+<span class="lineno">  215 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  216 </span><span class="spaces">        </span><span class="istickedoff">, <span class="nottickedoff">Handler $ \(e :: IOException) -&gt; do</span></span>
+<span class="lineno">  217 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">logE elog $</span></span>
+<span class="lineno">  218 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">S.concat [ &quot;Server.httpServe.go: got io exception: &quot;</span></span>
+<span class="lineno">  219 </span><span class="spaces">                         </span><span class="istickedoff"><span class="nottickedoff">, bshow e ]</span></span>
+<span class="lineno">  220 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  221 </span><span class="spaces">        </span><span class="istickedoff">, <span class="nottickedoff">Handler $ \(e :: SomeException) -&gt; do</span></span>
+<span class="lineno">  222 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">logE elog $</span></span>
+<span class="lineno">  223 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">S.concat [ &quot;Server.httpServe.go: got someexception: &quot;</span></span>
+<span class="lineno">  224 </span><span class="spaces">                         </span><span class="istickedoff"><span class="nottickedoff">, bshow e ]</span> ]</span></span>
+<span class="lineno">  225 </span>
+<span class="lineno">  226 </span>
+<span class="lineno">  227 </span>------------------------------------------------------------------------------
+<span class="lineno">  228 </span>debugE :: (MonadIO m) =&gt; ByteString -&gt; m ()
+<span class="lineno">  229 </span><span class="decl"><span class="istickedoff">debugE s = debug $ <span class="nottickedoff">&quot;Server: &quot; ++ (map w2c $ S.unpack s)</span></span></span>
+<span class="lineno">  230 </span>
+<span class="lineno">  231 </span>
+<span class="lineno">  232 </span>------------------------------------------------------------------------------
+<span class="lineno">  233 </span>logE :: Maybe Logger -&gt; ByteString -&gt; IO ()
+<span class="lineno">  234 </span><span class="decl"><span class="istickedoff">logE elog = maybe debugE (\l s -&gt; debugE <span class="nottickedoff">s</span> &gt;&gt; logE' l s) elog</span></span>
+<span class="lineno">  235 </span>
+<span class="lineno">  236 </span>
+<span class="lineno">  237 </span>------------------------------------------------------------------------------
+<span class="lineno">  238 </span>logE' :: Logger -&gt; ByteString -&gt; IO ()
+<span class="lineno">  239 </span><span class="decl"><span class="istickedoff">logE' logger s = (timestampedLogEntry s) &gt;&gt;= logMsg logger</span></span>
+<span class="lineno">  240 </span>
+<span class="lineno">  241 </span>
+<span class="lineno">  242 </span>------------------------------------------------------------------------------
+<span class="lineno">  243 </span>bshow :: (Prelude.Show a) =&gt; a -&gt; ByteString
+<span class="lineno">  244 </span><span class="decl"><span class="istickedoff">bshow = toBS . Prelude.show</span></span>
 <span class="lineno">  245 </span>
 <span class="lineno">  246 </span>
 <span class="lineno">  247 </span>------------------------------------------------------------------------------
-<span class="lineno">  248 </span>runHTTP :: ByteString                    -- ^ local host name
-<span class="lineno">  249 </span>        -&gt; ByteString                    -- ^ local ip address
-<span class="lineno">  250 </span>        -&gt; Int                           -- ^ local port
-<span class="lineno">  251 </span>        -&gt; ByteString                    -- ^ remote ip address
-<span class="lineno">  252 </span>        -&gt; Int                           -- ^ remote port
-<span class="lineno">  253 </span>        -&gt; Maybe Logger                  -- ^ access logger
-<span class="lineno">  254 </span>        -&gt; Maybe Logger                  -- ^ error logger
-<span class="lineno">  255 </span>        -&gt; Enumerator IO ()              -- ^ read end of socket
-<span class="lineno">  256 </span>        -&gt; Iteratee IO ()                -- ^ write end of socket
-<span class="lineno">  257 </span>        -&gt; (FilePath -&gt; Int64 -&gt; IO ())  -- ^ sendfile end
-<span class="lineno">  258 </span>        -&gt; IO ()                         -- ^ timeout tickler
-<span class="lineno">  259 </span>        -&gt; ServerHandler                 -- ^ handler procedure
-<span class="lineno">  260 </span>        -&gt; IO ()
-<span class="lineno">  261 </span><span class="decl"><span class="istickedoff">runHTTP lh lip lp rip rp alog elog</span>
-<span class="lineno">  262 </span><span class="spaces">        </span><span class="istickedoff">readEnd writeEnd onSendFile tickle handler =</span>
-<span class="lineno">  263 </span><span class="spaces">    </span><span class="istickedoff">go `catches` [ Handler $ <span class="nottickedoff">\(e :: AsyncException) -&gt; do</span></span>
-<span class="lineno">  264 </span><span class="spaces">                       </span><span class="istickedoff"><span class="nottickedoff">throwIO e</span></span>
-<span class="lineno">  265 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  266 </span><span class="spaces">                 </span><span class="istickedoff">, Handler $ <span class="nottickedoff">\(_ :: Backend.TimeoutException) -&gt; return ()</span></span>
-<span class="lineno">  267 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  268 </span><span class="spaces">                 </span><span class="istickedoff">, Handler $ \(e :: SomeException) -&gt;</span>
-<span class="lineno">  269 </span><span class="spaces">                       </span><span class="istickedoff">logE elog $ <span class="nottickedoff">S.concat [ logPrefix , bshow e ]</span> ]</span>
-<span class="lineno">  270 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  271 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  272 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">logPrefix = S.concat [ &quot;[&quot;, rip, &quot;]: error: &quot; ]</span></span>
-<span class="lineno">  273 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  274 </span><span class="spaces">    </span><span class="istickedoff">go = do</span>
-<span class="lineno">  275 </span><span class="spaces">        </span><span class="istickedoff">buf &lt;- mkIterateeBuffer</span>
-<span class="lineno">  276 </span><span class="spaces">        </span><span class="istickedoff">let iter = runServerMonad lh lip lp rip rp (logA alog) <span class="nottickedoff">(logE elog)</span> $</span>
-<span class="lineno">  277 </span><span class="spaces">                                  </span><span class="istickedoff">httpSession writeEnd buf onSendFile tickle</span>
-<span class="lineno">  278 </span><span class="spaces">                                  </span><span class="istickedoff">handler</span>
-<span class="lineno">  279 </span><span class="spaces">        </span><span class="istickedoff">readEnd iter &gt;&gt;= run</span></span>
-<span class="lineno">  280 </span>
-<span class="lineno">  281 </span>
-<span class="lineno">  282 </span>------------------------------------------------------------------------------
-<span class="lineno">  283 </span>sERVER_HEADER :: [ByteString]
-<span class="lineno">  284 </span><span class="decl"><span class="istickedoff">sERVER_HEADER = [S.concat [&quot;Snap/&quot;, snapServerVersion]]</span></span>
-<span class="lineno">  285 </span>
-<span class="lineno">  286 </span>snapServerVersion :: ByteString
-<span class="lineno">  287 </span><span class="decl"><span class="istickedoff">snapServerVersion = SC.pack $ showVersion $ V.version</span></span>
-<span class="lineno">  288 </span>
-<span class="lineno">  289 </span>------------------------------------------------------------------------------
-<span class="lineno">  290 </span>logAccess :: Request -&gt; Response -&gt; ServerMonad ()
-<span class="lineno">  291 </span><span class="decl"><span class="istickedoff">logAccess req rsp = gets _logAccess &gt;&gt;= (\l -&gt; liftIO $ l req rsp)</span></span>
-<span class="lineno">  292 </span>
-<span class="lineno">  293 </span>------------------------------------------------------------------------------
-<span class="lineno">  294 </span>logError :: ByteString -&gt; ServerMonad ()
-<span class="lineno">  295 </span><span class="decl"><span class="nottickedoff">logError s = gets _logError &gt;&gt;= (\l -&gt; liftIO $ l s)</span></span>
-<span class="lineno">  296 </span>
-<span class="lineno">  297 </span>------------------------------------------------------------------------------
-<span class="lineno">  298 </span>-- | Runs an HTTP session.
-<span class="lineno">  299 </span>httpSession :: Iteratee IO ()                -- ^ write end of socket
-<span class="lineno">  300 </span>            -&gt; ForeignPtr CChar              -- ^ iteratee buffer
-<span class="lineno">  301 </span>            -&gt; (FilePath -&gt; Int64 -&gt; IO ())  -- ^ sendfile continuation
-<span class="lineno">  302 </span>            -&gt; IO ()                         -- ^ timeout tickler
-<span class="lineno">  303 </span>            -&gt; ServerHandler                 -- ^ handler procedure
-<span class="lineno">  304 </span>            -&gt; ServerMonad ()
-<span class="lineno">  305 </span><span class="decl"><span class="istickedoff">httpSession writeEnd' ibuf onSendFile tickle handler = do</span>
-<span class="lineno">  306 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  307 </span><span class="spaces">    </span><span class="istickedoff">(writeEnd, cancelBuffering) &lt;-</span>
-<span class="lineno">  308 </span><span class="spaces">        </span><span class="istickedoff">liftIO $ I.unsafeBufferIterateeWithBuffer ibuf writeEnd'</span>
-<span class="lineno">  309 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  310 </span><span class="spaces">    </span><span class="istickedoff">-- (writeEnd, cancelBuffering) &lt;- liftIO $ I.bufferIteratee writeEnd'</span>
-<span class="lineno">  311 </span><span class="spaces">    </span><span class="istickedoff">let <span class="nottickedoff">killBuffer = writeIORef cancelBuffering True</span></span>
-<span class="lineno">  312 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  313 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  314 </span><span class="spaces">    </span><span class="istickedoff">liftIO $ debug <span class="nottickedoff">&quot;Server.httpSession: entered&quot;</span></span>
-<span class="lineno">  315 </span><span class="spaces">    </span><span class="istickedoff">mreq  &lt;- receiveRequest</span>
-<span class="lineno">  316 </span><span class="spaces">    </span><span class="istickedoff">-- successfully got a request, so restart timer</span>
-<span class="lineno">  317 </span><span class="spaces">    </span><span class="istickedoff">liftIO tickle</span>
-<span class="lineno">  318 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  319 </span><span class="spaces">    </span><span class="istickedoff">case mreq of</span>
-<span class="lineno">  320 </span><span class="spaces">      </span><span class="istickedoff">(Just req) -&gt; do</span>
-<span class="lineno">  321 </span><span class="spaces">          </span><span class="istickedoff">liftIO $ debug $ <span class="nottickedoff">&quot;got request: &quot; ++</span></span>
-<span class="lineno">  322 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">Prelude.show (rqMethod req) ++</span></span>
-<span class="lineno">  323 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">&quot; &quot; ++ SC.unpack (rqURI req) ++</span></span>
-<span class="lineno">  324 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">&quot; &quot; ++ Prelude.show (rqVersion req)</span></span>
-<span class="lineno">  325 </span><span class="spaces">          </span><span class="istickedoff">logerr &lt;- gets <span class="nottickedoff">_logError</span></span>
-<span class="lineno">  326 </span><span class="spaces">          </span><span class="istickedoff">(req',rspOrig) &lt;- lift $ handler <span class="nottickedoff">logerr</span> req</span>
-<span class="lineno">  327 </span><span class="spaces">          </span><span class="istickedoff">let rspTmp = rspOrig { rspHttpVersion = rqVersion req }</span>
-<span class="lineno">  328 </span><span class="spaces">          </span><span class="istickedoff">checkConnectionClose (rspHttpVersion rspTmp) (rspHeaders rspTmp)</span>
-<span class="lineno">  329 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  330 </span><span class="spaces">          </span><span class="istickedoff">cc &lt;- gets _forceConnectionClose</span>
-<span class="lineno">  331 </span><span class="spaces">          </span><span class="istickedoff">let rsp = if cc</span>
-<span class="lineno">  332 </span><span class="spaces">                      </span><span class="istickedoff">then (setHeader &quot;Connection&quot; &quot;close&quot; rspTmp)</span>
-<span class="lineno">  333 </span><span class="spaces">                      </span><span class="istickedoff">else rspTmp</span>
-<span class="lineno">  334 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  248 </span>logA ::Maybe Logger -&gt; Request -&gt; Response -&gt; IO ()
+<span class="lineno">  249 </span><span class="decl"><span class="istickedoff">logA alog = maybe (\_ _ -&gt; return <span class="nottickedoff">()</span>) logA' alog</span></span>
+<span class="lineno">  250 </span>
+<span class="lineno">  251 </span>
+<span class="lineno">  252 </span>------------------------------------------------------------------------------
+<span class="lineno">  253 </span>logA' :: Logger -&gt; Request -&gt; Response -&gt; IO ()
+<span class="lineno">  254 </span><span class="decl"><span class="istickedoff">logA' logger req rsp = do</span>
+<span class="lineno">  255 </span><span class="spaces">    </span><span class="istickedoff">let hdrs      = rqHeaders req</span>
+<span class="lineno">  256 </span><span class="spaces">    </span><span class="istickedoff">let host      = rqRemoteAddr req</span>
+<span class="lineno">  257 </span><span class="spaces">    </span><span class="istickedoff">let user      = Nothing -- TODO we don't do authentication yet</span>
+<span class="lineno">  258 </span><span class="spaces">    </span><span class="istickedoff">let (v, v')   = rqVersion req</span>
+<span class="lineno">  259 </span><span class="spaces">    </span><span class="istickedoff">let ver       = S.concat [ &quot;HTTP/&quot;, bshow v, &quot;.&quot;, bshow v' ]</span>
+<span class="lineno">  260 </span><span class="spaces">    </span><span class="istickedoff">let method    = toBS $ Prelude.show (rqMethod req)</span>
+<span class="lineno">  261 </span><span class="spaces">    </span><span class="istickedoff">let reql      = S.intercalate &quot; &quot; [ method, rqURI req, ver ]</span>
+<span class="lineno">  262 </span><span class="spaces">    </span><span class="istickedoff">let status    = rspStatus rsp</span>
+<span class="lineno">  263 </span><span class="spaces">    </span><span class="istickedoff">let cl        = rspContentLength rsp</span>
+<span class="lineno">  264 </span><span class="spaces">    </span><span class="istickedoff">let referer   = maybe Nothing <span class="nottickedoff">(Just . head)</span> $ Map.lookup &quot;referer&quot; hdrs</span>
+<span class="lineno">  265 </span><span class="spaces">    </span><span class="istickedoff">let userAgent = maybe <span class="nottickedoff">&quot;-&quot;</span> head $ Map.lookup &quot;user-agent&quot; hdrs</span>
+<span class="lineno">  266 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  267 </span><span class="spaces">    </span><span class="istickedoff">msg &lt;- combinedLogEntry host user reql status cl referer userAgent</span>
+<span class="lineno">  268 </span><span class="spaces">    </span><span class="istickedoff">logMsg logger msg</span></span>
+<span class="lineno">  269 </span>
+<span class="lineno">  270 </span>
+<span class="lineno">  271 </span>------------------------------------------------------------------------------
+<span class="lineno">  272 </span>runHTTP :: ByteString                    -- ^ local host name
+<span class="lineno">  273 </span>        -&gt; ByteString                    -- ^ local ip address
+<span class="lineno">  274 </span>        -&gt; Int                           -- ^ local port
+<span class="lineno">  275 </span>        -&gt; ByteString                    -- ^ remote ip address
+<span class="lineno">  276 </span>        -&gt; Int                           -- ^ remote port
+<span class="lineno">  277 </span>        -&gt; Maybe Logger                  -- ^ access logger
+<span class="lineno">  278 </span>        -&gt; Maybe Logger                  -- ^ error logger
+<span class="lineno">  279 </span>        -&gt; Enumerator IO ()              -- ^ read end of socket
+<span class="lineno">  280 </span>        -&gt; Iteratee IO ()                -- ^ write end of socket
+<span class="lineno">  281 </span>        -&gt; (FilePath -&gt; Int64 -&gt; IO ())  -- ^ sendfile end
+<span class="lineno">  282 </span>        -&gt; IO ()                         -- ^ timeout tickler
+<span class="lineno">  283 </span>        -&gt; ServerHandler                 -- ^ handler procedure
+<span class="lineno">  284 </span>        -&gt; IO ()
+<span class="lineno">  285 </span><span class="decl"><span class="istickedoff">runHTTP lh lip lp rip rp alog elog</span>
+<span class="lineno">  286 </span><span class="spaces">        </span><span class="istickedoff">readEnd writeEnd onSendFile tickle handler =</span>
+<span class="lineno">  287 </span><span class="spaces">    </span><span class="istickedoff">go `catches` [ Handler $ <span class="nottickedoff">\(e :: AsyncException) -&gt; do</span></span>
+<span class="lineno">  288 </span><span class="spaces">                       </span><span class="istickedoff"><span class="nottickedoff">throwIO e</span></span>
+<span class="lineno">  289 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  290 </span><span class="spaces">                 </span><span class="istickedoff">, Handler $ <span class="nottickedoff">\(_ :: Backend.TimeoutException) -&gt; return ()</span></span>
+<span class="lineno">  291 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  292 </span><span class="spaces">                 </span><span class="istickedoff">, Handler $ \(e :: SomeException) -&gt;</span>
+<span class="lineno">  293 </span><span class="spaces">                       </span><span class="istickedoff">logE elog $ <span class="nottickedoff">S.concat [ logPrefix , bshow e ]</span> ]</span>
+<span class="lineno">  294 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  295 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  296 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">logPrefix = S.concat [ &quot;[&quot;, rip, &quot;]: error: &quot; ]</span></span>
+<span class="lineno">  297 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  298 </span><span class="spaces">    </span><span class="istickedoff">go = do</span>
+<span class="lineno">  299 </span><span class="spaces">        </span><span class="istickedoff">buf &lt;- mkIterateeBuffer</span>
+<span class="lineno">  300 </span><span class="spaces">        </span><span class="istickedoff">let iter = runServerMonad lh lip lp rip rp (logA alog) <span class="nottickedoff">(logE elog)</span> $</span>
+<span class="lineno">  301 </span><span class="spaces">                                  </span><span class="istickedoff">httpSession writeEnd buf onSendFile tickle</span>
+<span class="lineno">  302 </span><span class="spaces">                                  </span><span class="istickedoff">handler</span>
+<span class="lineno">  303 </span><span class="spaces">        </span><span class="istickedoff">readEnd iter &gt;&gt;= run</span></span>
+<span class="lineno">  304 </span>
+<span class="lineno">  305 </span>
+<span class="lineno">  306 </span>------------------------------------------------------------------------------
+<span class="lineno">  307 </span>sERVER_HEADER :: [ByteString]
+<span class="lineno">  308 </span><span class="decl"><span class="istickedoff">sERVER_HEADER = [S.concat [&quot;Snap/&quot;, snapServerVersion]]</span></span>
+<span class="lineno">  309 </span>
+<span class="lineno">  310 </span>
+<span class="lineno">  311 </span>------------------------------------------------------------------------------
+<span class="lineno">  312 </span>snapServerVersion :: ByteString
+<span class="lineno">  313 </span><span class="decl"><span class="istickedoff">snapServerVersion = SC.pack $ showVersion $ V.version</span></span>
+<span class="lineno">  314 </span>
+<span class="lineno">  315 </span>
+<span class="lineno">  316 </span>------------------------------------------------------------------------------
+<span class="lineno">  317 </span>logAccess :: Request -&gt; Response -&gt; ServerMonad ()
+<span class="lineno">  318 </span><span class="decl"><span class="istickedoff">logAccess req rsp = gets _logAccess &gt;&gt;= (\l -&gt; liftIO $ l req rsp)</span></span>
+<span class="lineno">  319 </span>
+<span class="lineno">  320 </span>
+<span class="lineno">  321 </span>------------------------------------------------------------------------------
+<span class="lineno">  322 </span>logError :: ByteString -&gt; ServerMonad ()
+<span class="lineno">  323 </span><span class="decl"><span class="nottickedoff">logError s = gets _logError &gt;&gt;= (\l -&gt; liftIO $ l s)</span></span>
+<span class="lineno">  324 </span>
+<span class="lineno">  325 </span>
+<span class="lineno">  326 </span>------------------------------------------------------------------------------
+<span class="lineno">  327 </span>-- | Runs an HTTP session.
+<span class="lineno">  328 </span>httpSession :: Iteratee IO ()                -- ^ write end of socket
+<span class="lineno">  329 </span>            -&gt; ForeignPtr CChar              -- ^ iteratee buffer
+<span class="lineno">  330 </span>            -&gt; (FilePath -&gt; Int64 -&gt; IO ())  -- ^ sendfile continuation
+<span class="lineno">  331 </span>            -&gt; IO ()                         -- ^ timeout tickler
+<span class="lineno">  332 </span>            -&gt; ServerHandler                 -- ^ handler procedure
+<span class="lineno">  333 </span>            -&gt; ServerMonad ()
+<span class="lineno">  334 </span><span class="decl"><span class="istickedoff">httpSession writeEnd' ibuf onSendFile tickle handler = do</span>
 <span class="lineno">  335 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  336 </span><span class="spaces">          </span><span class="istickedoff">liftIO $ debug <span class="nottickedoff">&quot;Server.httpSession: handled, skipping request body&quot;</span></span>
-<span class="lineno">  337 </span><span class="spaces">          </span><span class="istickedoff">srqEnum &lt;- liftIO $ readIORef $ rqBody req'</span>
-<span class="lineno">  338 </span><span class="spaces">          </span><span class="istickedoff">let (SomeEnumerator rqEnum) = srqEnum</span>
-<span class="lineno">  339 </span><span class="spaces">          </span><span class="istickedoff">lift $ joinIM $ rqEnum skipToEof</span>
-<span class="lineno">  340 </span><span class="spaces">          </span><span class="istickedoff">liftIO $ debug <span class="nottickedoff">&quot;Server.httpSession: request body skipped, sending response&quot;</span></span>
+<span class="lineno">  336 </span><span class="spaces">    </span><span class="istickedoff">(writeEnd, cancelBuffering) &lt;-</span>
+<span class="lineno">  337 </span><span class="spaces">        </span><span class="istickedoff">liftIO $ I.unsafeBufferIterateeWithBuffer ibuf writeEnd'</span>
+<span class="lineno">  338 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  339 </span><span class="spaces">    </span><span class="istickedoff">-- (writeEnd, cancelBuffering) &lt;- liftIO $ I.bufferIteratee writeEnd'</span>
+<span class="lineno">  340 </span><span class="spaces">    </span><span class="istickedoff">let <span class="nottickedoff">killBuffer = writeIORef cancelBuffering True</span></span>
 <span class="lineno">  341 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  342 </span><span class="spaces">          </span><span class="istickedoff">date &lt;- liftIO getDateString</span>
-<span class="lineno">  343 </span><span class="spaces">          </span><span class="istickedoff">let ins = (Map.insert &quot;Date&quot; [date] . Map.insert &quot;Server&quot; sERVER_HEADER)</span>
-<span class="lineno">  344 </span><span class="spaces">          </span><span class="istickedoff">let rsp' = updateHeaders ins rsp</span>
-<span class="lineno">  345 </span><span class="spaces">          </span><span class="istickedoff">(bytesSent,_) &lt;- sendResponse rsp' writeEnd <span class="nottickedoff">ibuf</span> <span class="nottickedoff">killBuffer</span> onSendFile</span>
-<span class="lineno">  346 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  347 </span><span class="spaces">          </span><span class="istickedoff">liftIO . debug $ <span class="nottickedoff">&quot;Server.httpSession: sent &quot; ++</span></span>
-<span class="lineno">  348 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">(Prelude.show bytesSent) ++ &quot; bytes&quot;</span></span>
-<span class="lineno">  349 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  350 </span><span class="spaces">          </span><span class="istickedoff">maybe (logAccess <span class="nottickedoff">req</span> <span class="nottickedoff">rsp'</span>)</span>
-<span class="lineno">  351 </span><span class="spaces">                </span><span class="istickedoff">(\_ -&gt; logAccess req $ setContentLength bytesSent rsp')</span>
-<span class="lineno">  352 </span><span class="spaces">                </span><span class="istickedoff">(rspContentLength rsp')</span>
-<span class="lineno">  353 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  354 </span><span class="spaces">          </span><span class="istickedoff">if cc</span>
-<span class="lineno">  355 </span><span class="spaces">             </span><span class="istickedoff">then return <span class="nottickedoff">()</span></span>
-<span class="lineno">  356 </span><span class="spaces">             </span><span class="istickedoff">else httpSession writeEnd' ibuf <span class="nottickedoff">onSendFile</span> tickle handler</span>
+<span class="lineno">  342 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  343 </span><span class="spaces">    </span><span class="istickedoff">liftIO $ debug <span class="nottickedoff">&quot;Server.httpSession: entered&quot;</span></span>
+<span class="lineno">  344 </span><span class="spaces">    </span><span class="istickedoff">mreq  &lt;- receiveRequest</span>
+<span class="lineno">  345 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  346 </span><span class="spaces">    </span><span class="istickedoff">-- successfully got a request, so restart timer</span>
+<span class="lineno">  347 </span><span class="spaces">    </span><span class="istickedoff">liftIO tickle</span>
+<span class="lineno">  348 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  349 </span><span class="spaces">    </span><span class="istickedoff">case mreq of</span>
+<span class="lineno">  350 </span><span class="spaces">      </span><span class="istickedoff">(Just req) -&gt; do</span>
+<span class="lineno">  351 </span><span class="spaces">          </span><span class="istickedoff">liftIO $ debug $ <span class="nottickedoff">&quot;Server.httpSession: got request: &quot; ++</span></span>
+<span class="lineno">  352 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">Prelude.show (rqMethod req) ++</span></span>
+<span class="lineno">  353 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">&quot; &quot; ++ SC.unpack (rqURI req) ++</span></span>
+<span class="lineno">  354 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">&quot; &quot; ++ Prelude.show (rqVersion req)</span></span>
+<span class="lineno">  355 </span><span class="spaces">          </span><span class="istickedoff">logerr &lt;- gets <span class="nottickedoff">_logError</span></span>
+<span class="lineno">  356 </span><span class="spaces">          </span><span class="istickedoff">(req',rspOrig) &lt;- lift $ handler <span class="nottickedoff">logerr</span> req</span>
 <span class="lineno">  357 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  358 </span><span class="spaces">      </span><span class="istickedoff">Nothing -&gt; <span class="nottickedoff">return ()</span></span></span>
-<span class="lineno">  359 </span>
-<span class="lineno">  360 </span>------------------------------------------------------------------------------
-<span class="lineno">  361 </span>receiveRequest :: ServerMonad (Maybe Request)
-<span class="lineno">  362 </span><span class="decl"><span class="istickedoff">receiveRequest = do</span>
-<span class="lineno">  363 </span><span class="spaces">    </span><span class="istickedoff">mreq &lt;- {-# SCC &quot;receiveRequest/parseRequest&quot; #-} lift parseRequest</span>
-<span class="lineno">  364 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  365 </span><span class="spaces">    </span><span class="istickedoff">case mreq of</span>
-<span class="lineno">  366 </span><span class="spaces">      </span><span class="istickedoff">(Just ireq) -&gt; do</span>
-<span class="lineno">  367 </span><span class="spaces">          </span><span class="istickedoff">req' &lt;- toRequest ireq</span>
-<span class="lineno">  368 </span><span class="spaces">          </span><span class="istickedoff">setEnumerator req'</span>
-<span class="lineno">  369 </span><span class="spaces">          </span><span class="istickedoff">req  &lt;- parseForm req'</span>
-<span class="lineno">  370 </span><span class="spaces">          </span><span class="istickedoff">checkConnectionClose (rqVersion req) (rqHeaders req)</span>
-<span class="lineno">  371 </span><span class="spaces">          </span><span class="istickedoff">return $ Just req</span>
-<span class="lineno">  372 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  373 </span><span class="spaces">      </span><span class="istickedoff">Nothing     -&gt; <span class="nottickedoff">return Nothing</span></span>
+<span class="lineno">  358 </span><span class="spaces">          </span><span class="istickedoff">liftIO $ debug $ <span class="nottickedoff">&quot;Server.httpSession: finished running user handler&quot;</span></span>
+<span class="lineno">  359 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  360 </span><span class="spaces">          </span><span class="istickedoff">let rspTmp = rspOrig { rspHttpVersion = rqVersion req }</span>
+<span class="lineno">  361 </span><span class="spaces">          </span><span class="istickedoff">checkConnectionClose (rspHttpVersion rspTmp) (rspHeaders rspTmp)</span>
+<span class="lineno">  362 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  363 </span><span class="spaces">          </span><span class="istickedoff">cc &lt;- gets _forceConnectionClose</span>
+<span class="lineno">  364 </span><span class="spaces">          </span><span class="istickedoff">let rsp = if cc</span>
+<span class="lineno">  365 </span><span class="spaces">                      </span><span class="istickedoff">then (setHeader &quot;Connection&quot; &quot;close&quot; rspTmp)</span>
+<span class="lineno">  366 </span><span class="spaces">                      </span><span class="istickedoff">else rspTmp</span>
+<span class="lineno">  367 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  368 </span><span class="spaces">          </span><span class="istickedoff">liftIO $ debug <span class="nottickedoff">&quot;Server.httpSession: handled, skipping request body&quot;</span></span>
+<span class="lineno">  369 </span><span class="spaces">          </span><span class="istickedoff">srqEnum &lt;- liftIO $ readIORef $ rqBody req'</span>
+<span class="lineno">  370 </span><span class="spaces">          </span><span class="istickedoff">let (SomeEnumerator rqEnum) = srqEnum</span>
+<span class="lineno">  371 </span><span class="spaces">          </span><span class="istickedoff">lift $ joinIM $ rqEnum skipToEof</span>
+<span class="lineno">  372 </span><span class="spaces">          </span><span class="istickedoff">liftIO $ debug $ <span class="nottickedoff">&quot;Server.httpSession: request body skipped, &quot; ++</span></span>
+<span class="lineno">  373 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">&quot;sending response&quot;</span></span>
 <span class="lineno">  374 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  375 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  376 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  377 </span><span class="spaces">    </span><span class="istickedoff">-- check: did the client specify &quot;transfer-encoding: chunked&quot;? then we have</span>
-<span class="lineno">  378 </span><span class="spaces">    </span><span class="istickedoff">-- to honor that.</span>
-<span class="lineno">  379 </span><span class="spaces">    </span><span class="istickedoff">--</span>
-<span class="lineno">  380 </span><span class="spaces">    </span><span class="istickedoff">-- otherwise: check content-length header. if set: only take N bytes from</span>
-<span class="lineno">  381 </span><span class="spaces">    </span><span class="istickedoff">-- the read end of the socket</span>
-<span class="lineno">  382 </span><span class="spaces">    </span><span class="istickedoff">--</span>
-<span class="lineno">  383 </span><span class="spaces">    </span><span class="istickedoff">-- if no content-length and no chunked encoding, enumerate the entire</span>
-<span class="lineno">  384 </span><span class="spaces">    </span><span class="istickedoff">-- socket and close afterwards</span>
-<span class="lineno">  385 </span><span class="spaces">    </span><span class="istickedoff">setEnumerator :: Request -&gt; ServerMonad ()</span>
-<span class="lineno">  386 </span><span class="spaces">    </span><span class="istickedoff">setEnumerator req =</span>
-<span class="lineno">  387 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;receiveRequest/setEnumerator&quot; #-}</span>
-<span class="lineno">  388 </span><span class="spaces">        </span><span class="istickedoff">if isChunked</span>
-<span class="lineno">  389 </span><span class="spaces">          </span><span class="istickedoff">then liftIO $ writeIORef (rqBody req)</span>
-<span class="lineno">  390 </span><span class="spaces">                                   </span><span class="istickedoff">(SomeEnumerator readChunkedTransferEncoding)</span>
-<span class="lineno">  391 </span><span class="spaces">          </span><span class="istickedoff">else maybe noContentLength hasContentLength mbCL</span>
-<span class="lineno">  392 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  393 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  394 </span><span class="spaces">        </span><span class="istickedoff">isChunked = maybe False</span>
-<span class="lineno">  395 </span><span class="spaces">                          </span><span class="istickedoff">((== [&quot;chunked&quot;]) . map toCI)</span>
-<span class="lineno">  396 </span><span class="spaces">                          </span><span class="istickedoff">(Map.lookup &quot;transfer-encoding&quot; hdrs)</span>
-<span class="lineno">  397 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  398 </span><span class="spaces">        </span><span class="istickedoff">hasContentLength :: Int -&gt; ServerMonad ()</span>
-<span class="lineno">  399 </span><span class="spaces">        </span><span class="istickedoff">hasContentLength l = do</span>
-<span class="lineno">  400 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ writeIORef (rqBody req)</span>
-<span class="lineno">  401 </span><span class="spaces">                         </span><span class="istickedoff">(SomeEnumerator e)</span>
-<span class="lineno">  402 </span><span class="spaces">          </span><span class="istickedoff">where</span>
-<span class="lineno">  403 </span><span class="spaces">            </span><span class="istickedoff">e :: Enumerator IO a</span>
-<span class="lineno">  404 </span><span class="spaces">            </span><span class="istickedoff">e = return . joinI . I.take l</span>
-<span class="lineno">  405 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  406 </span><span class="spaces">        </span><span class="istickedoff">noContentLength :: ServerMonad ()</span>
-<span class="lineno">  407 </span><span class="spaces">        </span><span class="istickedoff">noContentLength =</span>
-<span class="lineno">  408 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ writeIORef (rqBody req)</span>
-<span class="lineno">  409 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">(SomeEnumerator $ return . joinI . I.take 0 )</span></span>
-<span class="lineno">  410 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  375 </span><span class="spaces">          </span><span class="istickedoff">date &lt;- liftIO getDateString</span>
+<span class="lineno">  376 </span><span class="spaces">          </span><span class="istickedoff">let ins = Map.insert &quot;Date&quot; [date] . Map.insert &quot;Server&quot; sERVER_HEADER</span>
+<span class="lineno">  377 </span><span class="spaces">          </span><span class="istickedoff">let rsp' = updateHeaders ins rsp</span>
+<span class="lineno">  378 </span><span class="spaces">          </span><span class="istickedoff">(bytesSent,_) &lt;- sendResponse rsp' writeEnd <span class="nottickedoff">ibuf</span> <span class="nottickedoff">killBuffer</span> onSendFile</span>
+<span class="lineno">  379 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  380 </span><span class="spaces">          </span><span class="istickedoff">liftIO . debug $ <span class="nottickedoff">&quot;Server.httpSession: sent &quot; ++</span></span>
+<span class="lineno">  381 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">(Prelude.show bytesSent) ++ &quot; bytes&quot;</span></span>
+<span class="lineno">  382 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  383 </span><span class="spaces">          </span><span class="istickedoff">maybe (logAccess <span class="nottickedoff">req</span> <span class="nottickedoff">rsp'</span>)</span>
+<span class="lineno">  384 </span><span class="spaces">                </span><span class="istickedoff">(\_ -&gt; logAccess req $ setContentLength bytesSent rsp')</span>
+<span class="lineno">  385 </span><span class="spaces">                </span><span class="istickedoff">(rspContentLength rsp')</span>
+<span class="lineno">  386 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  387 </span><span class="spaces">          </span><span class="istickedoff">if cc</span>
+<span class="lineno">  388 </span><span class="spaces">             </span><span class="istickedoff">then return <span class="nottickedoff">()</span></span>
+<span class="lineno">  389 </span><span class="spaces">             </span><span class="istickedoff">else httpSession writeEnd' ibuf <span class="nottickedoff">onSendFile</span> tickle handler</span>
+<span class="lineno">  390 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  391 </span><span class="spaces">      </span><span class="istickedoff">Nothing -&gt; <span class="nottickedoff">do</span></span>
+<span class="lineno">  392 </span><span class="spaces">          </span><span class="istickedoff"><span class="nottickedoff">liftIO $ debug $ &quot;Server.httpSession: parser did not produce a &quot; ++</span></span>
+<span class="lineno">  393 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">&quot;request, ending session&quot;</span></span>
+<span class="lineno">  394 </span><span class="spaces">          </span><span class="istickedoff"><span class="nottickedoff">return ()</span></span></span>
+<span class="lineno">  395 </span>
+<span class="lineno">  396 </span>
+<span class="lineno">  397 </span>------------------------------------------------------------------------------
+<span class="lineno">  398 </span>receiveRequest :: ServerMonad (Maybe Request)
+<span class="lineno">  399 </span><span class="decl"><span class="istickedoff">receiveRequest = do</span>
+<span class="lineno">  400 </span><span class="spaces">    </span><span class="istickedoff">mreq &lt;- {-# SCC &quot;receiveRequest/parseRequest&quot; #-} lift parseRequest</span>
+<span class="lineno">  401 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  402 </span><span class="spaces">    </span><span class="istickedoff">case mreq of</span>
+<span class="lineno">  403 </span><span class="spaces">      </span><span class="istickedoff">(Just ireq) -&gt; do</span>
+<span class="lineno">  404 </span><span class="spaces">          </span><span class="istickedoff">req' &lt;- toRequest ireq</span>
+<span class="lineno">  405 </span><span class="spaces">          </span><span class="istickedoff">setEnumerator req'</span>
+<span class="lineno">  406 </span><span class="spaces">          </span><span class="istickedoff">req  &lt;- parseForm req'</span>
+<span class="lineno">  407 </span><span class="spaces">          </span><span class="istickedoff">checkConnectionClose (rqVersion req) (rqHeaders req)</span>
+<span class="lineno">  408 </span><span class="spaces">          </span><span class="istickedoff">return $ Just req</span>
+<span class="lineno">  409 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  410 </span><span class="spaces">      </span><span class="istickedoff">Nothing     -&gt; <span class="nottickedoff">return Nothing</span></span>
 <span class="lineno">  411 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  412 </span><span class="spaces">        </span><span class="istickedoff">hdrs = rqHeaders req</span>
-<span class="lineno">  413 </span><span class="spaces">        </span><span class="istickedoff">mbCL = Map.lookup &quot;content-length&quot; hdrs &gt;&gt;= return . Cvt.int . head</span>
-<span class="lineno">  414 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  415 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  416 </span><span class="spaces">    </span><span class="istickedoff">parseForm :: Request -&gt; ServerMonad Request</span>
-<span class="lineno">  417 </span><span class="spaces">    </span><span class="istickedoff">parseForm req =</span>
-<span class="lineno">  418 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;receiveRequest/parseForm&quot; #-} if doIt then getIt else return req</span>
-<span class="lineno">  419 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  420 </span><span class="spaces">        </span><span class="istickedoff">doIt = mbCT == Just &quot;application/x-www-form-urlencoded&quot;</span>
-<span class="lineno">  421 </span><span class="spaces">        </span><span class="istickedoff">mbCT = liftM head $ Map.lookup &quot;content-type&quot; (rqHeaders req)</span>
-<span class="lineno">  422 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  423 </span><span class="spaces">        </span><span class="istickedoff">maximumPOSTBodySize :: Int64</span>
-<span class="lineno">  424 </span><span class="spaces">        </span><span class="istickedoff">maximumPOSTBodySize = 10*1024*1024</span>
-<span class="lineno">  425 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  426 </span><span class="spaces">        </span><span class="istickedoff">getIt :: ServerMonad Request</span>
-<span class="lineno">  427 </span><span class="spaces">        </span><span class="istickedoff">getIt = {-# SCC &quot;receiveRequest/parseForm/getIt&quot; #-} do</span>
-<span class="lineno">  428 </span><span class="spaces">            </span><span class="istickedoff">senum &lt;- liftIO $ readIORef $ rqBody req</span>
-<span class="lineno">  429 </span><span class="spaces">            </span><span class="istickedoff">let (SomeEnumerator enum) = senum</span>
-<span class="lineno">  430 </span><span class="spaces">            </span><span class="istickedoff">let i = joinI $ takeNoMoreThan maximumPOSTBodySize stream2stream</span>
-<span class="lineno">  431 </span><span class="spaces">            </span><span class="istickedoff">iter &lt;- liftIO $ enum i</span>
-<span class="lineno">  432 </span><span class="spaces">            </span><span class="istickedoff">body &lt;- liftM unWrap $ lift iter</span>
-<span class="lineno">  433 </span><span class="spaces">            </span><span class="istickedoff">let newParams = parseUrlEncoded body</span>
-<span class="lineno">  434 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ writeIORef (rqBody req)</span>
-<span class="lineno">  435 </span><span class="spaces">                         </span><span class="istickedoff">(SomeEnumerator $ enumBS body)</span>
-<span class="lineno">  436 </span><span class="spaces">            </span><span class="istickedoff">return $ req { rqParams = rqParams req `mappend` newParams }</span>
-<span class="lineno">  437 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  438 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  439 </span><span class="spaces">    </span><span class="istickedoff">toRequest (IRequest method uri version kvps) =</span>
-<span class="lineno">  440 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;receiveRequest/toRequest&quot; #-} do</span>
-<span class="lineno">  441 </span><span class="spaces">            </span><span class="istickedoff">localAddr     &lt;- gets _localAddress</span>
-<span class="lineno">  442 </span><span class="spaces">            </span><span class="istickedoff">localPort     &lt;- gets _localPort</span>
-<span class="lineno">  443 </span><span class="spaces">            </span><span class="istickedoff">remoteAddr    &lt;- gets _remoteAddr</span>
-<span class="lineno">  444 </span><span class="spaces">            </span><span class="istickedoff">remotePort    &lt;- gets _remotePort</span>
-<span class="lineno">  445 </span><span class="spaces">            </span><span class="istickedoff">localHostname &lt;- gets _localHostname</span>
-<span class="lineno">  446 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  447 </span><span class="spaces">            </span><span class="istickedoff">let (serverName, serverPort) = fromMaybe</span>
-<span class="lineno">  448 </span><span class="spaces">                                             </span><span class="istickedoff">(localHostname, localPort)</span>
-<span class="lineno">  449 </span><span class="spaces">                                             </span><span class="istickedoff">(liftM (parseHost . head)</span>
-<span class="lineno">  450 </span><span class="spaces">                                                    </span><span class="istickedoff">(Map.lookup &quot;host&quot; hdrs))</span>
-<span class="lineno">  451 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  452 </span><span class="spaces">            </span><span class="istickedoff">-- will override in &quot;setEnumerator&quot;</span>
-<span class="lineno">  453 </span><span class="spaces">            </span><span class="istickedoff">enum &lt;- liftIO $ newIORef $ <span class="nottickedoff">SomeEnumerator return</span></span>
-<span class="lineno">  454 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  412 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  413 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  414 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  415 </span><span class="spaces">    </span><span class="istickedoff">-- check: did the client specify &quot;transfer-encoding: chunked&quot;? then we have</span>
+<span class="lineno">  416 </span><span class="spaces">    </span><span class="istickedoff">-- to honor that.</span>
+<span class="lineno">  417 </span><span class="spaces">    </span><span class="istickedoff">--</span>
+<span class="lineno">  418 </span><span class="spaces">    </span><span class="istickedoff">-- otherwise: check content-length header. if set: only take N bytes from</span>
+<span class="lineno">  419 </span><span class="spaces">    </span><span class="istickedoff">-- the read end of the socket</span>
+<span class="lineno">  420 </span><span class="spaces">    </span><span class="istickedoff">--</span>
+<span class="lineno">  421 </span><span class="spaces">    </span><span class="istickedoff">-- if no content-length and no chunked encoding, enumerate the entire</span>
+<span class="lineno">  422 </span><span class="spaces">    </span><span class="istickedoff">-- socket and close afterwards</span>
+<span class="lineno">  423 </span><span class="spaces">    </span><span class="istickedoff">setEnumerator :: Request -&gt; ServerMonad ()</span>
+<span class="lineno">  424 </span><span class="spaces">    </span><span class="istickedoff">setEnumerator req =</span>
+<span class="lineno">  425 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;receiveRequest/setEnumerator&quot; #-}</span>
+<span class="lineno">  426 </span><span class="spaces">        </span><span class="istickedoff">if isChunked</span>
+<span class="lineno">  427 </span><span class="spaces">          </span><span class="istickedoff">then do</span>
+<span class="lineno">  428 </span><span class="spaces">              </span><span class="istickedoff">liftIO $ debug $ <span class="nottickedoff">&quot;receiveRequest/setEnumerator: &quot; ++</span></span>
+<span class="lineno">  429 </span><span class="spaces">                               </span><span class="istickedoff"><span class="nottickedoff">&quot;input in chunked encoding&quot;</span></span>
+<span class="lineno">  430 </span><span class="spaces">              </span><span class="istickedoff">let e = readChunkedTransferEncoding</span>
+<span class="lineno">  431 </span><span class="spaces">              </span><span class="istickedoff">liftIO $ writeIORef (rqBody req)</span>
+<span class="lineno">  432 </span><span class="spaces">                                  </span><span class="istickedoff">(SomeEnumerator e)</span>
+<span class="lineno">  433 </span><span class="spaces">          </span><span class="istickedoff">else maybe noContentLength hasContentLength mbCL</span>
+<span class="lineno">  434 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  435 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  436 </span><span class="spaces">        </span><span class="istickedoff">isChunked = maybe False</span>
+<span class="lineno">  437 </span><span class="spaces">                          </span><span class="istickedoff">((== [&quot;chunked&quot;]) . map toCI)</span>
+<span class="lineno">  438 </span><span class="spaces">                          </span><span class="istickedoff">(Map.lookup &quot;transfer-encoding&quot; hdrs)</span>
+<span class="lineno">  439 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  440 </span><span class="spaces">        </span><span class="istickedoff">hasContentLength :: Int -&gt; ServerMonad ()</span>
+<span class="lineno">  441 </span><span class="spaces">        </span><span class="istickedoff">hasContentLength l = do</span>
+<span class="lineno">  442 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ debug $ <span class="nottickedoff">&quot;receiveRequest/setEnumerator: &quot; ++</span></span>
+<span class="lineno">  443 </span><span class="spaces">                             </span><span class="istickedoff"><span class="nottickedoff">&quot;request had content-length&quot;</span></span>
+<span class="lineno">  444 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ writeIORef (rqBody req) (SomeEnumerator e)</span>
+<span class="lineno">  445 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ debug <span class="nottickedoff">&quot;receiveRequest/setEnumerator: body enumerator set&quot;</span></span>
+<span class="lineno">  446 </span><span class="spaces">          </span><span class="istickedoff">where</span>
+<span class="lineno">  447 </span><span class="spaces">            </span><span class="istickedoff">e :: Enumerator IO a</span>
+<span class="lineno">  448 </span><span class="spaces">            </span><span class="istickedoff">e = return . joinI . I.take l .</span>
+<span class="lineno">  449 </span><span class="spaces">                </span><span class="istickedoff">iterateeDebugWrapper <span class="nottickedoff">&quot;rqBody iterator&quot;</span></span>
+<span class="lineno">  450 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  451 </span><span class="spaces">        </span><span class="istickedoff">noContentLength :: ServerMonad ()</span>
+<span class="lineno">  452 </span><span class="spaces">        </span><span class="istickedoff">noContentLength = do</span>
+<span class="lineno">  453 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ debug <span class="nottickedoff">(&quot;receiveRequest/setEnumerator: &quot; ++</span></span>
+<span class="lineno">  454 </span><span class="spaces">                            </span><span class="istickedoff"><span class="nottickedoff">&quot;request did NOT have content-length&quot;)</span></span>
 <span class="lineno">  455 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  456 </span><span class="spaces">            </span><span class="istickedoff">return $ Request serverName</span>
-<span class="lineno">  457 </span><span class="spaces">                             </span><span class="istickedoff">serverPort</span>
-<span class="lineno">  458 </span><span class="spaces">                             </span><span class="istickedoff">remoteAddr</span>
-<span class="lineno">  459 </span><span class="spaces">                             </span><span class="istickedoff">remotePort</span>
-<span class="lineno">  460 </span><span class="spaces">                             </span><span class="istickedoff">localAddr</span>
-<span class="lineno">  461 </span><span class="spaces">                             </span><span class="istickedoff">localPort</span>
-<span class="lineno">  462 </span><span class="spaces">                             </span><span class="istickedoff">localHostname</span>
-<span class="lineno">  463 </span><span class="spaces">                             </span><span class="istickedoff">isSecure</span>
-<span class="lineno">  464 </span><span class="spaces">                             </span><span class="istickedoff">hdrs</span>
-<span class="lineno">  465 </span><span class="spaces">                             </span><span class="istickedoff">enum</span>
-<span class="lineno">  466 </span><span class="spaces">                             </span><span class="istickedoff">mbContentLength</span>
-<span class="lineno">  467 </span><span class="spaces">                             </span><span class="istickedoff">method</span>
-<span class="lineno">  468 </span><span class="spaces">                             </span><span class="istickedoff">version</span>
-<span class="lineno">  469 </span><span class="spaces">                             </span><span class="istickedoff">cookies</span>
-<span class="lineno">  470 </span><span class="spaces">                             </span><span class="istickedoff">snapletPath</span>
-<span class="lineno">  471 </span><span class="spaces">                             </span><span class="istickedoff">pathInfo</span>
-<span class="lineno">  472 </span><span class="spaces">                             </span><span class="istickedoff">contextPath</span>
-<span class="lineno">  473 </span><span class="spaces">                             </span><span class="istickedoff">uri</span>
-<span class="lineno">  474 </span><span class="spaces">                             </span><span class="istickedoff">queryString</span>
-<span class="lineno">  475 </span><span class="spaces">                             </span><span class="istickedoff">params</span>
-<span class="lineno">  476 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  477 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  478 </span><span class="spaces">        </span><span class="istickedoff">snapletPath = &quot;&quot;        -- TODO: snaplets in v0.2</span>
-<span class="lineno">  479 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  480 </span><span class="spaces">        </span><span class="istickedoff">dropLeadingSlash s = maybe <span class="nottickedoff">s</span> f mbS</span>
-<span class="lineno">  481 </span><span class="spaces">          </span><span class="istickedoff">where</span>
-<span class="lineno">  482 </span><span class="spaces">            </span><span class="istickedoff">f (a,s') = if <span class="tickonlytrue">a == c2w '/'</span> then s' else <span class="nottickedoff">s</span></span>
-<span class="lineno">  483 </span><span class="spaces">            </span><span class="istickedoff">mbS = S.uncons s</span>
-<span class="lineno">  484 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  485 </span><span class="spaces">        </span><span class="istickedoff">isSecure        = False</span>
-<span class="lineno">  486 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  487 </span><span class="spaces">        </span><span class="istickedoff">hdrs            = toHeaders kvps</span>
-<span class="lineno">  488 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  489 </span><span class="spaces">        </span><span class="istickedoff">mbContentLength = liftM (Cvt.int . head) $</span>
-<span class="lineno">  490 </span><span class="spaces">                          </span><span class="istickedoff">Map.lookup &quot;content-length&quot; hdrs</span>
+<span class="lineno">  456 </span><span class="spaces">            </span><span class="istickedoff">-- FIXME: should we not just read everything?</span>
+<span class="lineno">  457 </span><span class="spaces">            </span><span class="istickedoff">let <span class="nottickedoff">e = return . joinI . I.take 0</span></span>
+<span class="lineno">  458 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  459 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ writeIORef (rqBody req) <span class="nottickedoff">(SomeEnumerator e)</span></span>
+<span class="lineno">  460 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ debug <span class="nottickedoff">&quot;receiveRequest/setEnumerator: body enumerator set&quot;</span></span>
+<span class="lineno">  461 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  462 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  463 </span><span class="spaces">        </span><span class="istickedoff">hdrs = rqHeaders req</span>
+<span class="lineno">  464 </span><span class="spaces">        </span><span class="istickedoff">mbCL = Map.lookup &quot;content-length&quot; hdrs &gt;&gt;= return . Cvt.int . head</span>
+<span class="lineno">  465 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  466 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  467 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  468 </span><span class="spaces">    </span><span class="istickedoff">parseForm :: Request -&gt; ServerMonad Request</span>
+<span class="lineno">  469 </span><span class="spaces">    </span><span class="istickedoff">parseForm req = {-# SCC &quot;receiveRequest/parseForm&quot; #-}</span>
+<span class="lineno">  470 </span><span class="spaces">        </span><span class="istickedoff">if doIt then getIt else return req</span>
+<span class="lineno">  471 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  472 </span><span class="spaces">        </span><span class="istickedoff">mbCT   = liftM head $ Map.lookup &quot;content-type&quot; (rqHeaders req)</span>
+<span class="lineno">  473 </span><span class="spaces">        </span><span class="istickedoff">trimIt = fst . SC.spanEnd isSpace . SC.takeWhile (/= ';')</span>
+<span class="lineno">  474 </span><span class="spaces">                     </span><span class="istickedoff">. SC.dropWhile isSpace</span>
+<span class="lineno">  475 </span><span class="spaces">        </span><span class="istickedoff">mbCT'  = liftM trimIt mbCT</span>
+<span class="lineno">  476 </span><span class="spaces">        </span><span class="istickedoff">doIt   = mbCT' == Just &quot;application/x-www-form-urlencoded&quot;</span>
+<span class="lineno">  477 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  478 </span><span class="spaces">        </span><span class="istickedoff">maximumPOSTBodySize :: Int64</span>
+<span class="lineno">  479 </span><span class="spaces">        </span><span class="istickedoff">maximumPOSTBodySize = 10*1024*1024</span>
+<span class="lineno">  480 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  481 </span><span class="spaces">        </span><span class="istickedoff">getIt :: ServerMonad Request</span>
+<span class="lineno">  482 </span><span class="spaces">        </span><span class="istickedoff">getIt = {-# SCC &quot;receiveRequest/parseForm/getIt&quot; #-} do</span>
+<span class="lineno">  483 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ debug <span class="nottickedoff">&quot;parseForm: got application/x-www-form-urlencoded&quot;</span></span>
+<span class="lineno">  484 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ debug <span class="nottickedoff">&quot;parseForm: reading POST body&quot;</span></span>
+<span class="lineno">  485 </span><span class="spaces">            </span><span class="istickedoff">senum &lt;- liftIO $ readIORef $ rqBody req</span>
+<span class="lineno">  486 </span><span class="spaces">            </span><span class="istickedoff">let (SomeEnumerator enum) = senum</span>
+<span class="lineno">  487 </span><span class="spaces">            </span><span class="istickedoff">let i = joinI $ takeNoMoreThan maximumPOSTBodySize stream2stream</span>
+<span class="lineno">  488 </span><span class="spaces">            </span><span class="istickedoff">iter &lt;- liftIO $ enum i</span>
+<span class="lineno">  489 </span><span class="spaces">            </span><span class="istickedoff">body &lt;- liftM unWrap $ lift iter</span>
+<span class="lineno">  490 </span><span class="spaces">            </span><span class="istickedoff">let newParams = parseUrlEncoded body</span>
 <span class="lineno">  491 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  492 </span><span class="spaces">        </span><span class="istickedoff">cookies         = concat $</span>
-<span class="lineno">  493 </span><span class="spaces">                          </span><span class="istickedoff">maybe []</span>
-<span class="lineno">  494 </span><span class="spaces">                                </span><span class="istickedoff">(catMaybes . map parseCookie)</span>
-<span class="lineno">  495 </span><span class="spaces">                                </span><span class="istickedoff">(Map.lookup &quot;cookie&quot; hdrs)</span>
-<span class="lineno">  496 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  497 </span><span class="spaces">        </span><span class="istickedoff">contextPath     = &quot;/&quot;</span>
+<span class="lineno">  492 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ debug <span class="nottickedoff">&quot;parseForm: stuffing 'enumBS body' into request&quot;</span></span>
+<span class="lineno">  493 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  494 </span><span class="spaces">            </span><span class="istickedoff">let e = enumBS body &gt;. enumEof</span>
+<span class="lineno">  495 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  496 </span><span class="spaces">            </span><span class="istickedoff">liftIO $ writeIORef (rqBody req) $ SomeEnumerator $</span>
+<span class="lineno">  497 </span><span class="spaces">                     </span><span class="istickedoff">e . iterateeDebugWrapper <span class="nottickedoff">&quot;regurgitate body&quot;</span></span>
 <span class="lineno">  498 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  499 </span><span class="spaces">        </span><span class="istickedoff">parseHost h = (a, Cvt.int (S.drop 1 b))</span>
-<span class="lineno">  500 </span><span class="spaces">          </span><span class="istickedoff">where</span>
-<span class="lineno">  501 </span><span class="spaces">            </span><span class="istickedoff">(a,b) = S.break (== (c2w ':')) h</span>
-<span class="lineno">  502 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  503 </span><span class="spaces">        </span><span class="istickedoff">params          = parseUrlEncoded queryString</span>
-<span class="lineno">  504 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  505 </span><span class="spaces">        </span><span class="istickedoff">(pathInfo, queryString) = first dropLeadingSlash . second (S.drop 1) $</span>
-<span class="lineno">  506 </span><span class="spaces">                                  </span><span class="istickedoff">S.break (== (c2w '?')) uri</span></span>
-<span class="lineno">  507 </span>
-<span class="lineno">  508 </span>
-<span class="lineno">  509 </span>------------------------------------------------------------------------------
-<span class="lineno">  510 </span>-- Response must be well-formed here
-<span class="lineno">  511 </span>sendResponse :: Response
-<span class="lineno">  512 </span>             -&gt; Iteratee IO a
-<span class="lineno">  513 </span>             -&gt; ForeignPtr CChar
-<span class="lineno">  514 </span>             -&gt; IO ()
-<span class="lineno">  515 </span>             -&gt; (FilePath -&gt; Int64 -&gt; IO a)
-<span class="lineno">  516 </span>             -&gt; ServerMonad (Int64, a)
-<span class="lineno">  517 </span><span class="decl"><span class="istickedoff">sendResponse rsp' writeEnd ibuf killBuffering onSendFile = do</span>
-<span class="lineno">  518 </span><span class="spaces">    </span><span class="istickedoff">rsp &lt;- fixupResponse rsp'</span>
-<span class="lineno">  519 </span><span class="spaces">    </span><span class="istickedoff">let !headerString = mkHeaderString rsp</span>
-<span class="lineno">  520 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  521 </span><span class="spaces">    </span><span class="istickedoff">(!x,!bs) &lt;- case (rspBody rsp) of</span>
-<span class="lineno">  522 </span><span class="spaces">                  </span><span class="istickedoff">(Enum e)     -&gt; liftIO $ whenEnum headerString e</span>
-<span class="lineno">  523 </span><span class="spaces">                  </span><span class="istickedoff">(SendFile f) -&gt; liftIO $ whenSendFile headerString rsp f</span>
-<span class="lineno">  524 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  525 </span><span class="spaces">    </span><span class="istickedoff">return $! (bs,x)</span>
-<span class="lineno">  526 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  527 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  528 </span><span class="spaces">    </span><span class="istickedoff">whenEnum hs e = do</span>
-<span class="lineno">  529 </span><span class="spaces">        </span><span class="istickedoff">let enum = enumBS hs &gt;. e</span>
-<span class="lineno">  530 </span><span class="spaces">        </span><span class="istickedoff">let hl = fromIntegral $ S.length hs</span>
-<span class="lineno">  531 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  532 </span><span class="spaces">        </span><span class="istickedoff">(x,bs) &lt;- liftIO $ enum (countBytes writeEnd) &gt;&gt;= run</span>
-<span class="lineno">  533 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  534 </span><span class="spaces">        </span><span class="istickedoff">return (x, bs-hl)</span>
-<span class="lineno">  535 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  536 </span><span class="spaces">    </span><span class="istickedoff">whenSendFile hs r f = do</span>
-<span class="lineno">  537 </span><span class="spaces">        </span><span class="istickedoff">-- guaranteed to have a content length here.</span>
-<span class="lineno">  538 </span><span class="spaces">        </span><span class="istickedoff">enumBS hs writeEnd &gt;&gt;= run</span>
-<span class="lineno">  539 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  540 </span><span class="spaces">        </span><span class="istickedoff">let !cl = fromJust $ rspContentLength r</span>
-<span class="lineno">  541 </span><span class="spaces">        </span><span class="istickedoff">x &lt;- onSendFile f <span class="nottickedoff">cl</span></span>
-<span class="lineno">  542 </span><span class="spaces">        </span><span class="istickedoff">return (x, cl)</span>
+<span class="lineno">  499 </span><span class="spaces">            </span><span class="istickedoff">return $ req { rqParams = rqParams req `mappend` newParams }</span>
+<span class="lineno">  500 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  501 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  502 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  503 </span><span class="spaces">    </span><span class="istickedoff">toRequest (IRequest method uri version kvps) =</span>
+<span class="lineno">  504 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;receiveRequest/toRequest&quot; #-} do</span>
+<span class="lineno">  505 </span><span class="spaces">            </span><span class="istickedoff">localAddr     &lt;- gets _localAddress</span>
+<span class="lineno">  506 </span><span class="spaces">            </span><span class="istickedoff">localPort     &lt;- gets _localPort</span>
+<span class="lineno">  507 </span><span class="spaces">            </span><span class="istickedoff">remoteAddr    &lt;- gets _remoteAddr</span>
+<span class="lineno">  508 </span><span class="spaces">            </span><span class="istickedoff">remotePort    &lt;- gets _remotePort</span>
+<span class="lineno">  509 </span><span class="spaces">            </span><span class="istickedoff">localHostname &lt;- gets _localHostname</span>
+<span class="lineno">  510 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  511 </span><span class="spaces">            </span><span class="istickedoff">let (serverName, serverPort) = fromMaybe</span>
+<span class="lineno">  512 </span><span class="spaces">                                             </span><span class="istickedoff">(localHostname, localPort)</span>
+<span class="lineno">  513 </span><span class="spaces">                                             </span><span class="istickedoff">(liftM (parseHost . head)</span>
+<span class="lineno">  514 </span><span class="spaces">                                                    </span><span class="istickedoff">(Map.lookup &quot;host&quot; hdrs))</span>
+<span class="lineno">  515 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  516 </span><span class="spaces">            </span><span class="istickedoff">-- will override in &quot;setEnumerator&quot;</span>
+<span class="lineno">  517 </span><span class="spaces">            </span><span class="istickedoff">enum &lt;- liftIO $ newIORef $ <span class="nottickedoff">SomeEnumerator return</span></span>
+<span class="lineno">  518 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  519 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  520 </span><span class="spaces">            </span><span class="istickedoff">return $ Request serverName</span>
+<span class="lineno">  521 </span><span class="spaces">                             </span><span class="istickedoff">serverPort</span>
+<span class="lineno">  522 </span><span class="spaces">                             </span><span class="istickedoff">remoteAddr</span>
+<span class="lineno">  523 </span><span class="spaces">                             </span><span class="istickedoff">remotePort</span>
+<span class="lineno">  524 </span><span class="spaces">                             </span><span class="istickedoff">localAddr</span>
+<span class="lineno">  525 </span><span class="spaces">                             </span><span class="istickedoff">localPort</span>
+<span class="lineno">  526 </span><span class="spaces">                             </span><span class="istickedoff">localHostname</span>
+<span class="lineno">  527 </span><span class="spaces">                             </span><span class="istickedoff">isSecure</span>
+<span class="lineno">  528 </span><span class="spaces">                             </span><span class="istickedoff">hdrs</span>
+<span class="lineno">  529 </span><span class="spaces">                             </span><span class="istickedoff">enum</span>
+<span class="lineno">  530 </span><span class="spaces">                             </span><span class="istickedoff">mbContentLength</span>
+<span class="lineno">  531 </span><span class="spaces">                             </span><span class="istickedoff">method</span>
+<span class="lineno">  532 </span><span class="spaces">                             </span><span class="istickedoff">version</span>
+<span class="lineno">  533 </span><span class="spaces">                             </span><span class="istickedoff">cookies</span>
+<span class="lineno">  534 </span><span class="spaces">                             </span><span class="istickedoff">snapletPath</span>
+<span class="lineno">  535 </span><span class="spaces">                             </span><span class="istickedoff">pathInfo</span>
+<span class="lineno">  536 </span><span class="spaces">                             </span><span class="istickedoff">contextPath</span>
+<span class="lineno">  537 </span><span class="spaces">                             </span><span class="istickedoff">uri</span>
+<span class="lineno">  538 </span><span class="spaces">                             </span><span class="istickedoff">queryString</span>
+<span class="lineno">  539 </span><span class="spaces">                             </span><span class="istickedoff">params</span>
+<span class="lineno">  540 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  541 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  542 </span><span class="spaces">        </span><span class="istickedoff">snapletPath = &quot;&quot;        -- TODO: snaplets in v0.2</span>
 <span class="lineno">  543 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  544 </span><span class="spaces">    </span><span class="istickedoff">(major,minor) = rspHttpVersion rsp'</span>
-<span class="lineno">  545 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  546 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  547 </span><span class="spaces">    </span><span class="istickedoff">fmtHdrs hdrs =</span>
-<span class="lineno">  548 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;fmtHdrs&quot; #-}</span>
-<span class="lineno">  549 </span><span class="spaces">        </span><span class="istickedoff">concat xs</span>
-<span class="lineno">  550 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  551 </span><span class="spaces">        </span><span class="istickedoff">xs = map f $ Map.toList hdrs</span>
+<span class="lineno">  544 </span><span class="spaces">        </span><span class="istickedoff">dropLeadingSlash s = maybe <span class="nottickedoff">s</span> f mbS</span>
+<span class="lineno">  545 </span><span class="spaces">          </span><span class="istickedoff">where</span>
+<span class="lineno">  546 </span><span class="spaces">            </span><span class="istickedoff">f (a,s') = if <span class="tickonlytrue">a == c2w '/'</span> then s' else <span class="nottickedoff">s</span></span>
+<span class="lineno">  547 </span><span class="spaces">            </span><span class="istickedoff">mbS = S.uncons s</span>
+<span class="lineno">  548 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  549 </span><span class="spaces">        </span><span class="istickedoff">isSecure        = False</span>
+<span class="lineno">  550 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  551 </span><span class="spaces">        </span><span class="istickedoff">hdrs            = toHeaders kvps</span>
 <span class="lineno">  552 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  553 </span><span class="spaces">        </span><span class="istickedoff">f (k, ys) = map (g k) ys</span>
-<span class="lineno">  554 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  555 </span><span class="spaces">        </span><span class="istickedoff">g k y = S.concat [ unCI k, &quot;: &quot;, y, &quot;\r\n&quot; ]</span>
-<span class="lineno">  556 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  557 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  558 </span><span class="spaces">    </span><span class="istickedoff">noCL :: Response -&gt; ServerMonad Response</span>
-<span class="lineno">  559 </span><span class="spaces">    </span><span class="istickedoff">noCL r =</span>
-<span class="lineno">  560 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;noCL&quot; #-}</span>
-<span class="lineno">  561 </span><span class="spaces">        </span><span class="istickedoff">do</span>
-<span class="lineno">  562 </span><span class="spaces">            </span><span class="istickedoff">-- are we in HTTP/1.1?</span>
-<span class="lineno">  563 </span><span class="spaces">            </span><span class="istickedoff">let sendChunked = (rspHttpVersion r) == (1,1)</span>
-<span class="lineno">  564 </span><span class="spaces">            </span><span class="istickedoff">if sendChunked</span>
-<span class="lineno">  565 </span><span class="spaces">              </span><span class="istickedoff">then do</span>
-<span class="lineno">  566 </span><span class="spaces">                  </span><span class="istickedoff">liftIO $ killBuffering</span>
-<span class="lineno">  567 </span><span class="spaces">                  </span><span class="istickedoff">let r' = setHeader &quot;Transfer-Encoding&quot; &quot;chunked&quot; r</span>
-<span class="lineno">  568 </span><span class="spaces">                  </span><span class="istickedoff">let e  = writeChunkedTransferEncoding ibuf $</span>
-<span class="lineno">  569 </span><span class="spaces">                           </span><span class="istickedoff">rspBodyToEnum $ rspBody r</span>
-<span class="lineno">  570 </span><span class="spaces">                  </span><span class="istickedoff">return $ r' { rspBody = Enum e }</span>
-<span class="lineno">  571 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  572 </span><span class="spaces">              </span><span class="istickedoff">else do</span>
-<span class="lineno">  573 </span><span class="spaces">                  </span><span class="istickedoff">-- HTTP/1.0 and no content-length? We'll have to close the</span>
-<span class="lineno">  574 </span><span class="spaces">                  </span><span class="istickedoff">-- socket.</span>
-<span class="lineno">  575 </span><span class="spaces">                  </span><span class="istickedoff">modify $! \s -&gt; s { _forceConnectionClose = <span class="nottickedoff">True</span> }</span>
-<span class="lineno">  576 </span><span class="spaces">                  </span><span class="istickedoff">return $ setHeader &quot;Connection&quot; &quot;close&quot; r</span>
-<span class="lineno">  577 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  578 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  579 </span><span class="spaces">    </span><span class="istickedoff">hasCL :: Int64 -&gt; Response -&gt; ServerMonad Response</span>
-<span class="lineno">  580 </span><span class="spaces">    </span><span class="istickedoff">hasCL cl r =</span>
-<span class="lineno">  581 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;hasCL&quot; #-}</span>
-<span class="lineno">  582 </span><span class="spaces">        </span><span class="istickedoff">do</span>
-<span class="lineno">  583 </span><span class="spaces">            </span><span class="istickedoff">-- set the content-length header</span>
-<span class="lineno">  584 </span><span class="spaces">            </span><span class="istickedoff">let r' = setHeader &quot;Content-Length&quot; (l2s $ show cl) r</span>
-<span class="lineno">  585 </span><span class="spaces">            </span><span class="istickedoff">let b = case (rspBody r') of</span>
-<span class="lineno">  586 </span><span class="spaces">                      </span><span class="istickedoff">(Enum e)     -&gt; Enum (i e)</span>
-<span class="lineno">  587 </span><span class="spaces">                      </span><span class="istickedoff">(SendFile f) -&gt; SendFile f</span>
+<span class="lineno">  553 </span><span class="spaces">        </span><span class="istickedoff">mbContentLength = liftM (Cvt.int . head) $</span>
+<span class="lineno">  554 </span><span class="spaces">                          </span><span class="istickedoff">Map.lookup &quot;content-length&quot; hdrs</span>
+<span class="lineno">  555 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  556 </span><span class="spaces">        </span><span class="istickedoff">cookies         = concat $</span>
+<span class="lineno">  557 </span><span class="spaces">                          </span><span class="istickedoff">maybe []</span>
+<span class="lineno">  558 </span><span class="spaces">                                </span><span class="istickedoff">(catMaybes . map parseCookie)</span>
+<span class="lineno">  559 </span><span class="spaces">                                </span><span class="istickedoff">(Map.lookup &quot;cookie&quot; hdrs)</span>
+<span class="lineno">  560 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  561 </span><span class="spaces">        </span><span class="istickedoff">contextPath     = &quot;/&quot;</span>
+<span class="lineno">  562 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  563 </span><span class="spaces">        </span><span class="istickedoff">parseHost h = (a, Cvt.int (S.drop 1 b))</span>
+<span class="lineno">  564 </span><span class="spaces">          </span><span class="istickedoff">where</span>
+<span class="lineno">  565 </span><span class="spaces">            </span><span class="istickedoff">(a,b) = S.break (== (c2w ':')) h</span>
+<span class="lineno">  566 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  567 </span><span class="spaces">        </span><span class="istickedoff">params          = parseUrlEncoded queryString</span>
+<span class="lineno">  568 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  569 </span><span class="spaces">        </span><span class="istickedoff">(pathInfo, queryString) = first dropLeadingSlash . second (S.drop 1) $</span>
+<span class="lineno">  570 </span><span class="spaces">                                  </span><span class="istickedoff">S.break (== (c2w '?')) uri</span></span>
+<span class="lineno">  571 </span>
+<span class="lineno">  572 </span>
+<span class="lineno">  573 </span>------------------------------------------------------------------------------
+<span class="lineno">  574 </span>-- Response must be well-formed here
+<span class="lineno">  575 </span>sendResponse :: Response
+<span class="lineno">  576 </span>             -&gt; Iteratee IO a
+<span class="lineno">  577 </span>             -&gt; ForeignPtr CChar
+<span class="lineno">  578 </span>             -&gt; IO ()
+<span class="lineno">  579 </span>             -&gt; (FilePath -&gt; Int64 -&gt; IO a)
+<span class="lineno">  580 </span>             -&gt; ServerMonad (Int64, a)
+<span class="lineno">  581 </span><span class="decl"><span class="istickedoff">sendResponse rsp' writeEnd ibuf killBuffering onSendFile = do</span>
+<span class="lineno">  582 </span><span class="spaces">    </span><span class="istickedoff">rsp &lt;- fixupResponse rsp'</span>
+<span class="lineno">  583 </span><span class="spaces">    </span><span class="istickedoff">let !headerString = mkHeaderString rsp</span>
+<span class="lineno">  584 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  585 </span><span class="spaces">    </span><span class="istickedoff">(!x,!bs) &lt;- case (rspBody rsp) of</span>
+<span class="lineno">  586 </span><span class="spaces">                  </span><span class="istickedoff">(Enum e)     -&gt; liftIO $ whenEnum headerString e</span>
+<span class="lineno">  587 </span><span class="spaces">                  </span><span class="istickedoff">(SendFile f) -&gt; liftIO $ whenSendFile headerString rsp f</span>
 <span class="lineno">  588 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  589 </span><span class="spaces">            </span><span class="istickedoff">return $ r' { rspBody = b }</span>
+<span class="lineno">  589 </span><span class="spaces">    </span><span class="istickedoff">return $! (bs,x)</span>
 <span class="lineno">  590 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  591 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  592 </span><span class="spaces">        </span><span class="istickedoff">i :: Enumerator IO a -&gt; Enumerator IO a</span>
-<span class="lineno">  593 </span><span class="spaces">        </span><span class="istickedoff">i enum iter = enum (joinI $ takeExactly cl iter)</span>
-<span class="lineno">  594 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  595 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  596 </span><span class="spaces">    </span><span class="istickedoff">setFileSize :: FilePath -&gt; Response -&gt; ServerMonad Response</span>
-<span class="lineno">  597 </span><span class="spaces">    </span><span class="istickedoff">setFileSize fp r =</span>
-<span class="lineno">  598 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;setFileSize&quot; #-}</span>
-<span class="lineno">  599 </span><span class="spaces">        </span><span class="istickedoff">do</span>
-<span class="lineno">  600 </span><span class="spaces">            </span><span class="istickedoff">fs &lt;- liftM fromIntegral $ liftIO $ getFileSize fp</span>
-<span class="lineno">  601 </span><span class="spaces">            </span><span class="istickedoff">return $ r { rspContentLength = Just fs }</span>
-<span class="lineno">  602 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  603 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  604 </span><span class="spaces">    </span><span class="istickedoff">handle304 :: Response -&gt; Response</span>
-<span class="lineno">  605 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">handle304 r = setResponseBody (enumBS &quot;&quot;) $</span></span>
-<span class="lineno">  606 </span><span class="spaces">                  </span><span class="istickedoff"><span class="nottickedoff">updateHeaders (Map.delete &quot;Transfer-Encoding&quot;) $</span></span>
-<span class="lineno">  607 </span><span class="spaces">                  </span><span class="istickedoff"><span class="nottickedoff">setContentLength 0 r</span></span>
-<span class="lineno">  608 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  609 </span><span class="spaces">    </span><span class="istickedoff">fixupResponse :: Response -&gt; ServerMonad Response</span>
-<span class="lineno">  610 </span><span class="spaces">    </span><span class="istickedoff">fixupResponse r =</span>
-<span class="lineno">  611 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;fixupResponse&quot; #-}</span>
-<span class="lineno">  612 </span><span class="spaces">        </span><span class="istickedoff">do</span>
-<span class="lineno">  613 </span><span class="spaces">            </span><span class="istickedoff">let r' = updateHeaders (Map.delete &quot;Content-Length&quot;) r</span>
+<span class="lineno">  591 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  592 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  593 </span><span class="spaces">    </span><span class="istickedoff">whenEnum hs e = do</span>
+<span class="lineno">  594 </span><span class="spaces">        </span><span class="istickedoff">let enum = enumBS hs &gt;. e</span>
+<span class="lineno">  595 </span><span class="spaces">        </span><span class="istickedoff">let hl = fromIntegral $ S.length hs</span>
+<span class="lineno">  596 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  597 </span><span class="spaces">        </span><span class="istickedoff">(x,bs) &lt;- liftIO $ enum (countBytes writeEnd) &gt;&gt;= run</span>
+<span class="lineno">  598 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  599 </span><span class="spaces">        </span><span class="istickedoff">return (x, bs-hl)</span>
+<span class="lineno">  600 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  601 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  602 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  603 </span><span class="spaces">    </span><span class="istickedoff">whenSendFile hs r f = do</span>
+<span class="lineno">  604 </span><span class="spaces">        </span><span class="istickedoff">-- guaranteed to have a content length here.</span>
+<span class="lineno">  605 </span><span class="spaces">        </span><span class="istickedoff">enumBS hs writeEnd &gt;&gt;= run</span>
+<span class="lineno">  606 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  607 </span><span class="spaces">        </span><span class="istickedoff">let !cl = fromJust $ rspContentLength r</span>
+<span class="lineno">  608 </span><span class="spaces">        </span><span class="istickedoff">x &lt;- onSendFile f <span class="nottickedoff">cl</span></span>
+<span class="lineno">  609 </span><span class="spaces">        </span><span class="istickedoff">return (x, cl)</span>
+<span class="lineno">  610 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  611 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  612 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  613 </span><span class="spaces">    </span><span class="istickedoff">(major,minor) = rspHttpVersion rsp'</span>
 <span class="lineno">  614 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  615 </span><span class="spaces">            </span><span class="istickedoff">let code = rspStatus r'</span>
-<span class="lineno">  616 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  617 </span><span class="spaces">            </span><span class="istickedoff">let r'' = if <span class="tickonlyfalse">code == 204 || code == 304</span></span>
-<span class="lineno">  618 </span><span class="spaces">                       </span><span class="istickedoff">then <span class="nottickedoff">handle304 r'</span></span>
-<span class="lineno">  619 </span><span class="spaces">                       </span><span class="istickedoff">else r'</span>
-<span class="lineno">  620 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  621 </span><span class="spaces">            </span><span class="istickedoff">r''' &lt;- case (rspBody r'') of</span>
-<span class="lineno">  622 </span><span class="spaces">                     </span><span class="istickedoff">(Enum _)     -&gt; return r''</span>
-<span class="lineno">  623 </span><span class="spaces">                     </span><span class="istickedoff">(SendFile f) -&gt; setFileSize f r''</span>
-<span class="lineno">  624 </span><span class="spaces">            </span><span class="istickedoff">case (rspContentLength r''') of</span>
-<span class="lineno">  625 </span><span class="spaces">              </span><span class="istickedoff">Nothing   -&gt; noCL r'''</span>
-<span class="lineno">  626 </span><span class="spaces">              </span><span class="istickedoff">(Just sz) -&gt; hasCL sz r'''</span>
+<span class="lineno">  615 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  616 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  617 </span><span class="spaces">    </span><span class="istickedoff">fmtHdrs hdrs =</span>
+<span class="lineno">  618 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;fmtHdrs&quot; #-}</span>
+<span class="lineno">  619 </span><span class="spaces">        </span><span class="istickedoff">concat xs</span>
+<span class="lineno">  620 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  621 </span><span class="spaces">        </span><span class="istickedoff">xs = map f $ Map.toList hdrs</span>
+<span class="lineno">  622 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  623 </span><span class="spaces">        </span><span class="istickedoff">f (k, ys) = map (g k) ys</span>
+<span class="lineno">  624 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  625 </span><span class="spaces">        </span><span class="istickedoff">g k y = S.concat [ unCI k, &quot;: &quot;, y, &quot;\r\n&quot; ]</span>
+<span class="lineno">  626 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  627 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  628 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  629 </span><span class="spaces">    </span><span class="istickedoff">bsshow = l2s . show</span>
-<span class="lineno">  630 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  631 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  632 </span><span class="spaces">    </span><span class="istickedoff">mkHeaderString :: Response -&gt; ByteString</span>
-<span class="lineno">  633 </span><span class="spaces">    </span><span class="istickedoff">mkHeaderString r =</span>
-<span class="lineno">  634 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;mkHeaderString&quot; #-}</span>
-<span class="lineno">  635 </span><span class="spaces">        </span><span class="istickedoff">S.concat $ concat [hl, hdr, eol]</span>
-<span class="lineno">  636 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  637 </span><span class="spaces">        </span><span class="istickedoff">hl = [ &quot;HTTP/&quot;</span>
-<span class="lineno">  638 </span><span class="spaces">             </span><span class="istickedoff">, bsshow major</span>
-<span class="lineno">  639 </span><span class="spaces">             </span><span class="istickedoff">, &quot;.&quot;</span>
-<span class="lineno">  640 </span><span class="spaces">             </span><span class="istickedoff">, bsshow minor</span>
-<span class="lineno">  641 </span><span class="spaces">             </span><span class="istickedoff">, &quot; &quot;</span>
-<span class="lineno">  642 </span><span class="spaces">             </span><span class="istickedoff">, bsshow $ rspStatus r</span>
-<span class="lineno">  643 </span><span class="spaces">             </span><span class="istickedoff">, &quot; &quot;</span>
-<span class="lineno">  644 </span><span class="spaces">             </span><span class="istickedoff">, rspStatusReason r</span>
-<span class="lineno">  645 </span><span class="spaces">             </span><span class="istickedoff">, &quot;\r\n&quot; ]</span>
-<span class="lineno">  646 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  647 </span><span class="spaces">        </span><span class="istickedoff">hdr = fmtHdrs $ headers r</span>
+<span class="lineno">  628 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  629 </span><span class="spaces">    </span><span class="istickedoff">noCL :: Response -&gt; ServerMonad Response</span>
+<span class="lineno">  630 </span><span class="spaces">    </span><span class="istickedoff">noCL r =</span>
+<span class="lineno">  631 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;noCL&quot; #-}</span>
+<span class="lineno">  632 </span><span class="spaces">        </span><span class="istickedoff">do</span>
+<span class="lineno">  633 </span><span class="spaces">            </span><span class="istickedoff">-- are we in HTTP/1.1?</span>
+<span class="lineno">  634 </span><span class="spaces">            </span><span class="istickedoff">let sendChunked = (rspHttpVersion r) == (1,1)</span>
+<span class="lineno">  635 </span><span class="spaces">            </span><span class="istickedoff">if sendChunked</span>
+<span class="lineno">  636 </span><span class="spaces">              </span><span class="istickedoff">then do</span>
+<span class="lineno">  637 </span><span class="spaces">                  </span><span class="istickedoff">liftIO $ killBuffering</span>
+<span class="lineno">  638 </span><span class="spaces">                  </span><span class="istickedoff">let r' = setHeader &quot;Transfer-Encoding&quot; &quot;chunked&quot; r</span>
+<span class="lineno">  639 </span><span class="spaces">                  </span><span class="istickedoff">let e  = writeChunkedTransferEncoding ibuf $</span>
+<span class="lineno">  640 </span><span class="spaces">                           </span><span class="istickedoff">rspBodyToEnum $ rspBody r</span>
+<span class="lineno">  641 </span><span class="spaces">                  </span><span class="istickedoff">return $ r' { rspBody = Enum e }</span>
+<span class="lineno">  642 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  643 </span><span class="spaces">              </span><span class="istickedoff">else do</span>
+<span class="lineno">  644 </span><span class="spaces">                  </span><span class="istickedoff">-- HTTP/1.0 and no content-length? We'll have to close the</span>
+<span class="lineno">  645 </span><span class="spaces">                  </span><span class="istickedoff">-- socket.</span>
+<span class="lineno">  646 </span><span class="spaces">                  </span><span class="istickedoff">modify $! \s -&gt; s { _forceConnectionClose = <span class="nottickedoff">True</span> }</span>
+<span class="lineno">  647 </span><span class="spaces">                  </span><span class="istickedoff">return $ setHeader &quot;Connection&quot; &quot;close&quot; r</span>
 <span class="lineno">  648 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  649 </span><span class="spaces">        </span><span class="istickedoff">eol = [&quot;\r\n&quot;]</span></span>
-<span class="lineno">  650 </span>
-<span class="lineno">  651 </span>
-<span class="lineno">  652 </span>------------------------------------------------------------------------------
-<span class="lineno">  653 </span>checkConnectionClose :: (Int, Int) -&gt; Headers -&gt; ServerMonad ()
-<span class="lineno">  654 </span><span class="decl"><span class="istickedoff">checkConnectionClose ver hdrs =</span>
-<span class="lineno">  655 </span><span class="spaces">    </span><span class="istickedoff">-- For HTTP/1.1:</span>
-<span class="lineno">  656 </span><span class="spaces">    </span><span class="istickedoff">--   if there is an explicit Connection: close, close the socket.</span>
-<span class="lineno">  657 </span><span class="spaces">    </span><span class="istickedoff">-- For HTTP/1.0:</span>
-<span class="lineno">  658 </span><span class="spaces">    </span><span class="istickedoff">--   if there is no explicit Connection: Keep-Alive, close the socket.</span>
-<span class="lineno">  659 </span><span class="spaces">    </span><span class="istickedoff">if (ver == (1,1) &amp;&amp; l == Just [&quot;close&quot;]) ||</span>
-<span class="lineno">  660 </span><span class="spaces">       </span><span class="istickedoff">(ver == (1,0) &amp;&amp; l /= Just <span class="nottickedoff">[&quot;Keep-Alive&quot;]</span>)</span>
-<span class="lineno">  661 </span><span class="spaces">       </span><span class="istickedoff">then modify $ \s -&gt; s { _forceConnectionClose = True }</span>
-<span class="lineno">  662 </span><span class="spaces">       </span><span class="istickedoff">else return <span class="nottickedoff">()</span></span>
-<span class="lineno">  663 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  664 </span><span class="spaces">    </span><span class="istickedoff">l  = liftM (map tl) $ Map.lookup &quot;Connection&quot; hdrs</span>
-<span class="lineno">  665 </span><span class="spaces">    </span><span class="istickedoff">tl = S.map (c2w . toLower . w2c)</span></span>
-<span class="lineno">  666 </span>
-<span class="lineno">  667 </span>
-<span class="lineno">  668 </span>------------------------------------------------------------------------------
-<span class="lineno">  669 </span>-- FIXME: whitespace-trim the values here.
-<span class="lineno">  670 </span>toHeaders :: [(ByteString,ByteString)] -&gt; Headers
-<span class="lineno">  671 </span><span class="decl"><span class="istickedoff">toHeaders kvps = foldl' f Map.empty kvps'</span>
-<span class="lineno">  672 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  673 </span><span class="spaces">    </span><span class="istickedoff">kvps'     = map (first toCI . second (:[])) kvps</span>
-<span class="lineno">  674 </span><span class="spaces">    </span><span class="istickedoff">f m (k,v) = Map.insertWith' (flip (++)) k v m</span></span>
-<span class="lineno">  675 </span>
-<span class="lineno">  676 </span>
-<span class="lineno">  677 </span>------------------------------------------------------------------------------
-<span class="lineno">  678 </span>getFileSize :: FilePath -&gt; IO FileOffset
-<span class="lineno">  679 </span><span class="decl"><span class="istickedoff">getFileSize fp = liftM fileSize $ getFileStatus fp</span></span>
-<span class="lineno">  680 </span>
-<span class="lineno">  681 </span>
-<span class="lineno">  682 </span>l2s :: L.ByteString -&gt; S.ByteString
-<span class="lineno">  683 </span><span class="decl"><span class="istickedoff">l2s = S.concat . L.toChunks</span></span>
-<span class="lineno">  684 </span>
-<span class="lineno">  685 </span>
-<span class="lineno">  686 </span>toBS :: String -&gt; ByteString
-<span class="lineno">  687 </span><span class="decl"><span class="istickedoff">toBS = S.pack . map c2w</span></span>
+<span class="lineno">  649 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  650 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  651 </span><span class="spaces">    </span><span class="istickedoff">hasCL :: Int64 -&gt; Response -&gt; ServerMonad Response</span>
+<span class="lineno">  652 </span><span class="spaces">    </span><span class="istickedoff">hasCL cl r =</span>
+<span class="lineno">  653 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;hasCL&quot; #-}</span>
+<span class="lineno">  654 </span><span class="spaces">        </span><span class="istickedoff">do</span>
+<span class="lineno">  655 </span><span class="spaces">            </span><span class="istickedoff">-- set the content-length header</span>
+<span class="lineno">  656 </span><span class="spaces">            </span><span class="istickedoff">let r' = setHeader &quot;Content-Length&quot; (l2s $ show cl) r</span>
+<span class="lineno">  657 </span><span class="spaces">            </span><span class="istickedoff">let b = case (rspBody r') of</span>
+<span class="lineno">  658 </span><span class="spaces">                      </span><span class="istickedoff">(Enum e)     -&gt; Enum (i e)</span>
+<span class="lineno">  659 </span><span class="spaces">                      </span><span class="istickedoff">(SendFile f) -&gt; SendFile f</span>
+<span class="lineno">  660 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  661 </span><span class="spaces">            </span><span class="istickedoff">return $ r' { rspBody = b }</span>
+<span class="lineno">  662 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  663 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  664 </span><span class="spaces">        </span><span class="istickedoff">i :: Enumerator IO a -&gt; Enumerator IO a</span>
+<span class="lineno">  665 </span><span class="spaces">        </span><span class="istickedoff">i enum iter = enum (joinI $ takeExactly cl iter)</span>
+<span class="lineno">  666 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  667 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  668 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  669 </span><span class="spaces">    </span><span class="istickedoff">setFileSize :: FilePath -&gt; Response -&gt; ServerMonad Response</span>
+<span class="lineno">  670 </span><span class="spaces">    </span><span class="istickedoff">setFileSize fp r =</span>
+<span class="lineno">  671 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;setFileSize&quot; #-}</span>
+<span class="lineno">  672 </span><span class="spaces">        </span><span class="istickedoff">do</span>
+<span class="lineno">  673 </span><span class="spaces">            </span><span class="istickedoff">fs &lt;- liftM fromIntegral $ liftIO $ getFileSize fp</span>
+<span class="lineno">  674 </span><span class="spaces">            </span><span class="istickedoff">return $ r { rspContentLength = Just fs }</span>
+<span class="lineno">  675 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  676 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  677 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  678 </span><span class="spaces">    </span><span class="istickedoff">handle304 :: Response -&gt; Response</span>
+<span class="lineno">  679 </span><span class="spaces">    </span><span class="istickedoff">handle304 r = setResponseBody (enumBS <span class="nottickedoff">&quot;&quot;</span>) $</span>
+<span class="lineno">  680 </span><span class="spaces">                  </span><span class="istickedoff">updateHeaders (Map.delete <span class="nottickedoff">&quot;Transfer-Encoding&quot;</span>) $</span>
+<span class="lineno">  681 </span><span class="spaces">                  </span><span class="istickedoff">setContentLength 0 r</span>
+<span class="lineno">  682 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  683 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  684 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  685 </span><span class="spaces">    </span><span class="istickedoff">fixupResponse :: Response -&gt; ServerMonad Response</span>
+<span class="lineno">  686 </span><span class="spaces">    </span><span class="istickedoff">fixupResponse r =</span>
+<span class="lineno">  687 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;fixupResponse&quot; #-}</span>
+<span class="lineno">  688 </span><span class="spaces">        </span><span class="istickedoff">do</span>
+<span class="lineno">  689 </span><span class="spaces">            </span><span class="istickedoff">let r' = updateHeaders (Map.delete &quot;Content-Length&quot;) r</span>
+<span class="lineno">  690 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  691 </span><span class="spaces">            </span><span class="istickedoff">let code = rspStatus r'</span>
+<span class="lineno">  692 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  693 </span><span class="spaces">            </span><span class="istickedoff">let r'' = if code == 204 || code == 304</span>
+<span class="lineno">  694 </span><span class="spaces">                       </span><span class="istickedoff">then handle304 r'</span>
+<span class="lineno">  695 </span><span class="spaces">                       </span><span class="istickedoff">else r'</span>
+<span class="lineno">  696 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  697 </span><span class="spaces">            </span><span class="istickedoff">r''' &lt;- case (rspBody r'') of</span>
+<span class="lineno">  698 </span><span class="spaces">                     </span><span class="istickedoff">(Enum _)     -&gt; return r''</span>
+<span class="lineno">  699 </span><span class="spaces">                     </span><span class="istickedoff">(SendFile f) -&gt; setFileSize f r''</span>
+<span class="lineno">  700 </span><span class="spaces">            </span><span class="istickedoff">case (rspContentLength r''') of</span>
+<span class="lineno">  701 </span><span class="spaces">              </span><span class="istickedoff">Nothing   -&gt; noCL r'''</span>
+<span class="lineno">  702 </span><span class="spaces">              </span><span class="istickedoff">(Just sz) -&gt; hasCL sz r'''</span>
+<span class="lineno">  703 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  704 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  705 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  706 </span><span class="spaces">    </span><span class="istickedoff">bsshow = l2s . show</span>
+<span class="lineno">  707 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  708 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  709 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  710 </span><span class="spaces">    </span><span class="istickedoff">mkHeaderString :: Response -&gt; ByteString</span>
+<span class="lineno">  711 </span><span class="spaces">    </span><span class="istickedoff">mkHeaderString r =</span>
+<span class="lineno">  712 </span><span class="spaces">        </span><span class="istickedoff">{-# SCC &quot;mkHeaderString&quot; #-}</span>
+<span class="lineno">  713 </span><span class="spaces">        </span><span class="istickedoff">S.concat $ concat [hl, hdr, eol]</span>
+<span class="lineno">  714 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  715 </span><span class="spaces">        </span><span class="istickedoff">hl = [ &quot;HTTP/&quot;</span>
+<span class="lineno">  716 </span><span class="spaces">             </span><span class="istickedoff">, bsshow major</span>
+<span class="lineno">  717 </span><span class="spaces">             </span><span class="istickedoff">, &quot;.&quot;</span>
+<span class="lineno">  718 </span><span class="spaces">             </span><span class="istickedoff">, bsshow minor</span>
+<span class="lineno">  719 </span><span class="spaces">             </span><span class="istickedoff">, &quot; &quot;</span>
+<span class="lineno">  720 </span><span class="spaces">             </span><span class="istickedoff">, bsshow $ rspStatus r</span>
+<span class="lineno">  721 </span><span class="spaces">             </span><span class="istickedoff">, &quot; &quot;</span>
+<span class="lineno">  722 </span><span class="spaces">             </span><span class="istickedoff">, rspStatusReason r</span>
+<span class="lineno">  723 </span><span class="spaces">             </span><span class="istickedoff">, &quot;\r\n&quot; ]</span>
+<span class="lineno">  724 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  725 </span><span class="spaces">        </span><span class="istickedoff">hdr = fmtHdrs $ headers r</span>
+<span class="lineno">  726 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  727 </span><span class="spaces">        </span><span class="istickedoff">eol = [&quot;\r\n&quot;]</span></span>
+<span class="lineno">  728 </span>
+<span class="lineno">  729 </span>
+<span class="lineno">  730 </span>------------------------------------------------------------------------------
+<span class="lineno">  731 </span>checkConnectionClose :: (Int, Int) -&gt; Headers -&gt; ServerMonad ()
+<span class="lineno">  732 </span><span class="decl"><span class="istickedoff">checkConnectionClose ver hdrs =</span>
+<span class="lineno">  733 </span><span class="spaces">    </span><span class="istickedoff">-- For HTTP/1.1:</span>
+<span class="lineno">  734 </span><span class="spaces">    </span><span class="istickedoff">--   if there is an explicit Connection: close, close the socket.</span>
+<span class="lineno">  735 </span><span class="spaces">    </span><span class="istickedoff">-- For HTTP/1.0:</span>
+<span class="lineno">  736 </span><span class="spaces">    </span><span class="istickedoff">--   if there is no explicit Connection: Keep-Alive, close the socket.</span>
+<span class="lineno">  737 </span><span class="spaces">    </span><span class="istickedoff">if (ver == (1,1) &amp;&amp; l == Just [&quot;close&quot;]) ||</span>
+<span class="lineno">  738 </span><span class="spaces">       </span><span class="istickedoff">(ver == (1,0) &amp;&amp; l /= Just <span class="nottickedoff">[&quot;keep-alive&quot;]</span>)</span>
+<span class="lineno">  739 </span><span class="spaces">       </span><span class="istickedoff">then modify $ \s -&gt; s { _forceConnectionClose = True }</span>
+<span class="lineno">  740 </span><span class="spaces">       </span><span class="istickedoff">else return <span class="nottickedoff">()</span></span>
+<span class="lineno">  741 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  742 </span><span class="spaces">    </span><span class="istickedoff">l  = liftM (map tl) $ Map.lookup &quot;Connection&quot; hdrs</span>
+<span class="lineno">  743 </span><span class="spaces">    </span><span class="istickedoff">tl = S.map (c2w . toLower . w2c)</span></span>
+<span class="lineno">  744 </span>
+<span class="lineno">  745 </span>
+<span class="lineno">  746 </span>------------------------------------------------------------------------------
+<span class="lineno">  747 </span>-- FIXME: whitespace-trim the values here.
+<span class="lineno">  748 </span>toHeaders :: [(ByteString,ByteString)] -&gt; Headers
+<span class="lineno">  749 </span><span class="decl"><span class="istickedoff">toHeaders kvps = foldl' f Map.empty kvps'</span>
+<span class="lineno">  750 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  751 </span><span class="spaces">    </span><span class="istickedoff">kvps'     = map (first toCI . second (:[])) kvps</span>
+<span class="lineno">  752 </span><span class="spaces">    </span><span class="istickedoff">f m (k,v) = Map.insertWith' (flip (++)) k v m</span></span>
+<span class="lineno">  753 </span>
+<span class="lineno">  754 </span>
+<span class="lineno">  755 </span>------------------------------------------------------------------------------
+<span class="lineno">  756 </span>getFileSize :: FilePath -&gt; IO FileOffset
+<span class="lineno">  757 </span><span class="decl"><span class="istickedoff">getFileSize fp = liftM fileSize $ getFileStatus fp</span></span>
+<span class="lineno">  758 </span>
+<span class="lineno">  759 </span>
+<span class="lineno">  760 </span>------------------------------------------------------------------------------
+<span class="lineno">  761 </span>l2s :: L.ByteString -&gt; S.ByteString
+<span class="lineno">  762 </span><span class="decl"><span class="istickedoff">l2s = S.concat . L.toChunks</span></span>
+<span class="lineno">  763 </span>
+<span class="lineno">  764 </span>
+<span class="lineno">  765 </span>------------------------------------------------------------------------------
+<span class="lineno">  766 </span>toBS :: String -&gt; ByteString
+<span class="lineno">  767 </span><span class="decl"><span class="istickedoff">toBS = S.pack . map c2w</span></span>
 
 </pre>
 </html>

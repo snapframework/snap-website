@@ -403,197 +403,205 @@ span.spaces    { background: white }
 <span class="lineno">  392 </span>
 <span class="lineno">  393 </span>
 <span class="lineno">  394 </span>------------------------------------------------------------------------------
-<span class="lineno">  395 </span>-- | Binds a list of constant string splices
+<span class="lineno">  395 </span>-- | Binds a list of constant string splices.
 <span class="lineno">  396 </span>bindStrings :: Monad m
 <span class="lineno">  397 </span>            =&gt; [(ByteString, ByteString)]
 <span class="lineno">  398 </span>            -&gt; TemplateState m
 <span class="lineno">  399 </span>            -&gt; TemplateState m
-<span class="lineno">  400 </span><span class="decl"><span class="nottickedoff">bindStrings pairs ts = foldr add ts pairs</span>
-<span class="lineno">  401 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
-<span class="lineno">  402 </span><span class="spaces">    </span><span class="nottickedoff">add (n,v) = bindSplice n (return [X.Text v])</span></span>
-<span class="lineno">  403 </span>
-<span class="lineno">  404 </span>
-<span class="lineno">  405 </span>------------------------------------------------------------------------------
-<span class="lineno">  406 </span>-- | Renders a template with the specified parameters.  This is the function
-<span class="lineno">  407 </span>-- to use when you want to &quot;call&quot; a template and pass in parameters from code.
-<span class="lineno">  408 </span>callTemplate :: Monad m
-<span class="lineno">  409 </span>             =&gt; ByteString                 -- ^ The name of the template
-<span class="lineno">  410 </span>             -&gt; [(ByteString, ByteString)] -- ^ Association list of
-<span class="lineno">  411 </span>                                           -- (name,value) parameter pairs
-<span class="lineno">  412 </span>             -&gt; TemplateMonad m (Maybe Template)
-<span class="lineno">  413 </span><span class="decl"><span class="nottickedoff">callTemplate name params = do</span>
-<span class="lineno">  414 </span><span class="spaces">    </span><span class="nottickedoff">modifyTS $ bindStrings params</span>
-<span class="lineno">  415 </span><span class="spaces">    </span><span class="nottickedoff">evalTemplate name</span></span>
-<span class="lineno">  416 </span>
-<span class="lineno">  417 </span>
-<span class="lineno">  418 </span>------------------------------------------------------------------------------
-<span class="lineno">  419 </span>-- | Converts a Template to an InternalTemplate.  This can only be done inside
-<span class="lineno">  420 </span>-- TemplateMonad where the doctype is available.
-<span class="lineno">  421 </span>toInternalTemplate :: Monad m =&gt; Template -&gt; TemplateMonad m InternalTemplate
-<span class="lineno">  422 </span><span class="decl"><span class="istickedoff">toInternalTemplate t = do</span>
-<span class="lineno">  423 </span><span class="spaces">    </span><span class="istickedoff">dts &lt;- getsTS _doctypes</span>
-<span class="lineno">  424 </span><span class="spaces">    </span><span class="istickedoff">return $ InternalTemplate {</span>
-<span class="lineno">  425 </span><span class="spaces">        </span><span class="istickedoff">_itDoctype = listToMaybe dts,</span>
-<span class="lineno">  426 </span><span class="spaces">        </span><span class="istickedoff">_itNodes = t</span>
-<span class="lineno">  427 </span><span class="spaces">    </span><span class="istickedoff">}</span></span>
-<span class="lineno">  428 </span>
-<span class="lineno">  429 </span>
-<span class="lineno">  430 </span>------------------------------------------------------------------------------
-<span class="lineno">  431 </span>-- | Renders an internal template by prepending the appropriate doctype.
-<span class="lineno">  432 </span>renderInternal :: Monad m =&gt; InternalTemplate -&gt; TemplateMonad m ByteString
-<span class="lineno">  433 </span><span class="decl"><span class="istickedoff">renderInternal (InternalTemplate dt nodes) =</span>
-<span class="lineno">  434 </span><span class="spaces">    </span><span class="istickedoff">return $ maybe bs (flip B.append bs) dt</span>
-<span class="lineno">  435 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  436 </span><span class="spaces">    </span><span class="istickedoff">bs = formatList' nodes</span></span>
+<span class="lineno">  400 </span><span class="decl"><span class="nottickedoff">bindStrings pairs ts = foldr (uncurry bindString) ts pairs</span></span>
+<span class="lineno">  401 </span>
+<span class="lineno">  402 </span>
+<span class="lineno">  403 </span>------------------------------------------------------------------------------
+<span class="lineno">  404 </span>-- | Binds a single constant string splice.
+<span class="lineno">  405 </span>bindString :: Monad m
+<span class="lineno">  406 </span>            =&gt; ByteString
+<span class="lineno">  407 </span>            -&gt; ByteString
+<span class="lineno">  408 </span>            -&gt; TemplateState m
+<span class="lineno">  409 </span>            -&gt; TemplateState m
+<span class="lineno">  410 </span><span class="decl"><span class="nottickedoff">bindString n v = bindSplice n $ return [X.Text v]</span></span>
+<span class="lineno">  411 </span>
+<span class="lineno">  412 </span>
+<span class="lineno">  413 </span>------------------------------------------------------------------------------
+<span class="lineno">  414 </span>-- | Renders a template with the specified parameters.  This is the function
+<span class="lineno">  415 </span>-- to use when you want to &quot;call&quot; a template and pass in parameters from code.
+<span class="lineno">  416 </span>callTemplate :: Monad m
+<span class="lineno">  417 </span>             =&gt; ByteString                 -- ^ The name of the template
+<span class="lineno">  418 </span>             -&gt; [(ByteString, ByteString)] -- ^ Association list of
+<span class="lineno">  419 </span>                                           -- (name,value) parameter pairs
+<span class="lineno">  420 </span>             -&gt; TemplateMonad m (Maybe Template)
+<span class="lineno">  421 </span><span class="decl"><span class="nottickedoff">callTemplate name params = do</span>
+<span class="lineno">  422 </span><span class="spaces">    </span><span class="nottickedoff">modifyTS $ bindStrings params</span>
+<span class="lineno">  423 </span><span class="spaces">    </span><span class="nottickedoff">evalTemplate name</span></span>
+<span class="lineno">  424 </span>
+<span class="lineno">  425 </span>
+<span class="lineno">  426 </span>------------------------------------------------------------------------------
+<span class="lineno">  427 </span>-- | Converts a Template to an InternalTemplate.  This can only be done inside
+<span class="lineno">  428 </span>-- TemplateMonad where the doctype is available.
+<span class="lineno">  429 </span>toInternalTemplate :: Monad m =&gt; Template -&gt; TemplateMonad m InternalTemplate
+<span class="lineno">  430 </span><span class="decl"><span class="istickedoff">toInternalTemplate t = do</span>
+<span class="lineno">  431 </span><span class="spaces">    </span><span class="istickedoff">dts &lt;- getsTS _doctypes</span>
+<span class="lineno">  432 </span><span class="spaces">    </span><span class="istickedoff">return $ InternalTemplate {</span>
+<span class="lineno">  433 </span><span class="spaces">        </span><span class="istickedoff">_itDoctype = listToMaybe dts,</span>
+<span class="lineno">  434 </span><span class="spaces">        </span><span class="istickedoff">_itNodes = t</span>
+<span class="lineno">  435 </span><span class="spaces">    </span><span class="istickedoff">}</span></span>
+<span class="lineno">  436 </span>
 <span class="lineno">  437 </span>
-<span class="lineno">  438 </span>
-<span class="lineno">  439 </span>------------------------------------------------------------------------------
-<span class="lineno">  440 </span>-- | Renders a template from the specified TemplateState.
-<span class="lineno">  441 </span>renderTemplate :: Monad m
-<span class="lineno">  442 </span>               =&gt; TemplateState m
-<span class="lineno">  443 </span>               -&gt; ByteString
-<span class="lineno">  444 </span>               -&gt; m (Maybe ByteString)
-<span class="lineno">  445 </span><span class="decl"><span class="istickedoff">renderTemplate ts name = do</span>
-<span class="lineno">  446 </span><span class="spaces">    </span><span class="istickedoff">evalTemplateMonad</span>
-<span class="lineno">  447 </span><span class="spaces">        </span><span class="istickedoff">(do mt &lt;- evalWithHooks name</span>
-<span class="lineno">  448 </span><span class="spaces">            </span><span class="istickedoff">maybe (return Nothing)</span>
-<span class="lineno">  449 </span><span class="spaces">                </span><span class="istickedoff">(\t -&gt; liftM Just $ renderInternal =&lt;&lt; toInternalTemplate t)</span>
-<span class="lineno">  450 </span><span class="spaces">                </span><span class="istickedoff">mt</span>
-<span class="lineno">  451 </span><span class="spaces">        </span><span class="istickedoff">) <span class="nottickedoff">(X.Text &quot;&quot;)</span> ts</span></span>
-<span class="lineno">  452 </span>
-<span class="lineno">  453 </span>------------------------------------------------------------------------------
-<span class="lineno">  454 </span>-- Template loading
-<span class="lineno">  455 </span>------------------------------------------------------------------------------
-<span class="lineno">  456 </span>
-<span class="lineno">  457 </span>-- | Turns an in-memory XML/XHTML bytestring into a (doctype,'[Node]') pair.
-<span class="lineno">  458 </span>parseDoc :: ByteString -&gt; IO (Either String (Maybe ByteString,[Node]))
-<span class="lineno">  459 </span><span class="decl"><span class="istickedoff">parseDoc bs = do</span>
-<span class="lineno">  460 </span><span class="spaces">    </span><span class="istickedoff">let (doctype,rest) = extractDoctype bs</span>
-<span class="lineno">  461 </span><span class="spaces">    </span><span class="istickedoff">let wrap b = B.concat [&quot;&lt;snap:root&gt;\n&quot;, b, &quot;\n&lt;/snap:root&gt;&quot;]</span>
-<span class="lineno">  462 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  463 </span><span class="spaces">    </span><span class="istickedoff">return $</span>
-<span class="lineno">  464 </span><span class="spaces">      </span><span class="istickedoff">mapRight (\n -&gt; (doctype,X.getChildren n)) $</span>
-<span class="lineno">  465 </span><span class="spaces">      </span><span class="istickedoff">mapLeft <span class="nottickedoff">genErrorMsg</span> $</span>
-<span class="lineno">  466 </span><span class="spaces">      </span><span class="istickedoff">X.parse' heistExpatOptions (wrap rest)</span>
-<span class="lineno">  467 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  468 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  469 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">genErrorMsg (X.XMLParseError str loc) = locMsg loc ++ &quot;: &quot; ++ translate str</span></span>
+<span class="lineno">  438 </span>------------------------------------------------------------------------------
+<span class="lineno">  439 </span>-- | Renders an internal template by prepending the appropriate doctype.
+<span class="lineno">  440 </span>renderInternal :: Monad m =&gt; InternalTemplate -&gt; TemplateMonad m ByteString
+<span class="lineno">  441 </span><span class="decl"><span class="istickedoff">renderInternal (InternalTemplate dt nodes) =</span>
+<span class="lineno">  442 </span><span class="spaces">    </span><span class="istickedoff">return $ maybe bs (flip B.append bs) dt</span>
+<span class="lineno">  443 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  444 </span><span class="spaces">    </span><span class="istickedoff">bs = formatList' nodes</span></span>
+<span class="lineno">  445 </span>
+<span class="lineno">  446 </span>
+<span class="lineno">  447 </span>------------------------------------------------------------------------------
+<span class="lineno">  448 </span>-- | Renders a template from the specified TemplateState.
+<span class="lineno">  449 </span>renderTemplate :: Monad m
+<span class="lineno">  450 </span>               =&gt; TemplateState m
+<span class="lineno">  451 </span>               -&gt; ByteString
+<span class="lineno">  452 </span>               -&gt; m (Maybe ByteString)
+<span class="lineno">  453 </span><span class="decl"><span class="istickedoff">renderTemplate ts name = do</span>
+<span class="lineno">  454 </span><span class="spaces">    </span><span class="istickedoff">evalTemplateMonad</span>
+<span class="lineno">  455 </span><span class="spaces">        </span><span class="istickedoff">(do mt &lt;- evalWithHooks name</span>
+<span class="lineno">  456 </span><span class="spaces">            </span><span class="istickedoff">maybe (return Nothing)</span>
+<span class="lineno">  457 </span><span class="spaces">                </span><span class="istickedoff">(\t -&gt; liftM Just $ renderInternal =&lt;&lt; toInternalTemplate t)</span>
+<span class="lineno">  458 </span><span class="spaces">                </span><span class="istickedoff">mt</span>
+<span class="lineno">  459 </span><span class="spaces">        </span><span class="istickedoff">) <span class="nottickedoff">(X.Text &quot;&quot;)</span> ts</span></span>
+<span class="lineno">  460 </span>
+<span class="lineno">  461 </span>------------------------------------------------------------------------------
+<span class="lineno">  462 </span>-- Template loading
+<span class="lineno">  463 </span>------------------------------------------------------------------------------
+<span class="lineno">  464 </span>
+<span class="lineno">  465 </span>-- | Turns an in-memory XML/XHTML bytestring into a (doctype,'[Node]') pair.
+<span class="lineno">  466 </span>parseDoc :: ByteString -&gt; IO (Either String (Maybe ByteString,[Node]))
+<span class="lineno">  467 </span><span class="decl"><span class="istickedoff">parseDoc bs = do</span>
+<span class="lineno">  468 </span><span class="spaces">    </span><span class="istickedoff">let (doctype,rest) = extractDoctype bs</span>
+<span class="lineno">  469 </span><span class="spaces">    </span><span class="istickedoff">let wrap b = B.concat [&quot;&lt;snap:root&gt;\n&quot;, b, &quot;\n&lt;/snap:root&gt;&quot;]</span>
 <span class="lineno">  470 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  471 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">locMsg (X.XMLParseLocation line col _ _) =</span></span>
-<span class="lineno">  472 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">&quot;(line &quot; ++ show (line-1) ++ &quot;, col &quot; ++ show col ++ &quot;)&quot;</span></span>
-<span class="lineno">  473 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  474 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">translate &quot;junk after document element&quot; = &quot;document must have a single root element&quot;</span></span>
-<span class="lineno">  475 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">translate s = s</span></span></span>
-<span class="lineno">  476 </span>
-<span class="lineno">  477 </span>
-<span class="lineno">  478 </span>-- | Reads an XML document from disk.
-<span class="lineno">  479 </span>getDoc :: String -&gt; IO (Either String InternalTemplate)
-<span class="lineno">  480 </span><span class="decl"><span class="istickedoff">getDoc f = do</span>
-<span class="lineno">  481 </span><span class="spaces">    </span><span class="istickedoff">bs &lt;- catch (liftM Right $ B.readFile f)</span>
-<span class="lineno">  482 </span><span class="spaces">                </span><span class="istickedoff">(\(e::SomeException) -&gt; return $ Left $ <span class="nottickedoff">show e</span>)</span>
-<span class="lineno">  483 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  484 </span><span class="spaces">    </span><span class="istickedoff">d' &lt;- either (return . Left)</span>
-<span class="lineno">  485 </span><span class="spaces">                 </span><span class="istickedoff">parseDoc</span>
-<span class="lineno">  486 </span><span class="spaces">                 </span><span class="istickedoff">bs</span>
-<span class="lineno">  487 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  488 </span><span class="spaces">    </span><span class="istickedoff">let d = mapLeft <span class="nottickedoff">(\s -&gt; f ++ &quot; &quot; ++ s)</span> d'</span>
-<span class="lineno">  489 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  490 </span><span class="spaces">    </span><span class="istickedoff">return $ either Left</span>
-<span class="lineno">  491 </span><span class="spaces">               </span><span class="istickedoff">(\(doctype, nodes) -&gt; Right $ InternalTemplate {</span>
-<span class="lineno">  492 </span><span class="spaces">                    </span><span class="istickedoff">_itDoctype = doctype,</span>
-<span class="lineno">  493 </span><span class="spaces">                    </span><span class="istickedoff">_itNodes = nodes</span>
-<span class="lineno">  494 </span><span class="spaces">                </span><span class="istickedoff">})</span>
-<span class="lineno">  495 </span><span class="spaces">               </span><span class="istickedoff">d</span></span>
-<span class="lineno">  496 </span>
-<span class="lineno">  497 </span>
-<span class="lineno">  498 </span>------------------------------------------------------------------------------
-<span class="lineno">  499 </span>-- | Checks whether the bytestring has a doctype.
-<span class="lineno">  500 </span>hasDoctype :: ByteString -&gt; Bool
-<span class="lineno">  501 </span><span class="decl"><span class="istickedoff">hasDoctype bs = &quot;&lt;!DOCTYPE&quot; `B.isPrefixOf` bs</span></span>
-<span class="lineno">  502 </span>
-<span class="lineno">  503 </span>
-<span class="lineno">  504 </span>------------------------------------------------------------------------------
-<span class="lineno">  505 </span>-- | Converts a ByteString into a tuple containing a possible doctype
-<span class="lineno">  506 </span>-- ByteString and the rest of the document.
-<span class="lineno">  507 </span>extractDoctype :: ByteString -&gt; (Maybe ByteString, ByteString)
-<span class="lineno">  508 </span><span class="decl"><span class="istickedoff">extractDoctype bs = </span>
-<span class="lineno">  509 </span><span class="spaces">    </span><span class="istickedoff">if hasDoctype bs</span>
-<span class="lineno">  510 </span><span class="spaces">        </span><span class="istickedoff">then (Just $ B.snoc (B.takeWhile p bs) '&gt;',B.tail $ B.dropWhile p bs)</span>
-<span class="lineno">  511 </span><span class="spaces">        </span><span class="istickedoff">else (Nothing, bs)</span>
-<span class="lineno">  512 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  513 </span><span class="spaces">    </span><span class="istickedoff">p = (/='&gt;')</span></span>
-<span class="lineno">  514 </span>
-<span class="lineno">  515 </span>------------------------------------------------------------------------------
-<span class="lineno">  516 </span>mapLeft :: (a -&gt; b) -&gt; Either a c -&gt; Either b c
-<span class="lineno">  517 </span><span class="decl"><span class="istickedoff">mapLeft g = either (Left . <span class="nottickedoff">g</span>) Right</span></span>
-<span class="lineno">  518 </span>mapRight :: (b -&gt; c) -&gt; Either a b -&gt; Either a c
-<span class="lineno">  519 </span><span class="decl"><span class="istickedoff">mapRight g = either <span class="nottickedoff">Left</span> (Right . g)</span></span>
-<span class="lineno">  520 </span>
-<span class="lineno">  521 </span>
-<span class="lineno">  522 </span>------------------------------------------------------------------------------
-<span class="lineno">  523 </span>-- | Loads a template with the specified path and filename.  The
-<span class="lineno">  524 </span>-- template is only loaded if it has a &quot;.tpl&quot; extension.
-<span class="lineno">  525 </span>loadTemplate :: String -- ^ path of the template root
-<span class="lineno">  526 </span>             -&gt; String -- ^ full file path (includes the template root)
-<span class="lineno">  527 </span>             -&gt; IO [Either String (TPath, InternalTemplate)] --TemplateMap
-<span class="lineno">  528 </span><span class="decl"><span class="istickedoff">loadTemplate templateRoot fname</span>
-<span class="lineno">  529 </span><span class="spaces">    </span><span class="istickedoff">| &quot;.tpl&quot; `isSuffixOf` fname = do</span>
-<span class="lineno">  530 </span><span class="spaces">        </span><span class="istickedoff">c &lt;- getDoc fname</span>
-<span class="lineno">  531 </span><span class="spaces">        </span><span class="istickedoff">return [fmap (\t -&gt; (splitLocalPath $ B.pack tName, t)) c]</span>
-<span class="lineno">  532 </span><span class="spaces">    </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = return []</span>
-<span class="lineno">  533 </span><span class="spaces">  </span><span class="istickedoff">where -- tName is path relative to the template root directory</span>
-<span class="lineno">  534 </span><span class="spaces">        </span><span class="istickedoff">correction = if <span class="tickonlyfalse">last templateRoot == '/'</span> then <span class="nottickedoff">0</span> else 1</span>
-<span class="lineno">  535 </span><span class="spaces">        </span><span class="istickedoff">tName = drop ((length templateRoot)+correction) $</span>
-<span class="lineno">  536 </span><span class="spaces">                </span><span class="istickedoff">-- We're only dropping the template root, not the whole path</span>
-<span class="lineno">  537 </span><span class="spaces">                </span><span class="istickedoff">take ((length fname) - 4) fname</span></span>
-<span class="lineno">  538 </span>
-<span class="lineno">  539 </span>
-<span class="lineno">  540 </span>------------------------------------------------------------------------------
-<span class="lineno">  541 </span>-- | Traverses the specified directory structure and builds a
-<span class="lineno">  542 </span>-- TemplateState by loading all the files with a &quot;.tpl&quot; extension.
-<span class="lineno">  543 </span>loadTemplates :: Monad m =&gt; FilePath -&gt; TemplateState m -&gt; IO (Either String (TemplateState m))
-<span class="lineno">  544 </span><span class="decl"><span class="istickedoff">loadTemplates dir ts = do</span>
-<span class="lineno">  545 </span><span class="spaces">    </span><span class="istickedoff">d &lt;- readDirectoryWith (loadTemplate dir) dir</span>
-<span class="lineno">  546 </span><span class="spaces">    </span><span class="istickedoff">let tlist = F.fold (free d)</span>
-<span class="lineno">  547 </span><span class="spaces">        </span><span class="istickedoff">errs = lefts tlist</span>
-<span class="lineno">  548 </span><span class="spaces">    </span><span class="istickedoff">case errs of</span>
-<span class="lineno">  549 </span><span class="spaces">        </span><span class="istickedoff">[] -&gt; liftM Right $ foldM loadHook ts $ rights tlist</span>
-<span class="lineno">  550 </span><span class="spaces">        </span><span class="istickedoff">_  -&gt; <span class="nottickedoff">return $ Left $ unlines errs</span></span></span>
-<span class="lineno">  551 </span>
-<span class="lineno">  552 </span>
-<span class="lineno">  553 </span>------------------------------------------------------------------------------
-<span class="lineno">  554 </span>-- | Reversed list of directories.  This holds the path to the template
-<span class="lineno">  555 </span>runHookInternal :: Monad m =&gt; (Template -&gt; m Template)
-<span class="lineno">  556 </span>                -&gt; InternalTemplate
-<span class="lineno">  557 </span>                -&gt; m InternalTemplate
-<span class="lineno">  558 </span><span class="decl"><span class="istickedoff">runHookInternal f t = do</span>
-<span class="lineno">  559 </span><span class="spaces">    </span><span class="istickedoff">n &lt;- f $ _itNodes t</span>
-<span class="lineno">  560 </span><span class="spaces">    </span><span class="istickedoff">return $ t { _itNodes = n }</span></span>
-<span class="lineno">  561 </span>
-<span class="lineno">  562 </span>
-<span class="lineno">  563 </span>------------------------------------------------------------------------------
-<span class="lineno">  564 </span>-- | Runs the onLoad hook on the template and returns the `TemplateState`
-<span class="lineno">  565 </span>-- with the result inserted.
-<span class="lineno">  566 </span>loadHook :: Monad m =&gt; TemplateState m -&gt; (TPath, InternalTemplate) -&gt; IO (TemplateState m)
-<span class="lineno">  567 </span><span class="decl"><span class="istickedoff">loadHook ts (tp, t) = do</span>
-<span class="lineno">  568 </span><span class="spaces">    </span><span class="istickedoff">t' &lt;- runHookInternal (_onLoadHook ts) t</span>
-<span class="lineno">  569 </span><span class="spaces">    </span><span class="istickedoff">return $ insertTemplate tp t' ts</span></span>
+<span class="lineno">  471 </span><span class="spaces">    </span><span class="istickedoff">return $</span>
+<span class="lineno">  472 </span><span class="spaces">      </span><span class="istickedoff">mapRight (\n -&gt; (doctype,X.getChildren n)) $</span>
+<span class="lineno">  473 </span><span class="spaces">      </span><span class="istickedoff">mapLeft <span class="nottickedoff">genErrorMsg</span> $</span>
+<span class="lineno">  474 </span><span class="spaces">      </span><span class="istickedoff">X.parse' heistExpatOptions (wrap rest)</span>
+<span class="lineno">  475 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  476 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  477 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">genErrorMsg (X.XMLParseError str loc) = locMsg loc ++ &quot;: &quot; ++ translate str</span></span>
+<span class="lineno">  478 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  479 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">locMsg (X.XMLParseLocation line col _ _) =</span></span>
+<span class="lineno">  480 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">&quot;(line &quot; ++ show (line-1) ++ &quot;, col &quot; ++ show col ++ &quot;)&quot;</span></span>
+<span class="lineno">  481 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  482 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">translate &quot;junk after document element&quot; = &quot;document must have a single root element&quot;</span></span>
+<span class="lineno">  483 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">translate s = s</span></span></span>
+<span class="lineno">  484 </span>
+<span class="lineno">  485 </span>
+<span class="lineno">  486 </span>-- | Reads an XML document from disk.
+<span class="lineno">  487 </span>getDoc :: String -&gt; IO (Either String InternalTemplate)
+<span class="lineno">  488 </span><span class="decl"><span class="istickedoff">getDoc f = do</span>
+<span class="lineno">  489 </span><span class="spaces">    </span><span class="istickedoff">bs &lt;- catch (liftM Right $ B.readFile f)</span>
+<span class="lineno">  490 </span><span class="spaces">                </span><span class="istickedoff">(\(e::SomeException) -&gt; return $ Left $ <span class="nottickedoff">show e</span>)</span>
+<span class="lineno">  491 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  492 </span><span class="spaces">    </span><span class="istickedoff">d' &lt;- either (return . Left)</span>
+<span class="lineno">  493 </span><span class="spaces">                 </span><span class="istickedoff">parseDoc</span>
+<span class="lineno">  494 </span><span class="spaces">                 </span><span class="istickedoff">bs</span>
+<span class="lineno">  495 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  496 </span><span class="spaces">    </span><span class="istickedoff">let d = mapLeft <span class="nottickedoff">(\s -&gt; f ++ &quot; &quot; ++ s)</span> d'</span>
+<span class="lineno">  497 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  498 </span><span class="spaces">    </span><span class="istickedoff">return $ either Left</span>
+<span class="lineno">  499 </span><span class="spaces">               </span><span class="istickedoff">(\(doctype, nodes) -&gt; Right $ InternalTemplate {</span>
+<span class="lineno">  500 </span><span class="spaces">                    </span><span class="istickedoff">_itDoctype = doctype,</span>
+<span class="lineno">  501 </span><span class="spaces">                    </span><span class="istickedoff">_itNodes = nodes</span>
+<span class="lineno">  502 </span><span class="spaces">                </span><span class="istickedoff">})</span>
+<span class="lineno">  503 </span><span class="spaces">               </span><span class="istickedoff">d</span></span>
+<span class="lineno">  504 </span>
+<span class="lineno">  505 </span>
+<span class="lineno">  506 </span>------------------------------------------------------------------------------
+<span class="lineno">  507 </span>-- | Checks whether the bytestring has a doctype.
+<span class="lineno">  508 </span>hasDoctype :: ByteString -&gt; Bool
+<span class="lineno">  509 </span><span class="decl"><span class="istickedoff">hasDoctype bs = &quot;&lt;!DOCTYPE&quot; `B.isPrefixOf` bs</span></span>
+<span class="lineno">  510 </span>
+<span class="lineno">  511 </span>
+<span class="lineno">  512 </span>------------------------------------------------------------------------------
+<span class="lineno">  513 </span>-- | Converts a ByteString into a tuple containing a possible doctype
+<span class="lineno">  514 </span>-- ByteString and the rest of the document.
+<span class="lineno">  515 </span>extractDoctype :: ByteString -&gt; (Maybe ByteString, ByteString)
+<span class="lineno">  516 </span><span class="decl"><span class="istickedoff">extractDoctype bs = </span>
+<span class="lineno">  517 </span><span class="spaces">    </span><span class="istickedoff">if hasDoctype bs</span>
+<span class="lineno">  518 </span><span class="spaces">        </span><span class="istickedoff">then (Just $ B.snoc (B.takeWhile p bs) '&gt;',B.tail $ B.dropWhile p bs)</span>
+<span class="lineno">  519 </span><span class="spaces">        </span><span class="istickedoff">else (Nothing, bs)</span>
+<span class="lineno">  520 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  521 </span><span class="spaces">    </span><span class="istickedoff">p = (/='&gt;')</span></span>
+<span class="lineno">  522 </span>
+<span class="lineno">  523 </span>------------------------------------------------------------------------------
+<span class="lineno">  524 </span>mapLeft :: (a -&gt; b) -&gt; Either a c -&gt; Either b c
+<span class="lineno">  525 </span><span class="decl"><span class="istickedoff">mapLeft g = either (Left . <span class="nottickedoff">g</span>) Right</span></span>
+<span class="lineno">  526 </span>mapRight :: (b -&gt; c) -&gt; Either a b -&gt; Either a c
+<span class="lineno">  527 </span><span class="decl"><span class="istickedoff">mapRight g = either <span class="nottickedoff">Left</span> (Right . g)</span></span>
+<span class="lineno">  528 </span>
+<span class="lineno">  529 </span>
+<span class="lineno">  530 </span>------------------------------------------------------------------------------
+<span class="lineno">  531 </span>-- | Loads a template with the specified path and filename.  The
+<span class="lineno">  532 </span>-- template is only loaded if it has a &quot;.tpl&quot; extension.
+<span class="lineno">  533 </span>loadTemplate :: String -- ^ path of the template root
+<span class="lineno">  534 </span>             -&gt; String -- ^ full file path (includes the template root)
+<span class="lineno">  535 </span>             -&gt; IO [Either String (TPath, InternalTemplate)] --TemplateMap
+<span class="lineno">  536 </span><span class="decl"><span class="istickedoff">loadTemplate templateRoot fname</span>
+<span class="lineno">  537 </span><span class="spaces">    </span><span class="istickedoff">| &quot;.tpl&quot; `isSuffixOf` fname = do</span>
+<span class="lineno">  538 </span><span class="spaces">        </span><span class="istickedoff">c &lt;- getDoc fname</span>
+<span class="lineno">  539 </span><span class="spaces">        </span><span class="istickedoff">return [fmap (\t -&gt; (splitLocalPath $ B.pack tName, t)) c]</span>
+<span class="lineno">  540 </span><span class="spaces">    </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = return []</span>
+<span class="lineno">  541 </span><span class="spaces">  </span><span class="istickedoff">where -- tName is path relative to the template root directory</span>
+<span class="lineno">  542 </span><span class="spaces">        </span><span class="istickedoff">correction = if <span class="tickonlyfalse">last templateRoot == '/'</span> then <span class="nottickedoff">0</span> else 1</span>
+<span class="lineno">  543 </span><span class="spaces">        </span><span class="istickedoff">tName = drop ((length templateRoot)+correction) $</span>
+<span class="lineno">  544 </span><span class="spaces">                </span><span class="istickedoff">-- We're only dropping the template root, not the whole path</span>
+<span class="lineno">  545 </span><span class="spaces">                </span><span class="istickedoff">take ((length fname) - 4) fname</span></span>
+<span class="lineno">  546 </span>
+<span class="lineno">  547 </span>
+<span class="lineno">  548 </span>------------------------------------------------------------------------------
+<span class="lineno">  549 </span>-- | Traverses the specified directory structure and builds a
+<span class="lineno">  550 </span>-- TemplateState by loading all the files with a &quot;.tpl&quot; extension.
+<span class="lineno">  551 </span>loadTemplates :: Monad m =&gt; FilePath -&gt; TemplateState m -&gt; IO (Either String (TemplateState m))
+<span class="lineno">  552 </span><span class="decl"><span class="istickedoff">loadTemplates dir ts = do</span>
+<span class="lineno">  553 </span><span class="spaces">    </span><span class="istickedoff">d &lt;- readDirectoryWith (loadTemplate dir) dir</span>
+<span class="lineno">  554 </span><span class="spaces">    </span><span class="istickedoff">let tlist = F.fold (free d)</span>
+<span class="lineno">  555 </span><span class="spaces">        </span><span class="istickedoff">errs = lefts tlist</span>
+<span class="lineno">  556 </span><span class="spaces">    </span><span class="istickedoff">case errs of</span>
+<span class="lineno">  557 </span><span class="spaces">        </span><span class="istickedoff">[] -&gt; liftM Right $ foldM loadHook ts $ rights tlist</span>
+<span class="lineno">  558 </span><span class="spaces">        </span><span class="istickedoff">_  -&gt; <span class="nottickedoff">return $ Left $ unlines errs</span></span></span>
+<span class="lineno">  559 </span>
+<span class="lineno">  560 </span>
+<span class="lineno">  561 </span>------------------------------------------------------------------------------
+<span class="lineno">  562 </span>-- | Reversed list of directories.  This holds the path to the template
+<span class="lineno">  563 </span>runHookInternal :: Monad m =&gt; (Template -&gt; m Template)
+<span class="lineno">  564 </span>                -&gt; InternalTemplate
+<span class="lineno">  565 </span>                -&gt; m InternalTemplate
+<span class="lineno">  566 </span><span class="decl"><span class="istickedoff">runHookInternal f t = do</span>
+<span class="lineno">  567 </span><span class="spaces">    </span><span class="istickedoff">n &lt;- f $ _itNodes t</span>
+<span class="lineno">  568 </span><span class="spaces">    </span><span class="istickedoff">return $ t { _itNodes = n }</span></span>
+<span class="lineno">  569 </span>
 <span class="lineno">  570 </span>
-<span class="lineno">  571 </span>
-<span class="lineno">  572 </span>------------------------------------------------------------------------------
-<span class="lineno">  573 </span>-- These are here until we can get them into hexpat.
-<span class="lineno">  574 </span>------------------------------------------------------------------------------
-<span class="lineno">  575 </span>
-<span class="lineno">  576 </span>formatList :: (X.GenericXMLString tag, X.GenericXMLString text) =&gt;
-<span class="lineno">  577 </span>              [X.Node tag text]
-<span class="lineno">  578 </span>           -&gt; L.ByteString
-<span class="lineno">  579 </span><span class="decl"><span class="istickedoff">formatList nodes = foldl L.append L.empty $ map formatNode nodes</span></span>
-<span class="lineno">  580 </span>
-<span class="lineno">  581 </span>formatList' :: (X.GenericXMLString tag, X.GenericXMLString text) =&gt;
-<span class="lineno">  582 </span>               [X.Node tag text]
-<span class="lineno">  583 </span>            -&gt; B.ByteString
-<span class="lineno">  584 </span><span class="decl"><span class="istickedoff">formatList' = B.concat . L.toChunks . formatList</span></span>
-<span class="lineno">  585 </span>
+<span class="lineno">  571 </span>------------------------------------------------------------------------------
+<span class="lineno">  572 </span>-- | Runs the onLoad hook on the template and returns the `TemplateState`
+<span class="lineno">  573 </span>-- with the result inserted.
+<span class="lineno">  574 </span>loadHook :: Monad m =&gt; TemplateState m -&gt; (TPath, InternalTemplate) -&gt; IO (TemplateState m)
+<span class="lineno">  575 </span><span class="decl"><span class="istickedoff">loadHook ts (tp, t) = do</span>
+<span class="lineno">  576 </span><span class="spaces">    </span><span class="istickedoff">t' &lt;- runHookInternal (_onLoadHook ts) t</span>
+<span class="lineno">  577 </span><span class="spaces">    </span><span class="istickedoff">return $ insertTemplate tp t' ts</span></span>
+<span class="lineno">  578 </span>
+<span class="lineno">  579 </span>
+<span class="lineno">  580 </span>------------------------------------------------------------------------------
+<span class="lineno">  581 </span>-- These are here until we can get them into hexpat.
+<span class="lineno">  582 </span>------------------------------------------------------------------------------
+<span class="lineno">  583 </span>
+<span class="lineno">  584 </span>formatList :: (X.GenericXMLString tag, X.GenericXMLString text) =&gt;
+<span class="lineno">  585 </span>              [X.Node tag text]
+<span class="lineno">  586 </span>           -&gt; L.ByteString
+<span class="lineno">  587 </span><span class="decl"><span class="istickedoff">formatList nodes = foldl L.append L.empty $ map formatNode nodes</span></span>
+<span class="lineno">  588 </span>
+<span class="lineno">  589 </span>formatList' :: (X.GenericXMLString tag, X.GenericXMLString text) =&gt;
+<span class="lineno">  590 </span>               [X.Node tag text]
+<span class="lineno">  591 </span>            -&gt; B.ByteString
+<span class="lineno">  592 </span><span class="decl"><span class="istickedoff">formatList' = B.concat . L.toChunks . formatList</span></span>
+<span class="lineno">  593 </span>
 
 </pre>
 </html>
