@@ -12,77 +12,77 @@ span.spaces    { background: white }
 <span class="lineno">    1 </span>{-# LANGUAGE BangPatterns #-}
 <span class="lineno">    2 </span>{-# LANGUAGE CPP #-}
 <span class="lineno">    3 </span>{-# LANGUAGE OverloadedStrings #-}
-<span class="lineno">    4 </span>{-# LANGUAGE TypeSynonymInstances #-}
-<span class="lineno">    5 </span>
-<span class="lineno">    6 </span>-- | Snap Framework type aliases and utilities for iteratees. Note that as a
-<span class="lineno">    7 </span>-- convenience, this module also exports everything from @Data.Iteratee@ in the
-<span class="lineno">    8 </span>-- @iteratee@ library.
-<span class="lineno">    9 </span>--
-<span class="lineno">   10 </span>-- /WARNING/: Note that all of these types are scheduled to change in the
-<span class="lineno">   11 </span>-- @darcs@ head version of the @iteratee@ library; John Lato et al. are working
-<span class="lineno">   12 </span>-- on a much improved iteratee formulation.
-<span class="lineno">   13 </span>
-<span class="lineno">   14 </span>module Snap.Iteratee
-<span class="lineno">   15 </span>  ( -- * Convenience aliases around types from @Data.Iteratee@
-<span class="lineno">   16 </span>    Stream
-<span class="lineno">   17 </span>  , IterV
-<span class="lineno">   18 </span>  , Iteratee
-<span class="lineno">   19 </span>  , Enumerator
-<span class="lineno">   20 </span>
-<span class="lineno">   21 </span>    -- * Re-export types and functions from @Data.Iteratee@
-<span class="lineno">   22 </span>  , module Data.Iteratee
-<span class="lineno">   23 </span>
-<span class="lineno">   24 </span>    -- * Helper functions
-<span class="lineno">   25 </span>
-<span class="lineno">   26 </span>    -- ** Enumerators
-<span class="lineno">   27 </span>  , enumBS
-<span class="lineno">   28 </span>  , enumLBS
-<span class="lineno">   29 </span>  , enumFile
-<span class="lineno">   30 </span>
-<span class="lineno">   31 </span>    -- ** Conversion to/from 'WrappedByteString'
-<span class="lineno">   32 </span>  , fromWrap
-<span class="lineno">   33 </span>  , toWrap
-<span class="lineno">   34 </span>
-<span class="lineno">   35 </span>    -- ** Iteratee utilities
-<span class="lineno">   36 </span>  , drop'
-<span class="lineno">   37 </span>  , takeExactly
-<span class="lineno">   38 </span>  , takeNoMoreThan
-<span class="lineno">   39 </span>  , countBytes
-<span class="lineno">   40 </span>  , bufferIteratee
-<span class="lineno">   41 </span>  , mkIterateeBuffer
-<span class="lineno">   42 </span>  , unsafeBufferIterateeWithBuffer
-<span class="lineno">   43 </span>  , unsafeBufferIteratee
-<span class="lineno">   44 </span>  ) where
-<span class="lineno">   45 </span>
-<span class="lineno">   46 </span>------------------------------------------------------------------------------
-<span class="lineno">   47 </span>import           Control.Monad
-<span class="lineno">   48 </span>import           Control.Monad.CatchIO
-<span class="lineno">   49 </span>import           Data.ByteString (ByteString)
-<span class="lineno">   50 </span>import qualified Data.ByteString as S
-<span class="lineno">   51 </span>import qualified Data.ByteString.Unsafe as S
-<span class="lineno">   52 </span>import qualified Data.ByteString.Lazy as L
-<span class="lineno">   53 </span>import           Data.Int
-<span class="lineno">   54 </span>import           Data.IORef
-<span class="lineno">   55 </span>import           Data.Iteratee
-<span class="lineno">   56 </span>#ifdef PORTABLE
-<span class="lineno">   57 </span>import           Data.Iteratee.IO (enumHandle)
-<span class="lineno">   58 </span>#endif
-<span class="lineno">   59 </span>import qualified Data.Iteratee.Base.StreamChunk as SC
-<span class="lineno">   60 </span>import           Data.Iteratee.WrappedByteString
-<span class="lineno">   61 </span>import qualified Data.ListLike as LL
-<span class="lineno">   62 </span>import           Data.Monoid (mappend)
-<span class="lineno">   63 </span>import           Foreign
-<span class="lineno">   64 </span>import           Foreign.C.Types
-<span class="lineno">   65 </span>import           GHC.ForeignPtr
-<span class="lineno">   66 </span>import           Prelude hiding (catch,drop)
-<span class="lineno">   67 </span>import qualified Data.DList as D
-<span class="lineno">   68 </span>
-<span class="lineno">   69 </span>#ifdef PORTABLE
-<span class="lineno">   70 </span>import           Control.Monad.Trans (liftIO)
-<span class="lineno">   71 </span>import           System.IO
-<span class="lineno">   72 </span>#else
-<span class="lineno">   73 </span>import           Control.Exception (SomeException)
-<span class="lineno">   74 </span>import           System.IO.Posix.MMap
+<span class="lineno">    4 </span>{-# LANGUAGE PackageImports #-}
+<span class="lineno">    5 </span>{-# LANGUAGE TypeSynonymInstances #-}
+<span class="lineno">    6 </span>
+<span class="lineno">    7 </span>-- | Snap Framework type aliases and utilities for iteratees. Note that as a
+<span class="lineno">    8 </span>-- convenience, this module also exports everything from @Data.Iteratee@ in the
+<span class="lineno">    9 </span>-- @iteratee@ library.
+<span class="lineno">   10 </span>--
+<span class="lineno">   11 </span>-- /WARNING/: Note that all of these types are scheduled to change in the
+<span class="lineno">   12 </span>-- @darcs@ head version of the @iteratee@ library; John Lato et al. are working
+<span class="lineno">   13 </span>-- on a much improved iteratee formulation.
+<span class="lineno">   14 </span>
+<span class="lineno">   15 </span>module Snap.Iteratee
+<span class="lineno">   16 </span>  ( -- * Convenience aliases around types from @Data.Iteratee@
+<span class="lineno">   17 </span>    Stream
+<span class="lineno">   18 </span>  , IterV
+<span class="lineno">   19 </span>  , Iteratee
+<span class="lineno">   20 </span>  , Enumerator
+<span class="lineno">   21 </span>
+<span class="lineno">   22 </span>    -- * Re-export types and functions from @Data.Iteratee@
+<span class="lineno">   23 </span>  , module Data.Iteratee
+<span class="lineno">   24 </span>
+<span class="lineno">   25 </span>    -- * Helper functions
+<span class="lineno">   26 </span>
+<span class="lineno">   27 </span>    -- ** Enumerators
+<span class="lineno">   28 </span>  , enumBS
+<span class="lineno">   29 </span>  , enumLBS
+<span class="lineno">   30 </span>  , enumFile
+<span class="lineno">   31 </span>
+<span class="lineno">   32 </span>    -- ** Conversion to/from 'WrappedByteString'
+<span class="lineno">   33 </span>  , fromWrap
+<span class="lineno">   34 </span>  , toWrap
+<span class="lineno">   35 </span>
+<span class="lineno">   36 </span>    -- ** Iteratee utilities
+<span class="lineno">   37 </span>  , drop'
+<span class="lineno">   38 </span>  , takeExactly
+<span class="lineno">   39 </span>  , takeNoMoreThan
+<span class="lineno">   40 </span>  , countBytes
+<span class="lineno">   41 </span>  , bufferIteratee
+<span class="lineno">   42 </span>  , mkIterateeBuffer
+<span class="lineno">   43 </span>  , unsafeBufferIterateeWithBuffer
+<span class="lineno">   44 </span>  , unsafeBufferIteratee
+<span class="lineno">   45 </span>  ) where
+<span class="lineno">   46 </span>
+<span class="lineno">   47 </span>------------------------------------------------------------------------------
+<span class="lineno">   48 </span>import             Control.Monad
+<span class="lineno">   49 </span>import             Control.Monad.CatchIO
+<span class="lineno">   50 </span>import             Data.ByteString (ByteString)
+<span class="lineno">   51 </span>import qualified   Data.ByteString as S
+<span class="lineno">   52 </span>import qualified   Data.ByteString.Unsafe as S
+<span class="lineno">   53 </span>import qualified   Data.ByteString.Lazy as L
+<span class="lineno">   54 </span>import qualified   Data.DList as D
+<span class="lineno">   55 </span>import             Data.Int
+<span class="lineno">   56 </span>import             Data.IORef
+<span class="lineno">   57 </span>import             Data.Iteratee
+<span class="lineno">   58 </span>import             Data.Iteratee.IO (enumHandle)
+<span class="lineno">   59 </span>import qualified   Data.Iteratee.Base.StreamChunk as SC
+<span class="lineno">   60 </span>import             Data.Iteratee.WrappedByteString
+<span class="lineno">   61 </span>import qualified   Data.ListLike as LL
+<span class="lineno">   62 </span>import             Data.Monoid (mappend)
+<span class="lineno">   63 </span>import             Foreign
+<span class="lineno">   64 </span>import             Foreign.C.Types
+<span class="lineno">   65 </span>import             GHC.ForeignPtr
+<span class="lineno">   66 </span>import             Prelude hiding (catch,drop)
+<span class="lineno">   67 </span>import             System.IO
+<span class="lineno">   68 </span>import &quot;monads-fd&quot; Control.Monad.Trans (liftIO)
+<span class="lineno">   69 </span>
+<span class="lineno">   70 </span>#ifndef PORTABLE
+<span class="lineno">   71 </span>import           Control.Exception (SomeException)
+<span class="lineno">   72 </span>import           System.IO.Posix.MMap
+<span class="lineno">   73 </span>import           System.PosixCompat.Files
+<span class="lineno">   74 </span>import           System.Posix.Types
 <span class="lineno">   75 </span>#endif
 <span class="lineno">   76 </span>
 <span class="lineno">   77 </span>------------------------------------------------------------------------------
@@ -130,8 +130,8 @@ span.spaces    { background: white }
 <span class="lineno">  119 </span><span class="spaces">    </span><span class="istickedoff">f !n !iter stream = do</span>
 <span class="lineno">  120 </span><span class="spaces">        </span><span class="istickedoff">iterv &lt;- runIter iter stream</span>
 <span class="lineno">  121 </span><span class="spaces">        </span><span class="istickedoff">case iterv of</span>
-<span class="lineno">  122 </span><span class="spaces">          </span><span class="istickedoff">Done x rest -&gt; return $ Done (x, n) rest</span>
-<span class="lineno">  123 </span><span class="spaces">          </span><span class="istickedoff">Cont i err  -&gt; return $ Cont <span class="nottickedoff">(go n i)</span> err</span></span>
+<span class="lineno">  122 </span><span class="spaces">          </span><span class="istickedoff">Done x rest -&gt; return $ Done (x, n) <span class="nottickedoff">rest</span></span>
+<span class="lineno">  123 </span><span class="spaces">          </span><span class="istickedoff">Cont i err  -&gt; return $ Cont <span class="nottickedoff">(go n i)</span> <span class="nottickedoff">err</span></span></span>
 <span class="lineno">  124 </span>
 <span class="lineno">  125 </span>
 <span class="lineno">  126 </span>------------------------------------------------------------------------------
@@ -323,7 +323,7 @@ span.spaces    { background: white }
 <span class="lineno">  312 </span>enumLBS :: (Monad m) =&gt; L.ByteString -&gt; Enumerator m a
 <span class="lineno">  313 </span><span class="decl"><span class="istickedoff">enumLBS lbs = el chunks</span>
 <span class="lineno">  314 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  315 </span><span class="spaces">    </span><span class="istickedoff">el [] i     = liftM liftI $ runIter i (EOF Nothing)</span>
+<span class="lineno">  315 </span><span class="spaces">    </span><span class="istickedoff">el [] i     = return i</span>
 <span class="lineno">  316 </span><span class="spaces">    </span><span class="istickedoff">el (x:xs) i = do</span>
 <span class="lineno">  317 </span><span class="spaces">        </span><span class="istickedoff">i' &lt;- liftM liftI $ runIter i (Chunk $ WrapBS x)</span>
 <span class="lineno">  318 </span><span class="spaces">        </span><span class="istickedoff">el xs i'</span>
@@ -384,7 +384,7 @@ span.spaces    { background: white }
 <span class="lineno">  373 </span><span class="spaces">        </span><span class="istickedoff">inner  = liftM (check (n - strlen)) (runIter iter chk)</span>
 <span class="lineno">  374 </span><span class="spaces">        </span><span class="istickedoff">(s1, s2) = SC.splitAt (fromIntegral n) str</span>
 <span class="lineno">  375 </span><span class="spaces">  </span><span class="istickedoff">step _n (EOF (Just e))    = <span class="nottickedoff">return $ Cont undefined (Just e)</span></span>
-<span class="lineno">  376 </span><span class="spaces">  </span><span class="istickedoff">step _n (EOF Nothing)     = return $ Cont <span class="nottickedoff">undefined</span> (Just <span class="nottickedoff">(Err &quot;short write&quot;)</span>)</span>
+<span class="lineno">  376 </span><span class="spaces">  </span><span class="istickedoff">step _n (EOF Nothing)     = return $ Cont <span class="nottickedoff">undefined</span> <span class="nottickedoff">(Just (Err &quot;short write&quot;))</span></span>
 <span class="lineno">  377 </span><span class="spaces">  </span><span class="istickedoff">check n (Done x _)        = <span class="nottickedoff">drop' n &gt;&gt; return (return x)</span></span>
 <span class="lineno">  378 </span><span class="spaces">  </span><span class="istickedoff">check n (Cont x Nothing)  = takeExactly n x</span>
 <span class="lineno">  379 </span><span class="spaces">  </span><span class="istickedoff">check n (Cont _ (Just e)) = <span class="nottickedoff">drop' n &gt;&gt; throwErr e</span></span>
@@ -417,7 +417,7 @@ span.spaces    { background: white }
 <span class="lineno">  406 </span><span class="spaces">        </span><span class="istickedoff">v  &lt;- runIter iter chk</span>
 <span class="lineno">  407 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  408 </span><span class="spaces">        </span><span class="istickedoff">case v of</span>
-<span class="lineno">  409 </span><span class="spaces">          </span><span class="istickedoff">(Done x s)        -&gt; return $ Done (return x) s</span>
+<span class="lineno">  409 </span><span class="spaces">          </span><span class="istickedoff">(Done x s)        -&gt; return $ Done (return x) <span class="nottickedoff">s</span></span>
 <span class="lineno">  410 </span><span class="spaces">          </span><span class="istickedoff">(Cont _ (Just e)) -&gt; <span class="nottickedoff">return $ Cont undefined (Just e)</span></span>
 <span class="lineno">  411 </span><span class="spaces">          </span><span class="istickedoff">(Cont _ Nothing)  -&gt; <span class="nottickedoff">return $ Cont (throwErr $ Err &quot;premature EOF&quot;) Nothing</span></span>
 <span class="lineno">  412 </span><span class="spaces"></span><span class="istickedoff"></span>
@@ -438,30 +438,41 @@ span.spaces    { background: white }
 <span class="lineno">  427 </span>
 <span class="lineno">  428 </span>
 <span class="lineno">  429 </span>------------------------------------------------------------------------------
-<span class="lineno">  430 </span>enumFile :: FilePath -&gt; Iteratee IO a -&gt; IO (Iteratee IO a)
-<span class="lineno">  431 </span>
-<span class="lineno">  432 </span>#ifdef PORTABLE
-<span class="lineno">  433 </span>
-<span class="lineno">  434 </span>enumFile fp iter = do
-<span class="lineno">  435 </span>    h  &lt;- liftIO $ openBinaryFile fp ReadMode
-<span class="lineno">  436 </span>    i' &lt;- enumHandle h iter
-<span class="lineno">  437 </span>    return $ do
-<span class="lineno">  438 </span>        x &lt;- i'
-<span class="lineno">  439 </span>        liftIO (hClose h)
-<span class="lineno">  440 </span>        return x
-<span class="lineno">  441 </span>
-<span class="lineno">  442 </span>#else
-<span class="lineno">  443 </span>
-<span class="lineno">  444 </span><span class="decl"><span class="istickedoff">enumFile fp iter = do</span>
-<span class="lineno">  445 </span><span class="spaces">    </span><span class="istickedoff">es &lt;- (try $</span>
-<span class="lineno">  446 </span><span class="spaces">           </span><span class="istickedoff">liftM WrapBS $</span>
-<span class="lineno">  447 </span><span class="spaces">           </span><span class="istickedoff">unsafeMMapFile fp) :: IO (Either SomeException (WrappedByteString Word8))</span>
-<span class="lineno">  448 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  449 </span><span class="spaces">    </span><span class="istickedoff">case es of</span>
-<span class="lineno">  450 </span><span class="spaces">      </span><span class="istickedoff">(Left e)  -&gt; <span class="nottickedoff">return $ throwErr $ Err $ &quot;IO error&quot; ++ show e</span></span>
-<span class="lineno">  451 </span><span class="spaces">      </span><span class="istickedoff">(Right s) -&gt; liftM liftI $ runIter iter $ Chunk s</span></span>
-<span class="lineno">  452 </span>
-<span class="lineno">  453 </span>#endif
+<span class="lineno">  430 </span>_enumFile :: FilePath -&gt; Iteratee IO a -&gt; IO (Iteratee IO a)
+<span class="lineno">  431 </span><span class="decl"><span class="nottickedoff">_enumFile fp iter = do</span>
+<span class="lineno">  432 </span><span class="spaces">    </span><span class="nottickedoff">h  &lt;- liftIO $ openBinaryFile fp ReadMode</span>
+<span class="lineno">  433 </span><span class="spaces">    </span><span class="nottickedoff">i' &lt;- enumHandle h iter</span>
+<span class="lineno">  434 </span><span class="spaces">    </span><span class="nottickedoff">return (i' `finally` liftIO (hClose h))</span></span>
+<span class="lineno">  435 </span>
+<span class="lineno">  436 </span>
+<span class="lineno">  437 </span>enumFile :: FilePath -&gt; Iteratee IO a -&gt; IO (Iteratee IO a)
+<span class="lineno">  438 </span>
+<span class="lineno">  439 </span>#ifdef PORTABLE
+<span class="lineno">  440 </span>
+<span class="lineno">  441 </span>enumFile = _enumFile
+<span class="lineno">  442 </span>
+<span class="lineno">  443 </span>#else
+<span class="lineno">  444 </span>
+<span class="lineno">  445 </span>-- 40MB limit
+<span class="lineno">  446 </span>maxMMapFileSize :: FileOffset
+<span class="lineno">  447 </span><span class="decl"><span class="istickedoff">maxMMapFileSize = 41943040</span></span>
+<span class="lineno">  448 </span>
+<span class="lineno">  449 </span><span class="decl"><span class="istickedoff">enumFile fp iter = do</span>
+<span class="lineno">  450 </span><span class="spaces">    </span><span class="istickedoff">-- for small files we'll use mmap to save ourselves a copy, otherwise we'll</span>
+<span class="lineno">  451 </span><span class="spaces">    </span><span class="istickedoff">-- stream it</span>
+<span class="lineno">  452 </span><span class="spaces">    </span><span class="istickedoff">stat &lt;- getFileStatus fp</span>
+<span class="lineno">  453 </span><span class="spaces">    </span><span class="istickedoff">if <span class="tickonlyfalse">fileSize stat &gt; maxMMapFileSize</span></span>
+<span class="lineno">  454 </span><span class="spaces">      </span><span class="istickedoff">then <span class="nottickedoff">_enumFile fp iter</span></span>
+<span class="lineno">  455 </span><span class="spaces">      </span><span class="istickedoff">else do</span>
+<span class="lineno">  456 </span><span class="spaces">        </span><span class="istickedoff">es &lt;- (try $</span>
+<span class="lineno">  457 </span><span class="spaces">               </span><span class="istickedoff">liftM WrapBS $</span>
+<span class="lineno">  458 </span><span class="spaces">               </span><span class="istickedoff">unsafeMMapFile fp) :: IO (Either SomeException (WrappedByteString Word8))</span>
+<span class="lineno">  459 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  460 </span><span class="spaces">        </span><span class="istickedoff">case es of</span>
+<span class="lineno">  461 </span><span class="spaces">          </span><span class="istickedoff">(Left e)  -&gt; <span class="nottickedoff">return $ throwErr $ Err $ &quot;IO error&quot; ++ show e</span></span>
+<span class="lineno">  462 </span><span class="spaces">          </span><span class="istickedoff">(Right s) -&gt; liftM liftI $ runIter iter $ Chunk s</span></span>
+<span class="lineno">  463 </span>
+<span class="lineno">  464 </span>#endif
 
 </pre>
 </html>

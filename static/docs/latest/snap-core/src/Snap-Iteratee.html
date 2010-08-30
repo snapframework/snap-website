@@ -9,77 +9,77 @@
 <pre><a name="line-1"></a><span class='hs-comment'>{-# LANGUAGE BangPatterns #-}</span>
 <a name="line-2"></a><span class='hs-comment'>{-# LANGUAGE CPP #-}</span>
 <a name="line-3"></a><span class='hs-comment'>{-# LANGUAGE OverloadedStrings #-}</span>
-<a name="line-4"></a><span class='hs-comment'>{-# LANGUAGE TypeSynonymInstances #-}</span>
-<a name="line-5"></a>
-<a name="line-6"></a><span class='hs-comment'>-- | Snap Framework type aliases and utilities for iteratees. Note that as a</span>
-<a name="line-7"></a><span class='hs-comment'>-- convenience, this module also exports everything from @Data.Iteratee@ in the</span>
-<a name="line-8"></a><span class='hs-comment'>-- @iteratee@ library.</span>
-<a name="line-9"></a><span class='hs-comment'>--</span>
-<a name="line-10"></a><span class='hs-comment'>-- /WARNING/: Note that all of these types are scheduled to change in the</span>
-<a name="line-11"></a><span class='hs-comment'>-- @darcs@ head version of the @iteratee@ library; John Lato et al. are working</span>
-<a name="line-12"></a><span class='hs-comment'>-- on a much improved iteratee formulation.</span>
-<a name="line-13"></a>
-<a name="line-14"></a><span class='hs-keyword'>module</span> <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span>
-<a name="line-15"></a>  <span class='hs-layout'>(</span> <span class='hs-comment'>-- * Convenience aliases around types from @Data.Iteratee@</span>
-<a name="line-16"></a>    <span class='hs-conid'>Stream</span>
-<a name="line-17"></a>  <span class='hs-layout'>,</span> <span class='hs-conid'>IterV</span>
-<a name="line-18"></a>  <span class='hs-layout'>,</span> <span class='hs-conid'>Iteratee</span>
-<a name="line-19"></a>  <span class='hs-layout'>,</span> <span class='hs-conid'>Enumerator</span>
-<a name="line-20"></a>
-<a name="line-21"></a>    <span class='hs-comment'>-- * Re-export types and functions from @Data.Iteratee@</span>
-<a name="line-22"></a>  <span class='hs-layout'>,</span> <span class='hs-keyword'>module</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span>
-<a name="line-23"></a>
-<a name="line-24"></a>    <span class='hs-comment'>-- * Helper functions</span>
-<a name="line-25"></a>
-<a name="line-26"></a>    <span class='hs-comment'>-- ** Enumerators</span>
-<a name="line-27"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>enumBS</span>
-<a name="line-28"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>enumLBS</span>
-<a name="line-29"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>enumFile</span>
-<a name="line-30"></a>
-<a name="line-31"></a>    <span class='hs-comment'>-- ** Conversion to/from 'WrappedByteString'</span>
-<a name="line-32"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>fromWrap</span>
-<a name="line-33"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>toWrap</span>
-<a name="line-34"></a>
-<a name="line-35"></a>    <span class='hs-comment'>-- ** Iteratee utilities</span>
-<a name="line-36"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>drop'</span>
-<a name="line-37"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>takeExactly</span>
-<a name="line-38"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>takeNoMoreThan</span>
-<a name="line-39"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>countBytes</span>
-<a name="line-40"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>bufferIteratee</span>
-<a name="line-41"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>mkIterateeBuffer</span>
-<a name="line-42"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>unsafeBufferIterateeWithBuffer</span>
-<a name="line-43"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>unsafeBufferIteratee</span>
-<a name="line-44"></a>  <span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
-<a name="line-45"></a>
-<a name="line-46"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-47"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span>
-<a name="line-48"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>CatchIO</span>
-<a name="line-49"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
-<a name="line-50"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>S</span>
-<a name="line-51"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Unsafe</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>S</span>
-<a name="line-52"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Lazy</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>L</span>
-<a name="line-53"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Int</span>
-<a name="line-54"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>IORef</span>
-<a name="line-55"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span>
-<a name="line-56"></a><span class='hs-cpp'>#ifdef PORTABLE</span>
-<a name="line-57"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span><span class='hs-varop'>.</span><span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-varid'>enumHandle</span><span class='hs-layout'>)</span>
-<a name="line-58"></a><span class='hs-cpp'>#endif</span>
-<a name="line-59"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span><span class='hs-varop'>.</span><span class='hs-conid'>Base</span><span class='hs-varop'>.</span><span class='hs-conid'>StreamChunk</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>SC</span>
-<a name="line-60"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span><span class='hs-varop'>.</span><span class='hs-conid'>WrappedByteString</span>
-<a name="line-61"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ListLike</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>LL</span>
-<a name="line-62"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Monoid</span> <span class='hs-layout'>(</span><span class='hs-varid'>mappend</span><span class='hs-layout'>)</span>
-<a name="line-63"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Foreign</span>
-<a name="line-64"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Foreign</span><span class='hs-varop'>.</span><span class='hs-conid'>C</span><span class='hs-varop'>.</span><span class='hs-conid'>Types</span>
-<a name="line-65"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>GHC</span><span class='hs-varop'>.</span><span class='hs-conid'>ForeignPtr</span>
-<a name="line-66"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Prelude</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>catch</span><span class='hs-layout'>,</span><span class='hs-varid'>drop</span><span class='hs-layout'>)</span>
-<a name="line-67"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>DList</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>D</span>
-<a name="line-68"></a>
-<a name="line-69"></a><span class='hs-cpp'>#ifdef PORTABLE</span>
-<a name="line-70"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Trans</span> <span class='hs-layout'>(</span><span class='hs-varid'>liftIO</span><span class='hs-layout'>)</span>
-<a name="line-71"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>IO</span>
-<a name="line-72"></a><span class='hs-cpp'>#else</span>
-<a name="line-73"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Exception</span> <span class='hs-layout'>(</span><span class='hs-conid'>SomeException</span><span class='hs-layout'>)</span>
-<a name="line-74"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>IO</span><span class='hs-varop'>.</span><span class='hs-conid'>Posix</span><span class='hs-varop'>.</span><span class='hs-conid'>MMap</span>
+<a name="line-4"></a><span class='hs-comment'>{-# LANGUAGE PackageImports #-}</span>
+<a name="line-5"></a><span class='hs-comment'>{-# LANGUAGE TypeSynonymInstances #-}</span>
+<a name="line-6"></a>
+<a name="line-7"></a><span class='hs-comment'>-- | Snap Framework type aliases and utilities for iteratees. Note that as a</span>
+<a name="line-8"></a><span class='hs-comment'>-- convenience, this module also exports everything from @Data.Iteratee@ in the</span>
+<a name="line-9"></a><span class='hs-comment'>-- @iteratee@ library.</span>
+<a name="line-10"></a><span class='hs-comment'>--</span>
+<a name="line-11"></a><span class='hs-comment'>-- /WARNING/: Note that all of these types are scheduled to change in the</span>
+<a name="line-12"></a><span class='hs-comment'>-- @darcs@ head version of the @iteratee@ library; John Lato et al. are working</span>
+<a name="line-13"></a><span class='hs-comment'>-- on a much improved iteratee formulation.</span>
+<a name="line-14"></a>
+<a name="line-15"></a><span class='hs-keyword'>module</span> <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span>
+<a name="line-16"></a>  <span class='hs-layout'>(</span> <span class='hs-comment'>-- * Convenience aliases around types from @Data.Iteratee@</span>
+<a name="line-17"></a>    <span class='hs-conid'>Stream</span>
+<a name="line-18"></a>  <span class='hs-layout'>,</span> <span class='hs-conid'>IterV</span>
+<a name="line-19"></a>  <span class='hs-layout'>,</span> <span class='hs-conid'>Iteratee</span>
+<a name="line-20"></a>  <span class='hs-layout'>,</span> <span class='hs-conid'>Enumerator</span>
+<a name="line-21"></a>
+<a name="line-22"></a>    <span class='hs-comment'>-- * Re-export types and functions from @Data.Iteratee@</span>
+<a name="line-23"></a>  <span class='hs-layout'>,</span> <span class='hs-keyword'>module</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span>
+<a name="line-24"></a>
+<a name="line-25"></a>    <span class='hs-comment'>-- * Helper functions</span>
+<a name="line-26"></a>
+<a name="line-27"></a>    <span class='hs-comment'>-- ** Enumerators</span>
+<a name="line-28"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>enumBS</span>
+<a name="line-29"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>enumLBS</span>
+<a name="line-30"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>enumFile</span>
+<a name="line-31"></a>
+<a name="line-32"></a>    <span class='hs-comment'>-- ** Conversion to/from 'WrappedByteString'</span>
+<a name="line-33"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>fromWrap</span>
+<a name="line-34"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>toWrap</span>
+<a name="line-35"></a>
+<a name="line-36"></a>    <span class='hs-comment'>-- ** Iteratee utilities</span>
+<a name="line-37"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>drop'</span>
+<a name="line-38"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>takeExactly</span>
+<a name="line-39"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>takeNoMoreThan</span>
+<a name="line-40"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>countBytes</span>
+<a name="line-41"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>bufferIteratee</span>
+<a name="line-42"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>mkIterateeBuffer</span>
+<a name="line-43"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>unsafeBufferIterateeWithBuffer</span>
+<a name="line-44"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>unsafeBufferIteratee</span>
+<a name="line-45"></a>  <span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
+<a name="line-46"></a>
+<a name="line-47"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-48"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span>
+<a name="line-49"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>CatchIO</span>
+<a name="line-50"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
+<a name="line-51"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span>   <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>S</span>
+<a name="line-52"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span>   <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Unsafe</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>S</span>
+<a name="line-53"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span>   <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Lazy</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>L</span>
+<a name="line-54"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span>   <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>DList</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>D</span>
+<a name="line-55"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Int</span>
+<a name="line-56"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>IORef</span>
+<a name="line-57"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span>
+<a name="line-58"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span><span class='hs-varop'>.</span><span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-varid'>enumHandle</span><span class='hs-layout'>)</span>
+<a name="line-59"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span>   <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span><span class='hs-varop'>.</span><span class='hs-conid'>Base</span><span class='hs-varop'>.</span><span class='hs-conid'>StreamChunk</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>SC</span>
+<a name="line-60"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span><span class='hs-varop'>.</span><span class='hs-conid'>WrappedByteString</span>
+<a name="line-61"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span>   <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ListLike</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>LL</span>
+<a name="line-62"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Monoid</span> <span class='hs-layout'>(</span><span class='hs-varid'>mappend</span><span class='hs-layout'>)</span>
+<a name="line-63"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Foreign</span>
+<a name="line-64"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Foreign</span><span class='hs-varop'>.</span><span class='hs-conid'>C</span><span class='hs-varop'>.</span><span class='hs-conid'>Types</span>
+<a name="line-65"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>GHC</span><span class='hs-varop'>.</span><span class='hs-conid'>ForeignPtr</span>
+<a name="line-66"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Prelude</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>catch</span><span class='hs-layout'>,</span><span class='hs-varid'>drop</span><span class='hs-layout'>)</span>
+<a name="line-67"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>IO</span>
+<a name="line-68"></a><span class='hs-keyword'>import</span> <span class='hs-str'>"monads-fd"</span> <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Trans</span> <span class='hs-layout'>(</span><span class='hs-varid'>liftIO</span><span class='hs-layout'>)</span>
+<a name="line-69"></a>
+<a name="line-70"></a><span class='hs-cpp'>#ifndef PORTABLE</span>
+<a name="line-71"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Exception</span> <span class='hs-layout'>(</span><span class='hs-conid'>SomeException</span><span class='hs-layout'>)</span>
+<a name="line-72"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>IO</span><span class='hs-varop'>.</span><span class='hs-conid'>Posix</span><span class='hs-varop'>.</span><span class='hs-conid'>MMap</span>
+<a name="line-73"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>PosixCompat</span><span class='hs-varop'>.</span><span class='hs-conid'>Files</span>
+<a name="line-74"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>Posix</span><span class='hs-varop'>.</span><span class='hs-conid'>Types</span>
 <a name="line-75"></a><span class='hs-cpp'>#endif</span>
 <a name="line-76"></a>
 <a name="line-77"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
@@ -320,7 +320,7 @@
 <a name="line-312"></a><span class='hs-definition'>enumLBS</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Monad</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Enumerator</span> <span class='hs-varid'>m</span> <span class='hs-varid'>a</span>
 <a name="line-313"></a><span class='hs-definition'>enumLBS</span> <span class='hs-varid'>lbs</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>el</span> <span class='hs-varid'>chunks</span>
 <a name="line-314"></a>  <span class='hs-keyword'>where</span>
-<a name="line-315"></a>    <span class='hs-varid'>el</span> <span class='hs-conid'>[]</span> <span class='hs-varid'>i</span>     <span class='hs-keyglyph'>=</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>liftI</span> <span class='hs-varop'>$</span> <span class='hs-varid'>runIter</span> <span class='hs-varid'>i</span> <span class='hs-layout'>(</span><span class='hs-conid'>EOF</span> <span class='hs-conid'>Nothing</span><span class='hs-layout'>)</span>
+<a name="line-315"></a>    <span class='hs-varid'>el</span> <span class='hs-conid'>[]</span> <span class='hs-varid'>i</span>     <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-varid'>i</span>
 <a name="line-316"></a>    <span class='hs-varid'>el</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-varid'>i</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
 <a name="line-317"></a>        <span class='hs-varid'>i'</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>liftI</span> <span class='hs-varop'>$</span> <span class='hs-varid'>runIter</span> <span class='hs-varid'>i</span> <span class='hs-layout'>(</span><span class='hs-conid'>Chunk</span> <span class='hs-varop'>$</span> <span class='hs-conid'>WrapBS</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span>
 <a name="line-318"></a>        <span class='hs-varid'>el</span> <span class='hs-varid'>xs</span> <span class='hs-varid'>i'</span>
@@ -434,30 +434,41 @@
 <a name="line-426"></a>                <span class='hs-keyword'>else</span> <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Cont</span> <span class='hs-varid'>undefined</span> <span class='hs-layout'>(</span><span class='hs-conid'>Just</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Err</span> <span class='hs-str'>"too many bytes"</span><span class='hs-layout'>)</span>
 <a name="line-427"></a>
 <a name="line-428"></a>
-<a name="line-429"></a><a name="enumFile"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-430"></a><span class='hs-definition'>enumFile</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span>
-<a name="line-431"></a>
-<a name="line-432"></a><span class='hs-cpp'>#ifdef PORTABLE</span>
-<a name="line-433"></a>
-<a name="line-434"></a><span class='hs-definition'>enumFile</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>iter</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-435"></a>    <span class='hs-varid'>h</span>  <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>openBinaryFile</span> <span class='hs-varid'>fp</span> <span class='hs-conid'>ReadMode</span>
-<a name="line-436"></a>    <span class='hs-varid'>i'</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>enumHandle</span> <span class='hs-varid'>h</span> <span class='hs-varid'>iter</span>
-<a name="line-437"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>do</span>
-<a name="line-438"></a>        <span class='hs-varid'>x</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>i'</span>
-<a name="line-439"></a>        <span class='hs-varid'>liftIO</span> <span class='hs-layout'>(</span><span class='hs-varid'>hClose</span> <span class='hs-varid'>h</span><span class='hs-layout'>)</span>
-<a name="line-440"></a>        <span class='hs-varid'>return</span> <span class='hs-varid'>x</span>
-<a name="line-441"></a>
-<a name="line-442"></a><span class='hs-cpp'>#else</span>
-<a name="line-443"></a>
-<a name="line-444"></a><span class='hs-definition'>enumFile</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>iter</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-445"></a>    <span class='hs-varid'>es</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-layout'>(</span><span class='hs-varid'>try</span> <span class='hs-varop'>$</span>
-<a name="line-446"></a>           <span class='hs-varid'>liftM</span> <span class='hs-conid'>WrapBS</span> <span class='hs-varop'>$</span>
-<a name="line-447"></a>           <span class='hs-varid'>unsafeMMapFile</span> <span class='hs-varid'>fp</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Either</span> <span class='hs-conid'>SomeException</span> <span class='hs-layout'>(</span><span class='hs-conid'>WrappedByteString</span> <span class='hs-conid'>Word8</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-429"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-430"></a><span class='hs-sel'>_enumFile</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span>
+<a name="line-431"></a><span class='hs-sel'>_enumFile</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>iter</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-432"></a>    <span class='hs-varid'>h</span>  <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>openBinaryFile</span> <span class='hs-varid'>fp</span> <span class='hs-conid'>ReadMode</span>
+<a name="line-433"></a>    <span class='hs-varid'>i'</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>enumHandle</span> <span class='hs-varid'>h</span> <span class='hs-varid'>iter</span>
+<a name="line-434"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>i'</span> <span class='hs-varop'>`finally`</span> <span class='hs-varid'>liftIO</span> <span class='hs-layout'>(</span><span class='hs-varid'>hClose</span> <span class='hs-varid'>h</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-435"></a>
+<a name="line-436"></a>
+<a name="line-437"></a><a name="enumFile"></a><span class='hs-definition'>enumFile</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span>
+<a name="line-438"></a>
+<a name="line-439"></a><span class='hs-cpp'>#ifdef PORTABLE</span>
+<a name="line-440"></a>
+<a name="line-441"></a><span class='hs-definition'>enumFile</span> <span class='hs-keyglyph'>=</span> <span class='hs-sel'>_enumFile</span>
+<a name="line-442"></a>
+<a name="line-443"></a><span class='hs-cpp'>#else</span>
+<a name="line-444"></a>
+<a name="line-445"></a><a name="maxMMapFileSize"></a><span class='hs-comment'>-- 40MB limit</span>
+<a name="line-446"></a><span class='hs-definition'>maxMMapFileSize</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>FileOffset</span>
+<a name="line-447"></a><span class='hs-definition'>maxMMapFileSize</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>41943040</span>
 <a name="line-448"></a>
-<a name="line-449"></a>    <span class='hs-keyword'>case</span> <span class='hs-varid'>es</span> <span class='hs-keyword'>of</span>
-<a name="line-450"></a>      <span class='hs-layout'>(</span><span class='hs-conid'>Left</span> <span class='hs-varid'>e</span><span class='hs-layout'>)</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>throwErr</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Err</span> <span class='hs-varop'>$</span> <span class='hs-str'>"IO error"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>e</span>
-<a name="line-451"></a>      <span class='hs-layout'>(</span><span class='hs-conid'>Right</span> <span class='hs-varid'>s</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>liftI</span> <span class='hs-varop'>$</span> <span class='hs-varid'>runIter</span> <span class='hs-varid'>iter</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Chunk</span> <span class='hs-varid'>s</span>
-<a name="line-452"></a>
-<a name="line-453"></a><span class='hs-cpp'>#endif</span>
+<a name="line-449"></a><span class='hs-definition'>enumFile</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>iter</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-450"></a>    <span class='hs-comment'>-- for small files we'll use mmap to save ourselves a copy, otherwise we'll</span>
+<a name="line-451"></a>    <span class='hs-comment'>-- stream it</span>
+<a name="line-452"></a>    <span class='hs-varid'>stat</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getFileStatus</span> <span class='hs-varid'>fp</span>
+<a name="line-453"></a>    <span class='hs-keyword'>if</span> <span class='hs-varid'>fileSize</span> <span class='hs-varid'>stat</span> <span class='hs-varop'>&gt;</span> <span class='hs-varid'>maxMMapFileSize</span>
+<a name="line-454"></a>      <span class='hs-keyword'>then</span> <span class='hs-sel'>_enumFile</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>iter</span>
+<a name="line-455"></a>      <span class='hs-keyword'>else</span> <span class='hs-keyword'>do</span>
+<a name="line-456"></a>        <span class='hs-varid'>es</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-layout'>(</span><span class='hs-varid'>try</span> <span class='hs-varop'>$</span>
+<a name="line-457"></a>               <span class='hs-varid'>liftM</span> <span class='hs-conid'>WrapBS</span> <span class='hs-varop'>$</span>
+<a name="line-458"></a>               <span class='hs-varid'>unsafeMMapFile</span> <span class='hs-varid'>fp</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Either</span> <span class='hs-conid'>SomeException</span> <span class='hs-layout'>(</span><span class='hs-conid'>WrappedByteString</span> <span class='hs-conid'>Word8</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-459"></a>
+<a name="line-460"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>es</span> <span class='hs-keyword'>of</span>
+<a name="line-461"></a>          <span class='hs-layout'>(</span><span class='hs-conid'>Left</span> <span class='hs-varid'>e</span><span class='hs-layout'>)</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>throwErr</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Err</span> <span class='hs-varop'>$</span> <span class='hs-str'>"IO error"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>e</span>
+<a name="line-462"></a>          <span class='hs-layout'>(</span><span class='hs-conid'>Right</span> <span class='hs-varid'>s</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>liftI</span> <span class='hs-varop'>$</span> <span class='hs-varid'>runIter</span> <span class='hs-varid'>iter</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Chunk</span> <span class='hs-varid'>s</span>
+<a name="line-463"></a>
+<a name="line-464"></a><span class='hs-cpp'>#endif</span>
 </pre></body>
 </html>

@@ -66,8 +66,8 @@ span.spaces    { background: white }
 <span class="lineno">   55 </span>------------------------------------------------------------------------------
 <span class="lineno">   56 </span>
 <span class="lineno">   57 </span>-- FIXME: should be HashSet, make that later.
-<span class="lineno">   58 </span>import qualified   Data.HashMap.Concurrent as H
-<span class="lineno">   59 </span>import             Data.HashMap.Concurrent (HashMap)
+<span class="lineno">   58 </span>import qualified   Data.Concurrent.HashMap as H
+<span class="lineno">   59 </span>import             Data.Concurrent.HashMap (HashMap)
 <span class="lineno">   60 </span>import             Snap.Iteratee
 <span class="lineno">   61 </span>import             Snap.Internal.Debug
 <span class="lineno">   62 </span>import             Snap.Internal.Http.Server.Date
@@ -324,7 +324,7 @@ span.spaces    { background: white }
 <span class="lineno">  313 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  314 </span><span class="spaces">    </span><span class="istickedoff">withMVar lock $ \_ -&gt; do</span>
 <span class="lineno">  315 </span><span class="spaces">        </span><span class="istickedoff">evIoStop loop acceptObj</span>
-<span class="lineno">  316 </span><span class="spaces">        </span><span class="istickedoff">replicateM_ 10 $ writeChan connQ (-1)</span>
+<span class="lineno">  316 </span><span class="spaces">        </span><span class="istickedoff">replicateM_ 10 $ writeChan connQ <span class="nottickedoff">(-1)</span></span>
 <span class="lineno">  317 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  318 </span><span class="spaces">    </span><span class="istickedoff">debug $ <span class="nottickedoff">&quot;Backend.stop: waiting at most 10 seconds for connection threads to die&quot;</span></span>
 <span class="lineno">  319 </span><span class="spaces">    </span><span class="istickedoff">waitForThreads b $ seconds 10</span>
@@ -352,9 +352,9 @@ span.spaces    { background: white }
 <span class="lineno">  341 </span><span class="spaces">    </span><span class="istickedoff">threadSet = _connectionThreads backend</span>
 <span class="lineno">  342 </span><span class="spaces">    </span><span class="istickedoff">wait = do</span>
 <span class="lineno">  343 </span><span class="spaces">        </span><span class="istickedoff">b       &lt;- H.null threadSet</span>
-<span class="lineno">  344 </span><span class="spaces">        </span><span class="istickedoff">if b</span>
+<span class="lineno">  344 </span><span class="spaces">        </span><span class="istickedoff">if <span class="tickonlytrue">b</span></span>
 <span class="lineno">  345 </span><span class="spaces">          </span><span class="istickedoff">then return <span class="nottickedoff">()</span></span>
-<span class="lineno">  346 </span><span class="spaces">          </span><span class="istickedoff">else threadDelay (seconds 1) &gt;&gt; wait</span></span>
+<span class="lineno">  346 </span><span class="spaces">          </span><span class="istickedoff">else <span class="nottickedoff">threadDelay (seconds 1) &gt;&gt; wait</span></span></span>
 <span class="lineno">  347 </span>
 <span class="lineno">  348 </span>
 <span class="lineno">  349 </span>
@@ -447,7 +447,7 @@ span.spaces    { background: white }
 <span class="lineno">  436 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  437 </span><span class="spaces">    </span><span class="istickedoff">-- kill everything in thread table</span>
 <span class="lineno">  438 </span><span class="spaces">    </span><span class="istickedoff">tset &lt;- H.toList $ _connectionThreads backend</span>
-<span class="lineno">  439 </span><span class="spaces">    </span><span class="istickedoff">mapM_ <span class="nottickedoff">(killThread . fst)</span> tset</span>
+<span class="lineno">  439 </span><span class="spaces">    </span><span class="istickedoff">Prelude.mapM_ <span class="nottickedoff">(killThread . fst)</span> tset</span>
 <span class="lineno">  440 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  441 </span><span class="spaces">    </span><span class="istickedoff">debug $ <span class="nottickedoff">&quot;Backend.freeBackend: all threads killed&quot;</span></span>
 <span class="lineno">  442 </span><span class="spaces">    </span><span class="istickedoff">debug $ <span class="nottickedoff">&quot;Backend.freeBackend: destroying resources&quot;</span></span>
@@ -494,7 +494,7 @@ span.spaces    { background: white }
 <span class="lineno">  483 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  484 </span><span class="spaces">        </span><span class="istickedoff">-- if fd &lt; 0 throw an exception here (because this only happens if stop</span>
 <span class="lineno">  485 </span><span class="spaces">        </span><span class="istickedoff">-- is called)</span>
-<span class="lineno">  486 </span><span class="spaces">        </span><span class="istickedoff">when (fd &lt; 0) $ throwIO <span class="nottickedoff">BackendTerminatedException</span></span>
+<span class="lineno">  486 </span><span class="spaces">        </span><span class="istickedoff">when (fd &lt; 0) $ <span class="nottickedoff">throwIO BackendTerminatedException</span></span>
 <span class="lineno">  487 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  488 </span><span class="spaces">        </span><span class="istickedoff">sock &lt;- mkSocket fd AF_INET <span class="nottickedoff">Stream</span> <span class="nottickedoff">0</span> <span class="nottickedoff">Connected</span></span>
 <span class="lineno">  489 </span><span class="spaces">        </span><span class="istickedoff">peerName &lt;- getPeerName sock</span>
@@ -579,7 +579,7 @@ span.spaces    { background: white }
 <span class="lineno">  568 </span>
 <span class="lineno">  569 </span>
 <span class="lineno">  570 </span>data BackendTerminatedException = BackendTerminatedException
-<span class="lineno">  571 </span>   deriving (<span class="decl"><span class="istickedoff">Typeable</span></span>)
+<span class="lineno">  571 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
 <span class="lineno">  572 </span>
 <span class="lineno">  573 </span>instance Show BackendTerminatedException where
 <span class="lineno">  574 </span>    <span class="decl"><span class="nottickedoff">show BackendTerminatedException = &quot;Backend terminated&quot;</span></span>

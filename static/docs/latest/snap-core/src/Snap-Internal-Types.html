@@ -376,239 +376,263 @@
 <a name="line-368"></a><span class='hs-comment'>{-# INLINE modifyResponse #-}</span>
 <a name="line-369"></a>
 <a name="line-370"></a>
-<a name="line-371"></a><a name="logError"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-372"></a><span class='hs-comment'>-- | Log an error message in the 'Snap' monad</span>
-<a name="line-373"></a><span class='hs-definition'>logError</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
-<a name="line-374"></a><span class='hs-definition'>logError</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Snap</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gets</span> <span class='hs-sel'>_snapLogError</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>l</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>l</span> <span class='hs-varid'>s</span><span class='hs-layout'>)</span>
-<a name="line-375"></a>                                       <span class='hs-varop'>&gt;&gt;</span>  <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-conid'>Just</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Right</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
-<a name="line-376"></a><span class='hs-comment'>{-# INLINE logError #-}</span>
-<a name="line-377"></a>
-<a name="line-378"></a>
-<a name="line-379"></a><a name="addToOutput"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-380"></a><span class='hs-comment'>-- | Adds the output from the given enumerator to the 'Response'</span>
-<a name="line-381"></a><span class='hs-comment'>-- stored in the 'Snap' monad state.</span>
-<a name="line-382"></a><span class='hs-definition'>addToOutput</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-keyword'>forall</span> <span class='hs-varid'>a</span> <span class='hs-varop'>.</span> <span class='hs-conid'>Enumerator</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span>   <span class='hs-comment'>-- ^ output to add</span>
-<a name="line-383"></a>            <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
-<a name="line-384"></a><span class='hs-definition'>addToOutput</span> <span class='hs-varid'>enum</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>modifyResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>modifyResponseBody</span> <span class='hs-layout'>(</span><span class='hs-varop'>&gt;.</span> <span class='hs-varid'>enum</span><span class='hs-layout'>)</span>
-<a name="line-385"></a>
-<a name="line-386"></a>
-<a name="line-387"></a><a name="writeBS"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-388"></a><span class='hs-comment'>-- | Adds the given strict 'ByteString' to the body of the 'Response' stored in</span>
-<a name="line-389"></a><span class='hs-comment'>-- the 'Snap' monad state.</span>
-<a name="line-390"></a><span class='hs-comment'>--</span>
-<a name="line-391"></a><span class='hs-comment'>-- Warning: This function is intentionally non-strict. If any pure</span>
-<a name="line-392"></a><span class='hs-comment'>-- exceptions are raised by the expression creating the 'ByteString',</span>
-<a name="line-393"></a><span class='hs-comment'>-- the exception won't actually be raised within the Snap handler.</span>
-<a name="line-394"></a><span class='hs-definition'>writeBS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
-<a name="line-395"></a><span class='hs-definition'>writeBS</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>addToOutput</span> <span class='hs-varop'>$</span> <span class='hs-varid'>enumBS</span> <span class='hs-varid'>s</span>
-<a name="line-396"></a>
-<a name="line-397"></a>
-<a name="line-398"></a><a name="writeLBS"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-399"></a><span class='hs-comment'>-- | Adds the given lazy 'L.ByteString' to the body of the 'Response' stored in</span>
-<a name="line-400"></a><span class='hs-comment'>-- the 'Snap' monad state.</span>
-<a name="line-401"></a><span class='hs-comment'>--</span>
-<a name="line-402"></a><span class='hs-comment'>-- Warning: This function is intentionally non-strict. If any pure</span>
-<a name="line-403"></a><span class='hs-comment'>-- exceptions are raised by the expression creating the 'ByteString',</span>
-<a name="line-404"></a><span class='hs-comment'>-- the exception won't actually be raised within the Snap handler.</span>
-<a name="line-405"></a><span class='hs-definition'>writeLBS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
-<a name="line-406"></a><span class='hs-definition'>writeLBS</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>addToOutput</span> <span class='hs-varop'>$</span> <span class='hs-varid'>enumLBS</span> <span class='hs-varid'>s</span>
-<a name="line-407"></a>
-<a name="line-408"></a>
-<a name="line-409"></a><a name="writeText"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-410"></a><span class='hs-comment'>-- | Adds the given strict 'T.Text' to the body of the 'Response' stored in the</span>
-<a name="line-411"></a><span class='hs-comment'>-- 'Snap' monad state.</span>
-<a name="line-412"></a><span class='hs-comment'>--</span>
-<a name="line-413"></a><span class='hs-comment'>-- Warning: This function is intentionally non-strict. If any pure</span>
-<a name="line-414"></a><span class='hs-comment'>-- exceptions are raised by the expression creating the 'ByteString',</span>
-<a name="line-415"></a><span class='hs-comment'>-- the exception won't actually be raised within the Snap handler.</span>
-<a name="line-416"></a><span class='hs-definition'>writeText</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>T</span><span class='hs-varop'>.</span><span class='hs-conid'>Text</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
-<a name="line-417"></a><span class='hs-definition'>writeText</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>writeBS</span> <span class='hs-varop'>$</span> <span class='hs-conid'>T</span><span class='hs-varop'>.</span><span class='hs-varid'>encodeUtf8</span> <span class='hs-varid'>s</span>
-<a name="line-418"></a>
-<a name="line-419"></a>
-<a name="line-420"></a><a name="writeLazyText"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-421"></a><span class='hs-comment'>-- | Adds the given lazy 'LT.Text' to the body of the 'Response' stored in the</span>
-<a name="line-422"></a><span class='hs-comment'>-- 'Snap' monad state.</span>
-<a name="line-423"></a><span class='hs-comment'>--</span>
-<a name="line-424"></a><span class='hs-comment'>-- Warning: This function is intentionally non-strict. If any pure</span>
-<a name="line-425"></a><span class='hs-comment'>-- exceptions are raised by the expression creating the 'ByteString',</span>
-<a name="line-426"></a><span class='hs-comment'>-- the exception won't actually be raised within the Snap handler.</span>
-<a name="line-427"></a><span class='hs-definition'>writeLazyText</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>LT</span><span class='hs-varop'>.</span><span class='hs-conid'>Text</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
-<a name="line-428"></a><span class='hs-definition'>writeLazyText</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>writeLBS</span> <span class='hs-varop'>$</span> <span class='hs-conid'>LT</span><span class='hs-varop'>.</span><span class='hs-varid'>encodeUtf8</span> <span class='hs-varid'>s</span>
-<a name="line-429"></a>
-<a name="line-430"></a>
-<a name="line-431"></a><a name="sendFile"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-432"></a><span class='hs-comment'>-- | Sets the output to be the contents of the specified file.</span>
-<a name="line-433"></a><span class='hs-comment'>--</span>
-<a name="line-434"></a><span class='hs-comment'>-- Calling 'sendFile' will overwrite any output queued to be sent in the</span>
-<a name="line-435"></a><span class='hs-comment'>-- 'Response'. If the response body is not modified after the call to</span>
-<a name="line-436"></a><span class='hs-comment'>-- 'sendFile', Snap will use the efficient @sendfile()@ system call on</span>
-<a name="line-437"></a><span class='hs-comment'>-- platforms that support it.</span>
-<a name="line-438"></a><span class='hs-comment'>--</span>
-<a name="line-439"></a><span class='hs-comment'>-- If the response body is modified (using 'modifyResponseBody'), the file will</span>
-<a name="line-440"></a><span class='hs-comment'>-- be read using @mmap()@.</span>
-<a name="line-441"></a><span class='hs-definition'>sendFile</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
-<a name="line-442"></a><span class='hs-definition'>sendFile</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>modifyResponse</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>r</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>r</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rspBody</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SendFile</span> <span class='hs-varid'>f</span> <span class='hs-layout'>}</span>
+<a name="line-371"></a><a name="redirect"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-372"></a><span class='hs-comment'>-- | Performs a redirect by setting the @Location@ header to the given target</span>
+<a name="line-373"></a><span class='hs-comment'>-- URL/path and the status code to 302 in the 'Response' object stored in a</span>
+<a name="line-374"></a><span class='hs-comment'>-- 'Snap' monad. Note that the target URL is not validated in any way. Consider</span>
+<a name="line-375"></a><span class='hs-comment'>-- using 'redirect\'' instead, which allows you to choose the correct status</span>
+<a name="line-376"></a><span class='hs-comment'>-- code.</span>
+<a name="line-377"></a><span class='hs-definition'>redirect</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
+<a name="line-378"></a><span class='hs-definition'>redirect</span> <span class='hs-varid'>target</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>redirect'</span> <span class='hs-varid'>target</span> <span class='hs-num'>302</span>
+<a name="line-379"></a><span class='hs-comment'>{-# INLINE redirect #-}</span>
+<a name="line-380"></a>
+<a name="line-381"></a>
+<a name="line-382"></a><a name="redirect'"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-383"></a><span class='hs-comment'>-- | Performs a redirect by setting the @Location@ header to the given target</span>
+<a name="line-384"></a><span class='hs-comment'>-- URL/path and the status code (should be one of 301, 302, 303 or 307) in the</span>
+<a name="line-385"></a><span class='hs-comment'>-- 'Response' object stored in a 'Snap' monad. Note that the target URL is not</span>
+<a name="line-386"></a><span class='hs-comment'>-- validated in any way.</span>
+<a name="line-387"></a><span class='hs-definition'>redirect'</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
+<a name="line-388"></a><span class='hs-definition'>redirect'</span> <span class='hs-varid'>target</span> <span class='hs-varid'>status</span> <span class='hs-keyglyph'>=</span>
+<a name="line-389"></a>    <span class='hs-varid'>finishWith</span>
+<a name="line-390"></a>        <span class='hs-varop'>$</span> <span class='hs-varid'>setResponseCode</span> <span class='hs-varid'>status</span>
+<a name="line-391"></a>        <span class='hs-varop'>$</span> <span class='hs-varid'>setHeader</span> <span class='hs-str'>"Location"</span> <span class='hs-varid'>target</span> <span class='hs-varid'>emptyResponse</span>
+<a name="line-392"></a><span class='hs-comment'>{-# INLINE redirect' #-}</span>
+<a name="line-393"></a>
+<a name="line-394"></a>
+<a name="line-395"></a><a name="logError"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-396"></a><span class='hs-comment'>-- | Log an error message in the 'Snap' monad</span>
+<a name="line-397"></a><span class='hs-definition'>logError</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
+<a name="line-398"></a><span class='hs-definition'>logError</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Snap</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gets</span> <span class='hs-sel'>_snapLogError</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>l</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>l</span> <span class='hs-varid'>s</span><span class='hs-layout'>)</span>
+<a name="line-399"></a>                                       <span class='hs-varop'>&gt;&gt;</span>  <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-conid'>Just</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Right</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
+<a name="line-400"></a><span class='hs-comment'>{-# INLINE logError #-}</span>
+<a name="line-401"></a>
+<a name="line-402"></a>
+<a name="line-403"></a><a name="addToOutput"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-404"></a><span class='hs-comment'>-- | Adds the output from the given enumerator to the 'Response'</span>
+<a name="line-405"></a><span class='hs-comment'>-- stored in the 'Snap' monad state.</span>
+<a name="line-406"></a><span class='hs-definition'>addToOutput</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-keyword'>forall</span> <span class='hs-varid'>a</span> <span class='hs-varop'>.</span> <span class='hs-conid'>Enumerator</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span>   <span class='hs-comment'>-- ^ output to add</span>
+<a name="line-407"></a>            <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
+<a name="line-408"></a><span class='hs-definition'>addToOutput</span> <span class='hs-varid'>enum</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>modifyResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>modifyResponseBody</span> <span class='hs-layout'>(</span><span class='hs-varop'>&gt;.</span> <span class='hs-varid'>enum</span><span class='hs-layout'>)</span>
+<a name="line-409"></a>
+<a name="line-410"></a>
+<a name="line-411"></a><a name="writeBS"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-412"></a><span class='hs-comment'>-- | Adds the given strict 'ByteString' to the body of the 'Response' stored in</span>
+<a name="line-413"></a><span class='hs-comment'>-- the 'Snap' monad state.</span>
+<a name="line-414"></a><span class='hs-comment'>--</span>
+<a name="line-415"></a><span class='hs-comment'>-- Warning: This function is intentionally non-strict. If any pure</span>
+<a name="line-416"></a><span class='hs-comment'>-- exceptions are raised by the expression creating the 'ByteString',</span>
+<a name="line-417"></a><span class='hs-comment'>-- the exception won't actually be raised within the Snap handler.</span>
+<a name="line-418"></a><span class='hs-definition'>writeBS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
+<a name="line-419"></a><span class='hs-definition'>writeBS</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>addToOutput</span> <span class='hs-varop'>$</span> <span class='hs-varid'>enumBS</span> <span class='hs-varid'>s</span>
+<a name="line-420"></a>
+<a name="line-421"></a>
+<a name="line-422"></a><a name="writeLBS"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-423"></a><span class='hs-comment'>-- | Adds the given lazy 'L.ByteString' to the body of the 'Response' stored in</span>
+<a name="line-424"></a><span class='hs-comment'>-- the 'Snap' monad state.</span>
+<a name="line-425"></a><span class='hs-comment'>--</span>
+<a name="line-426"></a><span class='hs-comment'>-- Warning: This function is intentionally non-strict. If any pure</span>
+<a name="line-427"></a><span class='hs-comment'>-- exceptions are raised by the expression creating the 'ByteString',</span>
+<a name="line-428"></a><span class='hs-comment'>-- the exception won't actually be raised within the Snap handler.</span>
+<a name="line-429"></a><span class='hs-definition'>writeLBS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
+<a name="line-430"></a><span class='hs-definition'>writeLBS</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>addToOutput</span> <span class='hs-varop'>$</span> <span class='hs-varid'>enumLBS</span> <span class='hs-varid'>s</span>
+<a name="line-431"></a>
+<a name="line-432"></a>
+<a name="line-433"></a><a name="writeText"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-434"></a><span class='hs-comment'>-- | Adds the given strict 'T.Text' to the body of the 'Response' stored in the</span>
+<a name="line-435"></a><span class='hs-comment'>-- 'Snap' monad state.</span>
+<a name="line-436"></a><span class='hs-comment'>--</span>
+<a name="line-437"></a><span class='hs-comment'>-- Warning: This function is intentionally non-strict. If any pure</span>
+<a name="line-438"></a><span class='hs-comment'>-- exceptions are raised by the expression creating the 'ByteString',</span>
+<a name="line-439"></a><span class='hs-comment'>-- the exception won't actually be raised within the Snap handler.</span>
+<a name="line-440"></a><span class='hs-definition'>writeText</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>T</span><span class='hs-varop'>.</span><span class='hs-conid'>Text</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
+<a name="line-441"></a><span class='hs-definition'>writeText</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>writeBS</span> <span class='hs-varop'>$</span> <span class='hs-conid'>T</span><span class='hs-varop'>.</span><span class='hs-varid'>encodeUtf8</span> <span class='hs-varid'>s</span>
+<a name="line-442"></a>
 <a name="line-443"></a>
-<a name="line-444"></a>
-<a name="line-445"></a><a name="localRequest"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-446"></a><span class='hs-comment'>-- | Runs a 'Snap' action with a locally-modified 'Request' state</span>
-<a name="line-447"></a><span class='hs-comment'>-- object. The 'Request' object in the Snap monad state after the call</span>
-<a name="line-448"></a><span class='hs-comment'>-- to localRequest will be unchanged.</span>
-<a name="line-449"></a><span class='hs-definition'>localRequest</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Request</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Request</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
-<a name="line-450"></a><span class='hs-definition'>localRequest</span> <span class='hs-varid'>f</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-451"></a>    <span class='hs-varid'>req</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getRequest</span>
-<a name="line-452"></a>
-<a name="line-453"></a>    <span class='hs-varid'>runAct</span> <span class='hs-varid'>req</span> <span class='hs-varop'>&lt;|&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>putRequest</span> <span class='hs-varid'>req</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>pass</span><span class='hs-layout'>)</span>
+<a name="line-444"></a><a name="writeLazyText"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-445"></a><span class='hs-comment'>-- | Adds the given lazy 'LT.Text' to the body of the 'Response' stored in the</span>
+<a name="line-446"></a><span class='hs-comment'>-- 'Snap' monad state.</span>
+<a name="line-447"></a><span class='hs-comment'>--</span>
+<a name="line-448"></a><span class='hs-comment'>-- Warning: This function is intentionally non-strict. If any pure</span>
+<a name="line-449"></a><span class='hs-comment'>-- exceptions are raised by the expression creating the 'ByteString',</span>
+<a name="line-450"></a><span class='hs-comment'>-- the exception won't actually be raised within the Snap handler.</span>
+<a name="line-451"></a><span class='hs-definition'>writeLazyText</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>LT</span><span class='hs-varop'>.</span><span class='hs-conid'>Text</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
+<a name="line-452"></a><span class='hs-definition'>writeLazyText</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>writeLBS</span> <span class='hs-varop'>$</span> <span class='hs-conid'>LT</span><span class='hs-varop'>.</span><span class='hs-varid'>encodeUtf8</span> <span class='hs-varid'>s</span>
+<a name="line-453"></a>
 <a name="line-454"></a>
-<a name="line-455"></a>  <span class='hs-keyword'>where</span>
-<a name="line-456"></a>    <span class='hs-varid'>runAct</span> <span class='hs-varid'>req</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-457"></a>        <span class='hs-varid'>modifyRequest</span> <span class='hs-varid'>f</span>
-<a name="line-458"></a>        <span class='hs-varid'>result</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>m</span>
-<a name="line-459"></a>        <span class='hs-varid'>putRequest</span> <span class='hs-varid'>req</span>
-<a name="line-460"></a>        <span class='hs-varid'>return</span> <span class='hs-varid'>result</span>
-<a name="line-461"></a><span class='hs-comment'>{-# INLINE localRequest #-}</span>
-<a name="line-462"></a>
-<a name="line-463"></a>
-<a name="line-464"></a><a name="withRequest"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-465"></a><span class='hs-comment'>-- | Fetches the 'Request' from state and hands it to the given action.</span>
-<a name="line-466"></a><span class='hs-definition'>withRequest</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Request</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
-<a name="line-467"></a><span class='hs-definition'>withRequest</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>getRequest</span> <span class='hs-varop'>&gt;&gt;=</span><span class='hs-layout'>)</span>
-<a name="line-468"></a><span class='hs-comment'>{-# INLINE withRequest #-}</span>
-<a name="line-469"></a>
-<a name="line-470"></a>
-<a name="line-471"></a><a name="withResponse"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-472"></a><span class='hs-comment'>-- | Fetches the 'Response' from state and hands it to the given action.</span>
-<a name="line-473"></a><span class='hs-definition'>withResponse</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Response</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
-<a name="line-474"></a><span class='hs-definition'>withResponse</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>getResponse</span> <span class='hs-varop'>&gt;&gt;=</span><span class='hs-layout'>)</span>
-<a name="line-475"></a><span class='hs-comment'>{-# INLINE withResponse #-}</span>
+<a name="line-455"></a><a name="sendFile"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-456"></a><span class='hs-comment'>-- | Sets the output to be the contents of the specified file.</span>
+<a name="line-457"></a><span class='hs-comment'>--</span>
+<a name="line-458"></a><span class='hs-comment'>-- Calling 'sendFile' will overwrite any output queued to be sent in the</span>
+<a name="line-459"></a><span class='hs-comment'>-- 'Response'. If the response body is not modified after the call to</span>
+<a name="line-460"></a><span class='hs-comment'>-- 'sendFile', Snap will use the efficient @sendfile()@ system call on</span>
+<a name="line-461"></a><span class='hs-comment'>-- platforms that support it.</span>
+<a name="line-462"></a><span class='hs-comment'>--</span>
+<a name="line-463"></a><span class='hs-comment'>-- If the response body is modified (using 'modifyResponseBody'), the file will</span>
+<a name="line-464"></a><span class='hs-comment'>-- be read using @mmap()@.</span>
+<a name="line-465"></a><span class='hs-definition'>sendFile</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
+<a name="line-466"></a><span class='hs-definition'>sendFile</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>modifyResponse</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>r</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>r</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rspBody</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SendFile</span> <span class='hs-varid'>f</span> <span class='hs-layout'>}</span>
+<a name="line-467"></a>
+<a name="line-468"></a>
+<a name="line-469"></a><a name="localRequest"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-470"></a><span class='hs-comment'>-- | Runs a 'Snap' action with a locally-modified 'Request' state</span>
+<a name="line-471"></a><span class='hs-comment'>-- object. The 'Request' object in the Snap monad state after the call</span>
+<a name="line-472"></a><span class='hs-comment'>-- to localRequest will be unchanged.</span>
+<a name="line-473"></a><span class='hs-definition'>localRequest</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Request</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Request</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
+<a name="line-474"></a><span class='hs-definition'>localRequest</span> <span class='hs-varid'>f</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-475"></a>    <span class='hs-varid'>req</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getRequest</span>
 <a name="line-476"></a>
-<a name="line-477"></a>
-<a name="line-478"></a><a name="ipHeaderFilter"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-479"></a><span class='hs-comment'>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'</span>
-<a name="line-480"></a><span class='hs-comment'>-- field to the value in the X-Forwarded-For header. If the header is</span>
-<a name="line-481"></a><span class='hs-comment'>-- not present, this action has no effect.</span>
-<a name="line-482"></a><span class='hs-comment'>--</span>
-<a name="line-483"></a><span class='hs-comment'>-- This action should be used only when working behind a reverse http</span>
-<a name="line-484"></a><span class='hs-comment'>-- proxy that sets the X-Forwarded-For header. This is the only way to</span>
-<a name="line-485"></a><span class='hs-comment'>-- ensure the value in the X-Forwarded-For header can be trusted.</span>
-<a name="line-486"></a><span class='hs-comment'>--</span>
-<a name="line-487"></a><span class='hs-comment'>-- This is provided as a filter so actions that require the remote</span>
-<a name="line-488"></a><span class='hs-comment'>-- address can get it in a uniform manner. It has specifically limited</span>
-<a name="line-489"></a><span class='hs-comment'>-- functionality to ensure that its transformation can be trusted,</span>
-<a name="line-490"></a><span class='hs-comment'>-- when used correctly.</span>
-<a name="line-491"></a><span class='hs-definition'>ipHeaderFilter</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
-<a name="line-492"></a><span class='hs-definition'>ipHeaderFilter</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>ipHeaderFilter'</span> <span class='hs-str'>"x-forwarded-for"</span>
+<a name="line-477"></a>    <span class='hs-varid'>runAct</span> <span class='hs-varid'>req</span> <span class='hs-varop'>&lt;|&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>putRequest</span> <span class='hs-varid'>req</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>pass</span><span class='hs-layout'>)</span>
+<a name="line-478"></a>
+<a name="line-479"></a>  <span class='hs-keyword'>where</span>
+<a name="line-480"></a>    <span class='hs-varid'>runAct</span> <span class='hs-varid'>req</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-481"></a>        <span class='hs-varid'>modifyRequest</span> <span class='hs-varid'>f</span>
+<a name="line-482"></a>        <span class='hs-varid'>result</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>m</span>
+<a name="line-483"></a>        <span class='hs-varid'>putRequest</span> <span class='hs-varid'>req</span>
+<a name="line-484"></a>        <span class='hs-varid'>return</span> <span class='hs-varid'>result</span>
+<a name="line-485"></a><span class='hs-comment'>{-# INLINE localRequest #-}</span>
+<a name="line-486"></a>
+<a name="line-487"></a>
+<a name="line-488"></a><a name="withRequest"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-489"></a><span class='hs-comment'>-- | Fetches the 'Request' from state and hands it to the given action.</span>
+<a name="line-490"></a><span class='hs-definition'>withRequest</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Request</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
+<a name="line-491"></a><span class='hs-definition'>withRequest</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>getRequest</span> <span class='hs-varop'>&gt;&gt;=</span><span class='hs-layout'>)</span>
+<a name="line-492"></a><span class='hs-comment'>{-# INLINE withRequest #-}</span>
 <a name="line-493"></a>
 <a name="line-494"></a>
-<a name="line-495"></a><a name="ipHeaderFilter'"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-496"></a><span class='hs-comment'>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'</span>
-<a name="line-497"></a><span class='hs-comment'>-- field to the value from the header specified.  If the header</span>
-<a name="line-498"></a><span class='hs-comment'>-- specified is not present, this action has no effect.</span>
-<a name="line-499"></a><span class='hs-comment'>--</span>
-<a name="line-500"></a><span class='hs-comment'>-- This action should be used only when working behind a reverse http</span>
-<a name="line-501"></a><span class='hs-comment'>-- proxy that sets the header being looked at. This is the only way to</span>
-<a name="line-502"></a><span class='hs-comment'>-- ensure the value in the header can be trusted.</span>
-<a name="line-503"></a><span class='hs-comment'>--</span>
-<a name="line-504"></a><span class='hs-comment'>-- This is provided as a filter so actions that require the remote</span>
-<a name="line-505"></a><span class='hs-comment'>-- address can get it in a uniform manner. It has specifically limited</span>
-<a name="line-506"></a><span class='hs-comment'>-- functionality to ensure that its transformation can be trusted,</span>
-<a name="line-507"></a><span class='hs-comment'>-- when used correctly.</span>
-<a name="line-508"></a><span class='hs-definition'>ipHeaderFilter'</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>CIB</span><span class='hs-varop'>.</span><span class='hs-conid'>CIByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
-<a name="line-509"></a><span class='hs-definition'>ipHeaderFilter'</span> <span class='hs-varid'>header</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-510"></a>    <span class='hs-varid'>headerContents</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getHeader</span> <span class='hs-varid'>header</span> <span class='hs-varop'>&lt;$&gt;</span> <span class='hs-varid'>getRequest</span>
-<a name="line-511"></a>
-<a name="line-512"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>whitespace</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>" \t\r\n"</span>
-<a name="line-513"></a>        <span class='hs-varid'>ipChrs</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>".0123456789"</span>
-<a name="line-514"></a>        <span class='hs-varid'>trim</span> <span class='hs-varid'>f</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-varop'>`elem`</span> <span class='hs-varid'>s</span><span class='hs-layout'>)</span>
-<a name="line-515"></a>
-<a name="line-516"></a>        <span class='hs-varid'>clean</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>trim</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>takeWhile</span> <span class='hs-varid'>ipChrs</span> <span class='hs-varop'>.</span> <span class='hs-varid'>trim</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>dropWhile</span> <span class='hs-varid'>whitespace</span>
-<a name="line-517"></a>        <span class='hs-varid'>setIP</span> <span class='hs-varid'>ip</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>modifyRequest</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>rq</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>rq</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rqRemoteAddr</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>clean</span> <span class='hs-varid'>ip</span> <span class='hs-layout'>}</span>
-<a name="line-518"></a>    <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span> <span class='hs-varid'>setIP</span> <span class='hs-varid'>headerContents</span>
-<a name="line-519"></a>
-<a name="line-520"></a>
-<a name="line-521"></a><a name="NoHandlerException"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-522"></a><a name="NoHandlerException"></a><span class='hs-comment'>-- | This exception is thrown if the handler you supply to 'runSnap' fails.</span>
-<a name="line-523"></a><a name="NoHandlerException"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>NoHandlerException</span>
-<a name="line-524"></a>   <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Eq</span><span class='hs-layout'>,</span> <span class='hs-conid'>Typeable</span><span class='hs-layout'>)</span>
-<a name="line-525"></a>
-<a name="line-526"></a>
-<a name="line-527"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-528"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Show</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyword'>where</span>
-<a name="line-529"></a>    <span class='hs-varid'>show</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"No handler for request"</span>
-<a name="line-530"></a>
-<a name="line-531"></a>
-<a name="line-532"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-533"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Exception</span> <span class='hs-conid'>NoHandlerException</span>
-<a name="line-534"></a>
+<a name="line-495"></a><a name="withResponse"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-496"></a><span class='hs-comment'>-- | Fetches the 'Response' from state and hands it to the given action.</span>
+<a name="line-497"></a><span class='hs-definition'>withResponse</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Response</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
+<a name="line-498"></a><span class='hs-definition'>withResponse</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>getResponse</span> <span class='hs-varop'>&gt;&gt;=</span><span class='hs-layout'>)</span>
+<a name="line-499"></a><span class='hs-comment'>{-# INLINE withResponse #-}</span>
+<a name="line-500"></a>
+<a name="line-501"></a>
+<a name="line-502"></a><a name="ipHeaderFilter"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-503"></a><span class='hs-comment'>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'</span>
+<a name="line-504"></a><span class='hs-comment'>-- field to the value in the X-Forwarded-For header. If the header is</span>
+<a name="line-505"></a><span class='hs-comment'>-- not present, this action has no effect.</span>
+<a name="line-506"></a><span class='hs-comment'>--</span>
+<a name="line-507"></a><span class='hs-comment'>-- This action should be used only when working behind a reverse http</span>
+<a name="line-508"></a><span class='hs-comment'>-- proxy that sets the X-Forwarded-For header. This is the only way to</span>
+<a name="line-509"></a><span class='hs-comment'>-- ensure the value in the X-Forwarded-For header can be trusted.</span>
+<a name="line-510"></a><span class='hs-comment'>--</span>
+<a name="line-511"></a><span class='hs-comment'>-- This is provided as a filter so actions that require the remote</span>
+<a name="line-512"></a><span class='hs-comment'>-- address can get it in a uniform manner. It has specifically limited</span>
+<a name="line-513"></a><span class='hs-comment'>-- functionality to ensure that its transformation can be trusted,</span>
+<a name="line-514"></a><span class='hs-comment'>-- when used correctly.</span>
+<a name="line-515"></a><span class='hs-definition'>ipHeaderFilter</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
+<a name="line-516"></a><span class='hs-definition'>ipHeaderFilter</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>ipHeaderFilter'</span> <span class='hs-str'>"x-forwarded-for"</span>
+<a name="line-517"></a>
+<a name="line-518"></a>
+<a name="line-519"></a><a name="ipHeaderFilter'"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-520"></a><span class='hs-comment'>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'</span>
+<a name="line-521"></a><span class='hs-comment'>-- field to the value from the header specified.  If the header</span>
+<a name="line-522"></a><span class='hs-comment'>-- specified is not present, this action has no effect.</span>
+<a name="line-523"></a><span class='hs-comment'>--</span>
+<a name="line-524"></a><span class='hs-comment'>-- This action should be used only when working behind a reverse http</span>
+<a name="line-525"></a><span class='hs-comment'>-- proxy that sets the header being looked at. This is the only way to</span>
+<a name="line-526"></a><span class='hs-comment'>-- ensure the value in the header can be trusted.</span>
+<a name="line-527"></a><span class='hs-comment'>--</span>
+<a name="line-528"></a><span class='hs-comment'>-- This is provided as a filter so actions that require the remote</span>
+<a name="line-529"></a><span class='hs-comment'>-- address can get it in a uniform manner. It has specifically limited</span>
+<a name="line-530"></a><span class='hs-comment'>-- functionality to ensure that its transformation can be trusted,</span>
+<a name="line-531"></a><span class='hs-comment'>-- when used correctly.</span>
+<a name="line-532"></a><span class='hs-definition'>ipHeaderFilter'</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>CIB</span><span class='hs-varop'>.</span><span class='hs-conid'>CIByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-conid'>()</span>
+<a name="line-533"></a><span class='hs-definition'>ipHeaderFilter'</span> <span class='hs-varid'>header</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-534"></a>    <span class='hs-varid'>headerContents</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getHeader</span> <span class='hs-varid'>header</span> <span class='hs-varop'>&lt;$&gt;</span> <span class='hs-varid'>getRequest</span>
 <a name="line-535"></a>
-<a name="line-536"></a><a name="runSnap"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-537"></a><span class='hs-comment'>-- | Runs a 'Snap' monad action in the 'Iteratee IO' monad.</span>
-<a name="line-538"></a><span class='hs-definition'>runSnap</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
-<a name="line-539"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
-<a name="line-540"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Request</span>
-<a name="line-541"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Request</span><span class='hs-layout'>,</span><span class='hs-conid'>Response</span><span class='hs-layout'>)</span>
-<a name="line-542"></a><span class='hs-definition'>runSnap</span> <span class='hs-layout'>(</span><span class='hs-conid'>Snap</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-varid'>logerr</span> <span class='hs-varid'>req</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-543"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-layout'>,</span> <span class='hs-varid'>ss'</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runStateT</span> <span class='hs-varid'>m</span> <span class='hs-varid'>ss</span>
+<a name="line-536"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>whitespace</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>" \t\r\n"</span>
+<a name="line-537"></a>        <span class='hs-varid'>ipChrs</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>".0123456789"</span>
+<a name="line-538"></a>        <span class='hs-varid'>trim</span> <span class='hs-varid'>f</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-varop'>`elem`</span> <span class='hs-varid'>s</span><span class='hs-layout'>)</span>
+<a name="line-539"></a>
+<a name="line-540"></a>        <span class='hs-varid'>clean</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>trim</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>takeWhile</span> <span class='hs-varid'>ipChrs</span> <span class='hs-varop'>.</span> <span class='hs-varid'>trim</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>dropWhile</span> <span class='hs-varid'>whitespace</span>
+<a name="line-541"></a>        <span class='hs-varid'>setIP</span> <span class='hs-varid'>ip</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>modifyRequest</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>rq</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>rq</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rqRemoteAddr</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>clean</span> <span class='hs-varid'>ip</span> <span class='hs-layout'>}</span>
+<a name="line-542"></a>    <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span> <span class='hs-varid'>setIP</span> <span class='hs-varid'>headerContents</span>
+<a name="line-543"></a>
 <a name="line-544"></a>
-<a name="line-545"></a>    <span class='hs-varid'>e</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Left</span> <span class='hs-varid'>fourohfour</span><span class='hs-layout'>)</span>
-<a name="line-546"></a>               <span class='hs-varid'>return</span>
-<a name="line-547"></a>               <span class='hs-varid'>r</span>
-<a name="line-548"></a>
-<a name="line-549"></a>    <span class='hs-comment'>-- is this a case of early termination?</span>
-<a name="line-550"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>resp</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>case</span> <span class='hs-varid'>e</span> <span class='hs-keyword'>of</span>
-<a name="line-551"></a>                 <span class='hs-conid'>Left</span> <span class='hs-varid'>x</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>x</span>
-<a name="line-552"></a>                 <span class='hs-conid'>Right</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-sel'>_snapResponse</span> <span class='hs-varid'>ss'</span>
-<a name="line-553"></a>
-<a name="line-554"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-sel'>_snapRequest</span> <span class='hs-varid'>ss'</span><span class='hs-layout'>,</span> <span class='hs-varid'>resp</span><span class='hs-layout'>)</span>
+<a name="line-545"></a><a name="NoHandlerException"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-546"></a><a name="NoHandlerException"></a><span class='hs-comment'>-- | This exception is thrown if the handler you supply to 'runSnap' fails.</span>
+<a name="line-547"></a><a name="NoHandlerException"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>NoHandlerException</span>
+<a name="line-548"></a>   <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Eq</span><span class='hs-layout'>,</span> <span class='hs-conid'>Typeable</span><span class='hs-layout'>)</span>
+<a name="line-549"></a>
+<a name="line-550"></a>
+<a name="line-551"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-552"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Show</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyword'>where</span>
+<a name="line-553"></a>    <span class='hs-varid'>show</span> <span class='hs-conid'>NoHandlerException</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"No handler for request"</span>
+<a name="line-554"></a>
 <a name="line-555"></a>
-<a name="line-556"></a>  <span class='hs-keyword'>where</span>
-<a name="line-557"></a>    <span class='hs-varid'>fourohfour</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>setContentLength</span> <span class='hs-num'>3</span> <span class='hs-varop'>$</span>
-<a name="line-558"></a>                 <span class='hs-varid'>setResponseStatus</span> <span class='hs-num'>404</span> <span class='hs-str'>"Not Found"</span> <span class='hs-varop'>$</span>
-<a name="line-559"></a>                 <span class='hs-varid'>modifyResponseBody</span> <span class='hs-layout'>(</span><span class='hs-varop'>&gt;.</span> <span class='hs-varid'>enumBS</span> <span class='hs-str'>"404"</span><span class='hs-layout'>)</span> <span class='hs-varop'>$</span>
-<a name="line-560"></a>                 <span class='hs-varid'>emptyResponse</span>
-<a name="line-561"></a>
-<a name="line-562"></a>    <span class='hs-varid'>dresp</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>emptyResponse</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rspHttpVersion</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>rqVersion</span> <span class='hs-varid'>req</span> <span class='hs-layout'>}</span>
-<a name="line-563"></a>
-<a name="line-564"></a>    <span class='hs-varid'>ss</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SnapState</span> <span class='hs-varid'>req</span> <span class='hs-varid'>dresp</span> <span class='hs-varid'>logerr</span>
-<a name="line-565"></a><span class='hs-comment'>{-# INLINE runSnap #-}</span>
-<a name="line-566"></a>
-<a name="line-567"></a>
-<a name="line-568"></a><a name="evalSnap"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-569"></a><span class='hs-definition'>evalSnap</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
-<a name="line-570"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
-<a name="line-571"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Request</span>
-<a name="line-572"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span>
-<a name="line-573"></a><span class='hs-definition'>evalSnap</span> <span class='hs-layout'>(</span><span class='hs-conid'>Snap</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-varid'>logerr</span> <span class='hs-varid'>req</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-574"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-layout'>,</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runStateT</span> <span class='hs-varid'>m</span> <span class='hs-varid'>ss</span>
-<a name="line-575"></a>
-<a name="line-576"></a>    <span class='hs-varid'>e</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>throwIO</span> <span class='hs-conid'>NoHandlerException</span><span class='hs-layout'>)</span>
-<a name="line-577"></a>               <span class='hs-varid'>return</span>
-<a name="line-578"></a>               <span class='hs-varid'>r</span>
+<a name="line-556"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-557"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Exception</span> <span class='hs-conid'>NoHandlerException</span>
+<a name="line-558"></a>
+<a name="line-559"></a>
+<a name="line-560"></a><a name="runSnap"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-561"></a><span class='hs-comment'>-- | Runs a 'Snap' monad action in the 'Iteratee IO' monad.</span>
+<a name="line-562"></a><span class='hs-definition'>runSnap</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
+<a name="line-563"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
+<a name="line-564"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Request</span>
+<a name="line-565"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Request</span><span class='hs-layout'>,</span><span class='hs-conid'>Response</span><span class='hs-layout'>)</span>
+<a name="line-566"></a><span class='hs-definition'>runSnap</span> <span class='hs-layout'>(</span><span class='hs-conid'>Snap</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-varid'>logerr</span> <span class='hs-varid'>req</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-567"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-layout'>,</span> <span class='hs-varid'>ss'</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runStateT</span> <span class='hs-varid'>m</span> <span class='hs-varid'>ss</span>
+<a name="line-568"></a>
+<a name="line-569"></a>    <span class='hs-varid'>e</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Left</span> <span class='hs-varid'>fourohfour</span><span class='hs-layout'>)</span>
+<a name="line-570"></a>               <span class='hs-varid'>return</span>
+<a name="line-571"></a>               <span class='hs-varid'>r</span>
+<a name="line-572"></a>
+<a name="line-573"></a>    <span class='hs-comment'>-- is this a case of early termination?</span>
+<a name="line-574"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>resp</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>case</span> <span class='hs-varid'>e</span> <span class='hs-keyword'>of</span>
+<a name="line-575"></a>                 <span class='hs-conid'>Left</span> <span class='hs-varid'>x</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>x</span>
+<a name="line-576"></a>                 <span class='hs-conid'>Right</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-sel'>_snapResponse</span> <span class='hs-varid'>ss'</span>
+<a name="line-577"></a>
+<a name="line-578"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-sel'>_snapRequest</span> <span class='hs-varid'>ss'</span><span class='hs-layout'>,</span> <span class='hs-varid'>resp</span><span class='hs-layout'>)</span>
 <a name="line-579"></a>
-<a name="line-580"></a>    <span class='hs-comment'>-- is this a case of early termination?</span>
-<a name="line-581"></a>    <span class='hs-keyword'>case</span> <span class='hs-varid'>e</span> <span class='hs-keyword'>of</span>
-<a name="line-582"></a>      <span class='hs-conid'>Left</span> <span class='hs-keyword'>_</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>ErrorCall</span> <span class='hs-str'>"no value"</span>
-<a name="line-583"></a>      <span class='hs-conid'>Right</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-varid'>x</span>
-<a name="line-584"></a>  <span class='hs-keyword'>where</span>
-<a name="line-585"></a>    <span class='hs-varid'>dresp</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>emptyResponse</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rspHttpVersion</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>rqVersion</span> <span class='hs-varid'>req</span> <span class='hs-layout'>}</span>
-<a name="line-586"></a>    <span class='hs-varid'>ss</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SnapState</span> <span class='hs-varid'>req</span> <span class='hs-varid'>dresp</span> <span class='hs-varid'>logerr</span>
-<a name="line-587"></a><span class='hs-comment'>{-# INLINE evalSnap #-}</span>
-<a name="line-588"></a>
-<a name="line-589"></a>
+<a name="line-580"></a>  <span class='hs-keyword'>where</span>
+<a name="line-581"></a>    <span class='hs-varid'>fourohfour</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>setContentLength</span> <span class='hs-num'>3</span> <span class='hs-varop'>$</span>
+<a name="line-582"></a>                 <span class='hs-varid'>setResponseStatus</span> <span class='hs-num'>404</span> <span class='hs-str'>"Not Found"</span> <span class='hs-varop'>$</span>
+<a name="line-583"></a>                 <span class='hs-varid'>modifyResponseBody</span> <span class='hs-layout'>(</span><span class='hs-varop'>&gt;.</span> <span class='hs-varid'>enumBS</span> <span class='hs-str'>"404"</span><span class='hs-layout'>)</span> <span class='hs-varop'>$</span>
+<a name="line-584"></a>                 <span class='hs-varid'>emptyResponse</span>
+<a name="line-585"></a>
+<a name="line-586"></a>    <span class='hs-varid'>dresp</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>emptyResponse</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rspHttpVersion</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>rqVersion</span> <span class='hs-varid'>req</span> <span class='hs-layout'>}</span>
+<a name="line-587"></a>
+<a name="line-588"></a>    <span class='hs-varid'>ss</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SnapState</span> <span class='hs-varid'>req</span> <span class='hs-varid'>dresp</span> <span class='hs-varid'>logerr</span>
+<a name="line-589"></a><span class='hs-comment'>{-# INLINE runSnap #-}</span>
 <a name="line-590"></a>
-<a name="line-591"></a><a name="getParam"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-592"></a><span class='hs-comment'>-- | See 'rqParam'. Looks up a value for the given named parameter in the</span>
-<a name="line-593"></a><span class='hs-comment'>-- 'Request'. If more than one value was entered for the given parameter name,</span>
-<a name="line-594"></a><span class='hs-comment'>-- 'getParam' gloms the values together with:</span>
-<a name="line-595"></a><span class='hs-comment'>--</span>
-<a name="line-596"></a><span class='hs-comment'>-- @    'S.intercalate' \" \"@</span>
-<a name="line-597"></a><span class='hs-comment'>--</span>
-<a name="line-598"></a><span class='hs-definition'>getParam</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span>          <span class='hs-comment'>-- ^ parameter name to look up</span>
-<a name="line-599"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
-<a name="line-600"></a><span class='hs-definition'>getParam</span> <span class='hs-varid'>k</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-601"></a>    <span class='hs-varid'>rq</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getRequest</span>
-<a name="line-602"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>liftM</span> <span class='hs-layout'>(</span><span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>intercalate</span> <span class='hs-str'>" "</span><span class='hs-layout'>)</span> <span class='hs-varop'>$</span> <span class='hs-varid'>rqParam</span> <span class='hs-varid'>k</span> <span class='hs-varid'>rq</span>
+<a name="line-591"></a>
+<a name="line-592"></a><a name="evalSnap"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-593"></a><span class='hs-definition'>evalSnap</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Snap</span> <span class='hs-varid'>a</span>
+<a name="line-594"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
+<a name="line-595"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Request</span>
+<a name="line-596"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span>
+<a name="line-597"></a><span class='hs-definition'>evalSnap</span> <span class='hs-layout'>(</span><span class='hs-conid'>Snap</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-varid'>logerr</span> <span class='hs-varid'>req</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-598"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-layout'>,</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runStateT</span> <span class='hs-varid'>m</span> <span class='hs-varid'>ss</span>
+<a name="line-599"></a>
+<a name="line-600"></a>    <span class='hs-varid'>e</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>throwIO</span> <span class='hs-conid'>NoHandlerException</span><span class='hs-layout'>)</span>
+<a name="line-601"></a>               <span class='hs-varid'>return</span>
+<a name="line-602"></a>               <span class='hs-varid'>r</span>
 <a name="line-603"></a>
-<a name="line-604"></a>
+<a name="line-604"></a>    <span class='hs-comment'>-- is this a case of early termination?</span>
+<a name="line-605"></a>    <span class='hs-keyword'>case</span> <span class='hs-varid'>e</span> <span class='hs-keyword'>of</span>
+<a name="line-606"></a>      <span class='hs-conid'>Left</span> <span class='hs-keyword'>_</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>ErrorCall</span> <span class='hs-str'>"no value"</span>
+<a name="line-607"></a>      <span class='hs-conid'>Right</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-varid'>x</span>
+<a name="line-608"></a>  <span class='hs-keyword'>where</span>
+<a name="line-609"></a>    <span class='hs-varid'>dresp</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>emptyResponse</span> <span class='hs-layout'>{</span> <span class='hs-varid'>rspHttpVersion</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>rqVersion</span> <span class='hs-varid'>req</span> <span class='hs-layout'>}</span>
+<a name="line-610"></a>    <span class='hs-varid'>ss</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SnapState</span> <span class='hs-varid'>req</span> <span class='hs-varid'>dresp</span> <span class='hs-varid'>logerr</span>
+<a name="line-611"></a><span class='hs-comment'>{-# INLINE evalSnap #-}</span>
+<a name="line-612"></a>
+<a name="line-613"></a>
+<a name="line-614"></a>
+<a name="line-615"></a><a name="getParam"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-616"></a><span class='hs-comment'>-- | See 'rqParam'. Looks up a value for the given named parameter in the</span>
+<a name="line-617"></a><span class='hs-comment'>-- 'Request'. If more than one value was entered for the given parameter name,</span>
+<a name="line-618"></a><span class='hs-comment'>-- 'getParam' gloms the values together with:</span>
+<a name="line-619"></a><span class='hs-comment'>--</span>
+<a name="line-620"></a><span class='hs-comment'>-- @    'S.intercalate' \" \"@</span>
+<a name="line-621"></a><span class='hs-comment'>--</span>
+<a name="line-622"></a><span class='hs-definition'>getParam</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span>          <span class='hs-comment'>-- ^ parameter name to look up</span>
+<a name="line-623"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Snap</span> <span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
+<a name="line-624"></a><span class='hs-definition'>getParam</span> <span class='hs-varid'>k</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-625"></a>    <span class='hs-varid'>rq</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getRequest</span>
+<a name="line-626"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>liftM</span> <span class='hs-layout'>(</span><span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>intercalate</span> <span class='hs-str'>" "</span><span class='hs-layout'>)</span> <span class='hs-varop'>$</span> <span class='hs-varid'>rqParam</span> <span class='hs-varid'>k</span> <span class='hs-varid'>rq</span>
+<a name="line-627"></a>
+<a name="line-628"></a>
 </pre></body>
 </html>

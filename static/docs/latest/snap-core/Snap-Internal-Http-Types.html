@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.2.10: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.2.12: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Internal-Http-Types.html"
 >Source code</A
@@ -907,6 +907,22 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AsetResponseCode"
+>setResponseCode</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
+>Response</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AmodifyResponseBody"
 >modifyResponseBody</A
 > :: (<SPAN CLASS="keyword"
@@ -1145,6 +1161,20 @@
 >ByteString</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
 >String</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AstatusReasonMap"
+>statusReasonMap</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/containers/latest/doc/html/Data-IntMap.html#t%3AIntMap"
+>IntMap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
 ></TD
 ></TR
 ></TABLE
@@ -3328,7 +3358,73 @@
 ></TR
 ><TR
 ><TD CLASS="ndoc" COLSPAN="2"
->Sets the HTTP response status.
+>Sets the HTTP response status. Note: normally you would use
+ <TT
+><A HREF="Snap-Internal-Http-Types.html#v%3AsetResponseCode"
+>setResponseCode</A
+></TT
+> unless you needed a custom response explanation.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:setResponseCode"
+><A NAME="v%3AsetResponseCode"
+></A
+></A
+><B
+>setResponseCode</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#setResponseCode"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+></TD
+><TD CLASS="rdoc"
+>HTTP response integer code
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
+>Response</A
+></TD
+><TD CLASS="rdoc"
+>Response to be modified
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
+>Response</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Sets the HTTP response code.
 </TD
 ></TR
 ></TABLE
@@ -3937,6 +4033,34 @@
 ></TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Http-Types.html#toStr"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:statusReasonMap"
+><A NAME="v%3AstatusReasonMap"
+></A
+></A
+><B
+>statusReasonMap</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/containers/latest/doc/html/Data-IntMap.html#t%3AIntMap"
+>IntMap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#statusReasonMap"
 >Source</A
 ></TD
 ></TR

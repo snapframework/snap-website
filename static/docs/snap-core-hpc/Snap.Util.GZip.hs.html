@@ -253,93 +253,94 @@ span.spaces    { background: white }
 <span class="lineno">  242 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  243 </span><span class="spaces">        </span><span class="istickedoff">let output = L.toChunks $ compFunc bs</span>
 <span class="lineno">  244 </span><span class="spaces">        </span><span class="istickedoff">let runIt = do</span>
-<span class="lineno">  245 </span><span class="spaces">            </span><span class="istickedoff">mapM_ (writeChan writeEnd . toChunk) output</span>
-<span class="lineno">  246 </span><span class="spaces">            </span><span class="istickedoff">writeChan writeEnd $ EOF <span class="nottickedoff">Nothing</span></span>
-<span class="lineno">  247 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  248 </span><span class="spaces">        </span><span class="istickedoff">runIt `catch` <span class="nottickedoff">\(e::SomeException) -&gt;</span></span>
-<span class="lineno">  249 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">writeChan writeEnd $ EOF (Just $ Err $ show e)</span></span>
-<span class="lineno">  250 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  245 </span><span class="spaces">            </span><span class="istickedoff">--Prelude specified to work with iteratee-0.3.6</span>
+<span class="lineno">  246 </span><span class="spaces">            </span><span class="istickedoff">Prelude.mapM_ (writeChan writeEnd . toChunk) output</span>
+<span class="lineno">  247 </span><span class="spaces">            </span><span class="istickedoff">writeChan writeEnd $ EOF <span class="nottickedoff">Nothing</span></span>
+<span class="lineno">  248 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  249 </span><span class="spaces">        </span><span class="istickedoff">runIt `catch` <span class="nottickedoff">\(e::SomeException) -&gt;</span></span>
+<span class="lineno">  250 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">writeChan writeEnd $ EOF (Just $ Err $ show e)</span></span>
 <span class="lineno">  251 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  252 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  253 </span><span class="spaces">    </span><span class="istickedoff">streamToChunks []            = <span class="nottickedoff">[]</span></span>
-<span class="lineno">  254 </span><span class="spaces">    </span><span class="istickedoff">streamToChunks (Nothing:_)   = []</span>
-<span class="lineno">  255 </span><span class="spaces">    </span><span class="istickedoff">streamToChunks ((Just x):xs) = x:(streamToChunks xs)</span>
-<span class="lineno">  256 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  252 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  253 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  254 </span><span class="spaces">    </span><span class="istickedoff">streamToChunks []            = <span class="nottickedoff">[]</span></span>
+<span class="lineno">  255 </span><span class="spaces">    </span><span class="istickedoff">streamToChunks (Nothing:_)   = []</span>
+<span class="lineno">  256 </span><span class="spaces">    </span><span class="istickedoff">streamToChunks ((Just x):xs) = x:(streamToChunks xs)</span>
 <span class="lineno">  257 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  258 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  259 </span><span class="spaces">    </span><span class="istickedoff">toChunk = Chunk . WrapBS</span></span>
-<span class="lineno">  260 </span>
+<span class="lineno">  258 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  259 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  260 </span><span class="spaces">    </span><span class="istickedoff">toChunk = Chunk . WrapBS</span></span>
 <span class="lineno">  261 </span>
-<span class="lineno">  262 </span>------------------------------------------------------------------------------
-<span class="lineno">  263 </span>fullyParse :: ByteString -&gt; Parser a -&gt; Either String a
-<span class="lineno">  264 </span><span class="decl"><span class="istickedoff">fullyParse s p =</span>
-<span class="lineno">  265 </span><span class="spaces">    </span><span class="istickedoff">case r' of</span>
-<span class="lineno">  266 </span><span class="spaces">      </span><span class="istickedoff">(Fail _ _ e)    -&gt; Left <span class="nottickedoff">e</span></span>
-<span class="lineno">  267 </span><span class="spaces">      </span><span class="istickedoff">(Partial _)     -&gt; <span class="nottickedoff">Left &quot;parse failed&quot;</span></span>
-<span class="lineno">  268 </span><span class="spaces">      </span><span class="istickedoff">(Atto.Done _ x) -&gt; Right x</span>
-<span class="lineno">  269 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  270 </span><span class="spaces">    </span><span class="istickedoff">r  = parse p s</span>
-<span class="lineno">  271 </span><span class="spaces">    </span><span class="istickedoff">r' = feed r &quot;&quot;</span></span>
-<span class="lineno">  272 </span>
+<span class="lineno">  262 </span>
+<span class="lineno">  263 </span>------------------------------------------------------------------------------
+<span class="lineno">  264 </span>fullyParse :: ByteString -&gt; Parser a -&gt; Either String a
+<span class="lineno">  265 </span><span class="decl"><span class="istickedoff">fullyParse s p =</span>
+<span class="lineno">  266 </span><span class="spaces">    </span><span class="istickedoff">case r' of</span>
+<span class="lineno">  267 </span><span class="spaces">      </span><span class="istickedoff">(Fail _ _ e)    -&gt; Left <span class="nottickedoff">e</span></span>
+<span class="lineno">  268 </span><span class="spaces">      </span><span class="istickedoff">(Partial _)     -&gt; <span class="nottickedoff">Left &quot;parse failed&quot;</span></span>
+<span class="lineno">  269 </span><span class="spaces">      </span><span class="istickedoff">(Atto.Done _ x) -&gt; Right x</span>
+<span class="lineno">  270 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  271 </span><span class="spaces">    </span><span class="istickedoff">r  = parse p s</span>
+<span class="lineno">  272 </span><span class="spaces">    </span><span class="istickedoff">r' = feed r &quot;&quot;</span></span>
 <span class="lineno">  273 </span>
-<span class="lineno">  274 </span>------------------------------------------------------------------------------
-<span class="lineno">  275 </span>-- We're not gonna bother with quality values; we'll do gzip or compress in
-<span class="lineno">  276 </span>-- that order.
-<span class="lineno">  277 </span>acceptParser :: Parser [ByteString]
-<span class="lineno">  278 </span><span class="decl"><span class="istickedoff">acceptParser = do</span>
-<span class="lineno">  279 </span><span class="spaces">    </span><span class="istickedoff">xs &lt;- option <span class="nottickedoff">[]</span> $ (:[]) &lt;$&gt; encoding</span>
-<span class="lineno">  280 </span><span class="spaces">    </span><span class="istickedoff">ys &lt;- many (char ',' *&gt; encoding)</span>
-<span class="lineno">  281 </span><span class="spaces">    </span><span class="istickedoff">endOfInput</span>
-<span class="lineno">  282 </span><span class="spaces">    </span><span class="istickedoff">return $ xs ++ ys</span>
-<span class="lineno">  283 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  284 </span><span class="spaces">    </span><span class="istickedoff">encoding = skipSpace *&gt; c &lt;* skipSpace</span>
-<span class="lineno">  285 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  286 </span><span class="spaces">    </span><span class="istickedoff">c = do</span>
-<span class="lineno">  287 </span><span class="spaces">        </span><span class="istickedoff">x &lt;- coding</span>
-<span class="lineno">  288 </span><span class="spaces">        </span><span class="istickedoff">option <span class="nottickedoff">()</span> qvalue</span>
-<span class="lineno">  289 </span><span class="spaces">        </span><span class="istickedoff">return x</span>
-<span class="lineno">  290 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  291 </span><span class="spaces">    </span><span class="istickedoff">qvalue = do</span>
-<span class="lineno">  292 </span><span class="spaces">        </span><span class="istickedoff">skipSpace</span>
-<span class="lineno">  293 </span><span class="spaces">        </span><span class="istickedoff">char ';'</span>
-<span class="lineno">  294 </span><span class="spaces">        </span><span class="istickedoff">skipSpace</span>
-<span class="lineno">  295 </span><span class="spaces">        </span><span class="istickedoff">char 'q'</span>
-<span class="lineno">  296 </span><span class="spaces">        </span><span class="istickedoff">skipSpace</span>
-<span class="lineno">  297 </span><span class="spaces">        </span><span class="istickedoff">char '='</span>
-<span class="lineno">  298 </span><span class="spaces">        </span><span class="istickedoff">float</span>
-<span class="lineno">  299 </span><span class="spaces">        </span><span class="istickedoff">return <span class="nottickedoff">()</span></span>
-<span class="lineno">  300 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  301 </span><span class="spaces">    </span><span class="istickedoff">coding = string &quot;*&quot; &lt;|&gt; takeWhile isCodingChar</span>
-<span class="lineno">  302 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  303 </span><span class="spaces">    </span><span class="istickedoff">isCodingChar ch = isDigit ch || isAlpha_ascii ch || ch == '-' || ch == '_'</span>
-<span class="lineno">  304 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  305 </span><span class="spaces">    </span><span class="istickedoff">float = takeWhile isDigit &gt;&gt;</span>
-<span class="lineno">  306 </span><span class="spaces">            </span><span class="istickedoff">option <span class="nottickedoff">()</span> (char '.' &gt;&gt; takeWhile isDigit &gt;&gt; pure <span class="nottickedoff">()</span>)</span></span>
-<span class="lineno">  307 </span>
+<span class="lineno">  274 </span>
+<span class="lineno">  275 </span>------------------------------------------------------------------------------
+<span class="lineno">  276 </span>-- We're not gonna bother with quality values; we'll do gzip or compress in
+<span class="lineno">  277 </span>-- that order.
+<span class="lineno">  278 </span>acceptParser :: Parser [ByteString]
+<span class="lineno">  279 </span><span class="decl"><span class="istickedoff">acceptParser = do</span>
+<span class="lineno">  280 </span><span class="spaces">    </span><span class="istickedoff">xs &lt;- option <span class="nottickedoff">[]</span> $ (:[]) &lt;$&gt; encoding</span>
+<span class="lineno">  281 </span><span class="spaces">    </span><span class="istickedoff">ys &lt;- many (char ',' *&gt; encoding)</span>
+<span class="lineno">  282 </span><span class="spaces">    </span><span class="istickedoff">endOfInput</span>
+<span class="lineno">  283 </span><span class="spaces">    </span><span class="istickedoff">return $ xs ++ ys</span>
+<span class="lineno">  284 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  285 </span><span class="spaces">    </span><span class="istickedoff">encoding = skipSpace *&gt; c &lt;* skipSpace</span>
+<span class="lineno">  286 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  287 </span><span class="spaces">    </span><span class="istickedoff">c = do</span>
+<span class="lineno">  288 </span><span class="spaces">        </span><span class="istickedoff">x &lt;- coding</span>
+<span class="lineno">  289 </span><span class="spaces">        </span><span class="istickedoff">option <span class="nottickedoff">()</span> qvalue</span>
+<span class="lineno">  290 </span><span class="spaces">        </span><span class="istickedoff">return x</span>
+<span class="lineno">  291 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  292 </span><span class="spaces">    </span><span class="istickedoff">qvalue = do</span>
+<span class="lineno">  293 </span><span class="spaces">        </span><span class="istickedoff">skipSpace</span>
+<span class="lineno">  294 </span><span class="spaces">        </span><span class="istickedoff">char ';'</span>
+<span class="lineno">  295 </span><span class="spaces">        </span><span class="istickedoff">skipSpace</span>
+<span class="lineno">  296 </span><span class="spaces">        </span><span class="istickedoff">char 'q'</span>
+<span class="lineno">  297 </span><span class="spaces">        </span><span class="istickedoff">skipSpace</span>
+<span class="lineno">  298 </span><span class="spaces">        </span><span class="istickedoff">char '='</span>
+<span class="lineno">  299 </span><span class="spaces">        </span><span class="istickedoff">float</span>
+<span class="lineno">  300 </span><span class="spaces">        </span><span class="istickedoff">return <span class="nottickedoff">()</span></span>
+<span class="lineno">  301 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  302 </span><span class="spaces">    </span><span class="istickedoff">coding = string &quot;*&quot; &lt;|&gt; takeWhile isCodingChar</span>
+<span class="lineno">  303 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  304 </span><span class="spaces">    </span><span class="istickedoff">isCodingChar ch = isDigit ch || isAlpha_ascii ch || ch == '-' || ch == '_'</span>
+<span class="lineno">  305 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  306 </span><span class="spaces">    </span><span class="istickedoff">float = takeWhile isDigit &gt;&gt;</span>
+<span class="lineno">  307 </span><span class="spaces">            </span><span class="istickedoff">option <span class="nottickedoff">()</span> (char '.' &gt;&gt; takeWhile isDigit &gt;&gt; pure <span class="nottickedoff">()</span>)</span></span>
 <span class="lineno">  308 </span>
-<span class="lineno">  309 </span>------------------------------------------------------------------------------
-<span class="lineno">  310 </span>data BadAcceptEncodingException = BadAcceptEncodingException
-<span class="lineno">  311 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
-<span class="lineno">  312 </span>
+<span class="lineno">  309 </span>
+<span class="lineno">  310 </span>------------------------------------------------------------------------------
+<span class="lineno">  311 </span>data BadAcceptEncodingException = BadAcceptEncodingException
+<span class="lineno">  312 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
 <span class="lineno">  313 </span>
-<span class="lineno">  314 </span>------------------------------------------------------------------------------
-<span class="lineno">  315 </span>instance Show BadAcceptEncodingException where
-<span class="lineno">  316 </span>    <span class="decl"><span class="istickedoff">show BadAcceptEncodingException = &quot;bad 'accept-encoding' header&quot;</span></span>
-<span class="lineno">  317 </span>
+<span class="lineno">  314 </span>
+<span class="lineno">  315 </span>------------------------------------------------------------------------------
+<span class="lineno">  316 </span>instance Show BadAcceptEncodingException where
+<span class="lineno">  317 </span>    <span class="decl"><span class="istickedoff">show BadAcceptEncodingException = &quot;bad 'accept-encoding' header&quot;</span></span>
 <span class="lineno">  318 </span>
-<span class="lineno">  319 </span>------------------------------------------------------------------------------
-<span class="lineno">  320 </span>instance Exception BadAcceptEncodingException
-<span class="lineno">  321 </span>
+<span class="lineno">  319 </span>
+<span class="lineno">  320 </span>------------------------------------------------------------------------------
+<span class="lineno">  321 </span>instance Exception BadAcceptEncodingException
 <span class="lineno">  322 </span>
-<span class="lineno">  323 </span>------------------------------------------------------------------------------
-<span class="lineno">  324 </span>parseAcceptEncoding :: ByteString -&gt; IO [ByteString]
-<span class="lineno">  325 </span><span class="decl"><span class="istickedoff">parseAcceptEncoding s =</span>
-<span class="lineno">  326 </span><span class="spaces">    </span><span class="istickedoff">case r of</span>
-<span class="lineno">  327 </span><span class="spaces">      </span><span class="istickedoff">Left _ -&gt; throwIO BadAcceptEncodingException</span>
-<span class="lineno">  328 </span><span class="spaces">      </span><span class="istickedoff">Right x -&gt; return x</span>
-<span class="lineno">  329 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  330 </span><span class="spaces">    </span><span class="istickedoff">r = fullyParse s acceptParser</span></span>
-<span class="lineno">  331 </span>
+<span class="lineno">  323 </span>
+<span class="lineno">  324 </span>------------------------------------------------------------------------------
+<span class="lineno">  325 </span>parseAcceptEncoding :: ByteString -&gt; IO [ByteString]
+<span class="lineno">  326 </span><span class="decl"><span class="istickedoff">parseAcceptEncoding s =</span>
+<span class="lineno">  327 </span><span class="spaces">    </span><span class="istickedoff">case r of</span>
+<span class="lineno">  328 </span><span class="spaces">      </span><span class="istickedoff">Left _ -&gt; throwIO BadAcceptEncodingException</span>
+<span class="lineno">  329 </span><span class="spaces">      </span><span class="istickedoff">Right x -&gt; return x</span>
+<span class="lineno">  330 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  331 </span><span class="spaces">    </span><span class="istickedoff">r = fullyParse s acceptParser</span></span>
+<span class="lineno">  332 </span>
 
 </pre>
 </html>
