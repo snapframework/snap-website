@@ -37,6 +37,11 @@ $ cabal install snap-server</pre>
     <div class="section right">
       <div class="inner">
         <h2>Snap Packages</h2>
+
+        <p class="foundabug"><b>Found a bug in Snap? Please visit our <a
+        href="http://github.com/snapframework/snap-core/issues">issue
+        tracker.</a></b></p>
+
         <p>Snap is made up of a collection of separate packages:</p>
         <div id="packages">
           <dl>

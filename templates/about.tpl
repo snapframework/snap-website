@@ -22,6 +22,10 @@
           </ul>
         </p>
 
+        <p class="foundabug"><b>Found a bug in Snap? Please visit our <a
+        href="http://github.com/snapframework/snap-core/issues">issue
+        tracker.</a></b></p>
+
         <h2>What is the project's status?</h2>
         <p>
           The first developer prerelease of the Snap framework is available

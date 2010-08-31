@@ -4,12 +4,19 @@
   <div class="singlecolumn">
     <h2>Frequently Asked Questions</h2>
     <ol>
+      <li><a href="#issue-tracker">How can I report a bug in Snap?</a></li>
       <li><a href="#live-sites">Is anyone using Snap in production?</a></li>
       <li><a href="#high-level">Where's the high-level functionality?</a></li>
       <li><a href="#install">Why can't I install Snap?</a></li>
       <li><a href="#libev">How do I get the libev backend working?</a></li>
       <li><a href="#help">How can I help?</a></li>
     </ol>
+
+    <h3 id="issue-tracker">How can I report a bug in Snap?</h3>
+
+    <p>Found a bug in Snap? Please create a ticket on our <a
+        href="http://github.com/snapframework/snap-core/issues">issue
+        tracker.</a></p>
 
     <h3 id="live-sites">Is anyone using Snap in production?</h3>
 

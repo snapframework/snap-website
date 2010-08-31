@@ -250,6 +250,19 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
     width: 50%;
 }
 
+p.foundabug {
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 29px;
+    background: #F7D081;
+    font-family: "Droid Sans", sans-serif;
+
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
 .newspaper{
     width: 100%;
     overflow:auto;
