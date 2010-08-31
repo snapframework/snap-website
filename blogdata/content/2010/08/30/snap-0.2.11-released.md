@@ -1,7 +1,7 @@
 | title: Announcing: Snap Framework v0.2.11
 | author: Gregory Collins <greg@gregorycollins.net>
 | published: 2010-08-30T20:06:01-0400
-| updated: 2010-08-30T20:06:01-0400
+| updated: 2010-08-31T14:28:39-0400
 | summary: Release notes for version 0.2.11 of the Snap Framework.
 
 Hi all,
@@ -36,6 +36,10 @@ Changes since 0.2.9
    [`setResponseCode`](/docs/latest/snap-core/Snap-Types.html#v%3AsetResponseCode)
    to set the reponse status code and message together using a lookup table,
    rather than forcing you to input the status message yourself.
+
+ - Added a 
+   [`getCookie`](/docs/latest/snap-core/Snap-Types.html#v%3AgetCookie)
+   function.
 
  - Architecture-specific hash function is now selected via template haskell.
 
