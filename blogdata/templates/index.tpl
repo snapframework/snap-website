@@ -1,4 +1,6 @@
 <bind tag="subtitle">: Blog</bind>
+<bind tag="feed-autodiscovery-link"><link rel="alternate" type="application/atom+xml" href="/blog/feed.xml"/></bind>
+
 <apply template="page">
 
   <div id="blog-index">
