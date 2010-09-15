@@ -13,22 +13,22 @@
         <div class="navlist">
         <ul class="nav">
           <li class="home">
-            <a href="/">Home</a>
+            <a title="Home" href="/">Home</a>
           </li>
           <li class="about">
-            <a href="/about">About</a>
+            <a title="About the Snap Framework" href="/about">About</a>
           </li>
           <li class="blog">
-            <a href="/blog">Blog</a>
+            <a title="Snap Framework Developers' Blog" href="/blog">Blog</a>
           </li>
           <li class="download">
-            <a href="/download">Download</a>
+            <a title="Download the Snap Framework" href="/download">Download</a>
           </li>
           <li class="docs">
-            <a href="/docs">Docs</a>
+            <a title="Documentation" href="/docs">Docs</a>
           </li>
           <li class="faq">
-            <a href="/faq">FAQ</a>
+            <a title="Frequently Asked Questions" href="/faq">FAQ</a>
           </li>
         </ul>
         </div>
