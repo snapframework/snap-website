@@ -30,7 +30,7 @@ you know of others:
 
   -  [http://snapframework.com](http://snapframework.com) (this site)
 
-  -  [http://ego.fm           ](http://ego.fm           )
+  -  [http://ego.fm           ](http://ego.fm) (not always up)
 
 
 ### Where's the high-level functionality?
