@@ -25,7 +25,7 @@ Found a bug in Snap? Please create a ticket on our
 Yes!  Here is a list of sites that we know of that use Snap.  Let us know if
 you know of others:
 
-  -  [http://darcsden.com](Darcsden) is a nifty github-like source
+  -  [Darcsden](http://darcsden.com) is a nifty github-like source
      code hosting site for darcs.
 
   -  [http://snapframework.com](http://snapframework.com) (this site)
