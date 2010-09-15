@@ -31,6 +31,7 @@ Executable snap-website
     snap-server >= 0.2.12 && <0.3,
     snap-static-pages >= 0.0.1 && <0.1,
     text,
+    time,
     transformers,
     unix,
     utf8-string,

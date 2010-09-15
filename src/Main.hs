@@ -10,6 +10,7 @@ import qualified   Data.ByteString.Char8 as B
 import qualified   Data.Map as Map
 import             Data.Maybe
 import qualified   Data.Text as T
+import             Data.Time.Clock.POSIX
 import             Data.Typeable
 import             Control.Applicative
 import             Control.Concurrent
@@ -18,6 +19,7 @@ import             Control.Monad
 import             Control.Monad.CatchIO
 import "monads-fd" Control.Monad.Trans
 import "monads-fd" Control.Monad.Reader
+import             Foreign.C.Types
 import             Prelude hiding (catch)
 import             Snap.Http.Server
 import             Snap.StaticPages
@@ -45,6 +47,12 @@ data SiteState = SiteState {
 
 
 type Site a = ReaderT SiteState Snap a
+
+
+epochTime :: IO CTime
+epochTime = do
+    t <- getPOSIXTime
+    return $ fromInteger $ truncate t
 
 
 initSiteState :: IO SiteState
@@ -124,9 +132,18 @@ site ss =
               , ("admin/reload", runReaderT reload ss)
               , ("blog/", serveStaticPages (_blogState ss)) ] <|>
         templateServe (_currentTs ss) <|>
-        fileServe "static"
+        (setCache $ fileServe "static")
 
-
+  where
+    setCache act = do
+        pi <- liftM rqPathInfo getRequest
+        act
+        when ("media" `B.isPrefixOf` pi) $ do
+           expTime <- liftM (+604800) $ liftIO epochTime
+           s       <- liftIO $ formatHttpTime expTime
+           modifyResponse $
+              setHeader "Cache-Control" "public, max-age=604800" .
+              setHeader "Expires" s
 
 catch500 :: Snap a -> Snap ()
 catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
