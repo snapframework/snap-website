@@ -59,7 +59,7 @@ If that doesn't work, and you're getting an error that mentions `monads-fd` or
 If you're still having trouble, please email our [mailing
 list](http://mailman-mail5.webfaction.com/listinfo/snap) or contact us on our
 [IRC channel](http://webchat.freenode.net/?channels=snapframework&uio=d4)
-(`#snapframework` on [freenode](http://freenode.net/).
+(`#snapframework` on [freenode](http://freenode.net/)).
 
 
 ### How do I get the libev backend working?
