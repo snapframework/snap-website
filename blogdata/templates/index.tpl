@@ -5,7 +5,9 @@
 
   <div id="blog-index">
     <h2>
-      <a href="/blog">Snap Framework Blog</a>
+      <span itemscope="itemscope" itemtype="http://data-vocabulary.org/Breadcrumb">
+        <a itemprop="url" href="/blog"><span itemprop="title">Snap Framework Blog</span></a>
+      </span>
       <a href="/blog/feed.xml"><img src="/blog/i/feed.png"/></a>
     </h2>
     <table>

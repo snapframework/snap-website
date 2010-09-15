@@ -2,7 +2,15 @@
 <apply template="page">
 
   <div id="blog-post">
-    <h2><a href="/blog">Blog</a> <span style="color: #ccc;">&raquo;</span> <post:title/></h2>
+    <h2>
+      <span itemscope="itemscope" itemtype="http://data-vocabulary.org/Breadcrumb">
+        <a itemprop="url" href="/blog"><span itemprop="title">Blog</span></a>
+      </span>
+      <span style="color: #ccc;">&raquo;</span>
+      <span itemscope="itemscope" itemtype="http://data-vocabulary.org/Breadcrumb">
+        <a itemprop="url" href="#"><span itemprop="title"><post:title/></span></a>
+      </span>
+    </h2>
 
     <div class="post-meta">
       <div class="post-date"><post:date/></div>
