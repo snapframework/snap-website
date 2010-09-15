@@ -104,7 +104,7 @@ dl span.linklist {
     font-family: "PT Sans", "Arial", sans-serif;
 }
 
-pre.code, pre.sourceCode, pre.shell {
+pre.code, pre.sourceCode, pre.shell, .faqs {
     background: #222 url(black-screen.png) scroll repeat-x top left;
     color: #ffbf00;
     width: 87%;
@@ -113,6 +113,14 @@ pre.code, pre.sourceCode, pre.shell {
 
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
+}
+
+.faqs a {
+    color: #96C1D4;
+}
+
+.faqs a:hover, .faqs a:active {
+    color: #FFFAEB;
 }
 
 #blog-index table {
@@ -223,6 +231,7 @@ pre.sourceCode span.InfixOperator { color: #aaa; }
 .singlecolumn {
     width: 728px;
     margin-top: 20px;
+    padding-bottom: 58px;
 }
 
 .singlecolumn pre.sourceCode,
@@ -330,6 +339,24 @@ p.foundabug {
 
 .front-page #content{
     margin-top:20px;
+}
+
+#faqspage h3 {
+    font-family: "PT Sans", "Arial", sans-serif;
+    margin:58px 0 14px 0;
+    padding:0;
+    line-height: 43px;
+    border-top: 1px solid #c2d1e1;
+    text-transform: none;
+    color: #705E3A;
+    /*F7D081*/
+}
+
+#faqspage h5 {
+    font-family: "PT Sans", "Arial", sans-serif;
+    padding: 0;
+    margin: 0;
+    line-height: 29px;
 }
 
 #main{
