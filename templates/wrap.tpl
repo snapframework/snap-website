@@ -10,7 +10,6 @@
 
         <content />
 
-
       </div><!--end main-->
         <div id="footer">
 <p class="part-1">Powered by <b>Snap <snap-version/></b></p> <p class="part-2">Snap is <a rel="license" href="http://creativecommons.org/licenses/BSD/">BSD
@@ -20,20 +19,9 @@ href="http://creativecommons.org/licenses/by-nd/3.0/">Creative Commons
 Attribution-NoDerivs 3.0 Unported License.</a></p>
         </div><!--end footer-->
 
-
       <script type="text/javascript"
-      src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js">  </script>
+      src="/media/js/site.js"> </script>
 
-      <script type="text/javascript"
-      src="/media/js/jquery-1.4.2.min.js"> </script>
-
-      <script type="text/javascript"
-      src="/media/js/jquery.cycle.min.js"> </script>
-
-      <script type="text/javascript"
-      src="/media/js/jquery.url.packed.js"> </script>
-
-      <script type="text/javascript" src="/media/js/init.js"> </script>
     </body>
   </html>
 
