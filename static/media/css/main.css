@@ -342,9 +342,10 @@ p.foundabug {
 }
 
 #faqspage h3 {
+    background: url(chat-quotes.png) no-repeat center left;
     font-family: "PT Sans", "Arial", sans-serif;
-    margin:58px 0 14px 0;
-    padding:0;
+    margin:54px 0 14px 0;
+    padding:4px 0 0 60px;
     line-height: 43px;
     border-top: 1px solid #c2d1e1;
     text-transform: none;
