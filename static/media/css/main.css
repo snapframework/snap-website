@@ -128,37 +128,33 @@ pre.code, pre.sourceCode, pre.shell {
     margin-bottom: 29px;
 }
 
-#blog-post div.post-meta {
+#blog-post .post-meta {
     width: 226px;
     padding: 0 22px 0 0;
     float: left;
 }
 
-#blog-post div.post-date {
+#blog-post .post-date {
     line-height: 29px;
     font-size: 70%;
     margin-bottom: 29px;
 }
 
-#blog-post div.post-summary {
+#blog-post .post-summary {
     line-height: 29px;
     color: #666;
 }
 
-#blog-post div.post-content {
+#blog-post .post-content {
     width: 680px;
     padding-right: 8px;
     float: left;
 }
 
-#blog-post div.post-content hr {
+#blog-post .post-content hr {
     width: 66%;
     margin: 2.5em auto;
 }
-
-
-
-
 
 
 tr.post {
@@ -563,7 +559,7 @@ p.foundabug {
     top:0px;
 }
 
-#nav li.selected {
+#nav .selected {
     background-image: url(selected-tick.png);
     background-position: center bottom;
     background-repeat: no-repeat;
@@ -601,7 +597,7 @@ p.foundabug {
     display: block;
 }
 
-#nav li.active a:link, #nav li.active a:visited{
+#nav .active a:link, #nav .active a:visited{
     color: #fff;
 }
 

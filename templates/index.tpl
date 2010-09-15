@@ -8,7 +8,8 @@
           <div class="slideshow">
 
             <div class="content">
-              <img src="/media/img/splash-img.png" title="Snap Framework" />
+              <img width="960" height="282"
+                   src="/media/img/splash-img.png" title="Snap Framework" />
               <p class="blurb">
                 a web framework for the
                 <a href="http://www.haskell.org"><strong>Haskell</strong></a> 
@@ -17,7 +18,8 @@
             </div>
 
             <div class="content" style="display: none;">
-              <img src="/media/img/splash-img-2.png" title="Snap Framework" />
+              <img width="960" height="282"
+                   src="/media/img/splash-img-2.png" title="Snap Framework" />
               <p class="blurb">
                 Built for speed from the bottom up. Check out
                 some <a href="/benchmarks">benchmarks.</a>
@@ -28,7 +30,8 @@
               <pre class="code code-example">$ cabal update
 $ cabal install snap-server
 $ mkdir foo; cd foo; snap init</pre>
-              <img src="/media/img/splash-img-3.png" title="Snap Framework" />
+              <img width="960" height="282"
+                   src="/media/img/splash-img-3.png" title="Snap Framework" />
               <p class="blurb">Snap is <a href="/download">quick and easy to
               install</a>.
               </p>

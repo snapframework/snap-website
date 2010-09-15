@@ -4,7 +4,9 @@
     <div class="inner">
 
       <h1>
-        <a href="/" ><img src="/media/img/head-logo.png" title="Snap Framework" /></a>
+        <a href="/" ><img width="250" height="23"
+                          src="/media/img/head-logo.png"
+                          title="Snap Framework" /></a>
       </h1>
 
     <div id="nav" class="nav">           
