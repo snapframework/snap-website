@@ -60,23 +60,23 @@
 
         <div id="docdls">
           <dl>
-            <dt><a href="docs/api/snap-core">snap-core</a></dt>
+            <dt><a href="docs/latest/snap-core/index.html">snap-core</a></dt>
             <dd>
-              <a class="book" href="docs/api/snap-core">
+              <a class="book" href="docs/latest/snap-core/index.html">
                 <img src="/media/css/book.png" />
               </a>
               Core type definitions (<tt>Snap</tt> monad, HTTP types, etc) and
               utilities for web handlers.</dd>
-            <dt><a href="docs/api/snap-server">snap-server</a></dt>
+            <dt><a href="docs/latest/snap-server/index.html">snap-server</a></dt>
             <dd>
-              <a class="book" href="docs/api/snap-server">
+              <a class="book" href="docs/latest/snap-server/index.html">
                 <img src="/media/css/book.png" />
               </a>
               An iteratee-based HTTP server library, which runs <tt>Snap</tt>
               web handlers.</dd>
-            <dt><a href="docs/api/heist">heist</a></dt>
+            <dt><a href="docs/latest/heist/index.html">heist</a></dt>
             <dd>
-              <a class="book" href="docs/api/heist">
+              <a class="book" href="docs/latest/heist/index.html">
                 <img src="/media/css/book.png" />
               </a>
               An xhtml-based templating engine, allowing Haskell functions to
