@@ -33,8 +33,8 @@ $ cabal install snap-core -fno-debug
    `Transfer-Encoding: chunked`.
 
  - Many more tests have been written for `snap-server`; 
-   [test coverage](
-     http://buildbot.snapframework.com/job/snap-server/HPC_Test_Coverage_Report/)
+   [test
+    coverage](http://buildbot.snapframework.com/job/snap-server/HPC_Test_Coverage_Report/)
    for expressions is up in the 90%+ range now for most modules.
 
 
