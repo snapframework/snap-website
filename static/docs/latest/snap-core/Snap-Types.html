@@ -95,7 +95,7 @@
 ></DT
 ><DT
 ><A HREF="#6"
->Grabbing request bodies
+>Grabbing/transforming request bodies
 </A
 ></DT
 ></DL
@@ -240,13 +240,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AfinishWith"
 >finishWith</A
-> :: <A HREF="Snap-Types.html#t%3AResponse"
+> ::  <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 > -&gt; <A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
+> a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -552,13 +550,17 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="#v%3AunsafeDetachRequestBody"
->unsafeDetachRequestBody</A
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> (<A HREF="Snap-Types.html#t%3AEnumerator"
+><A HREF="#v%3AtransformRequestBody"
+>transformRequestBody</A
+> :: (<SPAN CLASS="keyword"
+>forall</SPAN
+> a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> a)</TD
+> a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -1514,6 +1516,24 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A HREF="#t%3ASomeEnumerator"
+>SomeEnumerator</A
+>  = <A HREF="#v%3ASomeEnumerator"
+>SomeEnumerator</A
+> (<SPAN CLASS="keyword"
+>forall</SPAN
+> a.  <A HREF="Snap-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AformatHttpTime"
 >formatHttpTime</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Foreign-C-Types.html#t%3ACTime"
@@ -2035,13 +2055,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >finishWith</B
-> :: <A HREF="Snap-Types.html#t%3AResponse"
+> ::  <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 > -&gt; <A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
+> a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#finishWith"
 >Source</A
@@ -3026,7 +3044,7 @@ for HTTP as well as the <TT
 ><TD CLASS="section2"
 ><A NAME="6"
 ><A NAME="6"
->Grabbing request bodies
+>Grabbing/transforming request bodies
 </A
 ></A
 ></TD
@@ -3109,19 +3127,15 @@ for HTTP as well as the <TT
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
-><A NAME="v:unsafeDetachRequestBody"
-><A NAME="v%3AunsafeDetachRequestBody"
+><A NAME="v:transformRequestBody"
+><A NAME="v%3AtransformRequestBody"
 ></A
 ></A
 ><B
->unsafeDetachRequestBody</B
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> (<A HREF="Snap-Types.html#t%3AEnumerator"
->Enumerator</A
-> a)</TD
+>transformRequestBody</B
+></TD
 ><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#unsafeDetachRequestBody"
+><A HREF="src/Snap-Internal-Types.html#transformRequestBody"
 >Source</A
 ></TD
 ></TR
@@ -3129,33 +3143,72 @@ for HTTP as well as the <TT
 ></TD
 ></TR
 ><TR
-><TD CLASS="doc"
-><P
->Detaches the request body's <TT
-><A HREF="Snap-Types.html#t%3AEnumerator"
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <SPAN CLASS="keyword"
+>forall</SPAN
+> a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> a</TD
+><TD CLASS="rdoc"
+>the output <TT
+><A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
 ></TT
-> from the <TT
-><A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-></TT
-> and
- returns it. You would want to use this if you needed to send the
- HTTP request body (transformed or otherwise) through to the output
- in O(1) space. (Examples: transcoding, &quot;echo&quot;, etc)
-</P
-><P
->Normally Snap is careful to ensure that the request body is fully
- consumed after your web handler runs; this function is marked
- &quot;unsafe&quot; because it breaks this guarantee and leaves the
- responsibility up to you. If you don't fully consume the
+> is passed to this
  <TT
 ><A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
 ></TT
-> you get here, the next HTTP request in the pipeline
- (if any) will misparse. Be careful with exception handlers.
+>, and then the resulting <TT
+><A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+></TT
+> is
+ fed the request body stream. Your <TT
+><A HREF="Snap-Types.html#t%3AEnumerator"
+>Enumerator</A
+></TT
+> is
+ responsible for transforming the input.
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+><P
+>Normally Snap is careful to ensure that the request body is fully consumed
+ after your web handler runs, but before the <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> enumerator is
+ streamed out the socket. If you want to transform the request body into some
+ output in O(1) space, you should use this function.
 </P
+><P
+>Note that upon calling this function, response processing finishes early as
+ if you called <TT
+><A HREF="Snap-Types.html#v%3AfinishWith"
+>finishWith</A
+></TT
+>. Make sure you set any content types, headers,
+ cookies, etc. before you call this function.
+</P
+></TD
+></TR
+></TABLE
 ></TD
 ></TR
 ><TR
@@ -6167,6 +6220,73 @@ for HTTP as well as the <TT
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Http-Types.html#Enumerator"
 >Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A NAME="t:SomeEnumerator"
+><A NAME="t%3ASomeEnumerator"
+></A
+></A
+><B
+>SomeEnumerator</B
+>  </TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#SomeEnumerator"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+>An existential wrapper for the <TT
+><A HREF="Snap-Types.html#t%3AEnumerator"
+>Enumerator</A
+></TT
+> type
+</TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+><A NAME="v:SomeEnumerator"
+><A NAME="v%3ASomeEnumerator"
+></A
+></A
+><B
+>SomeEnumerator</B
+> (<SPAN CLASS="keyword"
+>forall</SPAN
+> a.  <A HREF="Snap-Types.html#t%3AEnumerator"
+>Enumerator</A
+> a)</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
 ></TD
 ></TR
 ></TABLE

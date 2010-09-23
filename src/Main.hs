@@ -248,6 +248,5 @@ main = do
              (Just "error.log")
              (site ss)) :: IO (Either SomeException ())
 
-    threadDelay 1000000
     putStrLn "exiting"
     return ()

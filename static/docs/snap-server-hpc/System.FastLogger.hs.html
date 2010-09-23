@@ -94,7 +94,7 @@ span.spaces    { background: white }
 <span class="lineno">   83 </span>                 -&gt; IO ByteString
 <span class="lineno">   84 </span><span class="decl"><span class="istickedoff">combinedLogEntry !host !mbUser !req !status !mbNumBytes !mbReferer !userAgent = do</span>
 <span class="lineno">   85 </span><span class="spaces">    </span><span class="istickedoff">let user = fromMaybe &quot;-&quot; mbUser</span>
-<span class="lineno">   86 </span><span class="spaces">    </span><span class="istickedoff">let numBytes = maybe <span class="nottickedoff">&quot;-&quot;</span> (\s -&gt; strict $ show s) mbNumBytes</span>
+<span class="lineno">   86 </span><span class="spaces">    </span><span class="istickedoff">let numBytes = maybe &quot;-&quot; (\s -&gt; strict $ show s) mbNumBytes</span>
 <span class="lineno">   87 </span><span class="spaces">    </span><span class="istickedoff">let referer = maybe &quot;-&quot; <span class="nottickedoff">(\s -&gt; S.concat [&quot;\&quot;&quot;, s, &quot;\&quot;&quot;])</span> mbReferer</span>
 <span class="lineno">   88 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">   89 </span><span class="spaces">    </span><span class="istickedoff">timeStr &lt;- getLogDateString</span>
@@ -204,7 +204,7 @@ span.spaces    { background: white }
 <span class="lineno">  193 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  194 </span><span class="spaces">        </span><span class="istickedoff">-- at least five seconds between log dumps</span>
 <span class="lineno">  195 </span><span class="spaces">        </span><span class="istickedoff">threadDelay 5000000</span>
-<span class="lineno">  196 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">loop d</span></span></span>
+<span class="lineno">  196 </span><span class="spaces">        </span><span class="istickedoff">loop d</span></span>
 <span class="lineno">  197 </span>
 <span class="lineno">  198 </span>
 <span class="lineno">  199 </span>-- | Kills a logger thread, causing any unwritten contents to be

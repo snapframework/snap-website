@@ -1,0 +1,89 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>-- | An internal Snap module for debugging iteratees.
+<span class="lineno">    2 </span>--
+<span class="lineno">    3 </span>-- /N.B./ this is an internal interface, please don't write user code that
+<span class="lineno">    4 </span>-- depends on it.
+<span class="lineno">    5 </span>
+<span class="lineno">    6 </span>{-# OPTIONS_GHC -fno-warn-orphans #-}
+<span class="lineno">    7 </span>{-# LANGUAGE CPP #-}
+<span class="lineno">    8 </span>{-# LANGUAGE FlexibleInstances #-}
+<span class="lineno">    9 </span>
+<span class="lineno">   10 </span>
+<span class="lineno">   11 </span>module Snap.Internal.Iteratee.Debug
+<span class="lineno">   12 </span>  ( debugIteratee
+<span class="lineno">   13 </span>  , iterateeDebugWrapper
+<span class="lineno">   14 </span>  ) where
+<span class="lineno">   15 </span>
+<span class="lineno">   16 </span>------------------------------------------------------------------------------
+<span class="lineno">   17 </span>import           Data.Iteratee.WrappedByteString
+<span class="lineno">   18 </span>import           Data.Word (Word8)
+<span class="lineno">   19 </span>import           System.IO
+<span class="lineno">   20 </span>------------------------------------------------------------------------------
+<span class="lineno">   21 </span>import           Snap.Internal.Debug
+<span class="lineno">   22 </span>import           Snap.Iteratee
+<span class="lineno">   23 </span>------------------------------------------------------------------------------
+<span class="lineno">   24 </span>
+<span class="lineno">   25 </span>
+<span class="lineno">   26 </span>------------------------------------------------------------------------------
+<span class="lineno">   27 </span>instance Show (WrappedByteString Word8) where
+<span class="lineno">   28 </span>    <span class="decl"><span class="nottickedoff">show (WrapBS s) = show s</span></span>
+<span class="lineno">   29 </span>
+<span class="lineno">   30 </span>
+<span class="lineno">   31 </span>------------------------------------------------------------------------------
+<span class="lineno">   32 </span>debugIteratee :: Iteratee IO ()
+<span class="lineno">   33 </span><span class="decl"><span class="nottickedoff">debugIteratee = IterateeG f</span>
+<span class="lineno">   34 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
+<span class="lineno">   35 </span><span class="spaces">    </span><span class="nottickedoff">f c@(EOF _) = do</span>
+<span class="lineno">   36 </span><span class="spaces">        </span><span class="nottickedoff">putStrLn $ &quot;got EOF: &quot; ++ show c</span>
+<span class="lineno">   37 </span><span class="spaces">        </span><span class="nottickedoff">hFlush stdout</span>
+<span class="lineno">   38 </span><span class="spaces">        </span><span class="nottickedoff">return (Done () c)</span>
+<span class="lineno">   39 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">   40 </span><span class="spaces">    </span><span class="nottickedoff">f c@(Chunk _) = do</span>
+<span class="lineno">   41 </span><span class="spaces">        </span><span class="nottickedoff">putStrLn $ &quot;got chunk: &quot; ++ show c</span>
+<span class="lineno">   42 </span><span class="spaces">        </span><span class="nottickedoff">hFlush stdout</span>
+<span class="lineno">   43 </span><span class="spaces">        </span><span class="nottickedoff">return $ Cont debugIteratee Nothing</span></span>
+<span class="lineno">   44 </span>
+<span class="lineno">   45 </span>
+<span class="lineno">   46 </span>#if defined(DEBUG)
+<span class="lineno">   47 </span>
+<span class="lineno">   48 </span>iterateeDebugWrapper :: String -&gt; Iteratee IO a -&gt; Iteratee IO a
+<span class="lineno">   49 </span>iterateeDebugWrapper name iter = IterateeG f
+<span class="lineno">   50 </span>  where
+<span class="lineno">   51 </span>    f c@(EOF Nothing) = do
+<span class="lineno">   52 </span>        debug $ name ++ &quot;: got EOF: &quot; ++ show c
+<span class="lineno">   53 </span>        runIter iter c
+<span class="lineno">   54 </span>
+<span class="lineno">   55 </span>    f c@(EOF (Just e)) = do
+<span class="lineno">   56 </span>        debug $ name ++ &quot;: got EOF **error**: &quot; ++ show c
+<span class="lineno">   57 </span>        runIter iter c
+<span class="lineno">   58 </span>
+<span class="lineno">   59 </span>    f c@(Chunk _) = do
+<span class="lineno">   60 </span>        debug $ name ++ &quot;: got chunk: &quot; ++ show c
+<span class="lineno">   61 </span>        wrapResult $ runIter iter c
+<span class="lineno">   62 </span>
+<span class="lineno">   63 </span>    wrapResult m = do
+<span class="lineno">   64 </span>        iv &lt;- m
+<span class="lineno">   65 </span>        let i = liftI iv
+<span class="lineno">   66 </span>
+<span class="lineno">   67 </span>        return $ Cont (iterateeDebugWrapper name i) Nothing
+<span class="lineno">   68 </span>
+<span class="lineno">   69 </span>#else
+<span class="lineno">   70 </span>
+<span class="lineno">   71 </span>iterateeDebugWrapper :: String -&gt; Iteratee IO a -&gt; Iteratee IO a
+<span class="lineno">   72 </span><span class="decl"><span class="istickedoff">iterateeDebugWrapper _ = id</span></span>
+<span class="lineno">   73 </span>{-# INLINE iterateeDebugWrapper #-}
+<span class="lineno">   74 </span>
+<span class="lineno">   75 </span>#endif
+
+</pre>
+</html>

@@ -1,0 +1,49 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>-- | The Snap HTTP server is a high performance, epoll-enabled, iteratee-based
+<span class="lineno">    2 </span>-- web server library written in Haskell. Together with the @snap-core@ library
+<span class="lineno">    3 </span>-- upon which it depends, it provides a clean and efficient Haskell programming
+<span class="lineno">    4 </span>-- interface to the HTTP protocol.
+<span class="lineno">    5 </span>module Snap.Http.Server
+<span class="lineno">    6 </span>(
+<span class="lineno">    7 </span>  httpServe
+<span class="lineno">    8 </span>, snapServerVersion
+<span class="lineno">    9 </span>) where
+<span class="lineno">   10 </span>
+<span class="lineno">   11 </span>import           Data.ByteString (ByteString)
+<span class="lineno">   12 </span>import           Snap.Types
+<span class="lineno">   13 </span>import qualified Snap.Internal.Http.Server as Int
+<span class="lineno">   14 </span>
+<span class="lineno">   15 </span>
+<span class="lineno">   16 </span>------------------------------------------------------------------------------
+<span class="lineno">   17 </span>snapServerVersion :: ByteString
+<span class="lineno">   18 </span><span class="decl"><span class="istickedoff">snapServerVersion = Int.snapServerVersion</span></span>
+<span class="lineno">   19 </span>
+<span class="lineno">   20 </span>
+<span class="lineno">   21 </span>------------------------------------------------------------------------------
+<span class="lineno">   22 </span>-- | Starts serving HTTP requests on the given port using the given handler.
+<span class="lineno">   23 </span>-- This function never returns; to shut down the HTTP server, kill the
+<span class="lineno">   24 </span>-- controlling thread.
+<span class="lineno">   25 </span>httpServe :: ByteString      -- ^ bind address, or \&quot;*\&quot; for all
+<span class="lineno">   26 </span>          -&gt; Int             -- ^ port to bind to
+<span class="lineno">   27 </span>          -&gt; ByteString      -- ^ local hostname (server name)
+<span class="lineno">   28 </span>          -&gt; Maybe FilePath  -- ^ path to the (optional) access log
+<span class="lineno">   29 </span>          -&gt; Maybe FilePath  -- ^ path to the (optional) error log
+<span class="lineno">   30 </span>          -&gt; Snap ()         -- ^ handler procedure
+<span class="lineno">   31 </span>          -&gt; IO ()
+<span class="lineno">   32 </span><span class="decl"><span class="istickedoff">httpServe bindAddress bindPort localHostname alog elog handler =</span>
+<span class="lineno">   33 </span><span class="spaces">    </span><span class="istickedoff">Int.httpServe bindAddress bindPort localHostname alog elog handler'</span>
+<span class="lineno">   34 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   35 </span><span class="spaces">    </span><span class="istickedoff">handler' = runSnap handler</span></span>
+
+</pre>
+</html>

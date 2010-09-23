@@ -459,11 +459,7 @@
 >Iteratee</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
-> a, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-IORef.html#t%3AIORef"
->IORef</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
->Bool</A
->)</TD
+> a)</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -483,11 +479,7 @@
 >Iteratee</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
-> a, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-IORef.html#t%3AIORef"
->IORef</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
->Bool</A
->)</TD
+> a)</TD
 ></TR
 ></TABLE
 ></TD
@@ -1180,11 +1172,7 @@
 >Iteratee</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
-> a, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-IORef.html#t%3AIORef"
->IORef</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
->Bool</A
->)</TD
+> a)</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Iteratee.html#unsafeBufferIterateeWithBuffer"
 >Source</A
@@ -1208,15 +1196,6 @@
 >mkIterateeBuffer</A
 ></TT
 >.
-</P
-><P
->The IORef returned can be set to True to <A HREF="cancel.html"
->cancel</A
-> buffering. We added this
- so that transfer-encoding: chunked (which needs its own buffer and therefore
- doesn't need <EM
->its</EM
-> output buffered) can switch the outer buffer off.
 </P
 ></TD
 ></TR
@@ -1245,11 +1224,7 @@
 >Iteratee</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
-> a, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-IORef.html#t%3AIORef"
->IORef</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
->Bool</A
->)</TD
+> a)</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Iteratee.html#unsafeBufferIteratee"
 >Source</A
@@ -1260,23 +1235,12 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
-><P
 >Buffers an iteratee, &quot;unsafely&quot;. Here we use a fixed binary buffer which
  we'll re-use, meaning that if you hold on to any of the bytestring data
  passed into your iteratee (instead of, let's say, shoving it right out a
  socket) it'll get changed out from underneath you, breaking referential
  transparency. Use with caution!
-</P
-><P
->The IORef returned can be set to True to <A HREF="cancel.html"
->cancel</A
-> buffering. We added this
- so that transfer-encoding: chunked (which needs its own buffer and therefore
- doesn't need <EM
->its</EM
-> output buffered) can switch the outer buffer off.
-</P
-></TD
+</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
