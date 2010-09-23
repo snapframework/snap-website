@@ -8,6 +8,8 @@
 1. [Where's the high-level functionality?   ](#wheres-the-high-level-functionality)
 1. [Why can't I install Snap?               ](#why-cant-i-install-snap)
 1. [How do I get the libev backend working? ](#how-do-i-get-the-libev-backend-working)
+1. [How can I get debugging output?         ](#how-can-i-get-debugging-output)
+1. [When I run snap with multiple cores, throughput plummets. What's going on?](#when-i-run-snap-with-multiple-cores-throughput-plummets.-whats-going-on)
 1. [How can I help?                         ](#how-can-i-help)
 
 </div>
@@ -75,6 +77,26 @@ $ cabal install snap-server -flibev
 If you get an undefined symbol "`EVFLAG_SIGNALFD`" then you'll need to
 install the latest [libev](http://software.schmorp.de/pkg/libev.html)
 from [source](http://dist.schmorp.de/libev/).
+
+
+### When I run snap with multiple cores, throughput plummets. What's going on?
+
+The parallel GC introduced in GHC 6.10 doesn't seem to play very well with
+Snap. If you turn parallel GC off (using the "`-qg`" flag, e.g. "`./foo-website
++RTS -N -qg`") throughput should improve dramatically.
+
+
+### How can I get debugging output?
+
+With recent (>0.2.12) snap-core, if you set the environment variable `DEBUG=1`
+then Snap will produce debugging output to stderr. There is a *very* slight
+performance penalty associated with this feature; if you are in a production
+setting and require speed at all costs, you can disable debug output when
+building `snap-core` by passing the `no-debug` flag to `cabal install`:
+
+~~~~~~~~ {.shell}
+$ cabal install snap-core -fno-debug
+~~~~~~~~
 
 
 ### How can I help?
