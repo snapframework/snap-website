@@ -68,6 +68,11 @@ li{
 
 li p:first-child { display: inline; }
 
+li p {
+    text-indent: 0;
+    margin: 29px 0;
+}
+
 li:before {
     content: "» ";
 }
