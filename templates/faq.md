@@ -7,6 +7,7 @@
 1. [Is anyone using Snap in production?     ](#is-anyone-using-snap-in-production)
 1. [Where's the high-level functionality?   ](#wheres-the-high-level-functionality)
 1. [Why can't I install Snap?               ](#why-cant-i-install-snap)
+1. [How do I install Heist on Windows?      ](#how-do-i-install-heist-on-windows)
 1. [How do I get the libev backend working? ](#how-do-i-get-the-libev-backend-working)
 1. [How can I get debugging output?         ](#how-can-i-get-debugging-output)
 1. [When I run snap with multiple cores, throughput plummets. What's going on?](#when-i-run-snap-with-multiple-cores-throughput-plummets.-whats-going-on)
@@ -63,6 +64,12 @@ list](http://mailman-mail5.webfaction.com/listinfo/snap) or contact us on our
 [IRC channel](http://webchat.freenode.net/?channels=snapframework&uio=d4)
 (`#snapframework` on [freenode](http://freenode.net/)).
 
+
+### How do I install Heist on Windows?
+
+Heist needs a C XML library called expat.  See [this
+article](http://jystic.com/2010/10/07/installing-heist-and-hexpat-on-windows/)
+by Jacob Stanley for more information.
 
 ### How do I get the libev backend working?
 
