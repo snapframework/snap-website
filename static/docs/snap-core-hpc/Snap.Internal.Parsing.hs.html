@@ -1,0 +1,40 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>{-# LANGUAGE OverloadedStrings #-}
+<span class="lineno">    2 </span>
+<span class="lineno">    3 </span>module Snap.Internal.Parsing where
+<span class="lineno">    4 </span>
+<span class="lineno">    5 </span>import           Control.Monad
+<span class="lineno">    6 </span>import           Data.Attoparsec.Char8 hiding (Done)
+<span class="lineno">    7 </span>import qualified Data.Attoparsec.Char8 as Atto
+<span class="lineno">    8 </span>import           Data.ByteString.Char8 (ByteString)
+<span class="lineno">    9 </span>import           Data.ByteString.Nums.Careless.Int (int)
+<span class="lineno">   10 </span>import           Data.Int
+<span class="lineno">   11 </span>
+<span class="lineno">   12 </span>------------------------------------------------------------------------------
+<span class="lineno">   13 </span>fullyParse :: ByteString -&gt; Parser a -&gt; Either String a
+<span class="lineno">   14 </span><span class="decl"><span class="istickedoff">fullyParse s p =</span>
+<span class="lineno">   15 </span><span class="spaces">    </span><span class="istickedoff">case r' of</span>
+<span class="lineno">   16 </span><span class="spaces">      </span><span class="istickedoff">(Fail _ _ e)    -&gt; Left <span class="nottickedoff">e</span></span>
+<span class="lineno">   17 </span><span class="spaces">      </span><span class="istickedoff">(Partial _)     -&gt; <span class="nottickedoff">Left &quot;parse failed&quot;</span></span>
+<span class="lineno">   18 </span><span class="spaces">      </span><span class="istickedoff">(Atto.Done _ x) -&gt; Right x</span>
+<span class="lineno">   19 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   20 </span><span class="spaces">    </span><span class="istickedoff">r  = parse p s</span>
+<span class="lineno">   21 </span><span class="spaces">    </span><span class="istickedoff">r' = feed r &quot;&quot;</span></span>
+<span class="lineno">   22 </span>
+<span class="lineno">   23 </span>
+<span class="lineno">   24 </span>------------------------------------------------------------------------------
+<span class="lineno">   25 </span>parseNum :: Parser Int64
+<span class="lineno">   26 </span><span class="decl"><span class="istickedoff">parseNum = liftM int $ Atto.takeWhile1 Atto.isDigit</span></span>
+
+</pre>
+</html>

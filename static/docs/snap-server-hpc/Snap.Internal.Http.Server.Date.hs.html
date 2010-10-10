@@ -59,7 +59,7 @@ span.spaces    { background: white }
 <span class="lineno">   48 </span><span class="decl"><span class="istickedoff">dateState = unsafePerformIO $ do</span>
 <span class="lineno">   49 </span><span class="spaces">    </span><span class="istickedoff">(s1,s2,date) &lt;- fetchTime</span>
 <span class="lineno">   50 </span><span class="spaces">    </span><span class="istickedoff">bs1 &lt;- newIORef <span class="nottickedoff">s1</span></span>
-<span class="lineno">   51 </span><span class="spaces">    </span><span class="istickedoff">bs2 &lt;- newIORef <span class="nottickedoff">s2</span></span>
+<span class="lineno">   51 </span><span class="spaces">    </span><span class="istickedoff">bs2 &lt;- newIORef s2</span>
 <span class="lineno">   52 </span><span class="spaces">    </span><span class="istickedoff">dt  &lt;- newIORef date</span>
 <span class="lineno">   53 </span><span class="spaces">    </span><span class="istickedoff">ov  &lt;- newIORef False</span>
 <span class="lineno">   54 </span><span class="spaces">    </span><span class="istickedoff">th  &lt;- newEmptyMVar</span>

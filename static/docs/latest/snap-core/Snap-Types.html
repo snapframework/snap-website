@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.2.12: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.2.13: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Types.html"
 >Source code</A
@@ -866,6 +866,20 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AdeleteHeader"
+>deleteHeader</A
+> :: <A HREF="Snap-Types.html#t%3AHasHeaders"
+>HasHeaders</A
+> a =&gt; <A HREF="Data-CIByteString.html#t%3ACIByteString"
+>CIByteString</A
+> -&gt; a -&gt; a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AipHeaderFilter"
 >ipHeaderFilter</A
 > :: <A HREF="Snap-Types.html#t%3ASnap"
@@ -1489,6 +1503,26 @@ for HTTP as well as the <TT
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
 > -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AsendFilePartial"
+>sendFilePartial</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
+>Int64</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
+>Int64</A
+>) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
@@ -4154,6 +4188,43 @@ for HTTP as well as the <TT
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
+><A NAME="v:deleteHeader"
+><A NAME="v%3AdeleteHeader"
+></A
+></A
+><B
+>deleteHeader</B
+> :: <A HREF="Snap-Types.html#t%3AHasHeaders"
+>HasHeaders</A
+> a =&gt; <A HREF="Data-CIByteString.html#t%3ACIByteString"
+>CIByteString</A
+> -&gt; a -&gt; a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#deleteHeader"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Clears a header value from a <TT
+><A HREF="Snap-Types.html#t%3AHasHeaders"
+>HasHeaders</A
+></TT
+> datatype.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
 ><A NAME="v:ipHeaderFilter"
 ><A NAME="v%3AipHeaderFilter"
 ></A
@@ -6164,6 +6235,78 @@ for HTTP as well as the <TT
  <TT
 ><A HREF="Snap-Types.html#v%3AsendFile"
 >sendFile</A
+></TT
+>, Snap will use the efficient <TT
+>sendfile()</TT
+> system call on
+ platforms that support it.
+</P
+><P
+>If the response body is modified (using <TT
+><A HREF="Snap-Types.html#v%3AmodifyResponseBody"
+>modifyResponseBody</A
+></TT
+>), the file will
+ be read using <TT
+>mmap()</TT
+>.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:sendFilePartial"
+><A NAME="v%3AsendFilePartial"
+></A
+></A
+><B
+>sendFilePartial</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
+>Int64</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
+>Int64</A
+>) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#sendFilePartial"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Sets the output to be the contents of the specified file, within the given
+ (start,end) range.
+</P
+><P
+>Calling <TT
+><A HREF="Snap-Types.html#v%3AsendFilePartial"
+>sendFilePartial</A
+></TT
+> will overwrite any output queued to be sent in the
+ <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+>. If the response body is not modified after the call to
+ <TT
+><A HREF="Snap-Types.html#v%3AsendFilePartial"
+>sendFilePartial</A
 ></TT
 >, Snap will use the efficient <TT
 >sendfile()</TT
