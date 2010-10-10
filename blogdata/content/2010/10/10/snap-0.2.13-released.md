@@ -1,13 +1,20 @@
 | title: Announcing: Snap Framework v0.2.13
 | author: Gregory Collins <greg@gregorycollins.net>
 | published: 2010-10-10T17:10:00+0200
-| updated: 2010-10-10T17:10:00+0200
+| updated: 2010-10-10T19:15:35+0200
 | summary: Release notes for version 0.2.13 of the Snap Framework, (hopefully)
 |          the final version of the 0.2 series.
 
 The Snap team is pleased to announce the release of Snap 0.2.13, which should
 hopefully be the final Snap version of the 0.2 series. Snap 0.3 will be merged
 into the git master branch within the next few hours.
+
+**Update**: we've released an updated `snap-server` 0.2.13.1 which fixes a
+  longstanding (but not triggered until now) bug re: HTTP/1.0 responses with
+  `Connection: close`. Under certain circumstances, instead of closing the
+  socket after sending the response body, Snap would go back to try to read
+  more data from the input end of the socket, deadlocking the thread until the
+  timer expired.
 
 Changes since 0.2.12
 =====================
