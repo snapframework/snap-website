@@ -131,6 +131,7 @@ pre.code, pre.sourceCode, pre.shell, .faqs {
 #blog-index table {
     border-collapse:collapse;
     border-spacing:0;
+    margin-bottom: 29px;
 }
 
 #blog-index h2 a {
@@ -287,8 +288,7 @@ p.foundabug {
 }
 
 .newspaper .inner {
-    padding: 20px;
-    padding-top:0px;
+    padding: 0 20px;
     margin: 0;
 }
 
@@ -336,7 +336,6 @@ p.foundabug {
 
 #content.subpage{
     margin-top: 20px;
-    padding-bottom: 20px;
 }
 #content.subpage .inner-page{
         padding: 0px;
@@ -712,8 +711,8 @@ p.foundabug {
 }
 
 #footer{
-    position: fixed;
-    bottom: 0;
+    position: relative;
+    top: 0;
     left: 0;
     width: 100%;
     clear: both;
