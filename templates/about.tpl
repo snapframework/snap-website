@@ -73,11 +73,10 @@
           <h2>Who's involved?</h2>
           <p>
             <strong><a href="http://gregorycollins.net/">Gregory
-            Collins</a></strong> is a programmer from Toronto, Canada. He holds
-            an MSc in Computer Science from Yale University and he works
-            at <a title="Sysomos - Social Media Monitoring and Analytics"
-                  href="http://www.sysomos.com/">Sysomos</a>, a social media
-            analytics startup.
+            Collins</a></strong> is a Canadian programmer living in Zurich,
+            Switzerland. He holds an MSc in Computer Science from Yale
+            University and he works at <a href="http://www.google.ch/">Google
+            Switzerland</a>.
           </p>
           <p>
             <strong><a href="http://softwaresimply.blogspot.com/">Doug
