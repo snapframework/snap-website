@@ -7,6 +7,7 @@
 1. [Is anyone using Snap in production?     ](#is-anyone-using-snap-in-production)
 1. [Where's the high-level functionality?   ](#wheres-the-high-level-functionality)
 1. [Why can't I install Snap?               ](#why-cant-i-install-snap)
+1. [I am getting a "cannot find normal object file" error when trying to build Snap. Why?](#i-am-getting-a-cannot-find-normal-object-file-error-when-trying-to-build-snap.-why)
 1. [How do I install Heist on Windows?      ](#how-do-i-install-heist-on-windows)
 1. [How do I get the libev backend working? ](#how-do-i-get-the-libev-backend-working)
 1. [How can I get debugging output?         ](#how-can-i-get-debugging-output)
@@ -64,6 +65,27 @@ list](http://mailman-mail5.webfaction.com/listinfo/snap) or contact us on our
 [IRC channel](http://webchat.freenode.net/?channels=snapframework&uio=d4)
 (`#snapframework` on [freenode](http://freenode.net/)).
 
+
+### I am getting a "cannot find normal object file" error when trying to build Snap. Why?
+
+If you try to build Snap in profiling mode, sometimes you will encounter this error:
+
+~~~~~~~~ {.shell}
+src/Snap/Starter.hs:1:0:
+     cannot find normal object file `dist/build/snap/snap-tmp/Snap/StarterTH.o'
+~~~~~~~~
+
+GHC has a bug in which it gets confused about where to look for object files
+when a) using template haskell, and b) compiling in profiling mode. The
+workaround is to compile the library without profiling, then reconfigure and
+rebuild:
+
+~~~~~~~ {.shell}
+$ cabal configure
+$ cabal build
+$ cabal configure -p
+$ cabal build
+~~~~~~~
 
 ### How do I install Heist on Windows?
 
