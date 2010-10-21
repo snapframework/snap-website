@@ -89,9 +89,9 @@ $ cabal build
 
 ### How do I install Heist on Windows?
 
-Heist needs a C XML library called expat.  See [this
-article](http://jystic.com/2010/10/07/installing-heist-and-hexpat-on-windows/)
-by Jacob Stanley for more information.
+Heist needs a C XML library called expat.  See [this article by Jacob
+Stanley](http://jystic.com/2010/10/07/installing-heist-and-hexpat-on-windows/)
+for more information.
 
 ### How do I get the libev backend working?
 
