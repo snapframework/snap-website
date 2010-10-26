@@ -355,12 +355,16 @@ The following is code for a splice that calculates the factorial of a
 number.
 
 ~~~~~~~~~~~~~~~ {.haskell}
+import            Text.Templating.Heist
+import qualified  Data.ByteString.Char8 as B
+import qualified  Text.XML.Expat.Tree as X
+
 factSplice :: Splice Snap
 factSplice = do
     input <- getParamNode
     let text = B.unpack $ textContent input
         n = read text :: Int
-    return [Text $ B.pack $ show $ product [1..n]]
+    return [X.Text $ B.pack $ show $ product [1..n]]
 ~~~~~~~~~~~~~~~
 
 You must tell Heist to bind the splice to an XML tag using the
