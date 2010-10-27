@@ -1,7 +1,7 @@
 | title: Announcing: Snap Framework v0.2.15
 | author: Gregory Collins <greg@gregorycollins.net>
 | published: 2010-10-27T02:07:00+0200
-| updated: 2010-10-25T02:07:00+0200
+| updated: 2010-10-27T02:07:00+0200
 | summary: Release notes for version 0.2.15 of the Snap Framework.
 
 The Snap team is pleased to announce the release of Snap 0.2.15.
