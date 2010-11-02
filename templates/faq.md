@@ -137,6 +137,12 @@ and work on fixing the ones you care about most.  If you are unable to fix a
 problem, you can still help by writing an automated test case that detects the
 problem.
 
+It's also very likely that infrastructure you create in the course of building
+a real website can be generalized and merged into Snap.  Much of Snap's
+[higher-level functionality](#wheres-the-high-level-functionality) should
+become more evident as we find code patterns common to real-world Snap
+websites.  Communicating real-world Snap development experiences to us is a
+great way to contribute to this effort.
 
 ##### Develop automated memory leak and performance regression testing.
 
