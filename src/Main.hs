@@ -236,17 +236,9 @@ setLocaleToUTF8 = do
 ------------------------------------------------------------------------------
 main :: IO ()
 main = do
-    args   <- getArgs
-    port   <- case args of
-                []       -> error "You must specify a port!" >> exitFailure
-                (port:_) -> return $ read port
-
     ss <- initSiteState
 
-    (try $ httpServe "*" port "myserver"
-             (Just "access.log")
-             (Just "error.log")
-             (site ss)) :: IO (Either SomeException ())
+    quickHttpServe (site ss)
 
     putStrLn "exiting"
     return ()
