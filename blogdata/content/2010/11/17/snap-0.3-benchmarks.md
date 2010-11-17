@@ -1,7 +1,7 @@
 | title: Snap 0.3 Benchmarks with GHC 7.0.1
 | author: Doug Beardsley <mightybyte@gmail.com>
-| published: 2010-11-17T21:48:00+0100
-| updated: 2010-11-17T21:48:00+0100
+| published: 2010-11-17T18:55:00-0500
+| updated: 2010-11-17T18:55:00-0500
 | summary: New benchmarking results for Snap 0.3 show a ~50% improvement since Snap 0.1 and a 6% improvement due to GHC 7.0.1.
 
 The recent release of GHC 7.0.1 features some significant performance
@@ -56,7 +56,8 @@ compared to the rate of 1000 used to test all the other frameworks.  This
 brings it to within about 10% of Snap's numbers.  But on these benchmarks
 we're more interested in a server's performance under heavy load than it's
 peak throughput in optimal conditions, so our graphs show the numbers for a
-rate of 1000.
+rate of 1000.  The Happstack guys are planning to investigate this issue in
+the near future.
 
 One source of variation among applications is whether they do access logging
 or not.  Ruby on Rails, Node.js, and Happstack do not do any access logging.
