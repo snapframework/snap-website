@@ -4,6 +4,10 @@
 | updated: 2010-11-17T18:55:00-0500
 | summary: New benchmarking results for Snap 0.3 show a ~50% improvement since Snap 0.1 and a 6% improvement due to GHC 7.0.1.
 
+EDIT: Updated the numbers for Apache/PHP using PHP 5.3.3 and using echo
+instead of printf.  Also re-ran Rails with version 3.0.3.  Performance
+improved in both cases, but not enough to change the rankings.
+
 The recent release of GHC 7.0.1 features some significant performance
 improvements, and because the Snap benchmarks have not been updated since we
 released six months ago we thought it would be a good time to do so.  We kept
@@ -30,8 +34,8 @@ in January.
     <td>Snap (no logging)</td>
   </tr>
   <tr>
-    <td>258</td>
-    <td>8843</td>
+    <td>288</td>
+    <td>9769</td>
     <td>16299</td>
     <td>17800</td>
     <td>22733</td>
@@ -82,8 +86,8 @@ better.
     <td>Snap (no logging)</td>
   </tr>
   <tr>
-    <td>360</td>
-    <td>4126</td>
+    <td>450</td>
+    <td>4308</td>
     <td>4540</td>
     <td>6152</td>
     <td>7554</td>
@@ -136,10 +140,10 @@ will continue to ship it.
 
 For those who are interested, here are the versions of the software we used:
 
-* Ruby on Rails 2.3.5
+* Ruby on Rails 3.0.3
 * Grails 1.2.2
-* Apache 2.2.16
-* PHP 5.2.14
+* Apache 2.2.17
+* PHP 5.3.3
 * Node.js 0.2.4
 * Snap 0.3
 * Play 1.1
