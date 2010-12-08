@@ -9,6 +9,7 @@
 1. [Why can't I install Snap?               ](#why-cant-i-install-snap)
 1. [I am getting a "cannot find normal object file" error when trying to build Snap. Why?](#i-am-getting-a-cannot-find-normal-object-file-error-when-trying-to-build-snap.-why)
 1. [How do I install Heist on Windows?      ](#how-do-i-install-heist-on-windows)
+1. [Why doesn't Heist display templates?    ](#why-doesnt-heist-display-templates)
 1. [How do I get the libev backend working? ](#how-do-i-get-the-libev-backend-working)
 1. [How can I get debugging output?         ](#how-can-i-get-debugging-output)
 1. [When I run snap with multiple cores, throughput plummets. What's going on?](#when-i-run-snap-with-multiple-cores-throughput-plummets.-whats-going-on)
@@ -95,6 +96,12 @@ $ cabal build
 Heist needs a C XML library called expat.  See [this article by Jacob
 Stanley](http://jystic.com/2010/10/07/installing-heist-and-hexpat-on-windows/)
 for more information.
+
+### Why doesn't Heist display templates?
+
+The most common problem we've seen is that you have ".tpl" included as part of
+your template name.  Heist automatically adds the ".tpl" extension, so you
+shouldn't include it.
 
 ### How do I get the libev backend working?
 
