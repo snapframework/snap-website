@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-server-0.2.13: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</TD
+>snap-server-0.3.0: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Http-Server.html"
 >Source code</A
@@ -60,12 +60,12 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->The Snap HTTP server is a high performance, epoll-enabled, iteratee-based
- web server library written in Haskell. Together with the <TT
+>The Snap HTTP server is a high performance, epoll-enabled, iteratee-based web
+server library written in Haskell. Together with the <TT
 >snap-core</TT
-> library
- upon which it depends, it provides a clean and efficient Haskell programming
- interface to the HTTP protocol.
+> library upon
+which it depends, it provides a clean and efficient Haskell programming
+interface to the HTTP protocol.
 </TD
 ></TR
 ><TR
@@ -85,23 +85,55 @@
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AsimpleHttpServe"
+>simpleHttpServe</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> m a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AhttpServe"
 >httpServe</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
->Int</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
->Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
->FilePath</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
->Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
->FilePath</A
+> :: <A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AquickHttpServe"
+>quickHttpServe</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
 >Snap</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
@@ -121,6 +153,32 @@
 >snapServerVersion</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AsetUnicodeLocale"
+>setUnicodeLocale</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>module <A HREF="Snap-Http-Server-Config.html"
+>Snap.Http.Server.Config</A
 ></TD
 ></TR
 ></TABLE
@@ -143,12 +201,70 @@
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
+><A NAME="v:simpleHttpServe"
+><A NAME="v%3AsimpleHttpServe"
+></A
+></A
+><B
+>simpleHttpServe</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> m a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Http-Server.html#simpleHttpServe"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Starts serving HTTP requests using the given handler. Uses only the basic
+ settings from the given config; error handling and compression are ignored.
+ This function never returns; to shut down the HTTP server, kill the
+ controlling thread.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
 ><A NAME="v:httpServe"
 ><A NAME="v%3AhttpServe"
 ></A
 ></A
 ><B
 >httpServe</B
+> :: <A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
 ></TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Http-Server.html#httpServe"
@@ -159,87 +275,59 @@
 ></TD
 ></TR
 ><TR
-><TD CLASS="body"
-><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
-><TR
-><TD CLASS="arg"
->:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-></TD
-><TD CLASS="rdoc"
->bind address, or &quot;*&quot; for all
+><TD CLASS="doc"
+>Starts serving HTTP requests using the given handler, with settings from
+ the <TT
+><A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+></TT
+> passed in. This function never returns; to shut down the HTTP
+ server, kill the controlling thread.
 </TD
 ></TR
 ><TR
-><TD CLASS="arg"
->-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
->Int</A
+><TD CLASS="s15"
 ></TD
-><TD CLASS="rdoc"
->port to bind to
-</TD
 ></TR
 ><TR
-><TD CLASS="arg"
->-&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-></TD
-><TD CLASS="rdoc"
->local hostname (server name)
-</TD
-></TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
 ><TR
-><TD CLASS="arg"
->-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
->Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
->FilePath</A
-></TD
-><TD CLASS="rdoc"
->path to the (optional) access log
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
->Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
->FilePath</A
-></TD
-><TD CLASS="rdoc"
->path to the (optional) error log
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+><TD CLASS="declname"
+><A NAME="v:quickHttpServe"
+><A NAME="v%3AquickHttpServe"
+></A
+></A
+><B
+>quickHttpServe</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
 >Snap</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
-></TD
-><TD CLASS="rdoc"
->handler procedure
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
-><TD CLASS="rdoc"
+><TD CLASS="declbut"
+><A HREF="src/Snap-Http-Server.html#quickHttpServe"
+>Source</A
 ></TD
-></TR
-><TR
-><TD CLASS="ndoc" COLSPAN="2"
->Starts serving HTTP requests on the given port using the given handler.
- This function never returns; to shut down the HTTP server, kill the
- controlling thread.
-</TD
 ></TR
 ></TABLE
 ></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Starts serving HTTP using the given handler. The configuration is read
+ from the options given on the command-line, as returned by
+ <TT
+><A HREF="Snap-Http-Server-Config.html#v%3AcommandLineConfig"
+>commandLineConfig</A
+></TT
+>. This function never returns; to shut down the HTTP
+ server, kill the controlling thread.
+</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -265,6 +353,57 @@
 ></TD
 ></TR
 ></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>A short string describing the Snap server version
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:setUnicodeLocale"
+><A NAME="v%3AsetUnicodeLocale"
+></A
+></A
+><B
+>setUnicodeLocale</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Http-Server.html#setUnicodeLocale"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Given a string like &quot;en_US&quot;, this sets the locale to &quot;en_US.UTF-8&quot;.
+ This doesn't work on Windows.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>module <A HREF="Snap-Http-Server-Config.html"
+>Snap.Http.Server.Config</A
 ></TD
 ></TR
 ><TR

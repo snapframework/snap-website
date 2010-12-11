@@ -9,41 +9,121 @@ span.decl { font-weight: bold }
 span.spaces    { background: white }
 </style>
 <pre>
-<span class="lineno">    1 </span>-- | The Snap HTTP server is a high performance, epoll-enabled, iteratee-based
-<span class="lineno">    2 </span>-- web server library written in Haskell. Together with the @snap-core@ library
-<span class="lineno">    3 </span>-- upon which it depends, it provides a clean and efficient Haskell programming
-<span class="lineno">    4 </span>-- interface to the HTTP protocol.
-<span class="lineno">    5 </span>module Snap.Http.Server
-<span class="lineno">    6 </span>(
-<span class="lineno">    7 </span>  httpServe
-<span class="lineno">    8 </span>, snapServerVersion
-<span class="lineno">    9 </span>) where
+<span class="lineno">    1 </span>{-# LANGUAGE CPP #-}
+<span class="lineno">    2 </span>{-# LANGUAGE OverloadedStrings #-}
+<span class="lineno">    3 </span>
+<span class="lineno">    4 </span>{-|
+<span class="lineno">    5 </span>
+<span class="lineno">    6 </span>The Snap HTTP server is a high performance, epoll-enabled, iteratee-based web
+<span class="lineno">    7 </span>server library written in Haskell. Together with the @snap-core@ library upon
+<span class="lineno">    8 </span>which it depends, it provides a clean and efficient Haskell programming
+<span class="lineno">    9 </span>interface to the HTTP protocol.
 <span class="lineno">   10 </span>
-<span class="lineno">   11 </span>import           Data.ByteString (ByteString)
-<span class="lineno">   12 </span>import           Snap.Types
-<span class="lineno">   13 </span>import qualified Snap.Internal.Http.Server as Int
-<span class="lineno">   14 </span>
-<span class="lineno">   15 </span>
-<span class="lineno">   16 </span>------------------------------------------------------------------------------
-<span class="lineno">   17 </span>snapServerVersion :: ByteString
-<span class="lineno">   18 </span><span class="decl"><span class="istickedoff">snapServerVersion = Int.snapServerVersion</span></span>
-<span class="lineno">   19 </span>
-<span class="lineno">   20 </span>
-<span class="lineno">   21 </span>------------------------------------------------------------------------------
-<span class="lineno">   22 </span>-- | Starts serving HTTP requests on the given port using the given handler.
-<span class="lineno">   23 </span>-- This function never returns; to shut down the HTTP server, kill the
-<span class="lineno">   24 </span>-- controlling thread.
-<span class="lineno">   25 </span>httpServe :: ByteString      -- ^ bind address, or \&quot;*\&quot; for all
-<span class="lineno">   26 </span>          -&gt; Int             -- ^ port to bind to
-<span class="lineno">   27 </span>          -&gt; ByteString      -- ^ local hostname (server name)
-<span class="lineno">   28 </span>          -&gt; Maybe FilePath  -- ^ path to the (optional) access log
-<span class="lineno">   29 </span>          -&gt; Maybe FilePath  -- ^ path to the (optional) error log
-<span class="lineno">   30 </span>          -&gt; Snap ()         -- ^ handler procedure
-<span class="lineno">   31 </span>          -&gt; IO ()
-<span class="lineno">   32 </span><span class="decl"><span class="istickedoff">httpServe bindAddress bindPort localHostname alog elog handler =</span>
-<span class="lineno">   33 </span><span class="spaces">    </span><span class="istickedoff">Int.httpServe bindAddress bindPort localHostname alog elog handler'</span>
-<span class="lineno">   34 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">   35 </span><span class="spaces">    </span><span class="istickedoff">handler' = runSnap handler</span></span>
+<span class="lineno">   11 </span>-}
+<span class="lineno">   12 </span>
+<span class="lineno">   13 </span>module Snap.Http.Server
+<span class="lineno">   14 </span>  ( simpleHttpServe
+<span class="lineno">   15 </span>  , httpServe
+<span class="lineno">   16 </span>  , quickHttpServe
+<span class="lineno">   17 </span>  , snapServerVersion
+<span class="lineno">   18 </span>  , setUnicodeLocale
+<span class="lineno">   19 </span>  , module Snap.Http.Server.Config
+<span class="lineno">   20 </span>  ) where
+<span class="lineno">   21 </span>
+<span class="lineno">   22 </span>import           Control.Monad
+<span class="lineno">   23 </span>import           Control.Monad.CatchIO
+<span class="lineno">   24 </span>import           Data.ByteString (ByteString)
+<span class="lineno">   25 </span>import           Data.Char
+<span class="lineno">   26 </span>import           Data.List
+<span class="lineno">   27 </span>import           Data.Maybe
+<span class="lineno">   28 </span>import           Prelude hiding (catch)
+<span class="lineno">   29 </span>import           Snap.Http.Server.Config
+<span class="lineno">   30 </span>import qualified Snap.Internal.Http.Server as Int
+<span class="lineno">   31 </span>import           Snap.Types
+<span class="lineno">   32 </span>import           Snap.Util.GZip
+<span class="lineno">   33 </span>#ifndef PORTABLE
+<span class="lineno">   34 </span>import           System.Posix.Env
+<span class="lineno">   35 </span>#endif
+<span class="lineno">   36 </span>import           System.IO
+<span class="lineno">   37 </span>
+<span class="lineno">   38 </span>
+<span class="lineno">   39 </span>------------------------------------------------------------------------------
+<span class="lineno">   40 </span>-- | A short string describing the Snap server version
+<span class="lineno">   41 </span>snapServerVersion :: ByteString
+<span class="lineno">   42 </span><span class="decl"><span class="istickedoff">snapServerVersion = Int.snapServerVersion</span></span>
+<span class="lineno">   43 </span>
+<span class="lineno">   44 </span>
+<span class="lineno">   45 </span>------------------------------------------------------------------------------
+<span class="lineno">   46 </span>-- | Starts serving HTTP requests using the given handler. Uses only the basic
+<span class="lineno">   47 </span>-- settings from the given config; error handling and compression are ignored.
+<span class="lineno">   48 </span>-- This function never returns; to shut down the HTTP server, kill the
+<span class="lineno">   49 </span>-- controlling thread.
+<span class="lineno">   50 </span>simpleHttpServe :: MonadSnap m =&gt; Config m a -&gt; Snap () -&gt; IO ()
+<span class="lineno">   51 </span><span class="decl"><span class="istickedoff">simpleHttpServe config handler = do</span>
+<span class="lineno">   52 </span><span class="spaces">    </span><span class="istickedoff">setUnicodeLocale $ fromJust $ getLocale conf</span>
+<span class="lineno">   53 </span><span class="spaces">    </span><span class="istickedoff">Int.httpServe (map listenToInt $ getListen conf)</span>
+<span class="lineno">   54 </span><span class="spaces">                  </span><span class="istickedoff">(fmap backendToInt $ getBackend conf)</span>
+<span class="lineno">   55 </span><span class="spaces">                  </span><span class="istickedoff">(fromJust $ getHostname  conf)</span>
+<span class="lineno">   56 </span><span class="spaces">                  </span><span class="istickedoff">(fromJust $ getAccessLog conf)</span>
+<span class="lineno">   57 </span><span class="spaces">                  </span><span class="istickedoff">(fromJust $ getErrorLog  conf)</span>
+<span class="lineno">   58 </span><span class="spaces">                  </span><span class="istickedoff">(runSnap handler)</span>
+<span class="lineno">   59 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   60 </span><span class="spaces">    </span><span class="istickedoff">conf = completeConfig config</span>
+<span class="lineno">   61 </span><span class="spaces">    </span><span class="istickedoff">listenToInt (ListenHttp b p) = Int.HttpPort b p</span>
+<span class="lineno">   62 </span><span class="spaces">    </span><span class="istickedoff">listenToInt (ListenHttps b p c k) = <span class="nottickedoff">Int.HttpsPort b p c k</span></span>
+<span class="lineno">   63 </span><span class="spaces">    </span><span class="istickedoff">backendToInt ConfigSimpleBackend = Int.EventLoopSimple</span>
+<span class="lineno">   64 </span><span class="spaces">    </span><span class="istickedoff">backendToInt ConfigLibEvBackend  = Int.EventLoopLibEv</span></span>
+<span class="lineno">   65 </span>
+<span class="lineno">   66 </span>
+<span class="lineno">   67 </span>------------------------------------------------------------------------------
+<span class="lineno">   68 </span>-- | Starts serving HTTP requests using the given handler, with settings from
+<span class="lineno">   69 </span>-- the 'Config' passed in. This function never returns; to shut down the HTTP
+<span class="lineno">   70 </span>-- server, kill the controlling thread.
+<span class="lineno">   71 </span>httpServe :: Config Snap () -&gt; Snap () -&gt; IO ()
+<span class="lineno">   72 </span><span class="decl"><span class="istickedoff">httpServe config handler = do</span>
+<span class="lineno">   73 </span><span class="spaces">    </span><span class="istickedoff">mapM_ (output . <span class="nottickedoff">(&quot;Listening on &quot;++) . show</span>) $ getListen conf</span>
+<span class="lineno">   74 </span><span class="spaces">    </span><span class="istickedoff">serve handler `finally` output <span class="nottickedoff">&quot;\nShutting down...&quot;</span></span>
+<span class="lineno">   75 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   76 </span><span class="spaces">    </span><span class="istickedoff">conf     = completeConfig config</span>
+<span class="lineno">   77 </span><span class="spaces">    </span><span class="istickedoff">output   = when (fromJust $ getVerbose conf) . <span class="nottickedoff">hPutStrLn stderr</span></span>
+<span class="lineno">   78 </span><span class="spaces">    </span><span class="istickedoff">serve    = simpleHttpServe config . compress . catch500</span>
+<span class="lineno">   79 </span><span class="spaces">    </span><span class="istickedoff">catch500 = flip catch $ <span class="nottickedoff">fromJust $ getErrorHandler conf</span></span>
+<span class="lineno">   80 </span><span class="spaces">    </span><span class="istickedoff">compress = if <span class="tickonlytrue">fromJust $ getCompression conf</span> then withCompression else <span class="nottickedoff">id</span></span></span>
+<span class="lineno">   81 </span>
+<span class="lineno">   82 </span>
+<span class="lineno">   83 </span>------------------------------------------------------------------------------
+<span class="lineno">   84 </span>-- | Starts serving HTTP using the given handler. The configuration is read
+<span class="lineno">   85 </span>-- from the options given on the command-line, as returned by
+<span class="lineno">   86 </span>-- 'commandLineConfig'. This function never returns; to shut down the HTTP
+<span class="lineno">   87 </span>-- server, kill the controlling thread.
+<span class="lineno">   88 </span>quickHttpServe :: Snap () -&gt; IO ()
+<span class="lineno">   89 </span><span class="decl"><span class="nottickedoff">quickHttpServe m = commandLineConfig emptyConfig &gt;&gt;= \c -&gt; httpServe c m</span></span>
+<span class="lineno">   90 </span>
+<span class="lineno">   91 </span>
+<span class="lineno">   92 </span>------------------------------------------------------------------------------
+<span class="lineno">   93 </span>-- | Given a string like \&quot;en_US\&quot;, this sets the locale to \&quot;en_US.UTF-8\&quot;.
+<span class="lineno">   94 </span>-- This doesn't work on Windows.
+<span class="lineno">   95 </span>setUnicodeLocale :: String -&gt; IO ()
+<span class="lineno">   96 </span><span class="decl"><span class="istickedoff">setUnicodeLocale lang =</span>
+<span class="lineno">   97 </span><span class="spaces"></span><span class="istickedoff">#ifndef PORTABLE</span>
+<span class="lineno">   98 </span><span class="spaces">    </span><span class="istickedoff">mapM_ (\k -&gt; setEnv k (lang ++ &quot;.UTF-8&quot;) True)</span>
+<span class="lineno">   99 </span><span class="spaces">          </span><span class="istickedoff">[ &quot;LANG&quot;</span>
+<span class="lineno">  100 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_CTYPE&quot;</span>
+<span class="lineno">  101 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_NUMERIC&quot;</span>
+<span class="lineno">  102 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_TIME&quot;</span>
+<span class="lineno">  103 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_COLLATE&quot;</span>
+<span class="lineno">  104 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_MONETARY&quot;</span>
+<span class="lineno">  105 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_MESSAGES&quot;</span>
+<span class="lineno">  106 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_PAPER&quot;</span>
+<span class="lineno">  107 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_NAME&quot;</span>
+<span class="lineno">  108 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_ADDRESS&quot;</span>
+<span class="lineno">  109 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_TELEPHONE&quot;</span>
+<span class="lineno">  110 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_MEASUREMENT&quot;</span>
+<span class="lineno">  111 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_IDENTIFICATION&quot;</span>
+<span class="lineno">  112 </span><span class="spaces">          </span><span class="istickedoff">, &quot;LC_ALL&quot; ]</span></span>
+<span class="lineno">  113 </span>#else
+<span class="lineno">  114 </span>    return ()
+<span class="lineno">  115 </span>#endif
 
 </pre>
 </html>

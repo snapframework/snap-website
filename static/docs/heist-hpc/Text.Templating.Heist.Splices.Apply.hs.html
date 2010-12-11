@@ -14,52 +14,51 @@ span.spaces    { background: white }
 <span class="lineno">    3 </span>module Text.Templating.Heist.Splices.Apply where
 <span class="lineno">    4 </span>
 <span class="lineno">    5 </span>------------------------------------------------------------------------------
-<span class="lineno">    6 </span>import           Control.Monad.RWS.Strict
-<span class="lineno">    7 </span>import           Data.ByteString.Char8 (ByteString)
-<span class="lineno">    8 </span>import qualified Data.ByteString.Char8 as B
-<span class="lineno">    9 </span>import           Data.Maybe
-<span class="lineno">   10 </span>import qualified Text.XML.Expat.Tree as X
-<span class="lineno">   11 </span>
-<span class="lineno">   12 </span>------------------------------------------------------------------------------
-<span class="lineno">   13 </span>import           Text.Templating.Heist.Internal
-<span class="lineno">   14 </span>import           Text.Templating.Heist.Types
-<span class="lineno">   15 </span>
-<span class="lineno">   16 </span>------------------------------------------------------------------------------
-<span class="lineno">   17 </span>-- | Default name for the apply splice.
-<span class="lineno">   18 </span>applyTag :: ByteString
-<span class="lineno">   19 </span><span class="decl"><span class="istickedoff">applyTag = &quot;apply&quot;</span></span>
+<span class="lineno">    6 </span>import           Data.ByteString.Char8 (ByteString)
+<span class="lineno">    7 </span>import qualified Data.ByteString.Char8 as B
+<span class="lineno">    8 </span>import           Data.Maybe
+<span class="lineno">    9 </span>import qualified Text.XML.Expat.Tree as X
+<span class="lineno">   10 </span>
+<span class="lineno">   11 </span>------------------------------------------------------------------------------
+<span class="lineno">   12 </span>import           Text.Templating.Heist.Internal
+<span class="lineno">   13 </span>import           Text.Templating.Heist.Types
+<span class="lineno">   14 </span>
+<span class="lineno">   15 </span>------------------------------------------------------------------------------
+<span class="lineno">   16 </span>-- | Default name for the apply splice.
+<span class="lineno">   17 </span>applyTag :: ByteString
+<span class="lineno">   18 </span><span class="decl"><span class="istickedoff">applyTag = &quot;apply&quot;</span></span>
+<span class="lineno">   19 </span>
 <span class="lineno">   20 </span>
-<span class="lineno">   21 </span>
-<span class="lineno">   22 </span>------------------------------------------------------------------------------
-<span class="lineno">   23 </span>-- | Default attribute name for the apply tag.
-<span class="lineno">   24 </span>applyAttr :: ByteString
-<span class="lineno">   25 </span><span class="decl"><span class="istickedoff">applyAttr = &quot;template&quot;</span></span>
+<span class="lineno">   21 </span>------------------------------------------------------------------------------
+<span class="lineno">   22 </span>-- | Default attribute name for the apply tag.
+<span class="lineno">   23 </span>applyAttr :: ByteString
+<span class="lineno">   24 </span><span class="decl"><span class="istickedoff">applyAttr = &quot;template&quot;</span></span>
+<span class="lineno">   25 </span>
 <span class="lineno">   26 </span>
-<span class="lineno">   27 </span>
-<span class="lineno">   28 </span>------------------------------------------------------------------------------
-<span class="lineno">   29 </span>-- | Implementation of the apply splice.
-<span class="lineno">   30 </span>applyImpl :: Monad m =&gt; Splice m
-<span class="lineno">   31 </span><span class="istickedoff"><span class="decl"><span class="istickedoff">applyImpl = do</span>
-<span class="lineno">   32 </span><span class="spaces">    </span><span class="istickedoff">node &lt;- getParamNode</span>
-<span class="lineno">   33 </span><span class="spaces">    </span><span class="istickedoff">case X.getAttribute node applyAttr of</span>
-<span class="lineno">   34 </span><span class="spaces">        </span><span class="istickedoff">Nothing   -&gt; return [] -- TODO: error handling</span>
-<span class="lineno">   35 </span><span class="spaces">        </span><span class="istickedoff">Just attr -&gt; do </span>
-<span class="lineno">   36 </span><span class="spaces">            </span><span class="istickedoff">st &lt;- getTS</span>
-<span class="lineno">   37 </span><span class="spaces">            </span><span class="istickedoff">maybe (return []) -- TODO: error handling</span>
-<span class="lineno">   38 </span><span class="spaces">                  </span><span class="istickedoff">(\(t,ctx) -&gt; do</span>
-<span class="lineno">   39 </span><span class="spaces">                      </span><span class="istickedoff">addDoctype $ maybeToList $ _itDoctype t</span>
-<span class="lineno">   40 </span><span class="spaces">                      </span><span class="istickedoff">processedChildren &lt;- runNodeList $ X.getChildren node</span>
-<span class="lineno">   41 </span><span class="spaces">                      </span><span class="istickedoff">modifyTS (bindSplice &quot;content&quot; $ return processedChildren)</span>
-<span class="lineno">   42 </span><span class="spaces">                      </span><span class="istickedoff">setContext <span class="nottickedoff">ctx</span></span>
-<span class="lineno">   43 </span><span class="spaces">                      </span><span class="istickedoff">result &lt;- runNodeList $ _itNodes t</span>
-<span class="lineno">   44 </span><span class="spaces">                      </span><span class="istickedoff">restoreTS st</span>
-<span class="lineno">   45 </span><span class="spaces">                      </span><span class="istickedoff">return result)</span>
-<span class="lineno">   46 </span><span class="spaces">                  </span><span class="istickedoff">(lookupTemplate attr (st {_curContext = nextCtx attr st}))</span>
-<span class="lineno">   47 </span><span class="spaces">  </span><span class="istickedoff">where nextCtx name st</span>
-<span class="lineno">   48 </span><span class="spaces">            </span><span class="istickedoff">| B.isPrefixOf &quot;/&quot; name = []</span>
-<span class="lineno">   49 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span>             = _curContext st</span></span></span>
+<span class="lineno">   27 </span>------------------------------------------------------------------------------
+<span class="lineno">   28 </span>-- | Implementation of the apply splice.
+<span class="lineno">   29 </span>applyImpl :: Monad m =&gt; Splice m
+<span class="lineno">   30 </span><span class="istickedoff"><span class="decl"><span class="istickedoff">applyImpl = do</span>
+<span class="lineno">   31 </span><span class="spaces">    </span><span class="istickedoff">node &lt;- getParamNode</span>
+<span class="lineno">   32 </span><span class="spaces">    </span><span class="istickedoff">case X.getAttribute node applyAttr of</span>
+<span class="lineno">   33 </span><span class="spaces">        </span><span class="istickedoff">Nothing   -&gt; return [] -- TODO: error handling</span>
+<span class="lineno">   34 </span><span class="spaces">        </span><span class="istickedoff">Just attr -&gt; do </span>
+<span class="lineno">   35 </span><span class="spaces">            </span><span class="istickedoff">st &lt;- getTS</span>
+<span class="lineno">   36 </span><span class="spaces">            </span><span class="istickedoff">maybe (return []) -- TODO: error handling</span>
+<span class="lineno">   37 </span><span class="spaces">                  </span><span class="istickedoff">(\(t,ctx) -&gt; do</span>
+<span class="lineno">   38 </span><span class="spaces">                      </span><span class="istickedoff">addDoctype $ maybeToList $ _itDoctype t</span>
+<span class="lineno">   39 </span><span class="spaces">                      </span><span class="istickedoff">processedChildren &lt;- runNodeList $ X.getChildren node</span>
+<span class="lineno">   40 </span><span class="spaces">                      </span><span class="istickedoff">modifyTS (bindSplice &quot;content&quot; $ return processedChildren)</span>
+<span class="lineno">   41 </span><span class="spaces">                      </span><span class="istickedoff">setContext <span class="nottickedoff">ctx</span></span>
+<span class="lineno">   42 </span><span class="spaces">                      </span><span class="istickedoff">result &lt;- runNodeList $ _itNodes t</span>
+<span class="lineno">   43 </span><span class="spaces">                      </span><span class="istickedoff">restoreTS st</span>
+<span class="lineno">   44 </span><span class="spaces">                      </span><span class="istickedoff">return result)</span>
+<span class="lineno">   45 </span><span class="spaces">                  </span><span class="istickedoff">(lookupTemplate attr (st {_curContext = nextCtx attr st}))</span>
+<span class="lineno">   46 </span><span class="spaces">  </span><span class="istickedoff">where nextCtx name st</span>
+<span class="lineno">   47 </span><span class="spaces">            </span><span class="istickedoff">| B.isPrefixOf &quot;/&quot; name = []</span>
+<span class="lineno">   48 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span>             = _curContext st</span></span></span>
+<span class="lineno">   49 </span>
 <span class="lineno">   50 </span>
-<span class="lineno">   51 </span>
 
 </pre>
 </html>

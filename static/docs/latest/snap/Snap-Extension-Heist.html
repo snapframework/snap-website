@@ -1,0 +1,561 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Snap.Extension.Heist</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+><SCRIPT TYPE="text/javascript"
+>window.onload = function () {setSynopsis("mini_Snap-Extension-Heist.html")};</SCRIPT
+></HEAD
+><BODY
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topbar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
+></TD
+><TD CLASS="title"
+>snap-0.3.0: Snap: A Haskell Web Framework (Core)</TD
+><TD CLASS="topbut"
+><A HREF="src/Snap-Extension-Heist.html"
+>Source code</A
+></TD
+><TD CLASS="topbut"
+><A HREF="index.html"
+>Contents</A
+></TD
+><TD CLASS="topbut"
+><A HREF="doc-index.html"
+>Index</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="modulebar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><FONT SIZE="6"
+>Snap.Extension.Heist</FONT
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Description</TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Snap.Extension.Heist exports the <TT
+><A HREF="Snap-Extension-Heist.html#t%3AMonadHeist"
+>MonadHeist</A
+></TT
+> interface which allows you to
+integrate Heist templates into your Snap application. The interface's
+operations are <TT
+><A HREF="Snap-Extension-Heist.html#v%3AheistServe"
+>heistServe</A
+></TT
+>, <TT
+><A HREF="Snap-Extension-Heist.html#v%3AheistServeSingle"
+>heistServeSingle</A
+></TT
+>, <TT
+><A HREF="Snap-Extension-Heist.html#v%3AheistLocal"
+>heistLocal</A
+></TT
+> and <TT
+><A HREF="Snap-Extension-Heist.html#v%3Arender"
+>render</A
+></TT
+>.
+</P
+><P
+>Snap.Extension.Heist.Heist contains the only implementation of this
+interface and can be used to turn your application's monad into a
+<TT
+><A HREF="Snap-Extension-Heist.html#t%3AMonadHeist"
+>MonadHeist</A
+></TT
+>.
+</P
+><P
+><TT
+><A HREF="Snap-Extension-Heist.html#t%3AMonadHeist"
+>MonadHeist</A
+></TT
+> is unusual among Snap extensions in that it's a multi-parameter
+typeclass. The last parameter is your application's monad, and the first is
+the monad you want the <TT
+><A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+></TT
+> to use. This is usually, but not
+always, also your application's monad.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Synopsis</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> n, <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m) =&gt; <A HREF="#t%3AMonadHeist"
+>MonadHeist</A
+> n m | m -&gt; n <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Arender"
+>render</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AheistLocal"
+>heistLocal</A
+> ::  (<A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> n -&gt; <A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> n) -&gt; m a -&gt; m a</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AheistServe"
+>heistServe</A
+> :: m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AheistServeSingle"
+>heistServeSingle</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ArenderWithSplices"
+>renderWithSplices</A
+> :: <A HREF="Snap-Extension-Heist.html#t%3AMonadHeist"
+>MonadHeist</A
+> n m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ASplice"
+>Splice</A
+> n)] -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Documentation</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>class</SPAN
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> n, <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m) =&gt; <A NAME="t:MonadHeist"
+><A NAME="t%3AMonadHeist"
+></A
+></A
+><B
+>MonadHeist</B
+> n m | m -&gt; n <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist.html#MonadHeist"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+>The <TT
+><A HREF="Snap-Extension-Heist.html#t%3AMonadHeist"
+>MonadHeist</A
+></TT
+> type class. Minimal complete definition: <TT
+><A HREF="Snap-Extension-Heist.html#v%3Arender"
+>render</A
+></TT
+>,
+ <TT
+><A HREF="Snap-Extension-Heist.html#v%3AheistLocal"
+>heistLocal</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+>Methods</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:render"
+><A NAME="v%3Arender"
+></A
+></A
+><B
+>render</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist.html#render"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Renders a template as text/html. If the given template is not found,
+ this returns <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3Aempty"
+>empty</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:heistLocal"
+><A NAME="v%3AheistLocal"
+></A
+></A
+><B
+>heistLocal</B
+> ::  (<A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> n -&gt; <A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> n) -&gt; m a -&gt; m a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist.html#heistLocal"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Runs an action with a modified <TT
+><A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+></TT
+>. You might want to use
+ this if you had a set of splices which were customised for a specific
+ action. To do that you would do:
+</P
+><PRE
+> heistLocal (bindSplices mySplices) $ render &quot;myTemplate&quot;
+</PRE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:heistServe"
+><A NAME="v%3AheistServe"
+></A
+></A
+><B
+>heistServe</B
+> :: m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist.html#heistServe"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Analogous to fileServe. If the template specified in the request
+ path is not found, it returns <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3Aempty"
+>empty</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:heistServeSingle"
+><A NAME="v%3AheistServeSingle"
+></A
+></A
+><B
+>heistServeSingle</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist.html#heistServeSingle"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Analogous to fileServeSingle. If the given template is not found,
+ this throws an error.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:MonadHeist')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:MonadHeist" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="Snap-Extension-Heist-Impl.html#t%3AHasHeistState"
+>HasHeistState</A
+> m s =&gt; <A HREF="Snap-Extension-Heist.html#t%3AMonadHeist"
+>MonadHeist</A
+> m (<A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Reader.html#t%3AReaderT"
+>ReaderT</A
+> s m)</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="Snap-Extension-Heist-Impl.html#t%3AHasHeistState"
+>HasHeistState</A
+> (<A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s) s =&gt; <A HREF="Snap-Extension-Heist.html#t%3AMonadHeist"
+>MonadHeist</A
+> (<A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s) (<A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s)</TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:renderWithSplices"
+><A NAME="v%3ArenderWithSplices"
+></A
+></A
+><B
+>renderWithSplices</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist.html#renderWithSplices"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Extension-Heist.html#t%3AMonadHeist"
+>MonadHeist</A
+> n m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ASplice"
+>Splice</A
+> n)]</TD
+><TD CLASS="rdoc"
+>Splice mapping
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="rdoc"
+>Template to render
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Helper function for common use case: 
+ Render a template with a given set of splices.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="botbar"
+>Produced by <A HREF="http://www.haskell.org/haddock/"
+>Haddock</A
+> version 2.6.1</TD
+></TR
+></TABLE
+></BODY
+></HTML
+>

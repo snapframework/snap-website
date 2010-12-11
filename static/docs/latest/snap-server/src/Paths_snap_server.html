@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
@@ -16,14 +17,14 @@
 <a name="line-8"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>Environment</span> <span class='hs-layout'>(</span><span class='hs-varid'>getEnv</span><span class='hs-layout'>)</span>
 <a name="line-9"></a>
 <a name="line-10"></a><a name="version"></a><span class='hs-definition'>version</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Version</span>
-<a name="line-11"></a><span class='hs-definition'>version</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Version</span> <span class='hs-layout'>{</span><span class='hs-varid'>versionBranch</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyglyph'>[</span><span class='hs-num'>0</span><span class='hs-layout'>,</span><span class='hs-num'>2</span><span class='hs-layout'>,</span><span class='hs-num'>13</span><span class='hs-keyglyph'>]</span><span class='hs-layout'>,</span> <span class='hs-varid'>versionTags</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>[]</span><span class='hs-layout'>}</span>
+<a name="line-11"></a><span class='hs-definition'>version</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Version</span> <span class='hs-layout'>{</span><span class='hs-varid'>versionBranch</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyglyph'>[</span><span class='hs-num'>0</span><span class='hs-layout'>,</span><span class='hs-num'>3</span><span class='hs-layout'>,</span><span class='hs-num'>0</span><span class='hs-keyglyph'>]</span><span class='hs-layout'>,</span> <span class='hs-varid'>versionTags</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>[]</span><span class='hs-layout'>}</span>
 <a name="line-12"></a>
 <a name="line-13"></a><a name="bindir"></a><span class='hs-definition'>bindir</span><span class='hs-layout'>,</span> <span class='hs-varid'>libdir</span><span class='hs-layout'>,</span> <span class='hs-varid'>datadir</span><span class='hs-layout'>,</span> <span class='hs-varid'>libexecdir</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>FilePath</span>
 <a name="line-14"></a>
-<a name="line-15"></a><span class='hs-definition'>bindir</span>     <span class='hs-keyglyph'>=</span> <span class='hs-str'>"/Users/greg/.cabal/bin"</span>
-<a name="line-16"></a><a name="libdir"></a><span class='hs-definition'>libdir</span>     <span class='hs-keyglyph'>=</span> <span class='hs-str'>"/Users/greg/.cabal/lib/snap-server-0.2.13/ghc-6.12.3"</span>
-<a name="line-17"></a><a name="datadir"></a><span class='hs-definition'>datadir</span>    <span class='hs-keyglyph'>=</span> <span class='hs-str'>"/Users/greg/.cabal/share/snap-server-0.2.13"</span>
-<a name="line-18"></a><a name="libexecdir"></a><span class='hs-definition'>libexecdir</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"/Users/greg/.cabal/libexec"</span>
+<a name="line-15"></a><span class='hs-definition'>bindir</span>     <span class='hs-keyglyph'>=</span> <span class='hs-str'>"/home/greg/.cabal/bin"</span>
+<a name="line-16"></a><a name="libdir"></a><span class='hs-definition'>libdir</span>     <span class='hs-keyglyph'>=</span> <span class='hs-str'>"/home/greg/.cabal/lib/snap-server-0.3.0/ghc-6.12.3"</span>
+<a name="line-17"></a><a name="datadir"></a><span class='hs-definition'>datadir</span>    <span class='hs-keyglyph'>=</span> <span class='hs-str'>"/home/greg/.cabal/share/snap-server-0.3.0"</span>
+<a name="line-18"></a><a name="libexecdir"></a><span class='hs-definition'>libexecdir</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"/home/greg/.cabal/libexec"</span>
 <a name="line-19"></a>
 <a name="line-20"></a><a name="getBinDir"></a><span class='hs-definition'>getBinDir</span><span class='hs-layout'>,</span> <span class='hs-varid'>getLibDir</span><span class='hs-layout'>,</span> <span class='hs-varid'>getDataDir</span><span class='hs-layout'>,</span> <span class='hs-varid'>getLibexecDir</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>FilePath</span>
 <a name="line-21"></a><span class='hs-definition'>getBinDir</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>catch</span> <span class='hs-layout'>(</span><span class='hs-varid'>getEnv</span> <span class='hs-str'>"snap_server_bindir"</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-varid'>bindir</span><span class='hs-layout'>)</span>

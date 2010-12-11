@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->heist-0.3: An xhtml templating system</TD
+>heist-0.3.0.0: An xhtml templating system</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Text-Templating-Heist.html"
 >Source code</A
@@ -758,6 +758,30 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3ArenderWithArgs"
+>renderWithArgs</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)] -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AbindStrings"
 >bindStrings</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
@@ -1061,9 +1085,9 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Error-Class.html#t%3AMonadError"
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Error-Class.html#t%3AMonadError"
 >MonadError</A
-> e m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Error-Class.html#t%3AMonadError"
+> e m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Error-Class.html#t%3AMonadError"
 >MonadError</A
 > e (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
@@ -1071,9 +1095,9 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Reader-Class.html#t%3AMonadReader"
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Reader-Class.html#t%3AMonadReader"
 >MonadReader</A
-> r m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Reader-Class.html#t%3AMonadReader"
+> r m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Reader-Class.html#t%3AMonadReader"
 >MonadReader</A
 > r (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
@@ -1081,9 +1105,9 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#t%3AMonadState"
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-State-Class.html#t%3AMonadState"
 >MonadState</A
-> s m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#t%3AMonadState"
+> s m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-State-Class.html#t%3AMonadState"
 >MonadState</A
 > s (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
@@ -1175,9 +1199,9 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Cont-Class.html#t%3AMonadCont"
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Cont-Class.html#t%3AMonadCont"
 >MonadCont</A
-> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Cont-Class.html#t%3AMonadCont"
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Cont-Class.html#t%3AMonadCont"
 >MonadCont</A
 > (<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
@@ -2104,7 +2128,7 @@
 ><TR
 ><TD CLASS="doc"
 >TemplateMonad's <TT
-><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-Reader-Class.html#v%3Alocal"
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Reader-Class.html#v%3Alocal"
 >local</A
 ></TT
 >.
@@ -2143,7 +2167,7 @@
 ><TR
 ><TD CLASS="doc"
 >TemplateMonad's <TT
-><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#v%3Agets"
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-State-Class.html#v%3Agets"
 >gets</A
 ></TT
 >.
@@ -2182,7 +2206,7 @@
 ><TR
 ><TD CLASS="doc"
 >TemplateMonad's <TT
-><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#v%3Aget"
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-State-Class.html#v%3Aget"
 >get</A
 ></TT
 >.
@@ -2223,7 +2247,7 @@
 ><TR
 ><TD CLASS="doc"
 >TemplateMonad's <TT
-><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#v%3Aput"
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-State-Class.html#v%3Aput"
 >put</A
 ></TT
 >.
@@ -2266,7 +2290,7 @@
 ><TR
 ><TD CLASS="doc"
 >TemplateMonad's <TT
-><A HREF="http://hackage.haskell.org/packages/archive/monads-fd/latest/doc/html/Control-Monad-State-Class.html#v%3Amodify"
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-State-Class.html#v%3Amodify"
 >modify</A
 ></TT
 >.
@@ -2445,7 +2469,8 @@
 >Renders a template with the specified parameters.  This is the function
  to use when you want to <A HREF="call.html"
 >call</A
-> a template and pass in parameters from code.
+> a template and pass in parameters from
+ inside a splice.
 </TD
 ></TR
 ></TABLE
@@ -2488,6 +2513,52 @@
 ><TR
 ><TD CLASS="doc"
 >Renders a template from the specified TemplateState.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:renderWithArgs"
+><A NAME="v%3ArenderWithArgs"
+></A
+></A
+><B
+>renderWithArgs</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)] -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)</TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Internal.html#renderWithArgs"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Renders a template with the specified arguments passed to it.  This is a
+ convenience function for the common pattern of calling renderTemplate after
+ using bindString, bindStrings, or bindSplice to set up the arguments to the
+ template.
 </TD
 ></TR
 ><TR

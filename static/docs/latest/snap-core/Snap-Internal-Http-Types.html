@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.2.13: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.3.0: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Internal-Http-Types.html"
 >Source code</A
@@ -150,22 +150,6 @@
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><SPAN CLASS="keyword"
->type</SPAN
-> <A HREF="#t%3AEnumerator"
->Enumerator</A
-> a = <A HREF="Snap-Iteratee.html#t%3AEnumerator"
->Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -487,8 +471,12 @@
 >SomeEnumerator</A
 > (<SPAN CLASS="keyword"
 >forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> a.  <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a)</TD
 ></TR
 ><TR
@@ -695,8 +683,12 @@
 >Enum</A
 > (<SPAN CLASS="keyword"
 >forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> a.  <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a)</TD
 ></TR
 ><TR
@@ -729,10 +721,18 @@
 >rspBodyMap</A
 > :: (<SPAN CLASS="keyword"
 >forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> a.  <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
-> a -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a) -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
 >ResponseBody</A
 > -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
@@ -749,8 +749,12 @@
 >rspBodyToEnum</A
 > ::  <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
 >ResponseBody</A
-> -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a</TD
 ></TR
 ><TR
@@ -903,8 +907,12 @@
 >setResponseBody</A
 > :: (<SPAN CLASS="keyword"
 >forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> a.  <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a) -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
 >Response</A
 > -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
@@ -955,10 +963,18 @@
 >modifyResponseBody</A
 > :: (<SPAN CLASS="keyword"
 >forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> a.  <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
-> a -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a) -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
 >Response</A
 > -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
@@ -1332,36 +1348,6 @@
 ></TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Http-Types.html#c_format_log_time"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><SPAN CLASS="keyword"
->type</SPAN
-> <A NAME="t:Enumerator"
-><A NAME="t%3AEnumerator"
-></A
-></A
-><B
->Enumerator</B
-> a = <A HREF="Snap-Iteratee.html#t%3AEnumerator"
->Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> a</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Http-Types.html#Enumerator"
 >Source</A
 ></TD
 ></TR
@@ -2229,7 +2215,7 @@
 ><TR
 ><TD CLASS="ndoc"
 >An existential wrapper for the <TT
-><A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+><A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
 ></TT
 > type
@@ -2252,8 +2238,12 @@
 >SomeEnumerator</B
 > (<SPAN CLASS="keyword"
 >forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> a.  <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a)</TD
 ><TD CLASS="rdoc"
 ></TD
@@ -2804,8 +2794,12 @@
 >Enum</B
 > (<SPAN CLASS="keyword"
 >forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> a.  <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a)</TD
 ><TD CLASS="rdoc"
 >output body is enumerator
@@ -2856,10 +2850,18 @@
 >rspBodyMap</B
 > :: (<SPAN CLASS="keyword"
 >forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> a.  <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
-> a -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a) -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
 >ResponseBody</A
 > -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
@@ -2890,8 +2892,12 @@
 >rspBodyToEnum</B
 > ::  <A HREF="Snap-Internal-Http-Types.html#t%3AResponseBody"
 >ResponseBody</A
-> -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Http-Types.html#rspBodyToEnum"
@@ -3354,12 +3360,15 @@
 ><TD CLASS="arg"
 >:: <SPAN CLASS="keyword"
 >forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> a.  <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a</TD
 ><TD CLASS="rdoc"
->new response body
- enumerator
+>new response body enumerator
 </TD
 ></TR
 ><TR
@@ -3382,7 +3391,7 @@
 ><TR
 ><TD CLASS="ndoc" COLSPAN="2"
 >Sets an HTTP response body to the given <TT
-><A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+><A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
 ></TT
 > value.
@@ -3544,10 +3553,18 @@
 >modifyResponseBody</B
 > :: (<SPAN CLASS="keyword"
 >forall</SPAN
-> a.  <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> a.  <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
-> a -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AEnumerator"
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a) -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"
 >Response</A
 > -&gt; <A HREF="Snap-Internal-Http-Types.html#t%3AResponse"

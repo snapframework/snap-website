@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
@@ -17,7 +18,7 @@
 <a name="line-9"></a><span class='hs-comment'>{-|
 <a name="line-10"></a>
 <a name="line-11"></a>This module contains the core Heist data types.  TemplateMonad intentionally
-<a name="line-12"></a>does not expose any of it's functionality via MonadState or MonadReader
+<a name="line-12"></a>does not expose any of its functionality via MonadState or MonadReader
 <a name="line-13"></a>functions.  We define passthrough instances for the most common types of
 <a name="line-14"></a>monads.  These instances allow the user to use TemplateMonad in a monad stack
 <a name="line-15"></a>without needing calls to `lift`.
@@ -31,11 +32,11 @@
 <a name="line-23"></a>
 <a name="line-24"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
 <a name="line-25"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Applicative</span>
-<a name="line-26"></a><span class='hs-keyword'>import</span> <span class='hs-str'>"monads-fd"</span> <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Cont</span>
-<a name="line-27"></a><span class='hs-keyword'>import</span> <span class='hs-str'>"monads-fd"</span> <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Error</span>
-<a name="line-28"></a><span class='hs-keyword'>import</span> <span class='hs-str'>"monads-fd"</span> <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Reader</span>
-<a name="line-29"></a><span class='hs-keyword'>import</span> <span class='hs-str'>"monads-fd"</span> <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>State</span>
-<a name="line-30"></a><span class='hs-keyword'>import</span> <span class='hs-str'>"monads-fd"</span> <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Trans</span>
+<a name="line-26"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Cont</span>
+<a name="line-27"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Error</span>
+<a name="line-28"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Reader</span>
+<a name="line-29"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>State</span>
+<a name="line-30"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span><span class='hs-varop'>.</span><span class='hs-conid'>Trans</span>
 <a name="line-31"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
 <a name="line-32"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span>   <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Map</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Map</span>
 <a name="line-33"></a><span class='hs-keyword'>import</span>             <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Map</span> <span class='hs-layout'>(</span><span class='hs-conid'>Map</span><span class='hs-layout'>)</span>

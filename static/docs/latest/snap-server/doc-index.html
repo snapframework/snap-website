@@ -4,7 +4,7 @@
 ><HEAD
 ><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
 ><TITLE
->snap-server-0.2.13: A fast, iteratee-based, epoll-enabled web server for the Snap Framework (Index)</TITLE
+>snap-server-0.3.0: A fast, iteratee-based, epoll-enabled web server for the Snap Framework (Index)</TITLE
 ><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
 ><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
 ></SCRIPT
@@ -19,7 +19,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-server-0.2.13: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</TD
+>snap-server-0.3.0: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</TD
 ><TD CLASS="topbut"
 ><A HREF="index.html"
 >Contents</A
@@ -37,19 +37,11 @@
 ><TABLE ID="indexlist" CELLPADDING="0" CELLSPACING="5"
 ><TR CLASS="indexrow"
 ><TD CLASS="indexentry"
->accessLog</TD
+>addListen</TD
 ><TD CLASS="indexlinks"
-><A HREF="Snap-Http-Server-Config.html#v%3AaccessLog"
+><A HREF="Snap-Http-Server-Config.html#v%3AaddListen"
 >Snap.Http.Server.Config</A
-></TD
-></TR
-><TR CLASS="indexrow"
-><TD CLASS="indexentry"
->bindAddress</TD
-><TD CLASS="indexlinks"
-><A HREF="Snap-Http-Server-Config.html#v%3AbindAddress"
->Snap.Http.Server.Config</A
-></TD
+>, Snap.Http.Server</TD
 ></TR
 ><TR CLASS="indexrow"
 ><TD CLASS="indexentry"
@@ -60,32 +52,156 @@
 ></TD
 ></TR
 ><TR CLASS="indexrow"
-><TD CLASS="indexentry" COLSPAN="2"
->Config</TD
-></TR
-><TR CLASS="indexrow"
-><TD CLASS="indexannot"
->1 (Type/Class)</TD
+><TD CLASS="indexentry"
+>commandLineConfig</TD
 ><TD CLASS="indexlinks"
-><A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+><A HREF="Snap-Http-Server-Config.html#v%3AcommandLineConfig"
 >Snap.Http.Server.Config</A
-></TD
-></TR
-><TR CLASS="indexrow"
-><TD CLASS="indexannot"
->2 (Data Constructor)</TD
-><TD CLASS="indexlinks"
-><A HREF="Snap-Http-Server-Config.html#v%3AConfig"
->Snap.Http.Server.Config</A
-></TD
+>, Snap.Http.Server</TD
 ></TR
 ><TR CLASS="indexrow"
 ><TD CLASS="indexentry"
->errorLog</TD
+>completeConfig</TD
 ><TD CLASS="indexlinks"
-><A HREF="Snap-Http-Server-Config.html#v%3AerrorLog"
+><A HREF="Snap-Http-Server-Config.html#v%3AcompleteConfig"
 >Snap.Http.Server.Config</A
-></TD
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>Config</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>ConfigBackend</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#t%3AConfigBackend"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>ConfigLibEvBackend</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AConfigLibEvBackend"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>ConfigListen</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#t%3AConfigListen"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>ConfigSimpleBackend</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AConfigSimpleBackend"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>defaultConfig</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AdefaultConfig"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>emptyConfig</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AemptyConfig"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>getAccessLog</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetAccessLog"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>getBackend</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetBackend"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>getCompression</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetCompression"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>getErrorHandler</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetErrorHandler"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>getErrorLog</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetErrorLog"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>getHostname</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetHostname"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>getListen</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetListen"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>getLocale</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetLocale"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>getOther</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetOther"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>getVerbose</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetVerbose"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
 ></TR
 ><TR CLASS="indexrow"
 ><TD CLASS="indexentry"
@@ -97,19 +213,19 @@
 ></TR
 ><TR CLASS="indexrow"
 ><TD CLASS="indexentry"
->listenPort</TD
+>ListenHttp</TD
 ><TD CLASS="indexlinks"
-><A HREF="Snap-Http-Server-Config.html#v%3AlistenPort"
+><A HREF="Snap-Http-Server-Config.html#v%3AListenHttp"
 >Snap.Http.Server.Config</A
-></TD
+>, Snap.Http.Server</TD
 ></TR
 ><TR CLASS="indexrow"
 ><TD CLASS="indexentry"
->localHostname</TD
+>ListenHttps</TD
 ><TD CLASS="indexlinks"
-><A HREF="Snap-Http-Server-Config.html#v%3AlocalHostname"
+><A HREF="Snap-Http-Server-Config.html#v%3AListenHttps"
 >Snap.Http.Server.Config</A
-></TD
+>, Snap.Http.Server</TD
 ></TR
 ><TR CLASS="indexrow"
 ><TD CLASS="indexentry"
@@ -137,10 +253,98 @@
 ></TR
 ><TR CLASS="indexrow"
 ><TD CLASS="indexentry"
->readConfigFromCmdLineArgs</TD
+>quickHttpServe</TD
 ><TD CLASS="indexlinks"
-><A HREF="Snap-Http-Server-Config.html#v%3AreadConfigFromCmdLineArgs"
+><A HREF="Snap-Http-Server.html#v%3AquickHttpServe"
+>Snap.Http.Server</A
+></TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>setAccessLog</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetAccessLog"
 >Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>setBackend</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetBackend"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>setCompression</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetCompression"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>setErrorHandler</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetErrorHandler"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>setErrorLog</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetErrorLog"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>setHostname</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetHostname"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>setLocale</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetLocale"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>setOther</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetOther"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>setUnicodeLocale</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server.html#v%3AsetUnicodeLocale"
+>Snap.Http.Server</A
+></TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>setVerbose</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetVerbose"
+>Snap.Http.Server.Config</A
+>, Snap.Http.Server</TD
+></TR
+><TR CLASS="indexrow"
+><TD CLASS="indexentry"
+>simpleHttpServe</TD
+><TD CLASS="indexlinks"
+><A HREF="Snap-Http-Server.html#v%3AsimpleHttpServe"
+>Snap.Http.Server</A
 ></TD
 ></TR
 ><TR CLASS="indexrow"

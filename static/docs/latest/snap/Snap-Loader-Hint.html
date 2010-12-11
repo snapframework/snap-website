@@ -1,0 +1,502 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Snap.Loader.Hint</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+><SCRIPT TYPE="text/javascript"
+>window.onload = function () {setSynopsis("mini_Snap-Loader-Hint.html")};</SCRIPT
+></HEAD
+><BODY
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topbar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
+></TD
+><TD CLASS="title"
+>snap-0.3.0: Snap: A Haskell Web Framework (Core)</TD
+><TD CLASS="topbut"
+><A HREF="src/Snap-Loader-Hint.html"
+>Source code</A
+></TD
+><TD CLASS="topbut"
+><A HREF="index.html"
+>Contents</A
+></TD
+><TD CLASS="topbut"
+><A HREF="doc-index.html"
+>Index</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="modulebar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><FONT SIZE="6"
+>Snap.Loader.Hint</FONT
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Description</TD
+></TR
+><TR
+><TD CLASS="doc"
+>This module includes the machinery necessary to use hint to load
+ action code dynamically.  It includes a Template Haskell function
+ to gather the necessary compile-time information about code
+ location, compiler arguments, etc, and bind that information into
+ the calls to the dynamic loader.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Synopsis</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AloadSnapTH"
+>loadSnapTH</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
+>Name</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
+>Name</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
+>Name</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AQ"
+>Q</A
+> <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AExp"
+>Exp</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetHintOpts"
+>getHintOpts</A
+> :: [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+>] -&gt; [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AhintSnap"
+>hintSnap</A
+> :: [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+>] -&gt; [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+>] -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Aformat"
+>format</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/hint/latest/doc/html/Language-Haskell-Interpreter.html#t%3AInterpreterError"
+>InterpreterError</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AprotectedActionEvaluator"
+>protectedActionEvaluator</A
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/time/latest/doc/html/Data-Time-Clock.html#t%3ANominalDiffTime"
+>NominalDiffTime</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a)</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Documentation</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:loadSnapTH"
+><A NAME="v%3AloadSnapTH"
+></A
+></A
+><B
+>loadSnapTH</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
+>Name</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
+>Name</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
+>Name</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AQ"
+>Q</A
+> <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AExp"
+>Exp</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Loader-Hint.html#loadSnapTH"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>This function derives all the information necessary to use the
+ interpreter from the compile-time environment, and compiles it in
+ to the generated code.
+</P
+><P
+>This could be considered a TH wrapper around a function
+</P
+><PRE
+> loadSnap :: IO a -&gt; (a -&gt; IO ()) -&gt; (a -&gt; Snap ()) -&gt; IO (IO (), Snap ())
+</PRE
+><P
+>with a magical implementation.
+</P
+><P
+>The returned IO action does nothing.  The returned Snap action does
+ initialization, runs the action, and does the cleanup.  This means
+ that the whole application state will be loaded and unloaded for
+ each request.  To make this worthwhile, those steps should be made
+ quite fast.
+</P
+><P
+>The upshot is that you shouldn't need to recompile your server
+ during development unless your .cabal file changes, or the code
+ that uses this splice changes.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getHintOpts"
+><A NAME="v%3AgetHintOpts"
+></A
+></A
+><B
+>getHintOpts</B
+> :: [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+>] -&gt; [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+>]</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Loader-Hint.html#getHintOpts"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Convert the command-line arguments passed in to options for the
+ hint interpreter.  This is somewhat brittle code, based on a few
+ experimental datapoints regarding the structure of the command-line
+ arguments cabal produces.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:hintSnap"
+><A NAME="v%3AhintSnap"
+></A
+></A
+><B
+>hintSnap</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Loader-Hint.html#hintSnap"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+>]</TD
+><TD CLASS="rdoc"
+>A list of command-line options for the interpreter
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+>]</TD
+><TD CLASS="rdoc"
+>A list of modules that need to be
+ interpreted. This should contain only the
+ modules which contain the initialization,
+ cleanup, and handler actions.  Everything else
+ they require will be loaded transitively.
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+></TD
+><TD CLASS="rdoc"
+>The name of the initialization action
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+></TD
+><TD CLASS="rdoc"
+>The name of the cleanup action
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+></TD
+><TD CLASS="rdoc"
+>The name of the handler action
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+><P
+>This function creates the Snap handler that actually is
+ responsible for doing the dynamic loading of actions via hint,
+ given all of the configuration information that the interpreter
+ needs.  It also ensures safe concurrent access to the interpreter,
+ and caches the interpreter results for a short time before allowing
+ it to run again.
+</P
+><P
+>This constructs an expression of type Snap (), that is essentially
+</P
+><PRE
+> bracketSnap initialization cleanup handler
+</PRE
+><P
+>for the values of initialization, cleanup, and handler passed in.
+</P
+><P
+>Generally, this won't be called manually.  Instead, loadSnapTH will
+ generate a call to it at compile-time, calculating all the
+ arguments from its environment.
+</P
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:format"
+><A NAME="v%3Aformat"
+></A
+></A
+><B
+>format</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/hint/latest/doc/html/Language-Haskell-Interpreter.html#t%3AInterpreterError"
+>InterpreterError</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Loader-Hint.html#format"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Convert an InterpreterError to a String for presentation
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:protectedActionEvaluator"
+><A NAME="v%3AprotectedActionEvaluator"
+></A
+></A
+><B
+>protectedActionEvaluator</B
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/time/latest/doc/html/Data-Time-Clock.html#t%3ANominalDiffTime"
+>NominalDiffTime</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Loader-Hint.html#protectedActionEvaluator"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Create a wrapper for an action that protects the action from
+ concurrent or rapid evaluation.
+</P
+><P
+>There will be at least the passed-in <TT
+><A HREF="http://hackage.haskell.org/packages/archive/time/latest/doc/html/Data-Time-Clock.html#t%3ANominalDiffTime"
+>NominalDiffTime</A
+></TT
+> delay
+ between the finish of one execution of the action the start of the
+ next.  Concurrent calls to the wrapper, and calls within the delay
+ period, end up with the same calculated value returned.
+</P
+><P
+>If an exception is raised during the processing of the action, it
+ will be thrown to all waiting threads, and for all requests made
+ before the delay time has expired after the exception was raised.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="botbar"
+>Produced by <A HREF="http://www.haskell.org/haddock/"
+>Haddock</A
+> version 2.6.1</TD
+></TR
+></TABLE
+></BODY
+></HTML
+>

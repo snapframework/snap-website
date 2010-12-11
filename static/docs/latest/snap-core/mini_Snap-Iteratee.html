@@ -15,45 +15,8 @@
 >Snap.Iteratee</DIV
 ><DIV CLASS="mini-synopsis"
 ><H1
->Convenience aliases around types from <TT
->Data.Iteratee</TT
->
-</H1
-> <DIV CLASS="decl"
-><SPAN CLASS="keyword"
->type</SPAN
->&nbsp;<A HREF="Snap-Iteratee.html#t%3AStream" TARGET="main"
->Stream</A
-> </DIV
-> <DIV CLASS="decl"
-><SPAN CLASS="keyword"
->type</SPAN
->&nbsp;<A HREF="Snap-Iteratee.html#t%3AIterV" TARGET="main"
->IterV</A
-> m</DIV
-> <DIV CLASS="decl"
-><SPAN CLASS="keyword"
->type</SPAN
->&nbsp;<A HREF="Snap-Iteratee.html#t%3AIteratee" TARGET="main"
->Iteratee</A
-> m</DIV
-> <DIV CLASS="decl"
-><SPAN CLASS="keyword"
->type</SPAN
->&nbsp;<A HREF="Snap-Iteratee.html#t%3AEnumerator" TARGET="main"
->Enumerator</A
-> m a</DIV
-> <H1
->Re-export types and functions from <TT
->Data.Iteratee</TT
->
-</H1
->  <H1
->Helper functions
-</H1
-> <H2
 >Enumerators
-</H2
+</H1
 > <DIV CLASS="decl"
 ><A HREF="Snap-Iteratee.html#v%3AenumBS" TARGET="main"
 >enumBS</A
@@ -76,43 +39,16 @@
 >&nbsp;<A HREF="Snap-Iteratee.html#t%3AInvalidRangeException" TARGET="main"
 >InvalidRangeException</A
 > </DIV
-> <H2
->Conversion to/from <TT
-><A HREF="http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-WrappedByteString.html#t%3AWrappedByteString"
->WrappedByteString</A
-></TT
->
-</H2
-> <DIV CLASS="decl"
-><A HREF="Snap-Iteratee.html#v%3AfromWrap" TARGET="main"
->fromWrap</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Iteratee.html#v%3AtoWrap" TARGET="main"
->toWrap</A
-></DIV
-> <H2
+> <H1
 >Iteratee utilities
-</H2
-> <DIV CLASS="decl"
-><A HREF="Snap-Iteratee.html#v%3Adrop%27" TARGET="main"
->drop'</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Iteratee.html#v%3AtakeExactly" TARGET="main"
->takeExactly</A
-></DIV
-> <DIV CLASS="decl"
-><A HREF="Snap-Iteratee.html#v%3AtakeNoMoreThan" TARGET="main"
->takeNoMoreThan</A
-></DIV
+</H1
 > <DIV CLASS="decl"
 ><A HREF="Snap-Iteratee.html#v%3AcountBytes" TARGET="main"
 >countBytes</A
 ></DIV
 > <DIV CLASS="decl"
-><A HREF="Snap-Iteratee.html#v%3AbufferIteratee" TARGET="main"
->bufferIteratee</A
+><A HREF="Snap-Iteratee.html#v%3Adrop%27" TARGET="main"
+>drop'</A
 ></DIV
 > <DIV CLASS="decl"
 ><A HREF="Snap-Iteratee.html#v%3AmkIterateeBuffer" TARGET="main"
@@ -125,6 +61,204 @@
 > <DIV CLASS="decl"
 ><A HREF="Snap-Iteratee.html#v%3AunsafeBufferIteratee" TARGET="main"
 >unsafeBufferIteratee</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3Atake" TARGET="main"
+>take</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3Adrop" TARGET="main"
+>drop</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AtakeExactly" TARGET="main"
+>takeExactly</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AtakeNoMoreThan" TARGET="main"
+>takeNoMoreThan</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AskipToEof" TARGET="main"
+>skipToEof</A
+></DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Iteratee.html#t%3ATooManyBytesReadException" TARGET="main"
+>TooManyBytesReadException</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Iteratee.html#t%3AShortWriteException" TARGET="main"
+>ShortWriteException</A
+> </DIV
+> <H1
+>Re-export types and functions from <TT
+>Data.Enumerator</TT
+>
+</H1
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Iteratee.html#t%3AStream" TARGET="main"
+>Stream</A
+> a</DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Iteratee.html#t%3AStep" TARGET="main"
+>Step</A
+> a m b</DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Iteratee.html#t%3AIteratee" TARGET="main"
+>Iteratee</A
+> a m b</DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+>&nbsp;<A HREF="Snap-Iteratee.html#t%3AEnumerator" TARGET="main"
+>Enumerator</A
+> a m b</DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+>&nbsp;<A HREF="Snap-Iteratee.html#t%3AEnumeratee" TARGET="main"
+>Enumeratee</A
+> aOut aIn m b</DIV
+> <H2
+>Primitives
+</H2
+> <H3
+>Combinators
+</H3
+>  <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AreturnI" TARGET="main"
+>returnI</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3Ayield" TARGET="main"
+>yield</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3Acontinue" TARGET="main"
+>continue</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AthrowError" TARGET="main"
+>throwError</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AcatchError" TARGET="main"
+>catchError</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AliftI" TARGET="main"
+>liftI</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3A%3E%3E%3D%3D" TARGET="main"
+>(&gt;&gt;==)</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3A%3D%3D%3C%3C" TARGET="main"
+>(==&lt;&lt;)</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3A%24%24" TARGET="main"
+>($$)</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3A%3E%3D%3D%3E" TARGET="main"
+>(&gt;==&gt;)</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3A%3C%3D%3D%3C" TARGET="main"
+>(&lt;==&lt;)</A
+></DIV
+> <H3
+>Iteratees
+</H3
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3Arun" TARGET="main"
+>run</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3Arun_" TARGET="main"
+>run_</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3Aconsume" TARGET="main"
+>consume</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AisEOF" TARGET="main"
+>isEOF</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AliftTrans" TARGET="main"
+>liftTrans</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AliftFoldL" TARGET="main"
+>liftFoldL</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AliftFoldL%27" TARGET="main"
+>liftFoldL'</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AliftFoldM" TARGET="main"
+>liftFoldM</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AprintChunks" TARGET="main"
+>printChunks</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3Ahead" TARGET="main"
+>head</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3Apeek" TARGET="main"
+>peek</A
+></DIV
+> <H3
+>Enumerators
+</H3
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AenumEOF" TARGET="main"
+>enumEOF</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AenumList" TARGET="main"
+>enumList</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AconcatEnums" TARGET="main"
+>concatEnums</A
+></DIV
+> <H3
+>Enumeratees
+</H3
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AcheckDone" TARGET="main"
+>checkDone</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3Amap" TARGET="main"
+>map</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3Asequence" TARGET="main"
+>sequence</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Iteratee.html#v%3AjoinI" TARGET="main"
+>joinI</A
 ></DIV
 ></DIV
 ></DIV

@@ -11,665 +11,739 @@ span.spaces    { background: white }
 <pre>
 <span class="lineno">    1 </span>{-# LANGUAGE DeriveDataTypeable #-}
 <span class="lineno">    2 </span>{-# LANGUAGE EmptyDataDecls #-}
-<span class="lineno">    3 </span>{-# LANGUAGE OverloadedStrings #-}
-<span class="lineno">    4 </span>{-# LANGUAGE RankNTypes #-}
-<span class="lineno">    5 </span>
-<span class="lineno">    6 </span>module Snap.Internal.Types where
+<span class="lineno">    3 </span>{-# LANGUAGE FlexibleInstances #-}
+<span class="lineno">    4 </span>{-# LANGUAGE OverloadedStrings #-}
+<span class="lineno">    5 </span>{-# LANGUAGE PackageImports #-}
+<span class="lineno">    6 </span>{-# LANGUAGE RankNTypes #-}
 <span class="lineno">    7 </span>
-<span class="lineno">    8 </span>------------------------------------------------------------------------------
-<span class="lineno">    9 </span>import           Control.Applicative
-<span class="lineno">   10 </span>import           Control.Exception (throwIO, ErrorCall(..))
-<span class="lineno">   11 </span>import           Control.Monad.CatchIO
-<span class="lineno">   12 </span>import           Control.Monad.State.Strict
-<span class="lineno">   13 </span>import           Data.ByteString.Char8 (ByteString)
-<span class="lineno">   14 </span>import qualified Data.ByteString.Char8 as S
-<span class="lineno">   15 </span>import qualified Data.ByteString.Lazy.Char8 as L
-<span class="lineno">   16 </span>import qualified Data.CIByteString as CIB
-<span class="lineno">   17 </span>import           Data.Int
-<span class="lineno">   18 </span>import           Data.IORef
-<span class="lineno">   19 </span>import qualified Data.Iteratee as Iter
-<span class="lineno">   20 </span>import           Data.Maybe
-<span class="lineno">   21 </span>import qualified Data.Text as T
-<span class="lineno">   22 </span>import qualified Data.Text.Encoding as T
-<span class="lineno">   23 </span>import qualified Data.Text.Lazy as LT
-<span class="lineno">   24 </span>import qualified Data.Text.Lazy.Encoding as LT
-<span class="lineno">   25 </span>
-<span class="lineno">   26 </span>import           Data.Typeable
-<span class="lineno">   27 </span>
-<span class="lineno">   28 </span>------------------------------------------------------------------------------
-<span class="lineno">   29 </span>import           Snap.Iteratee hiding (Enumerator)
-<span class="lineno">   30 </span>import           Snap.Internal.Http.Types
-<span class="lineno">   31 </span>import           Snap.Internal.Iteratee.Debug
-<span class="lineno">   32 </span>
-<span class="lineno">   33 </span>
-<span class="lineno">   34 </span>------------------------------------------------------------------------------
-<span class="lineno">   35 </span>-- The Snap Monad
-<span class="lineno">   36 </span>------------------------------------------------------------------------------
+<span class="lineno">    8 </span>module Snap.Internal.Types where
+<span class="lineno">    9 </span>
+<span class="lineno">   10 </span>------------------------------------------------------------------------------
+<span class="lineno">   11 </span>import &quot;MonadCatchIO-transformers&quot; Control.Monad.CatchIO
+<span class="lineno">   12 </span>
+<span class="lineno">   13 </span>import                       Control.Applicative
+<span class="lineno">   14 </span>import                       Control.Exception (throwIO, ErrorCall(..))
+<span class="lineno">   15 </span>import                       Control.Monad
+<span class="lineno">   16 </span>import                       Control.Monad.State
+<span class="lineno">   17 </span>import                       Data.ByteString.Char8 (ByteString)
+<span class="lineno">   18 </span>import qualified             Data.ByteString.Char8 as S
+<span class="lineno">   19 </span>import qualified             Data.ByteString.Lazy.Char8 as L
+<span class="lineno">   20 </span>import qualified             Data.CIByteString as CIB
+<span class="lineno">   21 </span>import                       Data.Int
+<span class="lineno">   22 </span>import                       Data.IORef
+<span class="lineno">   23 </span>import                       Data.Maybe
+<span class="lineno">   24 </span>import qualified             Data.Text as T
+<span class="lineno">   25 </span>import qualified             Data.Text.Encoding as T
+<span class="lineno">   26 </span>import qualified             Data.Text.Lazy as LT
+<span class="lineno">   27 </span>import qualified             Data.Text.Lazy.Encoding as LT
+<span class="lineno">   28 </span>import                       Data.Typeable
+<span class="lineno">   29 </span>import                       Prelude hiding (catch, take)
+<span class="lineno">   30 </span>
+<span class="lineno">   31 </span>
+<span class="lineno">   32 </span>------------------------------------------------------------------------------
+<span class="lineno">   33 </span>import                       Snap.Internal.Http.Types
+<span class="lineno">   34 </span>import                       Snap.Iteratee
+<span class="lineno">   35 </span>import                       Snap.Internal.Iteratee.Debug
+<span class="lineno">   36 </span>
 <span class="lineno">   37 </span>
-<span class="lineno">   38 </span>{-|
-<span class="lineno">   39 </span>
-<span class="lineno">   40 </span>'Snap' is the 'Monad' that user web handlers run in. 'Snap' gives you:
+<span class="lineno">   38 </span>------------------------------------------------------------------------------
+<span class="lineno">   39 </span>-- The Snap Monad
+<span class="lineno">   40 </span>------------------------------------------------------------------------------
 <span class="lineno">   41 </span>
-<span class="lineno">   42 </span>1. stateful access to fetch or modify an HTTP 'Request'
+<span class="lineno">   42 </span>{-|
 <span class="lineno">   43 </span>
-<span class="lineno">   44 </span>2. stateful access to fetch or modify an HTTP 'Response'
+<span class="lineno">   44 </span>'Snap' is the 'Monad' that user web handlers run in. 'Snap' gives you:
 <span class="lineno">   45 </span>
-<span class="lineno">   46 </span>3. failure \/ 'Alternative' \/ 'MonadPlus' semantics: a 'Snap' handler can
-<span class="lineno">   47 </span>   choose not to handle a given request, using 'empty' or its synonym 'pass',
-<span class="lineno">   48 </span>   and you can try alternative handlers with the '&lt;|&gt;' operator:
+<span class="lineno">   46 </span>1. stateful access to fetch or modify an HTTP 'Request'
+<span class="lineno">   47 </span>
+<span class="lineno">   48 </span>2. stateful access to fetch or modify an HTTP 'Response'
 <span class="lineno">   49 </span>
-<span class="lineno">   50 </span>   &gt; a :: Snap String
-<span class="lineno">   51 </span>   &gt; a = pass
-<span class="lineno">   52 </span>   &gt;
-<span class="lineno">   53 </span>   &gt; b :: Snap String
-<span class="lineno">   54 </span>   &gt; b = return &quot;foo&quot;
-<span class="lineno">   55 </span>   &gt;
-<span class="lineno">   56 </span>   &gt; c :: Snap String
-<span class="lineno">   57 </span>   &gt; c = a &lt;|&gt; b             -- try running a, if it fails then try b
-<span class="lineno">   58 </span>
-<span class="lineno">   59 </span>4. convenience functions ('writeBS', 'writeLBS', 'writeText', 'writeLazyText',
-<span class="lineno">   60 </span>   'addToOutput') for writing output to the 'Response':
-<span class="lineno">   61 </span>
-<span class="lineno">   62 </span>   &gt; a :: (forall a . Enumerator a) -&gt; Snap ()
-<span class="lineno">   63 </span>   &gt; a someEnumerator = do
-<span class="lineno">   64 </span>   &gt;     writeBS &quot;I'm a strict bytestring&quot;
-<span class="lineno">   65 </span>   &gt;     writeLBS &quot;I'm a lazy bytestring&quot;
-<span class="lineno">   66 </span>   &gt;     addToOutput someEnumerator
-<span class="lineno">   67 </span>
-<span class="lineno">   68 </span>5. early termination: if you call 'finishWith':
-<span class="lineno">   69 </span>
-<span class="lineno">   70 </span>   &gt; a :: Snap ()
-<span class="lineno">   71 </span>   &gt; a = do
-<span class="lineno">   72 </span>   &gt;   modifyResponse $ setResponseStatus 500 &quot;Internal Server Error&quot;
-<span class="lineno">   73 </span>   &gt;   writeBS &quot;500 error&quot;
-<span class="lineno">   74 </span>   &gt;   r &lt;- getResponse
-<span class="lineno">   75 </span>   &gt;   finishWith r
-<span class="lineno">   76 </span>
-<span class="lineno">   77 </span>   then any subsequent processing will be skipped and supplied 'Response' value
-<span class="lineno">   78 </span>   will be returned from 'runSnap' as-is.
-<span class="lineno">   79 </span>
-<span class="lineno">   80 </span>6. access to the 'IO' monad through a 'MonadIO' instance:
-<span class="lineno">   81 </span>
-<span class="lineno">   82 </span>   &gt; a :: Snap ()
-<span class="lineno">   83 </span>   &gt; a = liftIO fireTheMissiles
-<span class="lineno">   84 </span>-}
+<span class="lineno">   50 </span>3. failure \/ 'Alternative' \/ 'MonadPlus' semantics: a 'Snap' handler can
+<span class="lineno">   51 </span>   choose not to handle a given request, using 'empty' or its synonym 'pass',
+<span class="lineno">   52 </span>   and you can try alternative handlers with the '&lt;|&gt;' operator:
+<span class="lineno">   53 </span>
+<span class="lineno">   54 </span>   &gt; a :: Snap String
+<span class="lineno">   55 </span>   &gt; a = pass
+<span class="lineno">   56 </span>   &gt;
+<span class="lineno">   57 </span>   &gt; b :: Snap String
+<span class="lineno">   58 </span>   &gt; b = return &quot;foo&quot;
+<span class="lineno">   59 </span>   &gt;
+<span class="lineno">   60 </span>   &gt; c :: Snap String
+<span class="lineno">   61 </span>   &gt; c = a &lt;|&gt; b             -- try running a, if it fails then try b
+<span class="lineno">   62 </span>
+<span class="lineno">   63 </span>4. convenience functions ('writeBS', 'writeLBS', 'writeText', 'writeLazyText',
+<span class="lineno">   64 </span>   'addToOutput') for writing output to the 'Response':
+<span class="lineno">   65 </span>
+<span class="lineno">   66 </span>   &gt; a :: (forall a . Enumerator a) -&gt; Snap ()
+<span class="lineno">   67 </span>   &gt; a someEnumerator = do
+<span class="lineno">   68 </span>   &gt;     writeBS &quot;I'm a strict bytestring&quot;
+<span class="lineno">   69 </span>   &gt;     writeLBS &quot;I'm a lazy bytestring&quot;
+<span class="lineno">   70 </span>   &gt;     addToOutput someEnumerator
+<span class="lineno">   71 </span>
+<span class="lineno">   72 </span>5. early termination: if you call 'finishWith':
+<span class="lineno">   73 </span>
+<span class="lineno">   74 </span>   &gt; a :: Snap ()
+<span class="lineno">   75 </span>   &gt; a = do
+<span class="lineno">   76 </span>   &gt;   modifyResponse $ setResponseStatus 500 &quot;Internal Server Error&quot;
+<span class="lineno">   77 </span>   &gt;   writeBS &quot;500 error&quot;
+<span class="lineno">   78 </span>   &gt;   r &lt;- getResponse
+<span class="lineno">   79 </span>   &gt;   finishWith r
+<span class="lineno">   80 </span>
+<span class="lineno">   81 </span>   then any subsequent processing will be skipped and supplied 'Response' value
+<span class="lineno">   82 </span>   will be returned from 'runSnap' as-is.
+<span class="lineno">   83 </span>
+<span class="lineno">   84 </span>6. access to the 'IO' monad through a 'MonadIO' instance:
 <span class="lineno">   85 </span>
-<span class="lineno">   86 </span>
-<span class="lineno">   87 </span>------------------------------------------------------------------------------
-<span class="lineno">   88 </span>newtype <span class="istickedoff">Snap</span> a = Snap {
-<span class="lineno">   89 </span>      unSnap :: StateT SnapState (Iteratee IO) (Maybe (Either Response a))
-<span class="lineno">   90 </span>}
-<span class="lineno">   91 </span>
-<span class="lineno">   92 </span>
-<span class="lineno">   93 </span>------------------------------------------------------------------------------
-<span class="lineno">   94 </span>data <span class="istickedoff">SnapState</span> = SnapState
-<span class="lineno">   95 </span>    { _snapRequest  :: Request
-<span class="lineno">   96 </span>    , _snapResponse :: Response
-<span class="lineno">   97 </span>    , _snapLogError :: ByteString -&gt; IO () }
+<span class="lineno">   86 </span>   &gt; a :: Snap ()
+<span class="lineno">   87 </span>   &gt; a = liftIO fireTheMissiles
+<span class="lineno">   88 </span>
+<span class="lineno">   89 </span>You may notice that most of the type signatures in this module contain a
+<span class="lineno">   90 </span>@(MonadSnap m) =&gt; ...@ typeclass constraint. 'MonadSnap' is a typeclass which,
+<span class="lineno">   91 </span>in essence, says \&quot;you can get back to the 'Snap' monad from here\&quot;. Using
+<span class="lineno">   92 </span>'MonadSnap' you can extend the 'Snap' monad with additional functionality and
+<span class="lineno">   93 </span>still have access to most of the 'Snap' functions without writing 'lift'
+<span class="lineno">   94 </span>everywhere. Instances are already provided for most of the common monad
+<span class="lineno">   95 </span>transformers ('ReaderT', 'WriterT', 'StateT', etc.).
+<span class="lineno">   96 </span>
+<span class="lineno">   97 </span>-}
 <span class="lineno">   98 </span>
-<span class="lineno">   99 </span>
-<span class="lineno">  100 </span>------------------------------------------------------------------------------
-<span class="lineno">  101 </span>instance Monad Snap where
-<span class="lineno">  102 </span>    <span class="decl"><span class="istickedoff">(Snap m) &gt;&gt;= f =</span>
-<span class="lineno">  103 </span><span class="spaces">        </span><span class="istickedoff">Snap $ do</span>
-<span class="lineno">  104 </span><span class="spaces">            </span><span class="istickedoff">eth &lt;- m</span>
-<span class="lineno">  105 </span><span class="spaces">            </span><span class="istickedoff">maybe (return Nothing)</span>
-<span class="lineno">  106 </span><span class="spaces">                  </span><span class="istickedoff">(either (return . Just . Left)</span>
-<span class="lineno">  107 </span><span class="spaces">                          </span><span class="istickedoff">(unSnap . f))</span>
-<span class="lineno">  108 </span><span class="spaces">                  </span><span class="istickedoff">eth</span></span>
-<span class="lineno">  109 </span>
-<span class="lineno">  110 </span>    <span class="decl"><span class="istickedoff">return = Snap . return . Just . Right</span></span>
-<span class="lineno">  111 </span>    <span class="decl"><span class="istickedoff">fail   = const $ Snap $ return Nothing</span></span>
-<span class="lineno">  112 </span>
-<span class="lineno">  113 </span>
-<span class="lineno">  114 </span>------------------------------------------------------------------------------
-<span class="lineno">  115 </span>instance MonadIO Snap where
-<span class="lineno">  116 </span>    <span class="decl"><span class="istickedoff">liftIO m = Snap $ liftM (Just . Right) $ liftIO m</span></span>
+<span class="lineno">   99 </span>------------------------------------------------------------------------------
+<span class="lineno">  100 </span>-- | 'MonadSnap' is a type class, analogous to 'MonadIO' for 'IO', that makes
+<span class="lineno">  101 </span>-- it easy to wrap 'Snap' inside monad transformers.
+<span class="lineno">  102 </span>class (Monad m, MonadIO m, MonadCatchIO m, MonadPlus m, Functor m,
+<span class="lineno">  103 </span>       Applicative m, Alternative m) =&gt; MonadSnap m where
+<span class="lineno">  104 </span>    liftSnap :: Snap a -&gt; m a
+<span class="lineno">  105 </span>
+<span class="lineno">  106 </span>------------------------------------------------------------------------------
+<span class="lineno">  107 </span>newtype <span class="istickedoff">Snap</span> a = Snap {
+<span class="lineno">  108 </span>      unSnap :: StateT SnapState (Iteratee ByteString IO) (Maybe (Either Response a))
+<span class="lineno">  109 </span>}
+<span class="lineno">  110 </span>
+<span class="lineno">  111 </span>
+<span class="lineno">  112 </span>------------------------------------------------------------------------------
+<span class="lineno">  113 </span>data <span class="istickedoff">SnapState</span> = SnapState
+<span class="lineno">  114 </span>    { _snapRequest  :: Request
+<span class="lineno">  115 </span>    , _snapResponse :: Response
+<span class="lineno">  116 </span>    , _snapLogError :: ByteString -&gt; IO () }
 <span class="lineno">  117 </span>
 <span class="lineno">  118 </span>
 <span class="lineno">  119 </span>------------------------------------------------------------------------------
-<span class="lineno">  120 </span>instance MonadCatchIO Snap where
-<span class="lineno">  121 </span>    <span class="istickedoff"><span class="decl"><span class="istickedoff">catch (Snap m) handler = Snap $ do</span>
-<span class="lineno">  122 </span><span class="spaces">        </span><span class="istickedoff">x &lt;- try m</span>
-<span class="lineno">  123 </span><span class="spaces">        </span><span class="istickedoff">case x of</span>
-<span class="lineno">  124 </span><span class="spaces">          </span><span class="istickedoff">(Left e)  -&gt; let (Snap z) = handler e in z</span>
-<span class="lineno">  125 </span><span class="spaces">          </span><span class="istickedoff">(Right y) -&gt; return y</span></span></span>
-<span class="lineno">  126 </span>
-<span class="lineno">  127 </span>    <span class="decl"><span class="istickedoff">block (Snap m) = Snap $ block m</span></span>
-<span class="lineno">  128 </span>    <span class="decl"><span class="istickedoff">unblock (Snap m) = Snap $ unblock m</span></span>
-<span class="lineno">  129 </span>
-<span class="lineno">  130 </span>
-<span class="lineno">  131 </span>------------------------------------------------------------------------------
-<span class="lineno">  132 </span>instance MonadPlus Snap where
-<span class="lineno">  133 </span>    <span class="decl"><span class="istickedoff">mzero = Snap $ return Nothing</span></span>
-<span class="lineno">  134 </span>
-<span class="lineno">  135 </span>    <span class="decl"><span class="istickedoff">a `mplus` b =</span>
-<span class="lineno">  136 </span><span class="spaces">        </span><span class="istickedoff">Snap $ do</span>
-<span class="lineno">  137 </span><span class="spaces">            </span><span class="istickedoff">mb &lt;- unSnap a</span>
-<span class="lineno">  138 </span><span class="spaces">            </span><span class="istickedoff">if isJust mb then return mb else unSnap b</span></span>
-<span class="lineno">  139 </span>
-<span class="lineno">  140 </span>
-<span class="lineno">  141 </span>------------------------------------------------------------------------------
-<span class="lineno">  142 </span>instance Functor Snap where
-<span class="lineno">  143 </span>    <span class="decl"><span class="istickedoff">fmap = liftM</span></span>
-<span class="lineno">  144 </span>
+<span class="lineno">  120 </span>instance Monad Snap where
+<span class="lineno">  121 </span>    <span class="decl"><span class="istickedoff">(Snap m) &gt;&gt;= f =</span>
+<span class="lineno">  122 </span><span class="spaces">        </span><span class="istickedoff">Snap $ do</span>
+<span class="lineno">  123 </span><span class="spaces">            </span><span class="istickedoff">eth &lt;- m</span>
+<span class="lineno">  124 </span><span class="spaces">            </span><span class="istickedoff">maybe (return Nothing)</span>
+<span class="lineno">  125 </span><span class="spaces">                  </span><span class="istickedoff">(either (return . Just . Left)</span>
+<span class="lineno">  126 </span><span class="spaces">                          </span><span class="istickedoff">(unSnap . f))</span>
+<span class="lineno">  127 </span><span class="spaces">                  </span><span class="istickedoff">eth</span></span>
+<span class="lineno">  128 </span>
+<span class="lineno">  129 </span>    <span class="decl"><span class="istickedoff">return = Snap . return . Just . Right</span></span>
+<span class="lineno">  130 </span>    <span class="decl"><span class="istickedoff">fail   = const $ Snap $ return Nothing</span></span>
+<span class="lineno">  131 </span>
+<span class="lineno">  132 </span>
+<span class="lineno">  133 </span>------------------------------------------------------------------------------
+<span class="lineno">  134 </span>instance MonadIO Snap where
+<span class="lineno">  135 </span>    <span class="decl"><span class="istickedoff">liftIO m = Snap $ liftM (Just . Right) $ liftIO m</span></span>
+<span class="lineno">  136 </span>
+<span class="lineno">  137 </span>
+<span class="lineno">  138 </span>------------------------------------------------------------------------------
+<span class="lineno">  139 </span>instance MonadCatchIO Snap where
+<span class="lineno">  140 </span>    <span class="istickedoff"><span class="decl"><span class="istickedoff">catch (Snap m) handler = Snap $ do</span>
+<span class="lineno">  141 </span><span class="spaces">        </span><span class="istickedoff">x &lt;- try m</span>
+<span class="lineno">  142 </span><span class="spaces">        </span><span class="istickedoff">case x of</span>
+<span class="lineno">  143 </span><span class="spaces">          </span><span class="istickedoff">(Left e)  -&gt; let (Snap z) = handler e in z</span>
+<span class="lineno">  144 </span><span class="spaces">          </span><span class="istickedoff">(Right y) -&gt; return y</span></span></span>
 <span class="lineno">  145 </span>
-<span class="lineno">  146 </span>------------------------------------------------------------------------------
-<span class="lineno">  147 </span>instance Applicative Snap where
-<span class="lineno">  148 </span>    <span class="decl"><span class="istickedoff">pure  = return</span></span>
-<span class="lineno">  149 </span>    <span class="decl"><span class="istickedoff">(&lt;*&gt;) = ap</span></span>
-<span class="lineno">  150 </span>
-<span class="lineno">  151 </span>
-<span class="lineno">  152 </span>------------------------------------------------------------------------------
-<span class="lineno">  153 </span>instance Alternative Snap where
-<span class="lineno">  154 </span>    <span class="decl"><span class="istickedoff">empty = mzero</span></span>
-<span class="lineno">  155 </span>    <span class="decl"><span class="istickedoff">(&lt;|&gt;) = mplus</span></span>
-<span class="lineno">  156 </span>
-<span class="lineno">  157 </span>------------------------------------------------------------------------------
-<span class="lineno">  158 </span>-- | The Typeable instance is here so Snap can be dynamically executed with
-<span class="lineno">  159 </span>-- Hint.
-<span class="lineno">  160 </span>snapTyCon :: TyCon
-<span class="lineno">  161 </span><span class="decl"><span class="nottickedoff">snapTyCon = mkTyCon &quot;Snap.Types.Snap&quot;</span></span>
-<span class="lineno">  162 </span>{-# NOINLINE snapTyCon #-}
+<span class="lineno">  146 </span>    <span class="decl"><span class="istickedoff">block (Snap m) = Snap $ block m</span></span>
+<span class="lineno">  147 </span>    <span class="decl"><span class="istickedoff">unblock (Snap m) = Snap $ unblock m</span></span>
+<span class="lineno">  148 </span>
+<span class="lineno">  149 </span>
+<span class="lineno">  150 </span>------------------------------------------------------------------------------
+<span class="lineno">  151 </span>instance MonadPlus Snap where
+<span class="lineno">  152 </span>    <span class="decl"><span class="istickedoff">mzero = Snap $ return Nothing</span></span>
+<span class="lineno">  153 </span>
+<span class="lineno">  154 </span>    <span class="decl"><span class="istickedoff">a `mplus` b =</span>
+<span class="lineno">  155 </span><span class="spaces">        </span><span class="istickedoff">Snap $ do</span>
+<span class="lineno">  156 </span><span class="spaces">            </span><span class="istickedoff">mb &lt;- unSnap a</span>
+<span class="lineno">  157 </span><span class="spaces">            </span><span class="istickedoff">if isJust mb then return mb else unSnap b</span></span>
+<span class="lineno">  158 </span>
+<span class="lineno">  159 </span>
+<span class="lineno">  160 </span>------------------------------------------------------------------------------
+<span class="lineno">  161 </span>instance Functor Snap where
+<span class="lineno">  162 </span>    <span class="decl"><span class="istickedoff">fmap = liftM</span></span>
 <span class="lineno">  163 </span>
-<span class="lineno">  164 </span>instance Typeable1 Snap where
-<span class="lineno">  165 </span>    <span class="decl"><span class="nottickedoff">typeOf1 _ = mkTyConApp snapTyCon []</span></span>
-<span class="lineno">  166 </span>
-<span class="lineno">  167 </span>
-<span class="lineno">  168 </span>------------------------------------------------------------------------------
-<span class="lineno">  169 </span>liftIter :: Iteratee IO a -&gt; Snap a
-<span class="lineno">  170 </span><span class="decl"><span class="istickedoff">liftIter i = Snap (lift i &gt;&gt;= return . Just . Right)</span></span>
-<span class="lineno">  171 </span>
-<span class="lineno">  172 </span>
-<span class="lineno">  173 </span>------------------------------------------------------------------------------
-<span class="lineno">  174 </span>-- | Sends the request body through an iteratee (data consumer) and
-<span class="lineno">  175 </span>-- returns the result.
-<span class="lineno">  176 </span>runRequestBody :: Iteratee IO a -&gt; Snap a
-<span class="lineno">  177 </span><span class="decl"><span class="istickedoff">runRequestBody iter = do</span>
-<span class="lineno">  178 </span><span class="spaces">    </span><span class="istickedoff">req  &lt;- getRequest</span>
-<span class="lineno">  179 </span><span class="spaces">    </span><span class="istickedoff">senum &lt;- liftIO $ readIORef $ rqBody req</span>
-<span class="lineno">  180 </span><span class="spaces">    </span><span class="istickedoff">let (SomeEnumerator enum) = senum</span>
-<span class="lineno">  181 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  182 </span><span class="spaces">    </span><span class="istickedoff">-- make sure the iteratee consumes all of the output</span>
-<span class="lineno">  183 </span><span class="spaces">    </span><span class="istickedoff">let iter' = iter &gt;&gt;= (\a -&gt; Iter.skipToEof &gt;&gt; return a)</span>
-<span class="lineno">  184 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  185 </span><span class="spaces">    </span><span class="istickedoff">-- run the iteratee</span>
-<span class="lineno">  186 </span><span class="spaces">    </span><span class="istickedoff">result &lt;- liftIter $ Iter.joinIM $ enum iter'</span>
-<span class="lineno">  187 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  188 </span><span class="spaces">    </span><span class="istickedoff">-- stuff a new dummy enumerator into the request, so you can only try to</span>
-<span class="lineno">  189 </span><span class="spaces">    </span><span class="istickedoff">-- read the request body from the socket once</span>
-<span class="lineno">  190 </span><span class="spaces">    </span><span class="istickedoff">liftIO $ writeIORef (rqBody req)</span>
-<span class="lineno">  191 </span><span class="spaces">                        </span><span class="istickedoff">(SomeEnumerator $ return . Iter.joinI . Iter.take 0 )</span>
-<span class="lineno">  192 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  193 </span><span class="spaces">    </span><span class="istickedoff">return result</span></span>
-<span class="lineno">  194 </span>
-<span class="lineno">  195 </span>
-<span class="lineno">  196 </span>------------------------------------------------------------------------------
-<span class="lineno">  197 </span>-- | Returns the request body as a bytestring.
-<span class="lineno">  198 </span>getRequestBody :: Snap L.ByteString
-<span class="lineno">  199 </span><span class="decl"><span class="istickedoff">getRequestBody = liftM fromWrap $ runRequestBody stream2stream</span></span>
-<span class="lineno">  200 </span>{-# INLINE getRequestBody #-}
-<span class="lineno">  201 </span>
-<span class="lineno">  202 </span>
-<span class="lineno">  203 </span>------------------------------------------------------------------------------
-<span class="lineno">  204 </span>-- | Normally Snap is careful to ensure that the request body is fully consumed
-<span class="lineno">  205 </span>-- after your web handler runs, but before the 'Response' enumerator is
-<span class="lineno">  206 </span>-- streamed out the socket. If you want to transform the request body into some
-<span class="lineno">  207 </span>-- output in O(1) space, you should use this function.
-<span class="lineno">  208 </span>--
-<span class="lineno">  209 </span>-- Note that upon calling this function, response processing finishes early as
-<span class="lineno">  210 </span>-- if you called 'finishWith'. Make sure you set any content types, headers,
-<span class="lineno">  211 </span>-- cookies, etc. before you call this function.
-<span class="lineno">  212 </span>--
-<span class="lineno">  213 </span>transformRequestBody :: (forall a . Enumerator a)
-<span class="lineno">  214 </span>                         -- ^ the output 'Iteratee' is passed to this
-<span class="lineno">  215 </span>                         -- 'Enumerator', and then the resulting 'Iteratee' is
-<span class="lineno">  216 </span>                         -- fed the request body stream. Your 'Enumerator' is
-<span class="lineno">  217 </span>                         -- responsible for transforming the input.
-<span class="lineno">  218 </span>                     -&gt; Snap ()
-<span class="lineno">  219 </span><span class="decl"><span class="istickedoff">transformRequestBody trans = do</span>
-<span class="lineno">  220 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
-<span class="lineno">  221 </span><span class="spaces">    </span><span class="istickedoff">let ioref = rqBody req</span>
-<span class="lineno">  222 </span><span class="spaces">    </span><span class="istickedoff">senum &lt;- liftIO $ readIORef ioref</span>
-<span class="lineno">  223 </span><span class="spaces">    </span><span class="istickedoff">let (SomeEnumerator enum) = senum</span>
-<span class="lineno">  224 </span><span class="spaces">    </span><span class="istickedoff">liftIO $ writeIORef ioref</span>
-<span class="lineno">  225 </span><span class="spaces">               </span><span class="istickedoff"><span class="nottickedoff">(SomeEnumerator $ return . Iter.joinI . Iter.take 0)</span></span>
-<span class="lineno">  226 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  227 </span><span class="spaces">    </span><span class="istickedoff">origRsp &lt;- getResponse</span>
-<span class="lineno">  228 </span><span class="spaces">    </span><span class="istickedoff">let rsp = setResponseBody</span>
-<span class="lineno">  229 </span><span class="spaces">                </span><span class="istickedoff">(\writeEnd -&gt; do</span>
-<span class="lineno">  230 </span><span class="spaces">                     </span><span class="istickedoff">i &lt;- trans writeEnd</span>
-<span class="lineno">  231 </span><span class="spaces">                     </span><span class="istickedoff">enum $ iterateeDebugWrapper &quot;transformRequestBody&quot; i)</span>
-<span class="lineno">  232 </span><span class="spaces">                </span><span class="istickedoff">$ origRsp { rspTransformingRqBody = True }</span>
-<span class="lineno">  233 </span><span class="spaces">    </span><span class="istickedoff">finishWith rsp</span></span>
-<span class="lineno">  234 </span>
-<span class="lineno">  235 </span>
-<span class="lineno">  236 </span>------------------------------------------------------------------------------
-<span class="lineno">  237 </span>-- | Short-circuits a 'Snap' monad action early, storing the given
-<span class="lineno">  238 </span>-- 'Response' value in its state.
-<span class="lineno">  239 </span>finishWith :: Response -&gt; Snap a
-<span class="lineno">  240 </span><span class="decl"><span class="istickedoff">finishWith = Snap . return . Just . Left</span></span>
-<span class="lineno">  241 </span>{-# INLINE finishWith #-}
-<span class="lineno">  242 </span>
-<span class="lineno">  243 </span>
-<span class="lineno">  244 </span>------------------------------------------------------------------------------
-<span class="lineno">  245 </span>-- | Fails out of a 'Snap' monad action.  This is used to indicate
-<span class="lineno">  246 </span>-- that you choose not to handle the given request within the given
-<span class="lineno">  247 </span>-- handler.
-<span class="lineno">  248 </span>pass :: Snap a
-<span class="lineno">  249 </span><span class="decl"><span class="istickedoff">pass = empty</span></span>
-<span class="lineno">  250 </span>
-<span class="lineno">  251 </span>
-<span class="lineno">  252 </span>------------------------------------------------------------------------------
-<span class="lineno">  253 </span>-- | Runs a 'Snap' monad action only if the request's HTTP method matches
-<span class="lineno">  254 </span>-- the given method.
-<span class="lineno">  255 </span>method :: Method -&gt; Snap a -&gt; Snap a
-<span class="lineno">  256 </span><span class="decl"><span class="istickedoff">method m action = do</span>
-<span class="lineno">  257 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
-<span class="lineno">  258 </span><span class="spaces">    </span><span class="istickedoff">unless (rqMethod req == m) pass</span>
-<span class="lineno">  259 </span><span class="spaces">    </span><span class="istickedoff">action</span></span>
-<span class="lineno">  260 </span>{-# INLINE method #-}
-<span class="lineno">  261 </span>
-<span class="lineno">  262 </span>
-<span class="lineno">  263 </span>------------------------------------------------------------------------------
-<span class="lineno">  264 </span>-- Appends n bytes of the path info to the context path with a
-<span class="lineno">  265 </span>-- trailing slash.
-<span class="lineno">  266 </span>updateContextPath :: Int -&gt; Request -&gt; Request
-<span class="lineno">  267 </span><span class="decl"><span class="istickedoff">updateContextPath n req | n &gt; 0     = req { rqContextPath = ctx</span>
-<span class="lineno">  268 </span><span class="spaces">                                          </span><span class="istickedoff">, rqPathInfo    = pinfo }</span>
-<span class="lineno">  269 </span><span class="spaces">                        </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = req</span>
-<span class="lineno">  270 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  271 </span><span class="spaces">    </span><span class="istickedoff">ctx'  = S.take n (rqPathInfo req)</span>
-<span class="lineno">  272 </span><span class="spaces">    </span><span class="istickedoff">ctx   = S.concat [rqContextPath req, ctx', &quot;/&quot;]</span>
-<span class="lineno">  273 </span><span class="spaces">    </span><span class="istickedoff">pinfo = S.drop (n+1) (rqPathInfo req)</span></span>
-<span class="lineno">  274 </span>
-<span class="lineno">  275 </span>
-<span class="lineno">  276 </span>------------------------------------------------------------------------------
-<span class="lineno">  277 </span>-- Runs a 'Snap' monad action only if the 'rqPathInfo' matches the given
-<span class="lineno">  278 </span>-- predicate.
-<span class="lineno">  279 </span>pathWith :: (ByteString -&gt; ByteString -&gt; Bool)
-<span class="lineno">  280 </span>         -&gt; ByteString
-<span class="lineno">  281 </span>         -&gt; Snap a
-<span class="lineno">  282 </span>         -&gt; Snap a
-<span class="lineno">  283 </span><span class="decl"><span class="istickedoff">pathWith c p action = do</span>
-<span class="lineno">  284 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
-<span class="lineno">  285 </span><span class="spaces">    </span><span class="istickedoff">unless (c p (rqPathInfo req)) pass</span>
-<span class="lineno">  286 </span><span class="spaces">    </span><span class="istickedoff">localRequest (updateContextPath $ S.length p) action</span></span>
-<span class="lineno">  287 </span>
-<span class="lineno">  288 </span>
-<span class="lineno">  289 </span>------------------------------------------------------------------------------
-<span class="lineno">  290 </span>-- | Runs a 'Snap' monad action only when the 'rqPathInfo' of the request
-<span class="lineno">  291 </span>-- starts with the given path. For example,
-<span class="lineno">  292 </span>--
-<span class="lineno">  293 </span>-- &gt; dir &quot;foo&quot; handler
-<span class="lineno">  294 </span>--
-<span class="lineno">  295 </span>-- Will fail if 'rqPathInfo' is not \&quot;@\/foo@\&quot; or \&quot;@\/foo\/...@\&quot;, and will
-<span class="lineno">  296 </span>-- add @\&quot;foo\/\&quot;@ to the handler's local 'rqContextPath'.
-<span class="lineno">  297 </span>dir :: ByteString  -- ^ path component to match
-<span class="lineno">  298 </span>    -&gt; Snap a      -- ^ handler to run
-<span class="lineno">  299 </span>    -&gt; Snap a
-<span class="lineno">  300 </span><span class="decl"><span class="istickedoff">dir = pathWith f</span>
-<span class="lineno">  301 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  302 </span><span class="spaces">    </span><span class="istickedoff">f dr pinfo = dr == x</span>
-<span class="lineno">  303 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  304 </span><span class="spaces">        </span><span class="istickedoff">(x,_) = S.break (=='/') pinfo</span></span>
-<span class="lineno">  305 </span>{-# INLINE dir #-}
-<span class="lineno">  306 </span>
-<span class="lineno">  307 </span>
-<span class="lineno">  308 </span>------------------------------------------------------------------------------
-<span class="lineno">  309 </span>-- | Runs a 'Snap' monad action only for requests where 'rqPathInfo' is exactly
-<span class="lineno">  310 </span>-- equal to the given string. If the path matches, locally sets 'rqContextPath'
-<span class="lineno">  311 </span>-- to the old value of 'rqPathInfo', sets 'rqPathInfo'=\&quot;\&quot;, and runs the given
-<span class="lineno">  312 </span>-- handler.
-<span class="lineno">  313 </span>path :: ByteString  -- ^ path to match against
-<span class="lineno">  314 </span>     -&gt; Snap a      -- ^ handler to run
-<span class="lineno">  315 </span>     -&gt; Snap a
-<span class="lineno">  316 </span><span class="decl"><span class="istickedoff">path = pathWith (==)</span></span>
-<span class="lineno">  317 </span>{-# INLINE path #-}
+<span class="lineno">  164 </span>
+<span class="lineno">  165 </span>------------------------------------------------------------------------------
+<span class="lineno">  166 </span>instance Applicative Snap where
+<span class="lineno">  167 </span>    <span class="decl"><span class="istickedoff">pure  = return</span></span>
+<span class="lineno">  168 </span>    <span class="decl"><span class="istickedoff">(&lt;*&gt;) = ap</span></span>
+<span class="lineno">  169 </span>
+<span class="lineno">  170 </span>
+<span class="lineno">  171 </span>------------------------------------------------------------------------------
+<span class="lineno">  172 </span>instance Alternative Snap where
+<span class="lineno">  173 </span>    <span class="decl"><span class="istickedoff">empty = mzero</span></span>
+<span class="lineno">  174 </span>    <span class="decl"><span class="istickedoff">(&lt;|&gt;) = mplus</span></span>
+<span class="lineno">  175 </span>
+<span class="lineno">  176 </span>
+<span class="lineno">  177 </span>------------------------------------------------------------------------------
+<span class="lineno">  178 </span>instance MonadSnap Snap where
+<span class="lineno">  179 </span>    <span class="decl"><span class="istickedoff">liftSnap = id</span></span>
+<span class="lineno">  180 </span>
+<span class="lineno">  181 </span>
+<span class="lineno">  182 </span>
+<span class="lineno">  183 </span>------------------------------------------------------------------------------
+<span class="lineno">  184 </span>-- | The Typeable instance is here so Snap can be dynamically executed with
+<span class="lineno">  185 </span>-- Hint.
+<span class="lineno">  186 </span>snapTyCon :: TyCon
+<span class="lineno">  187 </span><span class="decl"><span class="nottickedoff">snapTyCon = mkTyCon &quot;Snap.Types.Snap&quot;</span></span>
+<span class="lineno">  188 </span>{-# NOINLINE snapTyCon #-}
+<span class="lineno">  189 </span>
+<span class="lineno">  190 </span>instance Typeable1 Snap where
+<span class="lineno">  191 </span>    <span class="decl"><span class="nottickedoff">typeOf1 _ = mkTyConApp snapTyCon []</span></span>
+<span class="lineno">  192 </span>
+<span class="lineno">  193 </span>
+<span class="lineno">  194 </span>------------------------------------------------------------------------------
+<span class="lineno">  195 </span>liftIter :: MonadSnap m =&gt; Iteratee ByteString IO a -&gt; m a
+<span class="lineno">  196 </span><span class="istickedoff"><span class="decl"><span class="istickedoff">liftIter i = liftSnap $ Snap (lift i &gt;&gt;= return . Just . Right)</span></span></span>
+<span class="lineno">  197 </span>
+<span class="lineno">  198 </span>
+<span class="lineno">  199 </span>------------------------------------------------------------------------------
+<span class="lineno">  200 </span>-- | Sends the request body through an iteratee (data consumer) and
+<span class="lineno">  201 </span>-- returns the result.
+<span class="lineno">  202 </span>runRequestBody :: MonadSnap m =&gt; Iteratee ByteString IO a -&gt; m a
+<span class="lineno">  203 </span><span class="decl"><span class="istickedoff">runRequestBody iter = do</span>
+<span class="lineno">  204 </span><span class="spaces">    </span><span class="istickedoff">req  &lt;- getRequest</span>
+<span class="lineno">  205 </span><span class="spaces">    </span><span class="istickedoff">senum &lt;- liftIO $ readIORef $ rqBody req</span>
+<span class="lineno">  206 </span><span class="spaces">    </span><span class="istickedoff">let (SomeEnumerator enum) = senum</span>
+<span class="lineno">  207 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  208 </span><span class="spaces">    </span><span class="istickedoff">-- make sure the iteratee consumes all of the output</span>
+<span class="lineno">  209 </span><span class="spaces">    </span><span class="istickedoff">let iter' = iter &gt;&gt;= \a -&gt; skipToEof &gt;&gt; return a</span>
+<span class="lineno">  210 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  211 </span><span class="spaces">    </span><span class="istickedoff">-- run the iteratee</span>
+<span class="lineno">  212 </span><span class="spaces">    </span><span class="istickedoff">step   &lt;- liftIO $ runIteratee iter'</span>
+<span class="lineno">  213 </span><span class="spaces">    </span><span class="istickedoff">result &lt;- liftIter $ enum step</span>
+<span class="lineno">  214 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  215 </span><span class="spaces">    </span><span class="istickedoff">-- stuff a new dummy enumerator into the request, so you can only try to</span>
+<span class="lineno">  216 </span><span class="spaces">    </span><span class="istickedoff">-- read the request body from the socket once</span>
+<span class="lineno">  217 </span><span class="spaces">    </span><span class="istickedoff">liftIO $ writeIORef (rqBody req)</span>
+<span class="lineno">  218 </span><span class="spaces">                        </span><span class="istickedoff">(SomeEnumerator $ joinI . take 0 )</span>
+<span class="lineno">  219 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  220 </span><span class="spaces">    </span><span class="istickedoff">return result</span></span>
+<span class="lineno">  221 </span>
+<span class="lineno">  222 </span>
+<span class="lineno">  223 </span>------------------------------------------------------------------------------
+<span class="lineno">  224 </span>-- | Returns the request body as a bytestring.
+<span class="lineno">  225 </span>getRequestBody :: MonadSnap m =&gt; m L.ByteString
+<span class="lineno">  226 </span><span class="decl"><span class="istickedoff">getRequestBody = liftM L.fromChunks $ runRequestBody consume</span></span>
+<span class="lineno">  227 </span>{-# INLINE getRequestBody #-}
+<span class="lineno">  228 </span>
+<span class="lineno">  229 </span>
+<span class="lineno">  230 </span>------------------------------------------------------------------------------
+<span class="lineno">  231 </span>-- | Normally Snap is careful to ensure that the request body is fully consumed
+<span class="lineno">  232 </span>-- after your web handler runs, but before the 'Response' enumerator is
+<span class="lineno">  233 </span>-- streamed out the socket. If you want to transform the request body into some
+<span class="lineno">  234 </span>-- output in O(1) space, you should use this function.
+<span class="lineno">  235 </span>--
+<span class="lineno">  236 </span>-- Note that upon calling this function, response processing finishes early as
+<span class="lineno">  237 </span>-- if you called 'finishWith'. Make sure you set any content types, headers,
+<span class="lineno">  238 </span>-- cookies, etc. before you call this function.
+<span class="lineno">  239 </span>--
+<span class="lineno">  240 </span>transformRequestBody :: (forall a . Enumerator ByteString IO a)
+<span class="lineno">  241 </span>                         -- ^ the output 'Iteratee' is passed to this
+<span class="lineno">  242 </span>                         -- 'Enumerator', and then the resulting 'Iteratee' is
+<span class="lineno">  243 </span>                         -- fed the request body stream. Your 'Enumerator' is
+<span class="lineno">  244 </span>                         -- responsible for transforming the input.
+<span class="lineno">  245 </span>                     -&gt; Snap ()
+<span class="lineno">  246 </span><span class="decl"><span class="istickedoff">transformRequestBody trans = do</span>
+<span class="lineno">  247 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
+<span class="lineno">  248 </span><span class="spaces">    </span><span class="istickedoff">let ioref = rqBody req</span>
+<span class="lineno">  249 </span><span class="spaces">    </span><span class="istickedoff">senum &lt;- liftIO $ readIORef ioref</span>
+<span class="lineno">  250 </span><span class="spaces">    </span><span class="istickedoff">let (SomeEnumerator enum) = senum</span>
+<span class="lineno">  251 </span><span class="spaces">    </span><span class="istickedoff">liftIO $ writeIORef ioref <span class="nottickedoff">(SomeEnumerator enumEOF)</span></span>
+<span class="lineno">  252 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  253 </span><span class="spaces">    </span><span class="istickedoff">origRsp &lt;- getResponse</span>
+<span class="lineno">  254 </span><span class="spaces">    </span><span class="istickedoff">let rsp = setResponseBody</span>
+<span class="lineno">  255 </span><span class="spaces">                </span><span class="istickedoff">(\writeEnd -&gt; do</span>
+<span class="lineno">  256 </span><span class="spaces">                     </span><span class="istickedoff">let i = iterateeDebugWrapper &quot;transformRequestBody&quot;</span>
+<span class="lineno">  257 </span><span class="spaces">                                                  </span><span class="istickedoff">$ trans writeEnd</span>
+<span class="lineno">  258 </span><span class="spaces">                     </span><span class="istickedoff">st &lt;- liftIO $ runIteratee i</span>
+<span class="lineno">  259 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  260 </span><span class="spaces">                     </span><span class="istickedoff">enum st)</span>
+<span class="lineno">  261 </span><span class="spaces">                </span><span class="istickedoff">$ origRsp { rspTransformingRqBody = True }</span>
+<span class="lineno">  262 </span><span class="spaces">    </span><span class="istickedoff">finishWith rsp</span></span>
+<span class="lineno">  263 </span>
+<span class="lineno">  264 </span>
+<span class="lineno">  265 </span>------------------------------------------------------------------------------
+<span class="lineno">  266 </span>-- | Short-circuits a 'Snap' monad action early, storing the given
+<span class="lineno">  267 </span>-- 'Response' value in its state.
+<span class="lineno">  268 </span>finishWith :: MonadSnap m =&gt; Response -&gt; m a
+<span class="lineno">  269 </span><span class="decl"><span class="istickedoff">finishWith = liftSnap . Snap . return . Just . Left</span></span>
+<span class="lineno">  270 </span>{-# INLINE finishWith #-}
+<span class="lineno">  271 </span>
+<span class="lineno">  272 </span>
+<span class="lineno">  273 </span>------------------------------------------------------------------------------
+<span class="lineno">  274 </span>-- | Fails out of a 'Snap' monad action.  This is used to indicate
+<span class="lineno">  275 </span>-- that you choose not to handle the given request within the given
+<span class="lineno">  276 </span>-- handler.
+<span class="lineno">  277 </span>pass :: MonadSnap m =&gt; m a
+<span class="lineno">  278 </span><span class="decl"><span class="istickedoff">pass = empty</span></span>
+<span class="lineno">  279 </span>
+<span class="lineno">  280 </span>
+<span class="lineno">  281 </span>------------------------------------------------------------------------------
+<span class="lineno">  282 </span>-- | Runs a 'Snap' monad action only if the request's HTTP method matches
+<span class="lineno">  283 </span>-- the given method.
+<span class="lineno">  284 </span>method :: MonadSnap m =&gt; Method -&gt; m a -&gt; m a
+<span class="lineno">  285 </span><span class="decl"><span class="istickedoff">method m action = do</span>
+<span class="lineno">  286 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
+<span class="lineno">  287 </span><span class="spaces">    </span><span class="istickedoff">unless (rqMethod req == m) pass</span>
+<span class="lineno">  288 </span><span class="spaces">    </span><span class="istickedoff">action</span></span>
+<span class="lineno">  289 </span>{-# INLINE method #-}
+<span class="lineno">  290 </span>
+<span class="lineno">  291 </span>
+<span class="lineno">  292 </span>------------------------------------------------------------------------------
+<span class="lineno">  293 </span>-- Appends n bytes of the path info to the context path with a
+<span class="lineno">  294 </span>-- trailing slash.
+<span class="lineno">  295 </span>updateContextPath :: Int -&gt; Request -&gt; Request
+<span class="lineno">  296 </span><span class="decl"><span class="istickedoff">updateContextPath n req | n &gt; 0     = req { rqContextPath = ctx</span>
+<span class="lineno">  297 </span><span class="spaces">                                          </span><span class="istickedoff">, rqPathInfo    = pinfo }</span>
+<span class="lineno">  298 </span><span class="spaces">                        </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = req</span>
+<span class="lineno">  299 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  300 </span><span class="spaces">    </span><span class="istickedoff">ctx'  = S.take n (rqPathInfo req)</span>
+<span class="lineno">  301 </span><span class="spaces">    </span><span class="istickedoff">ctx   = S.concat [rqContextPath req, ctx', &quot;/&quot;]</span>
+<span class="lineno">  302 </span><span class="spaces">    </span><span class="istickedoff">pinfo = S.drop (n+1) (rqPathInfo req)</span></span>
+<span class="lineno">  303 </span>
+<span class="lineno">  304 </span>
+<span class="lineno">  305 </span>------------------------------------------------------------------------------
+<span class="lineno">  306 </span>-- Runs a 'Snap' monad action only if the 'rqPathInfo' matches the given
+<span class="lineno">  307 </span>-- predicate.
+<span class="lineno">  308 </span>pathWith :: MonadSnap m
+<span class="lineno">  309 </span>         =&gt; (ByteString -&gt; ByteString -&gt; Bool)
+<span class="lineno">  310 </span>         -&gt; ByteString
+<span class="lineno">  311 </span>         -&gt; m a
+<span class="lineno">  312 </span>         -&gt; m a
+<span class="lineno">  313 </span><span class="decl"><span class="istickedoff">pathWith c p action = do</span>
+<span class="lineno">  314 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
+<span class="lineno">  315 </span><span class="spaces">    </span><span class="istickedoff">unless (c p (rqPathInfo req)) pass</span>
+<span class="lineno">  316 </span><span class="spaces">    </span><span class="istickedoff">localRequest (updateContextPath $ S.length p) action</span></span>
+<span class="lineno">  317 </span>
 <span class="lineno">  318 </span>
-<span class="lineno">  319 </span>
-<span class="lineno">  320 </span>------------------------------------------------------------------------------
-<span class="lineno">  321 </span>-- | Runs a 'Snap' monad action only when 'rqPathInfo' is empty.
-<span class="lineno">  322 </span>ifTop :: Snap a -&gt; Snap a
-<span class="lineno">  323 </span><span class="decl"><span class="istickedoff">ifTop = path &quot;&quot;</span></span>
-<span class="lineno">  324 </span>{-# INLINE ifTop #-}
-<span class="lineno">  325 </span>
-<span class="lineno">  326 </span>
-<span class="lineno">  327 </span>------------------------------------------------------------------------------
-<span class="lineno">  328 </span>-- | Local Snap version of 'get'.
-<span class="lineno">  329 </span>sget :: Snap SnapState
-<span class="lineno">  330 </span><span class="decl"><span class="istickedoff">sget = Snap $ liftM (Just . Right) get</span></span>
-<span class="lineno">  331 </span>{-# INLINE sget #-}
-<span class="lineno">  332 </span>
-<span class="lineno">  333 </span>
-<span class="lineno">  334 </span>------------------------------------------------------------------------------
-<span class="lineno">  335 </span>-- | Local Snap monad version of 'modify'.
-<span class="lineno">  336 </span>smodify :: (SnapState -&gt; SnapState) -&gt; Snap ()
-<span class="lineno">  337 </span><span class="decl"><span class="istickedoff">smodify f = Snap $ modify f &gt;&gt; return (Just $ Right ())</span></span>
-<span class="lineno">  338 </span>{-# INLINE smodify #-}
-<span class="lineno">  339 </span>
-<span class="lineno">  340 </span>
-<span class="lineno">  341 </span>------------------------------------------------------------------------------
-<span class="lineno">  342 </span>-- | Grabs the 'Request' object out of the 'Snap' monad.
-<span class="lineno">  343 </span>getRequest :: Snap Request
-<span class="lineno">  344 </span><span class="decl"><span class="istickedoff">getRequest = liftM _snapRequest sget</span></span>
-<span class="lineno">  345 </span>{-# INLINE getRequest #-}
-<span class="lineno">  346 </span>
-<span class="lineno">  347 </span>
-<span class="lineno">  348 </span>------------------------------------------------------------------------------
-<span class="lineno">  349 </span>-- | Grabs the 'Response' object out of the 'Snap' monad.
-<span class="lineno">  350 </span>getResponse :: Snap Response
-<span class="lineno">  351 </span><span class="decl"><span class="istickedoff">getResponse = liftM _snapResponse sget</span></span>
-<span class="lineno">  352 </span>{-# INLINE getResponse #-}
-<span class="lineno">  353 </span>
-<span class="lineno">  354 </span>
-<span class="lineno">  355 </span>------------------------------------------------------------------------------
-<span class="lineno">  356 </span>-- | Puts a new 'Response' object into the 'Snap' monad.
-<span class="lineno">  357 </span>putResponse :: Response -&gt; Snap ()
-<span class="lineno">  358 </span><span class="decl"><span class="istickedoff">putResponse r = smodify $ \ss -&gt; ss { _snapResponse = r }</span></span>
-<span class="lineno">  359 </span>{-# INLINE putResponse #-}
-<span class="lineno">  360 </span>
-<span class="lineno">  361 </span>
-<span class="lineno">  362 </span>------------------------------------------------------------------------------
-<span class="lineno">  363 </span>-- | Puts a new 'Request' object into the 'Snap' monad.
-<span class="lineno">  364 </span>putRequest :: Request -&gt; Snap ()
-<span class="lineno">  365 </span><span class="decl"><span class="istickedoff">putRequest r = smodify $ \ss -&gt; ss { _snapRequest = r }</span></span>
-<span class="lineno">  366 </span>{-# INLINE putRequest #-}
-<span class="lineno">  367 </span>
-<span class="lineno">  368 </span>
-<span class="lineno">  369 </span>------------------------------------------------------------------------------
-<span class="lineno">  370 </span>-- | Modifies the 'Request' object stored in a 'Snap' monad.
-<span class="lineno">  371 </span>modifyRequest :: (Request -&gt; Request) -&gt; Snap ()
-<span class="lineno">  372 </span><span class="decl"><span class="istickedoff">modifyRequest f = smodify $ \ss -&gt; ss { _snapRequest = f $ _snapRequest ss }</span></span>
-<span class="lineno">  373 </span>{-# INLINE modifyRequest #-}
-<span class="lineno">  374 </span>
-<span class="lineno">  375 </span>
-<span class="lineno">  376 </span>------------------------------------------------------------------------------
-<span class="lineno">  377 </span>-- | Modifes the 'Response' object stored in a 'Snap' monad.
-<span class="lineno">  378 </span>modifyResponse :: (Response -&gt; Response) -&gt; Snap ()
-<span class="lineno">  379 </span><span class="decl"><span class="istickedoff">modifyResponse f = smodify $ \ss -&gt; ss { _snapResponse = f $ _snapResponse ss }</span></span>
-<span class="lineno">  380 </span>{-# INLINE modifyResponse #-}
-<span class="lineno">  381 </span>
-<span class="lineno">  382 </span>
-<span class="lineno">  383 </span>------------------------------------------------------------------------------
-<span class="lineno">  384 </span>-- | Performs a redirect by setting the @Location@ header to the given target
-<span class="lineno">  385 </span>-- URL/path and the status code to 302 in the 'Response' object stored in a
-<span class="lineno">  386 </span>-- 'Snap' monad. Note that the target URL is not validated in any way. Consider
-<span class="lineno">  387 </span>-- using 'redirect\'' instead, which allows you to choose the correct status
-<span class="lineno">  388 </span>-- code.
-<span class="lineno">  389 </span>redirect :: ByteString -&gt; Snap ()
-<span class="lineno">  390 </span><span class="decl"><span class="istickedoff">redirect target = redirect' target 302</span></span>
-<span class="lineno">  391 </span>{-# INLINE redirect #-}
+<span class="lineno">  319 </span>------------------------------------------------------------------------------
+<span class="lineno">  320 </span>-- | Runs a 'Snap' monad action only when the 'rqPathInfo' of the request
+<span class="lineno">  321 </span>-- starts with the given path. For example,
+<span class="lineno">  322 </span>--
+<span class="lineno">  323 </span>-- &gt; dir &quot;foo&quot; handler
+<span class="lineno">  324 </span>--
+<span class="lineno">  325 </span>-- Will fail if 'rqPathInfo' is not \&quot;@\/foo@\&quot; or \&quot;@\/foo\/...@\&quot;, and will
+<span class="lineno">  326 </span>-- add @\&quot;foo\/\&quot;@ to the handler's local 'rqContextPath'.
+<span class="lineno">  327 </span>dir :: MonadSnap m
+<span class="lineno">  328 </span>    =&gt; ByteString  -- ^ path component to match
+<span class="lineno">  329 </span>    -&gt; m a         -- ^ handler to run
+<span class="lineno">  330 </span>    -&gt; m a
+<span class="lineno">  331 </span><span class="decl"><span class="istickedoff">dir = pathWith f</span>
+<span class="lineno">  332 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  333 </span><span class="spaces">    </span><span class="istickedoff">f dr pinfo = dr == x</span>
+<span class="lineno">  334 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  335 </span><span class="spaces">        </span><span class="istickedoff">(x,_) = S.break (=='/') pinfo</span></span>
+<span class="lineno">  336 </span>{-# INLINE dir #-}
+<span class="lineno">  337 </span>
+<span class="lineno">  338 </span>
+<span class="lineno">  339 </span>------------------------------------------------------------------------------
+<span class="lineno">  340 </span>-- | Runs a 'Snap' monad action only for requests where 'rqPathInfo' is exactly
+<span class="lineno">  341 </span>-- equal to the given string. If the path matches, locally sets 'rqContextPath'
+<span class="lineno">  342 </span>-- to the old value of 'rqPathInfo', sets 'rqPathInfo'=\&quot;\&quot;, and runs the given
+<span class="lineno">  343 </span>-- handler.
+<span class="lineno">  344 </span>path :: MonadSnap m
+<span class="lineno">  345 </span>     =&gt; ByteString  -- ^ path to match against
+<span class="lineno">  346 </span>     -&gt; m a         -- ^ handler to run
+<span class="lineno">  347 </span>     -&gt; m a
+<span class="lineno">  348 </span><span class="decl"><span class="istickedoff">path = pathWith (==)</span></span>
+<span class="lineno">  349 </span>{-# INLINE path #-}
+<span class="lineno">  350 </span>
+<span class="lineno">  351 </span>
+<span class="lineno">  352 </span>------------------------------------------------------------------------------
+<span class="lineno">  353 </span>-- | Runs a 'Snap' monad action only when 'rqPathInfo' is empty.
+<span class="lineno">  354 </span>ifTop :: MonadSnap m =&gt; m a -&gt; m a
+<span class="lineno">  355 </span><span class="decl"><span class="istickedoff">ifTop = path &quot;&quot;</span></span>
+<span class="lineno">  356 </span>{-# INLINE ifTop #-}
+<span class="lineno">  357 </span>
+<span class="lineno">  358 </span>
+<span class="lineno">  359 </span>------------------------------------------------------------------------------
+<span class="lineno">  360 </span>-- | Local Snap version of 'get'.
+<span class="lineno">  361 </span>sget :: Snap SnapState
+<span class="lineno">  362 </span><span class="decl"><span class="istickedoff">sget = Snap $ liftM (Just . Right) get</span></span>
+<span class="lineno">  363 </span>{-# INLINE sget #-}
+<span class="lineno">  364 </span>
+<span class="lineno">  365 </span>
+<span class="lineno">  366 </span>------------------------------------------------------------------------------
+<span class="lineno">  367 </span>-- | Local Snap monad version of 'modify'.
+<span class="lineno">  368 </span>smodify :: (SnapState -&gt; SnapState) -&gt; Snap ()
+<span class="lineno">  369 </span><span class="decl"><span class="istickedoff">smodify f = Snap $ modify f &gt;&gt; return (Just $ Right ())</span></span>
+<span class="lineno">  370 </span>{-# INLINE smodify #-}
+<span class="lineno">  371 </span>
+<span class="lineno">  372 </span>
+<span class="lineno">  373 </span>------------------------------------------------------------------------------
+<span class="lineno">  374 </span>-- | Grabs the 'Request' object out of the 'Snap' monad.
+<span class="lineno">  375 </span>getRequest :: MonadSnap m =&gt; m Request
+<span class="lineno">  376 </span><span class="decl"><span class="istickedoff">getRequest = liftSnap $ liftM _snapRequest sget</span></span>
+<span class="lineno">  377 </span>{-# INLINE getRequest #-}
+<span class="lineno">  378 </span>
+<span class="lineno">  379 </span>
+<span class="lineno">  380 </span>------------------------------------------------------------------------------
+<span class="lineno">  381 </span>-- | Grabs the 'Response' object out of the 'Snap' monad.
+<span class="lineno">  382 </span>getResponse :: MonadSnap m =&gt; m Response
+<span class="lineno">  383 </span><span class="decl"><span class="istickedoff">getResponse = liftSnap $ liftM _snapResponse sget</span></span>
+<span class="lineno">  384 </span>{-# INLINE getResponse #-}
+<span class="lineno">  385 </span>
+<span class="lineno">  386 </span>
+<span class="lineno">  387 </span>------------------------------------------------------------------------------
+<span class="lineno">  388 </span>-- | Puts a new 'Response' object into the 'Snap' monad.
+<span class="lineno">  389 </span>putResponse :: MonadSnap m =&gt; Response -&gt; m ()
+<span class="lineno">  390 </span><span class="decl"><span class="istickedoff">putResponse r = liftSnap $ smodify $ \ss -&gt; ss { _snapResponse = r }</span></span>
+<span class="lineno">  391 </span>{-# INLINE putResponse #-}
 <span class="lineno">  392 </span>
 <span class="lineno">  393 </span>
 <span class="lineno">  394 </span>------------------------------------------------------------------------------
-<span class="lineno">  395 </span>-- | Performs a redirect by setting the @Location@ header to the given target
-<span class="lineno">  396 </span>-- URL/path and the status code (should be one of 301, 302, 303 or 307) in the
-<span class="lineno">  397 </span>-- 'Response' object stored in a 'Snap' monad. Note that the target URL is not
-<span class="lineno">  398 </span>-- validated in any way.
-<span class="lineno">  399 </span>redirect' :: ByteString -&gt; Int -&gt; Snap ()
-<span class="lineno">  400 </span><span class="decl"><span class="istickedoff">redirect' target status = do</span>
-<span class="lineno">  401 </span><span class="spaces">    </span><span class="istickedoff">r &lt;- getResponse</span>
-<span class="lineno">  402 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  403 </span><span class="spaces">    </span><span class="istickedoff">finishWith</span>
-<span class="lineno">  404 </span><span class="spaces">        </span><span class="istickedoff">$ setResponseCode status</span>
-<span class="lineno">  405 </span><span class="spaces">        </span><span class="istickedoff">$ setContentLength <span class="nottickedoff">0</span></span>
-<span class="lineno">  406 </span><span class="spaces">        </span><span class="istickedoff">$ modifyResponseBody <span class="nottickedoff">(const $ enumBS &quot;&quot;)</span></span>
-<span class="lineno">  407 </span><span class="spaces">        </span><span class="istickedoff">$ setHeader &quot;Location&quot; target r</span></span>
+<span class="lineno">  395 </span>-- | Puts a new 'Request' object into the 'Snap' monad.
+<span class="lineno">  396 </span>putRequest :: MonadSnap m =&gt; Request -&gt; m ()
+<span class="lineno">  397 </span><span class="decl"><span class="istickedoff">putRequest r = liftSnap $ smodify $ \ss -&gt; ss { _snapRequest = r }</span></span>
+<span class="lineno">  398 </span>{-# INLINE putRequest #-}
+<span class="lineno">  399 </span>
+<span class="lineno">  400 </span>
+<span class="lineno">  401 </span>------------------------------------------------------------------------------
+<span class="lineno">  402 </span>-- | Modifies the 'Request' object stored in a 'Snap' monad.
+<span class="lineno">  403 </span>modifyRequest :: MonadSnap m =&gt; (Request -&gt; Request) -&gt; m ()
+<span class="lineno">  404 </span><span class="decl"><span class="istickedoff">modifyRequest f = liftSnap $</span>
+<span class="lineno">  405 </span><span class="spaces">    </span><span class="istickedoff">smodify $ \ss -&gt; ss { _snapRequest = f $ _snapRequest ss }</span></span>
+<span class="lineno">  406 </span>{-# INLINE modifyRequest #-}
+<span class="lineno">  407 </span>
 <span class="lineno">  408 </span>
-<span class="lineno">  409 </span>{-# INLINE redirect' #-}
-<span class="lineno">  410 </span>
-<span class="lineno">  411 </span>
-<span class="lineno">  412 </span>------------------------------------------------------------------------------
-<span class="lineno">  413 </span>-- | Log an error message in the 'Snap' monad
-<span class="lineno">  414 </span>logError :: ByteString -&gt; Snap ()
-<span class="lineno">  415 </span><span class="decl"><span class="istickedoff">logError s = Snap $ gets _snapLogError &gt;&gt;= (\l -&gt; liftIO $ l s)</span>
-<span class="lineno">  416 </span><span class="spaces">                                       </span><span class="istickedoff">&gt;&gt;  return (Just $ Right <span class="nottickedoff">()</span>)</span></span>
-<span class="lineno">  417 </span>{-# INLINE logError #-}
-<span class="lineno">  418 </span>
-<span class="lineno">  419 </span>
-<span class="lineno">  420 </span>------------------------------------------------------------------------------
-<span class="lineno">  421 </span>-- | Adds the output from the given enumerator to the 'Response'
-<span class="lineno">  422 </span>-- stored in the 'Snap' monad state.
-<span class="lineno">  423 </span>addToOutput :: (forall a . Enumerator a)   -- ^ output to add
-<span class="lineno">  424 </span>            -&gt; Snap ()
-<span class="lineno">  425 </span><span class="decl"><span class="istickedoff">addToOutput enum = modifyResponse $ modifyResponseBody (&gt;. enum)</span></span>
+<span class="lineno">  409 </span>------------------------------------------------------------------------------
+<span class="lineno">  410 </span>-- | Modifes the 'Response' object stored in a 'Snap' monad.
+<span class="lineno">  411 </span>modifyResponse :: MonadSnap m =&gt; (Response -&gt; Response) -&gt; m ()
+<span class="lineno">  412 </span><span class="decl"><span class="istickedoff">modifyResponse f = liftSnap $</span>
+<span class="lineno">  413 </span><span class="spaces">     </span><span class="istickedoff">smodify $ \ss -&gt; ss { _snapResponse = f $ _snapResponse ss }</span></span>
+<span class="lineno">  414 </span>{-# INLINE modifyResponse #-}
+<span class="lineno">  415 </span>
+<span class="lineno">  416 </span>
+<span class="lineno">  417 </span>------------------------------------------------------------------------------
+<span class="lineno">  418 </span>-- | Performs a redirect by setting the @Location@ header to the given target
+<span class="lineno">  419 </span>-- URL/path and the status code to 302 in the 'Response' object stored in a
+<span class="lineno">  420 </span>-- 'Snap' monad. Note that the target URL is not validated in any way. Consider
+<span class="lineno">  421 </span>-- using 'redirect\'' instead, which allows you to choose the correct status
+<span class="lineno">  422 </span>-- code.
+<span class="lineno">  423 </span>redirect :: MonadSnap m =&gt; ByteString -&gt; m ()
+<span class="lineno">  424 </span><span class="decl"><span class="istickedoff">redirect target = redirect' target 302</span></span>
+<span class="lineno">  425 </span>{-# INLINE redirect #-}
 <span class="lineno">  426 </span>
 <span class="lineno">  427 </span>
 <span class="lineno">  428 </span>------------------------------------------------------------------------------
-<span class="lineno">  429 </span>-- | Adds the given strict 'ByteString' to the body of the 'Response' stored in
-<span class="lineno">  430 </span>-- the 'Snap' monad state.
-<span class="lineno">  431 </span>--
-<span class="lineno">  432 </span>-- Warning: This function is intentionally non-strict. If any pure
-<span class="lineno">  433 </span>-- exceptions are raised by the expression creating the 'ByteString',
-<span class="lineno">  434 </span>-- the exception won't actually be raised within the Snap handler.
-<span class="lineno">  435 </span>writeBS :: ByteString -&gt; Snap ()
-<span class="lineno">  436 </span><span class="decl"><span class="istickedoff">writeBS s = addToOutput $ enumBS s</span></span>
-<span class="lineno">  437 </span>
-<span class="lineno">  438 </span>
-<span class="lineno">  439 </span>------------------------------------------------------------------------------
-<span class="lineno">  440 </span>-- | Adds the given lazy 'L.ByteString' to the body of the 'Response' stored in
-<span class="lineno">  441 </span>-- the 'Snap' monad state.
-<span class="lineno">  442 </span>--
-<span class="lineno">  443 </span>-- Warning: This function is intentionally non-strict. If any pure
-<span class="lineno">  444 </span>-- exceptions are raised by the expression creating the 'ByteString',
-<span class="lineno">  445 </span>-- the exception won't actually be raised within the Snap handler.
-<span class="lineno">  446 </span>writeLBS :: L.ByteString -&gt; Snap ()
-<span class="lineno">  447 </span><span class="decl"><span class="istickedoff">writeLBS s = addToOutput $ enumLBS s</span></span>
-<span class="lineno">  448 </span>
-<span class="lineno">  449 </span>
-<span class="lineno">  450 </span>------------------------------------------------------------------------------
-<span class="lineno">  451 </span>-- | Adds the given strict 'T.Text' to the body of the 'Response' stored in the
-<span class="lineno">  452 </span>-- 'Snap' monad state.
-<span class="lineno">  453 </span>--
-<span class="lineno">  454 </span>-- Warning: This function is intentionally non-strict. If any pure
-<span class="lineno">  455 </span>-- exceptions are raised by the expression creating the 'ByteString',
-<span class="lineno">  456 </span>-- the exception won't actually be raised within the Snap handler.
-<span class="lineno">  457 </span>writeText :: T.Text -&gt; Snap ()
-<span class="lineno">  458 </span><span class="decl"><span class="istickedoff">writeText s = writeBS $ T.encodeUtf8 s</span></span>
-<span class="lineno">  459 </span>
-<span class="lineno">  460 </span>
-<span class="lineno">  461 </span>------------------------------------------------------------------------------
-<span class="lineno">  462 </span>-- | Adds the given lazy 'LT.Text' to the body of the 'Response' stored in the
-<span class="lineno">  463 </span>-- 'Snap' monad state.
-<span class="lineno">  464 </span>--
-<span class="lineno">  465 </span>-- Warning: This function is intentionally non-strict. If any pure
-<span class="lineno">  466 </span>-- exceptions are raised by the expression creating the 'ByteString',
-<span class="lineno">  467 </span>-- the exception won't actually be raised within the Snap handler.
-<span class="lineno">  468 </span>writeLazyText :: LT.Text -&gt; Snap ()
-<span class="lineno">  469 </span><span class="decl"><span class="istickedoff">writeLazyText s = writeLBS $ LT.encodeUtf8 s</span></span>
-<span class="lineno">  470 </span>
-<span class="lineno">  471 </span>
-<span class="lineno">  472 </span>------------------------------------------------------------------------------
-<span class="lineno">  473 </span>-- | Sets the output to be the contents of the specified file.
-<span class="lineno">  474 </span>--
-<span class="lineno">  475 </span>-- Calling 'sendFile' will overwrite any output queued to be sent in the
-<span class="lineno">  476 </span>-- 'Response'. If the response body is not modified after the call to
-<span class="lineno">  477 </span>-- 'sendFile', Snap will use the efficient @sendfile()@ system call on
-<span class="lineno">  478 </span>-- platforms that support it.
-<span class="lineno">  479 </span>--
-<span class="lineno">  480 </span>-- If the response body is modified (using 'modifyResponseBody'), the file will
-<span class="lineno">  481 </span>-- be read using @mmap()@.
-<span class="lineno">  482 </span>sendFile :: FilePath -&gt; Snap ()
-<span class="lineno">  483 </span><span class="decl"><span class="istickedoff">sendFile f = modifyResponse $ \r -&gt; r { rspBody = SendFile f Nothing }</span></span>
+<span class="lineno">  429 </span>-- | Performs a redirect by setting the @Location@ header to the given target
+<span class="lineno">  430 </span>-- URL/path and the status code (should be one of 301, 302, 303 or 307) in the
+<span class="lineno">  431 </span>-- 'Response' object stored in a 'Snap' monad. Note that the target URL is not
+<span class="lineno">  432 </span>-- validated in any way.
+<span class="lineno">  433 </span>redirect' :: MonadSnap m =&gt; ByteString -&gt; Int -&gt; m ()
+<span class="lineno">  434 </span><span class="decl"><span class="istickedoff">redirect' target status = do</span>
+<span class="lineno">  435 </span><span class="spaces">    </span><span class="istickedoff">r &lt;- getResponse</span>
+<span class="lineno">  436 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  437 </span><span class="spaces">    </span><span class="istickedoff">finishWith</span>
+<span class="lineno">  438 </span><span class="spaces">        </span><span class="istickedoff">$ setResponseCode status</span>
+<span class="lineno">  439 </span><span class="spaces">        </span><span class="istickedoff">$ setContentLength <span class="nottickedoff">0</span></span>
+<span class="lineno">  440 </span><span class="spaces">        </span><span class="istickedoff">$ modifyResponseBody <span class="nottickedoff">(const $ enumBS &quot;&quot;)</span></span>
+<span class="lineno">  441 </span><span class="spaces">        </span><span class="istickedoff">$ setHeader &quot;Location&quot; target r</span></span>
+<span class="lineno">  442 </span>
+<span class="lineno">  443 </span>{-# INLINE redirect' #-}
+<span class="lineno">  444 </span>
+<span class="lineno">  445 </span>
+<span class="lineno">  446 </span>------------------------------------------------------------------------------
+<span class="lineno">  447 </span>-- | Log an error message in the 'Snap' monad
+<span class="lineno">  448 </span>logError :: MonadSnap m =&gt; ByteString -&gt; m ()
+<span class="lineno">  449 </span><span class="istickedoff"><span class="decl"><span class="istickedoff">logError s = liftSnap $ Snap $ gets _snapLogError &gt;&gt;= (\l -&gt; liftIO $ l s)</span>
+<span class="lineno">  450 </span><span class="spaces">                                       </span><span class="istickedoff">&gt;&gt;  return (Just $ Right <span class="nottickedoff">()</span>)</span></span></span>
+<span class="lineno">  451 </span>{-# INLINE logError #-}
+<span class="lineno">  452 </span>
+<span class="lineno">  453 </span>
+<span class="lineno">  454 </span>------------------------------------------------------------------------------
+<span class="lineno">  455 </span>-- | Adds the output from the given enumerator to the 'Response'
+<span class="lineno">  456 </span>-- stored in the 'Snap' monad state.
+<span class="lineno">  457 </span>addToOutput :: MonadSnap m
+<span class="lineno">  458 </span>            =&gt; (forall a . Enumerator ByteString IO a)   -- ^ output to add
+<span class="lineno">  459 </span>            -&gt; m ()
+<span class="lineno">  460 </span><span class="decl"><span class="istickedoff">addToOutput enum = modifyResponse $ modifyResponseBody (&gt;==&gt; enum)</span></span>
+<span class="lineno">  461 </span>
+<span class="lineno">  462 </span>
+<span class="lineno">  463 </span>------------------------------------------------------------------------------
+<span class="lineno">  464 </span>-- | Adds the given strict 'ByteString' to the body of the 'Response' stored in
+<span class="lineno">  465 </span>-- the 'Snap' monad state.
+<span class="lineno">  466 </span>--
+<span class="lineno">  467 </span>-- Warning: This function is intentionally non-strict. If any pure
+<span class="lineno">  468 </span>-- exceptions are raised by the expression creating the 'ByteString',
+<span class="lineno">  469 </span>-- the exception won't actually be raised within the Snap handler.
+<span class="lineno">  470 </span>writeBS :: MonadSnap m =&gt; ByteString -&gt; m ()
+<span class="lineno">  471 </span><span class="decl"><span class="istickedoff">writeBS s = addToOutput $ enumBS s</span></span>
+<span class="lineno">  472 </span>
+<span class="lineno">  473 </span>
+<span class="lineno">  474 </span>------------------------------------------------------------------------------
+<span class="lineno">  475 </span>-- | Adds the given lazy 'L.ByteString' to the body of the 'Response' stored in
+<span class="lineno">  476 </span>-- the 'Snap' monad state.
+<span class="lineno">  477 </span>--
+<span class="lineno">  478 </span>-- Warning: This function is intentionally non-strict. If any pure
+<span class="lineno">  479 </span>-- exceptions are raised by the expression creating the 'ByteString',
+<span class="lineno">  480 </span>-- the exception won't actually be raised within the Snap handler.
+<span class="lineno">  481 </span>writeLBS :: MonadSnap m =&gt; L.ByteString -&gt; m ()
+<span class="lineno">  482 </span><span class="decl"><span class="istickedoff">writeLBS s = addToOutput $ enumLBS s</span></span>
+<span class="lineno">  483 </span>
 <span class="lineno">  484 </span>
-<span class="lineno">  485 </span>
-<span class="lineno">  486 </span>------------------------------------------------------------------------------
-<span class="lineno">  487 </span>-- | Sets the output to be the contents of the specified file, within the given
-<span class="lineno">  488 </span>-- (start,end) range.
-<span class="lineno">  489 </span>--
-<span class="lineno">  490 </span>-- Calling 'sendFilePartial' will overwrite any output queued to be sent in the
-<span class="lineno">  491 </span>-- 'Response'. If the response body is not modified after the call to
-<span class="lineno">  492 </span>-- 'sendFilePartial', Snap will use the efficient @sendfile()@ system call on
-<span class="lineno">  493 </span>-- platforms that support it.
-<span class="lineno">  494 </span>--
-<span class="lineno">  495 </span>-- If the response body is modified (using 'modifyResponseBody'), the file will
-<span class="lineno">  496 </span>-- be read using @mmap()@.
-<span class="lineno">  497 </span>sendFilePartial :: FilePath -&gt; (Int64,Int64) -&gt; Snap ()
-<span class="lineno">  498 </span><span class="decl"><span class="istickedoff">sendFilePartial f rng = modifyResponse $ \r -&gt;</span>
-<span class="lineno">  499 </span><span class="spaces">                        </span><span class="istickedoff">r { rspBody = SendFile f (Just rng) }</span></span>
-<span class="lineno">  500 </span>
-<span class="lineno">  501 </span>
-<span class="lineno">  502 </span>------------------------------------------------------------------------------
-<span class="lineno">  503 </span>-- | Runs a 'Snap' action with a locally-modified 'Request' state
-<span class="lineno">  504 </span>-- object. The 'Request' object in the Snap monad state after the call
-<span class="lineno">  505 </span>-- to localRequest will be unchanged.
-<span class="lineno">  506 </span>localRequest :: (Request -&gt; Request) -&gt; Snap a -&gt; Snap a
-<span class="lineno">  507 </span><span class="decl"><span class="istickedoff">localRequest f m = do</span>
-<span class="lineno">  508 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
-<span class="lineno">  509 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  510 </span><span class="spaces">    </span><span class="istickedoff">runAct req &lt;|&gt; (putRequest req &gt;&gt; pass)</span>
-<span class="lineno">  511 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  512 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  513 </span><span class="spaces">    </span><span class="istickedoff">runAct req = do</span>
-<span class="lineno">  514 </span><span class="spaces">        </span><span class="istickedoff">modifyRequest f</span>
-<span class="lineno">  515 </span><span class="spaces">        </span><span class="istickedoff">result &lt;- m</span>
-<span class="lineno">  516 </span><span class="spaces">        </span><span class="istickedoff">putRequest req</span>
-<span class="lineno">  517 </span><span class="spaces">        </span><span class="istickedoff">return result</span></span>
-<span class="lineno">  518 </span>{-# INLINE localRequest #-}
+<span class="lineno">  485 </span>------------------------------------------------------------------------------
+<span class="lineno">  486 </span>-- | Adds the given strict 'T.Text' to the body of the 'Response' stored in the
+<span class="lineno">  487 </span>-- 'Snap' monad state.
+<span class="lineno">  488 </span>--
+<span class="lineno">  489 </span>-- Warning: This function is intentionally non-strict. If any pure
+<span class="lineno">  490 </span>-- exceptions are raised by the expression creating the 'ByteString',
+<span class="lineno">  491 </span>-- the exception won't actually be raised within the Snap handler.
+<span class="lineno">  492 </span>writeText :: MonadSnap m =&gt; T.Text -&gt; m ()
+<span class="lineno">  493 </span><span class="decl"><span class="istickedoff">writeText s = writeBS $ T.encodeUtf8 s</span></span>
+<span class="lineno">  494 </span>
+<span class="lineno">  495 </span>
+<span class="lineno">  496 </span>------------------------------------------------------------------------------
+<span class="lineno">  497 </span>-- | Adds the given lazy 'LT.Text' to the body of the 'Response' stored in the
+<span class="lineno">  498 </span>-- 'Snap' monad state.
+<span class="lineno">  499 </span>--
+<span class="lineno">  500 </span>-- Warning: This function is intentionally non-strict. If any pure
+<span class="lineno">  501 </span>-- exceptions are raised by the expression creating the 'ByteString',
+<span class="lineno">  502 </span>-- the exception won't actually be raised within the Snap handler.
+<span class="lineno">  503 </span>writeLazyText :: MonadSnap m =&gt; LT.Text -&gt; m ()
+<span class="lineno">  504 </span><span class="decl"><span class="istickedoff">writeLazyText s = writeLBS $ LT.encodeUtf8 s</span></span>
+<span class="lineno">  505 </span>
+<span class="lineno">  506 </span>
+<span class="lineno">  507 </span>------------------------------------------------------------------------------
+<span class="lineno">  508 </span>-- | Sets the output to be the contents of the specified file.
+<span class="lineno">  509 </span>--
+<span class="lineno">  510 </span>-- Calling 'sendFile' will overwrite any output queued to be sent in the
+<span class="lineno">  511 </span>-- 'Response'. If the response body is not modified after the call to
+<span class="lineno">  512 </span>-- 'sendFile', Snap will use the efficient @sendfile()@ system call on
+<span class="lineno">  513 </span>-- platforms that support it.
+<span class="lineno">  514 </span>--
+<span class="lineno">  515 </span>-- If the response body is modified (using 'modifyResponseBody'), the file will
+<span class="lineno">  516 </span>-- be read using @mmap()@.
+<span class="lineno">  517 </span>sendFile :: (MonadSnap m) =&gt; FilePath -&gt; m ()
+<span class="lineno">  518 </span><span class="decl"><span class="istickedoff">sendFile f = modifyResponse $ \r -&gt; r { rspBody = SendFile f Nothing }</span></span>
 <span class="lineno">  519 </span>
 <span class="lineno">  520 </span>
 <span class="lineno">  521 </span>------------------------------------------------------------------------------
-<span class="lineno">  522 </span>-- | Fetches the 'Request' from state and hands it to the given action.
-<span class="lineno">  523 </span>withRequest :: (Request -&gt; Snap a) -&gt; Snap a
-<span class="lineno">  524 </span><span class="decl"><span class="istickedoff">withRequest = (getRequest &gt;&gt;=)</span></span>
-<span class="lineno">  525 </span>{-# INLINE withRequest #-}
-<span class="lineno">  526 </span>
-<span class="lineno">  527 </span>
-<span class="lineno">  528 </span>------------------------------------------------------------------------------
-<span class="lineno">  529 </span>-- | Fetches the 'Response' from state and hands it to the given action.
-<span class="lineno">  530 </span>withResponse :: (Response -&gt; Snap a) -&gt; Snap a
-<span class="lineno">  531 </span><span class="decl"><span class="istickedoff">withResponse = (getResponse &gt;&gt;=)</span></span>
-<span class="lineno">  532 </span>{-# INLINE withResponse #-}
-<span class="lineno">  533 </span>
-<span class="lineno">  534 </span>
-<span class="lineno">  535 </span>------------------------------------------------------------------------------
-<span class="lineno">  536 </span>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'
-<span class="lineno">  537 </span>-- field to the value in the X-Forwarded-For header. If the header is
-<span class="lineno">  538 </span>-- not present, this action has no effect.
-<span class="lineno">  539 </span>--
-<span class="lineno">  540 </span>-- This action should be used only when working behind a reverse http
-<span class="lineno">  541 </span>-- proxy that sets the X-Forwarded-For header. This is the only way to
-<span class="lineno">  542 </span>-- ensure the value in the X-Forwarded-For header can be trusted.
-<span class="lineno">  543 </span>--
-<span class="lineno">  544 </span>-- This is provided as a filter so actions that require the remote
-<span class="lineno">  545 </span>-- address can get it in a uniform manner. It has specifically limited
-<span class="lineno">  546 </span>-- functionality to ensure that its transformation can be trusted,
-<span class="lineno">  547 </span>-- when used correctly.
-<span class="lineno">  548 </span>ipHeaderFilter :: Snap ()
-<span class="lineno">  549 </span><span class="decl"><span class="istickedoff">ipHeaderFilter = ipHeaderFilter' &quot;x-forwarded-for&quot;</span></span>
-<span class="lineno">  550 </span>
-<span class="lineno">  551 </span>
-<span class="lineno">  552 </span>------------------------------------------------------------------------------
-<span class="lineno">  553 </span>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'
-<span class="lineno">  554 </span>-- field to the value from the header specified.  If the header
-<span class="lineno">  555 </span>-- specified is not present, this action has no effect.
-<span class="lineno">  556 </span>--
-<span class="lineno">  557 </span>-- This action should be used only when working behind a reverse http
-<span class="lineno">  558 </span>-- proxy that sets the header being looked at. This is the only way to
-<span class="lineno">  559 </span>-- ensure the value in the header can be trusted.
-<span class="lineno">  560 </span>--
-<span class="lineno">  561 </span>-- This is provided as a filter so actions that require the remote
-<span class="lineno">  562 </span>-- address can get it in a uniform manner. It has specifically limited
-<span class="lineno">  563 </span>-- functionality to ensure that its transformation can be trusted,
-<span class="lineno">  564 </span>-- when used correctly.
-<span class="lineno">  565 </span>ipHeaderFilter' :: CIB.CIByteString -&gt; Snap ()
-<span class="lineno">  566 </span><span class="decl"><span class="istickedoff">ipHeaderFilter' header = do</span>
-<span class="lineno">  567 </span><span class="spaces">    </span><span class="istickedoff">headerContents &lt;- getHeader header &lt;$&gt; getRequest</span>
-<span class="lineno">  568 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  569 </span><span class="spaces">    </span><span class="istickedoff">let whitespace = &quot; \t\r\n&quot;</span>
-<span class="lineno">  570 </span><span class="spaces">        </span><span class="istickedoff">ipChrs = &quot;.0123456789&quot;</span>
-<span class="lineno">  571 </span><span class="spaces">        </span><span class="istickedoff">trim f s = f (`elem` s)</span>
-<span class="lineno">  572 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  573 </span><span class="spaces">        </span><span class="istickedoff">clean = trim S.takeWhile ipChrs . trim S.dropWhile whitespace</span>
-<span class="lineno">  574 </span><span class="spaces">        </span><span class="istickedoff">setIP ip = modifyRequest $ \rq -&gt; rq { rqRemoteAddr = clean ip }</span>
-<span class="lineno">  575 </span><span class="spaces">    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) setIP headerContents</span></span>
-<span class="lineno">  576 </span>
-<span class="lineno">  577 </span>
-<span class="lineno">  578 </span>------------------------------------------------------------------------------
-<span class="lineno">  579 </span>-- | This exception is thrown if the handler you supply to 'runSnap' fails.
-<span class="lineno">  580 </span>data NoHandlerException = NoHandlerException
-<span class="lineno">  581 </span>   deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>, <span class="decl"><span class="nottickedoff">Typeable</span></span>)
-<span class="lineno">  582 </span>
-<span class="lineno">  583 </span>
-<span class="lineno">  584 </span>------------------------------------------------------------------------------
-<span class="lineno">  585 </span>instance Show NoHandlerException where
-<span class="lineno">  586 </span>    <span class="decl"><span class="istickedoff">show NoHandlerException = &quot;No handler for request&quot;</span></span>
-<span class="lineno">  587 </span>
-<span class="lineno">  588 </span>
-<span class="lineno">  589 </span>------------------------------------------------------------------------------
-<span class="lineno">  590 </span>instance Exception NoHandlerException
-<span class="lineno">  591 </span>
-<span class="lineno">  592 </span>
-<span class="lineno">  593 </span>------------------------------------------------------------------------------
-<span class="lineno">  594 </span>-- | Runs a 'Snap' monad action in the 'Iteratee IO' monad.
-<span class="lineno">  595 </span>runSnap :: Snap a
-<span class="lineno">  596 </span>        -&gt; (ByteString -&gt; IO ())
-<span class="lineno">  597 </span>        -&gt; Request
-<span class="lineno">  598 </span>        -&gt; Iteratee IO (Request,Response)
-<span class="lineno">  599 </span><span class="decl"><span class="istickedoff">runSnap (Snap m) logerr req = do</span>
-<span class="lineno">  600 </span><span class="spaces">    </span><span class="istickedoff">(r, ss') &lt;- runStateT m ss</span>
-<span class="lineno">  601 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  602 </span><span class="spaces">    </span><span class="istickedoff">e &lt;- maybe (return $ Left fourohfour)</span>
-<span class="lineno">  603 </span><span class="spaces">               </span><span class="istickedoff">return</span>
-<span class="lineno">  604 </span><span class="spaces">               </span><span class="istickedoff">r</span>
-<span class="lineno">  605 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  606 </span><span class="spaces">    </span><span class="istickedoff">-- is this a case of early termination?</span>
-<span class="lineno">  607 </span><span class="spaces">    </span><span class="istickedoff">let resp = case e of</span>
-<span class="lineno">  608 </span><span class="spaces">                 </span><span class="istickedoff">Left x  -&gt; x</span>
-<span class="lineno">  609 </span><span class="spaces">                 </span><span class="istickedoff">Right _ -&gt; _snapResponse ss'</span>
-<span class="lineno">  610 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  611 </span><span class="spaces">    </span><span class="istickedoff">return (_snapRequest ss', resp)</span>
-<span class="lineno">  612 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  613 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  614 </span><span class="spaces">    </span><span class="istickedoff">fourohfour = setContentLength 3 $</span>
-<span class="lineno">  615 </span><span class="spaces">                 </span><span class="istickedoff">setResponseStatus 404 &quot;Not Found&quot; $</span>
-<span class="lineno">  616 </span><span class="spaces">                 </span><span class="istickedoff">modifyResponseBody (&gt;. enumBS &quot;404&quot;) $</span>
-<span class="lineno">  617 </span><span class="spaces">                 </span><span class="istickedoff">emptyResponse</span>
-<span class="lineno">  618 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  619 </span><span class="spaces">    </span><span class="istickedoff">dresp = emptyResponse { rspHttpVersion = rqVersion req }</span>
-<span class="lineno">  620 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  621 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req dresp logerr</span></span>
-<span class="lineno">  622 </span>{-# INLINE runSnap #-}
-<span class="lineno">  623 </span>
-<span class="lineno">  624 </span>
-<span class="lineno">  625 </span>------------------------------------------------------------------------------
-<span class="lineno">  626 </span>evalSnap :: Snap a
-<span class="lineno">  627 </span>         -&gt; (ByteString -&gt; IO ())
-<span class="lineno">  628 </span>         -&gt; Request
-<span class="lineno">  629 </span>         -&gt; Iteratee IO a
-<span class="lineno">  630 </span><span class="decl"><span class="istickedoff">evalSnap (Snap m) logerr req = do</span>
-<span class="lineno">  631 </span><span class="spaces">    </span><span class="istickedoff">(r, _) &lt;- runStateT m ss</span>
-<span class="lineno">  632 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  633 </span><span class="spaces">    </span><span class="istickedoff">e &lt;- maybe (liftIO $ throwIO NoHandlerException)</span>
-<span class="lineno">  634 </span><span class="spaces">               </span><span class="istickedoff">return</span>
-<span class="lineno">  635 </span><span class="spaces">               </span><span class="istickedoff">r</span>
-<span class="lineno">  636 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  637 </span><span class="spaces">    </span><span class="istickedoff">-- is this a case of early termination?</span>
-<span class="lineno">  638 </span><span class="spaces">    </span><span class="istickedoff">case e of</span>
-<span class="lineno">  639 </span><span class="spaces">      </span><span class="istickedoff">Left _  -&gt; liftIO $ throwIO $ ErrorCall &quot;no value&quot;</span>
-<span class="lineno">  640 </span><span class="spaces">      </span><span class="istickedoff">Right x -&gt; return x</span>
-<span class="lineno">  641 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  642 </span><span class="spaces">    </span><span class="istickedoff">dresp = emptyResponse { rspHttpVersion = rqVersion req }</span>
-<span class="lineno">  643 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req dresp logerr</span></span>
-<span class="lineno">  644 </span>{-# INLINE evalSnap #-}
-<span class="lineno">  645 </span>
+<span class="lineno">  522 </span>-- | Sets the output to be the contents of the specified file, within the given
+<span class="lineno">  523 </span>-- (start,end) range.
+<span class="lineno">  524 </span>--
+<span class="lineno">  525 </span>-- Calling 'sendFilePartial' will overwrite any output queued to be sent in the
+<span class="lineno">  526 </span>-- 'Response'. If the response body is not modified after the call to
+<span class="lineno">  527 </span>-- 'sendFilePartial', Snap will use the efficient @sendfile()@ system call on
+<span class="lineno">  528 </span>-- platforms that support it.
+<span class="lineno">  529 </span>--
+<span class="lineno">  530 </span>-- If the response body is modified (using 'modifyResponseBody'), the file will
+<span class="lineno">  531 </span>-- be read using @mmap()@.
+<span class="lineno">  532 </span>sendFilePartial :: (MonadSnap m) =&gt; FilePath -&gt; (Int64,Int64) -&gt; m ()
+<span class="lineno">  533 </span><span class="decl"><span class="istickedoff">sendFilePartial f rng = modifyResponse $ \r -&gt;</span>
+<span class="lineno">  534 </span><span class="spaces">                        </span><span class="istickedoff">r { rspBody = SendFile f (Just rng) }</span></span>
+<span class="lineno">  535 </span>
+<span class="lineno">  536 </span>
+<span class="lineno">  537 </span>------------------------------------------------------------------------------
+<span class="lineno">  538 </span>-- | Runs a 'Snap' action with a locally-modified 'Request' state
+<span class="lineno">  539 </span>-- object. The 'Request' object in the Snap monad state after the call
+<span class="lineno">  540 </span>-- to localRequest will be unchanged.
+<span class="lineno">  541 </span>localRequest :: MonadSnap m =&gt; (Request -&gt; Request) -&gt; m a -&gt; m a
+<span class="lineno">  542 </span><span class="decl"><span class="istickedoff">localRequest f m = do</span>
+<span class="lineno">  543 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
+<span class="lineno">  544 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  545 </span><span class="spaces">    </span><span class="istickedoff">runAct req &lt;|&gt; (putRequest req &gt;&gt; pass)</span>
+<span class="lineno">  546 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  547 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  548 </span><span class="spaces">    </span><span class="istickedoff">runAct req = do</span>
+<span class="lineno">  549 </span><span class="spaces">        </span><span class="istickedoff">modifyRequest f</span>
+<span class="lineno">  550 </span><span class="spaces">        </span><span class="istickedoff">result &lt;- m</span>
+<span class="lineno">  551 </span><span class="spaces">        </span><span class="istickedoff">putRequest req</span>
+<span class="lineno">  552 </span><span class="spaces">        </span><span class="istickedoff">return result</span></span>
+<span class="lineno">  553 </span>{-# INLINE localRequest #-}
+<span class="lineno">  554 </span>
+<span class="lineno">  555 </span>
+<span class="lineno">  556 </span>------------------------------------------------------------------------------
+<span class="lineno">  557 </span>-- | Fetches the 'Request' from state and hands it to the given action.
+<span class="lineno">  558 </span>withRequest :: MonadSnap m =&gt; (Request -&gt; m a) -&gt; m a
+<span class="lineno">  559 </span><span class="decl"><span class="istickedoff">withRequest = (getRequest &gt;&gt;=)</span></span>
+<span class="lineno">  560 </span>{-# INLINE withRequest #-}
+<span class="lineno">  561 </span>
+<span class="lineno">  562 </span>
+<span class="lineno">  563 </span>------------------------------------------------------------------------------
+<span class="lineno">  564 </span>-- | Fetches the 'Response' from state and hands it to the given action.
+<span class="lineno">  565 </span>withResponse :: MonadSnap m =&gt; (Response -&gt; m a) -&gt; m a
+<span class="lineno">  566 </span><span class="decl"><span class="istickedoff">withResponse = (getResponse &gt;&gt;=)</span></span>
+<span class="lineno">  567 </span>{-# INLINE withResponse #-}
+<span class="lineno">  568 </span>
+<span class="lineno">  569 </span>
+<span class="lineno">  570 </span>------------------------------------------------------------------------------
+<span class="lineno">  571 </span>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'
+<span class="lineno">  572 </span>-- field to the value in the X-Forwarded-For header. If the header is
+<span class="lineno">  573 </span>-- not present, this action has no effect.
+<span class="lineno">  574 </span>--
+<span class="lineno">  575 </span>-- This action should be used only when working behind a reverse http
+<span class="lineno">  576 </span>-- proxy that sets the X-Forwarded-For header. This is the only way to
+<span class="lineno">  577 </span>-- ensure the value in the X-Forwarded-For header can be trusted.
+<span class="lineno">  578 </span>--
+<span class="lineno">  579 </span>-- This is provided as a filter so actions that require the remote
+<span class="lineno">  580 </span>-- address can get it in a uniform manner. It has specifically limited
+<span class="lineno">  581 </span>-- functionality to ensure that its transformation can be trusted,
+<span class="lineno">  582 </span>-- when used correctly.
+<span class="lineno">  583 </span>ipHeaderFilter :: MonadSnap m =&gt; m ()
+<span class="lineno">  584 </span><span class="decl"><span class="istickedoff">ipHeaderFilter = ipHeaderFilter' &quot;x-forwarded-for&quot;</span></span>
+<span class="lineno">  585 </span>
+<span class="lineno">  586 </span>
+<span class="lineno">  587 </span>------------------------------------------------------------------------------
+<span class="lineno">  588 </span>-- | Modifies the 'Request' in the state to set the 'rqRemoteAddr'
+<span class="lineno">  589 </span>-- field to the value from the header specified.  If the header
+<span class="lineno">  590 </span>-- specified is not present, this action has no effect.
+<span class="lineno">  591 </span>--
+<span class="lineno">  592 </span>-- This action should be used only when working behind a reverse http
+<span class="lineno">  593 </span>-- proxy that sets the header being looked at. This is the only way to
+<span class="lineno">  594 </span>-- ensure the value in the header can be trusted.
+<span class="lineno">  595 </span>--
+<span class="lineno">  596 </span>-- This is provided as a filter so actions that require the remote
+<span class="lineno">  597 </span>-- address can get it in a uniform manner. It has specifically limited
+<span class="lineno">  598 </span>-- functionality to ensure that its transformation can be trusted,
+<span class="lineno">  599 </span>-- when used correctly.
+<span class="lineno">  600 </span>ipHeaderFilter' :: MonadSnap m =&gt; CIB.CIByteString -&gt; m ()
+<span class="lineno">  601 </span><span class="decl"><span class="istickedoff">ipHeaderFilter' header = do</span>
+<span class="lineno">  602 </span><span class="spaces">    </span><span class="istickedoff">headerContents &lt;- getHeader header &lt;$&gt; getRequest</span>
+<span class="lineno">  603 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  604 </span><span class="spaces">    </span><span class="istickedoff">let whitespace = &quot; \t\r\n&quot;</span>
+<span class="lineno">  605 </span><span class="spaces">        </span><span class="istickedoff">ipChrs = &quot;.0123456789&quot;</span>
+<span class="lineno">  606 </span><span class="spaces">        </span><span class="istickedoff">trim f s = f (`elem` s)</span>
+<span class="lineno">  607 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  608 </span><span class="spaces">        </span><span class="istickedoff">clean = trim S.takeWhile ipChrs . trim S.dropWhile whitespace</span>
+<span class="lineno">  609 </span><span class="spaces">        </span><span class="istickedoff">setIP ip = modifyRequest $ \rq -&gt; rq { rqRemoteAddr = clean ip }</span>
+<span class="lineno">  610 </span><span class="spaces">    </span><span class="istickedoff">maybe (return <span class="nottickedoff">()</span>) setIP headerContents</span></span>
+<span class="lineno">  611 </span>
+<span class="lineno">  612 </span>
+<span class="lineno">  613 </span>------------------------------------------------------------------------------
+<span class="lineno">  614 </span>-- | This function brackets a Snap action in resource acquisition and
+<span class="lineno">  615 </span>-- release. This is provided because MonadCatchIO's 'bracket' function
+<span class="lineno">  616 </span>-- doesn't work properly in the case of a short-circuit return from
+<span class="lineno">  617 </span>-- the action being bracketed.
+<span class="lineno">  618 </span>--
+<span class="lineno">  619 </span>-- In order to prevent confusion regarding the effects of the
+<span class="lineno">  620 </span>-- aquisition and release actions on the Snap state, this function
+<span class="lineno">  621 </span>-- doesn't accept Snap actions for the acquire or release actions.
+<span class="lineno">  622 </span>--
+<span class="lineno">  623 </span>-- This function will run the release action in all cases where the
+<span class="lineno">  624 </span>-- acquire action succeeded.  This includes the following behaviors
+<span class="lineno">  625 </span>-- from the bracketed Snap action.
+<span class="lineno">  626 </span>--
+<span class="lineno">  627 </span>-- 1. Normal completion
+<span class="lineno">  628 </span>--
+<span class="lineno">  629 </span>-- 2. Short-circuit completion, either from calling 'fail' or 'finishWith'
+<span class="lineno">  630 </span>--
+<span class="lineno">  631 </span>-- 3. An exception being thrown.
+<span class="lineno">  632 </span>bracketSnap :: IO a -&gt; (a -&gt; IO b) -&gt; (a -&gt; Snap c) -&gt; Snap c
+<span class="lineno">  633 </span><span class="decl"><span class="nottickedoff">bracketSnap before after thing = block . Snap $ do</span>
+<span class="lineno">  634 </span><span class="spaces">    </span><span class="nottickedoff">a &lt;- liftIO before</span>
+<span class="lineno">  635 </span><span class="spaces">    </span><span class="nottickedoff">let after' = liftIO $ after a</span>
+<span class="lineno">  636 </span><span class="spaces">        </span><span class="nottickedoff">(Snap thing') = thing a</span>
+<span class="lineno">  637 </span><span class="spaces">    </span><span class="nottickedoff">r &lt;- unblock thing' `onException` after'</span>
+<span class="lineno">  638 </span><span class="spaces">    </span><span class="nottickedoff">_ &lt;- after'</span>
+<span class="lineno">  639 </span><span class="spaces">    </span><span class="nottickedoff">return r</span></span>
+<span class="lineno">  640 </span>
+<span class="lineno">  641 </span>
+<span class="lineno">  642 </span>------------------------------------------------------------------------------
+<span class="lineno">  643 </span>-- | This exception is thrown if the handler you supply to 'runSnap' fails.
+<span class="lineno">  644 </span>data NoHandlerException = NoHandlerException
+<span class="lineno">  645 </span>   deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>, <span class="decl"><span class="nottickedoff">Typeable</span></span>)
 <span class="lineno">  646 </span>
 <span class="lineno">  647 </span>
 <span class="lineno">  648 </span>------------------------------------------------------------------------------
-<span class="lineno">  649 </span>-- | See 'rqParam'. Looks up a value for the given named parameter in the
-<span class="lineno">  650 </span>-- 'Request'. If more than one value was entered for the given parameter name,
-<span class="lineno">  651 </span>-- 'getParam' gloms the values together with:
-<span class="lineno">  652 </span>--
-<span class="lineno">  653 </span>-- @    'S.intercalate' \&quot; \&quot;@
-<span class="lineno">  654 </span>--
-<span class="lineno">  655 </span>getParam :: ByteString          -- ^ parameter name to look up
-<span class="lineno">  656 </span>         -&gt; Snap (Maybe ByteString)
-<span class="lineno">  657 </span><span class="decl"><span class="istickedoff">getParam k = do</span>
-<span class="lineno">  658 </span><span class="spaces">    </span><span class="istickedoff">rq &lt;- getRequest</span>
-<span class="lineno">  659 </span><span class="spaces">    </span><span class="istickedoff">return $ liftM (S.intercalate &quot; &quot;) $ rqParam k rq</span></span>
-<span class="lineno">  660 </span>
-<span class="lineno">  661 </span>
+<span class="lineno">  649 </span>instance Show NoHandlerException where
+<span class="lineno">  650 </span>    <span class="decl"><span class="istickedoff">show NoHandlerException = &quot;No handler for request&quot;</span></span>
+<span class="lineno">  651 </span>
+<span class="lineno">  652 </span>
+<span class="lineno">  653 </span>------------------------------------------------------------------------------
+<span class="lineno">  654 </span>instance Exception NoHandlerException
+<span class="lineno">  655 </span>
+<span class="lineno">  656 </span>
+<span class="lineno">  657 </span>------------------------------------------------------------------------------
+<span class="lineno">  658 </span>-- | Runs a 'Snap' monad action in the 'Iteratee IO' monad.
+<span class="lineno">  659 </span>runSnap :: Snap a
+<span class="lineno">  660 </span>        -&gt; (ByteString -&gt; IO ())
+<span class="lineno">  661 </span>        -&gt; Request
+<span class="lineno">  662 </span>        -&gt; Iteratee ByteString IO (Request,Response)
+<span class="lineno">  663 </span><span class="decl"><span class="istickedoff">runSnap (Snap m) logerr req = do</span>
+<span class="lineno">  664 </span><span class="spaces">    </span><span class="istickedoff">(r, ss') &lt;- runStateT m ss</span>
+<span class="lineno">  665 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  666 </span><span class="spaces">    </span><span class="istickedoff">e &lt;- maybe (return $ Left fourohfour)</span>
+<span class="lineno">  667 </span><span class="spaces">               </span><span class="istickedoff">return</span>
+<span class="lineno">  668 </span><span class="spaces">               </span><span class="istickedoff">r</span>
+<span class="lineno">  669 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  670 </span><span class="spaces">    </span><span class="istickedoff">-- is this a case of early termination?</span>
+<span class="lineno">  671 </span><span class="spaces">    </span><span class="istickedoff">let resp = case e of</span>
+<span class="lineno">  672 </span><span class="spaces">                 </span><span class="istickedoff">Left x  -&gt; x</span>
+<span class="lineno">  673 </span><span class="spaces">                 </span><span class="istickedoff">Right _ -&gt; _snapResponse ss'</span>
+<span class="lineno">  674 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  675 </span><span class="spaces">    </span><span class="istickedoff">return (_snapRequest ss', resp)</span>
+<span class="lineno">  676 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  677 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  678 </span><span class="spaces">    </span><span class="istickedoff">fourohfour = setContentLength 3 $</span>
+<span class="lineno">  679 </span><span class="spaces">                 </span><span class="istickedoff">setResponseStatus 404 &quot;Not Found&quot; $</span>
+<span class="lineno">  680 </span><span class="spaces">                 </span><span class="istickedoff">modifyResponseBody (&gt;==&gt; enumBS &quot;404&quot;) $</span>
+<span class="lineno">  681 </span><span class="spaces">                 </span><span class="istickedoff">emptyResponse</span>
+<span class="lineno">  682 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  683 </span><span class="spaces">    </span><span class="istickedoff">dresp = emptyResponse { rspHttpVersion = rqVersion req }</span>
+<span class="lineno">  684 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  685 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req dresp logerr</span></span>
+<span class="lineno">  686 </span>{-# INLINE runSnap #-}
+<span class="lineno">  687 </span>
+<span class="lineno">  688 </span>
+<span class="lineno">  689 </span>------------------------------------------------------------------------------
+<span class="lineno">  690 </span>evalSnap :: Snap a
+<span class="lineno">  691 </span>         -&gt; (ByteString -&gt; IO ())
+<span class="lineno">  692 </span>         -&gt; Request
+<span class="lineno">  693 </span>         -&gt; Iteratee ByteString IO a
+<span class="lineno">  694 </span><span class="decl"><span class="istickedoff">evalSnap (Snap m) logerr req = do</span>
+<span class="lineno">  695 </span><span class="spaces">    </span><span class="istickedoff">(r, _) &lt;- runStateT m ss</span>
+<span class="lineno">  696 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  697 </span><span class="spaces">    </span><span class="istickedoff">e &lt;- maybe (liftIO $ throwIO NoHandlerException)</span>
+<span class="lineno">  698 </span><span class="spaces">               </span><span class="istickedoff">return</span>
+<span class="lineno">  699 </span><span class="spaces">               </span><span class="istickedoff">r</span>
+<span class="lineno">  700 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  701 </span><span class="spaces">    </span><span class="istickedoff">-- is this a case of early termination?</span>
+<span class="lineno">  702 </span><span class="spaces">    </span><span class="istickedoff">case e of</span>
+<span class="lineno">  703 </span><span class="spaces">      </span><span class="istickedoff">Left _  -&gt; liftIO $ throwIO $ ErrorCall &quot;no value&quot;</span>
+<span class="lineno">  704 </span><span class="spaces">      </span><span class="istickedoff">Right x -&gt; return x</span>
+<span class="lineno">  705 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  706 </span><span class="spaces">    </span><span class="istickedoff">dresp = emptyResponse { rspHttpVersion = rqVersion req }</span>
+<span class="lineno">  707 </span><span class="spaces">    </span><span class="istickedoff">ss = SnapState req dresp logerr</span></span>
+<span class="lineno">  708 </span>{-# INLINE evalSnap #-}
+<span class="lineno">  709 </span>
+<span class="lineno">  710 </span>
+<span class="lineno">  711 </span>
+<span class="lineno">  712 </span>------------------------------------------------------------------------------
+<span class="lineno">  713 </span>-- | See 'rqParam'. Looks up a value for the given named parameter in the
+<span class="lineno">  714 </span>-- 'Request'. If more than one value was entered for the given parameter name,
+<span class="lineno">  715 </span>-- 'getParam' gloms the values together with:
+<span class="lineno">  716 </span>--
+<span class="lineno">  717 </span>-- @    'S.intercalate' \&quot; \&quot;@
+<span class="lineno">  718 </span>--
+<span class="lineno">  719 </span>getParam :: MonadSnap m
+<span class="lineno">  720 </span>         =&gt; ByteString          -- ^ parameter name to look up
+<span class="lineno">  721 </span>         -&gt; m (Maybe ByteString)
+<span class="lineno">  722 </span><span class="decl"><span class="istickedoff">getParam k = do</span>
+<span class="lineno">  723 </span><span class="spaces">    </span><span class="istickedoff">rq &lt;- getRequest</span>
+<span class="lineno">  724 </span><span class="spaces">    </span><span class="istickedoff">return $ liftM (S.intercalate &quot; &quot;) $ rqParam k rq</span></span>
+<span class="lineno">  725 </span>
+<span class="lineno">  726 </span>
+<span class="lineno">  727 </span>------------------------------------------------------------------------------
+<span class="lineno">  728 </span>-- | Gets the HTTP 'Cookie' with the specified name.
+<span class="lineno">  729 </span>getCookie :: MonadSnap m
+<span class="lineno">  730 </span>          =&gt; ByteString
+<span class="lineno">  731 </span>          -&gt; m (Maybe Cookie)
+<span class="lineno">  732 </span><span class="decl"><span class="nottickedoff">getCookie name = withRequest $</span>
+<span class="lineno">  733 </span><span class="spaces">    </span><span class="nottickedoff">return . listToMaybe . filter (\c -&gt; cookieName c == name) . rqCookies</span></span>
+<span class="lineno">  734 </span>
+<span class="lineno">  735 </span>
 
 </pre>
 </html>

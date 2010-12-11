@@ -178,259 +178,269 @@ span.spaces    { background: white }
 <span class="lineno">  167 </span>-- | Gets a path from the 'Request' using 'rqPathInfo' and makes sure it is
 <span class="lineno">  168 </span>-- safe to use for opening files.  A path is safe if it is a relative path
 <span class="lineno">  169 </span>-- and has no &quot;..&quot; elements to escape the intended directory structure.
-<span class="lineno">  170 </span>getSafePath :: Snap FilePath
+<span class="lineno">  170 </span>getSafePath :: MonadSnap m =&gt; m FilePath
 <span class="lineno">  171 </span><span class="decl"><span class="istickedoff">getSafePath = do</span>
 <span class="lineno">  172 </span><span class="spaces">    </span><span class="istickedoff">req &lt;- getRequest</span>
-<span class="lineno">  173 </span><span class="spaces">    </span><span class="istickedoff">let p = S.unpack $ rqPathInfo req</span>
+<span class="lineno">  173 </span><span class="spaces">    </span><span class="istickedoff">let mp = urlDecode $ rqPathInfo req</span>
 <span class="lineno">  174 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  175 </span><span class="spaces">    </span><span class="istickedoff">-- check that we don't have any sneaky .. paths</span>
-<span class="lineno">  176 </span><span class="spaces">    </span><span class="istickedoff">let dirs = splitDirectories p</span>
-<span class="lineno">  177 </span><span class="spaces">    </span><span class="istickedoff">when (elem &quot;..&quot; dirs) pass</span>
-<span class="lineno">  178 </span><span class="spaces">    </span><span class="istickedoff">return p</span></span>
-<span class="lineno">  179 </span>
-<span class="lineno">  180 </span>
-<span class="lineno">  181 </span>------------------------------------------------------------------------------
-<span class="lineno">  182 </span>-- | Serves files out of the given directory. The relative path given in
-<span class="lineno">  183 </span>-- 'rqPathInfo' is searched for the given file, and the file is served with the
-<span class="lineno">  184 </span>-- appropriate mime type if it is found. Absolute paths and \&quot;@..@\&quot; are prohibited
-<span class="lineno">  185 </span>-- to prevent files from being served from outside the sandbox.
-<span class="lineno">  186 </span>--
-<span class="lineno">  187 </span>-- Uses 'defaultMimeTypes' to determine the @Content-Type@ based on the file's
-<span class="lineno">  188 </span>-- extension.
-<span class="lineno">  189 </span>fileServe :: FilePath  -- ^ root directory
-<span class="lineno">  190 </span>          -&gt; Snap ()
-<span class="lineno">  191 </span><span class="decl"><span class="istickedoff">fileServe = fileServe' defaultMimeTypes</span></span>
-<span class="lineno">  192 </span>{-# INLINE fileServe #-}
-<span class="lineno">  193 </span>
-<span class="lineno">  194 </span>
-<span class="lineno">  195 </span>------------------------------------------------------------------------------
-<span class="lineno">  196 </span>-- | Same as 'fileServe', with control over the MIME mapping used.
-<span class="lineno">  197 </span>fileServe' :: MimeMap           -- ^ MIME type mapping
-<span class="lineno">  198 </span>           -&gt; FilePath          -- ^ root directory
-<span class="lineno">  199 </span>           -&gt; Snap ()
-<span class="lineno">  200 </span><span class="decl"><span class="istickedoff">fileServe' mm root = do</span>
-<span class="lineno">  201 </span><span class="spaces">    </span><span class="istickedoff">sp &lt;- getSafePath</span>
-<span class="lineno">  202 </span><span class="spaces">    </span><span class="istickedoff">let fp   = root &lt;/&gt; sp</span>
-<span class="lineno">  203 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  204 </span><span class="spaces">    </span><span class="istickedoff">-- check that the file exists</span>
-<span class="lineno">  205 </span><span class="spaces">    </span><span class="istickedoff">liftIO (doesFileExist fp) &gt;&gt;= flip unless pass</span>
-<span class="lineno">  206 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  207 </span><span class="spaces">    </span><span class="istickedoff">let fn   = takeFileName fp</span>
-<span class="lineno">  208 </span><span class="spaces">    </span><span class="istickedoff">let mime = fileType mm fn</span>
-<span class="lineno">  209 </span><span class="spaces">    </span><span class="istickedoff">fileServeSingle' mime fp</span></span>
-<span class="lineno">  210 </span>{-# INLINE fileServe' #-}
-<span class="lineno">  211 </span>
-<span class="lineno">  212 </span>
-<span class="lineno">  213 </span>------------------------------------------------------------------------------
-<span class="lineno">  214 </span>-- | Serves a single file specified by a full or relative path.  The
-<span class="lineno">  215 </span>-- path restrictions on fileServe don't apply to this function since
-<span class="lineno">  216 </span>-- the path is not being supplied by the user.
-<span class="lineno">  217 </span>fileServeSingle :: FilePath          -- ^ path to file
-<span class="lineno">  218 </span>                -&gt; Snap ()
-<span class="lineno">  219 </span><span class="decl"><span class="istickedoff">fileServeSingle fp =</span>
-<span class="lineno">  220 </span><span class="spaces">    </span><span class="istickedoff">fileServeSingle' (fileType defaultMimeTypes (takeFileName fp)) fp</span></span>
-<span class="lineno">  221 </span>{-# INLINE fileServeSingle #-}
-<span class="lineno">  222 </span>
-<span class="lineno">  223 </span>
-<span class="lineno">  224 </span>------------------------------------------------------------------------------
-<span class="lineno">  225 </span>-- | Same as 'fileServeSingle', with control over the MIME mapping used.
-<span class="lineno">  226 </span>fileServeSingle' :: ByteString        -- ^ MIME type mapping
-<span class="lineno">  227 </span>                 -&gt; FilePath          -- ^ path to file
-<span class="lineno">  228 </span>                 -&gt; Snap ()
-<span class="lineno">  229 </span><span class="decl"><span class="istickedoff">fileServeSingle' mime fp = do</span>
-<span class="lineno">  230 </span><span class="spaces">    </span><span class="istickedoff">reqOrig &lt;- getRequest</span>
-<span class="lineno">  231 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  232 </span><span class="spaces">    </span><span class="istickedoff">-- If-Range header must be ignored if there is no Range: header in the</span>
-<span class="lineno">  233 </span><span class="spaces">    </span><span class="istickedoff">-- request (RFC 2616 section 14.27)</span>
-<span class="lineno">  234 </span><span class="spaces">    </span><span class="istickedoff">let req = if isNothing $ getHeader &quot;range&quot; reqOrig</span>
-<span class="lineno">  235 </span><span class="spaces">                </span><span class="istickedoff">then deleteHeader &quot;if-range&quot; reqOrig</span>
-<span class="lineno">  236 </span><span class="spaces">                </span><span class="istickedoff">else reqOrig</span>
-<span class="lineno">  237 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  238 </span><span class="spaces">    </span><span class="istickedoff">-- check &quot;If-Modified-Since&quot; and &quot;If-Range&quot; headers</span>
-<span class="lineno">  239 </span><span class="spaces">    </span><span class="istickedoff">let mbH = getHeader &quot;if-modified-since&quot; req</span>
-<span class="lineno">  240 </span><span class="spaces">    </span><span class="istickedoff">mbIfModified &lt;- liftIO $ case mbH of</span>
-<span class="lineno">  241 </span><span class="spaces">                               </span><span class="istickedoff">Nothing  -&gt; return Nothing</span>
-<span class="lineno">  242 </span><span class="spaces">                               </span><span class="istickedoff">(Just s) -&gt; liftM Just $ parseHttpTime s</span>
-<span class="lineno">  243 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  244 </span><span class="spaces">    </span><span class="istickedoff">-- If-Range header could contain an entity, but then parseHttpTime will</span>
-<span class="lineno">  245 </span><span class="spaces">    </span><span class="istickedoff">-- fail and return 0 which means a 200 response will be generated anyways</span>
-<span class="lineno">  246 </span><span class="spaces">    </span><span class="istickedoff">mbIfRange &lt;- liftIO $ case getHeader &quot;if-range&quot; req of</span>
-<span class="lineno">  247 </span><span class="spaces">                            </span><span class="istickedoff">Nothing  -&gt; return Nothing</span>
-<span class="lineno">  248 </span><span class="spaces">                            </span><span class="istickedoff">(Just s) -&gt; liftM Just $ parseHttpTime s</span>
-<span class="lineno">  249 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  250 </span><span class="spaces">    </span><span class="istickedoff">dbg $ &quot;mbIfModified: &quot; ++ Prelude.show mbIfModified</span>
-<span class="lineno">  251 </span><span class="spaces">    </span><span class="istickedoff">dbg $ &quot;mbIfRange: &quot; ++ Prelude.show mbIfRange</span>
-<span class="lineno">  252 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  253 </span><span class="spaces">    </span><span class="istickedoff">-- check modification time and bug out early if the file is not modified.</span>
-<span class="lineno">  254 </span><span class="spaces">    </span><span class="istickedoff">--</span>
-<span class="lineno">  255 </span><span class="spaces">    </span><span class="istickedoff">-- TODO: a stat cache would be nice here, but it'd need the date thread</span>
-<span class="lineno">  256 </span><span class="spaces">    </span><span class="istickedoff">-- stuff from snap-server to be folded into snap-core</span>
-<span class="lineno">  257 </span><span class="spaces">    </span><span class="istickedoff">filestat &lt;- liftIO $ getFileStatus fp</span>
-<span class="lineno">  258 </span><span class="spaces">    </span><span class="istickedoff">let mt = modificationTime filestat</span>
-<span class="lineno">  259 </span><span class="spaces">    </span><span class="istickedoff">maybe (return $! ()) (\lt -&gt; when (mt &lt;= lt) notModified) mbIfModified</span>
-<span class="lineno">  260 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  261 </span><span class="spaces">    </span><span class="istickedoff">let sz = fromIntegral $ fileSize filestat</span>
-<span class="lineno">  262 </span><span class="spaces">    </span><span class="istickedoff">lm &lt;- liftIO $ formatHttpTime mt</span>
-<span class="lineno">  263 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  264 </span><span class="spaces">    </span><span class="istickedoff">-- ok, at this point we know the last-modified time and the</span>
-<span class="lineno">  265 </span><span class="spaces">    </span><span class="istickedoff">-- content-type. set those.</span>
-<span class="lineno">  266 </span><span class="spaces">    </span><span class="istickedoff">modifyResponse $ setHeader &quot;Last-Modified&quot; lm</span>
-<span class="lineno">  267 </span><span class="spaces">                   </span><span class="istickedoff">. setHeader &quot;Accept-Ranges&quot; &quot;bytes&quot;</span>
-<span class="lineno">  268 </span><span class="spaces">                   </span><span class="istickedoff">. setContentType mime</span>
-<span class="lineno">  269 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  175 </span><span class="spaces">    </span><span class="istickedoff">p &lt;- maybe <span class="nottickedoff">pass</span> (return . S.unpack) mp</span>
+<span class="lineno">  176 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  177 </span><span class="spaces">    </span><span class="istickedoff">-- relative paths only!</span>
+<span class="lineno">  178 </span><span class="spaces">    </span><span class="istickedoff">when (not $ isRelative p) pass</span>
+<span class="lineno">  179 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  180 </span><span class="spaces">    </span><span class="istickedoff">-- check that we don't have any sneaky .. paths</span>
+<span class="lineno">  181 </span><span class="spaces">    </span><span class="istickedoff">let dirs = splitDirectories p</span>
+<span class="lineno">  182 </span><span class="spaces">    </span><span class="istickedoff">when (elem &quot;..&quot; dirs) pass</span>
+<span class="lineno">  183 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  184 </span><span class="spaces">    </span><span class="istickedoff">return $ joinPath dirs</span></span>
+<span class="lineno">  185 </span>
+<span class="lineno">  186 </span>
+<span class="lineno">  187 </span>------------------------------------------------------------------------------
+<span class="lineno">  188 </span>-- | Serves files out of the given directory. The relative path given in
+<span class="lineno">  189 </span>-- 'rqPathInfo' is searched for the given file, and the file is served with the
+<span class="lineno">  190 </span>-- appropriate mime type if it is found. Absolute paths and \&quot;@..@\&quot; are prohibited
+<span class="lineno">  191 </span>-- to prevent files from being served from outside the sandbox.
+<span class="lineno">  192 </span>--
+<span class="lineno">  193 </span>-- Uses 'defaultMimeTypes' to determine the @Content-Type@ based on the file's
+<span class="lineno">  194 </span>-- extension.
+<span class="lineno">  195 </span>fileServe :: MonadSnap m
+<span class="lineno">  196 </span>          =&gt; FilePath  -- ^ root directory
+<span class="lineno">  197 </span>          -&gt; m ()
+<span class="lineno">  198 </span><span class="decl"><span class="istickedoff">fileServe = fileServe' defaultMimeTypes</span></span>
+<span class="lineno">  199 </span>{-# INLINE fileServe #-}
+<span class="lineno">  200 </span>
+<span class="lineno">  201 </span>
+<span class="lineno">  202 </span>------------------------------------------------------------------------------
+<span class="lineno">  203 </span>-- | Same as 'fileServe', with control over the MIME mapping used.
+<span class="lineno">  204 </span>fileServe' :: MonadSnap m
+<span class="lineno">  205 </span>           =&gt; MimeMap           -- ^ MIME type mapping
+<span class="lineno">  206 </span>           -&gt; FilePath          -- ^ root directory
+<span class="lineno">  207 </span>           -&gt; m ()
+<span class="lineno">  208 </span><span class="decl"><span class="istickedoff">fileServe' mm root = do</span>
+<span class="lineno">  209 </span><span class="spaces">    </span><span class="istickedoff">sp &lt;- getSafePath</span>
+<span class="lineno">  210 </span><span class="spaces">    </span><span class="istickedoff">let fp   = root &lt;/&gt; sp</span>
+<span class="lineno">  211 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  212 </span><span class="spaces">    </span><span class="istickedoff">-- check that the file exists</span>
+<span class="lineno">  213 </span><span class="spaces">    </span><span class="istickedoff">liftIO (doesFileExist fp) &gt;&gt;= flip unless pass</span>
+<span class="lineno">  214 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  215 </span><span class="spaces">    </span><span class="istickedoff">let fn   = takeFileName fp</span>
+<span class="lineno">  216 </span><span class="spaces">    </span><span class="istickedoff">let mime = fileType mm fn</span>
+<span class="lineno">  217 </span><span class="spaces">    </span><span class="istickedoff">fileServeSingle' mime fp</span></span>
+<span class="lineno">  218 </span>{-# INLINE fileServe' #-}
+<span class="lineno">  219 </span>
+<span class="lineno">  220 </span>
+<span class="lineno">  221 </span>------------------------------------------------------------------------------
+<span class="lineno">  222 </span>-- | Serves a single file specified by a full or relative path.  The
+<span class="lineno">  223 </span>-- path restrictions on fileServe don't apply to this function since
+<span class="lineno">  224 </span>-- the path is not being supplied by the user.
+<span class="lineno">  225 </span>fileServeSingle :: MonadSnap m
+<span class="lineno">  226 </span>                =&gt; FilePath          -- ^ path to file
+<span class="lineno">  227 </span>                -&gt; m ()
+<span class="lineno">  228 </span><span class="decl"><span class="istickedoff">fileServeSingle fp =</span>
+<span class="lineno">  229 </span><span class="spaces">    </span><span class="istickedoff">fileServeSingle' (fileType defaultMimeTypes (takeFileName fp)) fp</span></span>
+<span class="lineno">  230 </span>{-# INLINE fileServeSingle #-}
+<span class="lineno">  231 </span>
+<span class="lineno">  232 </span>
+<span class="lineno">  233 </span>------------------------------------------------------------------------------
+<span class="lineno">  234 </span>-- | Same as 'fileServeSingle', with control over the MIME mapping used.
+<span class="lineno">  235 </span>fileServeSingle' :: MonadSnap m
+<span class="lineno">  236 </span>                 =&gt; ByteString        -- ^ MIME type mapping
+<span class="lineno">  237 </span>                 -&gt; FilePath          -- ^ path to file
+<span class="lineno">  238 </span>                 -&gt; m ()
+<span class="lineno">  239 </span><span class="decl"><span class="istickedoff">fileServeSingle' mime fp = do</span>
+<span class="lineno">  240 </span><span class="spaces">    </span><span class="istickedoff">reqOrig &lt;- getRequest</span>
+<span class="lineno">  241 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  242 </span><span class="spaces">    </span><span class="istickedoff">-- If-Range header must be ignored if there is no Range: header in the</span>
+<span class="lineno">  243 </span><span class="spaces">    </span><span class="istickedoff">-- request (RFC 2616 section 14.27)</span>
+<span class="lineno">  244 </span><span class="spaces">    </span><span class="istickedoff">let req = if isNothing $ getHeader &quot;range&quot; reqOrig</span>
+<span class="lineno">  245 </span><span class="spaces">                </span><span class="istickedoff">then deleteHeader &quot;if-range&quot; reqOrig</span>
+<span class="lineno">  246 </span><span class="spaces">                </span><span class="istickedoff">else reqOrig</span>
+<span class="lineno">  247 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  248 </span><span class="spaces">    </span><span class="istickedoff">-- check &quot;If-Modified-Since&quot; and &quot;If-Range&quot; headers</span>
+<span class="lineno">  249 </span><span class="spaces">    </span><span class="istickedoff">let mbH = getHeader &quot;if-modified-since&quot; req</span>
+<span class="lineno">  250 </span><span class="spaces">    </span><span class="istickedoff">mbIfModified &lt;- liftIO $ case mbH of</span>
+<span class="lineno">  251 </span><span class="spaces">                               </span><span class="istickedoff">Nothing  -&gt; return Nothing</span>
+<span class="lineno">  252 </span><span class="spaces">                               </span><span class="istickedoff">(Just s) -&gt; liftM Just $ parseHttpTime s</span>
+<span class="lineno">  253 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  254 </span><span class="spaces">    </span><span class="istickedoff">-- If-Range header could contain an entity, but then parseHttpTime will</span>
+<span class="lineno">  255 </span><span class="spaces">    </span><span class="istickedoff">-- fail and return 0 which means a 200 response will be generated anyways</span>
+<span class="lineno">  256 </span><span class="spaces">    </span><span class="istickedoff">mbIfRange &lt;- liftIO $ case getHeader &quot;if-range&quot; req of</span>
+<span class="lineno">  257 </span><span class="spaces">                            </span><span class="istickedoff">Nothing  -&gt; return Nothing</span>
+<span class="lineno">  258 </span><span class="spaces">                            </span><span class="istickedoff">(Just s) -&gt; liftM Just $ parseHttpTime s</span>
+<span class="lineno">  259 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  260 </span><span class="spaces">    </span><span class="istickedoff">dbg $ &quot;mbIfModified: &quot; ++ Prelude.show mbIfModified</span>
+<span class="lineno">  261 </span><span class="spaces">    </span><span class="istickedoff">dbg $ &quot;mbIfRange: &quot; ++ Prelude.show mbIfRange</span>
+<span class="lineno">  262 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  263 </span><span class="spaces">    </span><span class="istickedoff">-- check modification time and bug out early if the file is not modified.</span>
+<span class="lineno">  264 </span><span class="spaces">    </span><span class="istickedoff">--</span>
+<span class="lineno">  265 </span><span class="spaces">    </span><span class="istickedoff">-- TODO: a stat cache would be nice here, but it'd need the date thread</span>
+<span class="lineno">  266 </span><span class="spaces">    </span><span class="istickedoff">-- stuff from snap-server to be folded into snap-core</span>
+<span class="lineno">  267 </span><span class="spaces">    </span><span class="istickedoff">filestat &lt;- liftIO $ getFileStatus fp</span>
+<span class="lineno">  268 </span><span class="spaces">    </span><span class="istickedoff">let mt = modificationTime filestat</span>
+<span class="lineno">  269 </span><span class="spaces">    </span><span class="istickedoff">maybe (return $! ()) (\lt -&gt; when (mt &lt;= lt) notModified) mbIfModified</span>
 <span class="lineno">  270 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  271 </span><span class="spaces">    </span><span class="istickedoff">-- now check: is this a range request? If there is an 'If-Range' header</span>
-<span class="lineno">  272 </span><span class="spaces">    </span><span class="istickedoff">-- with an old modification time we skip this check and send a 200 response</span>
-<span class="lineno">  273 </span><span class="spaces">    </span><span class="istickedoff">let skipRangeCheck = maybe (False)</span>
-<span class="lineno">  274 </span><span class="spaces">                               </span><span class="istickedoff">(\lt -&gt; mt &gt; lt)</span>
-<span class="lineno">  275 </span><span class="spaces">                               </span><span class="istickedoff">mbIfRange</span>
-<span class="lineno">  276 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  277 </span><span class="spaces">    </span><span class="istickedoff">-- checkRangeReq checks for a Range: header in the request and sends a</span>
-<span class="lineno">  278 </span><span class="spaces">    </span><span class="istickedoff">-- partial response if it matches.</span>
-<span class="lineno">  279 </span><span class="spaces">    </span><span class="istickedoff">wasRange &lt;- if skipRangeCheck</span>
-<span class="lineno">  280 </span><span class="spaces">                  </span><span class="istickedoff">then return False</span>
-<span class="lineno">  281 </span><span class="spaces">                  </span><span class="istickedoff">else checkRangeReq req fp sz</span>
-<span class="lineno">  282 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  283 </span><span class="spaces">    </span><span class="istickedoff">dbg $ &quot;was this a range request? &quot; ++ Prelude.show wasRange</span>
-<span class="lineno">  284 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  285 </span><span class="spaces">    </span><span class="istickedoff">-- if we didn't have a range request, we just do normal sendfile</span>
-<span class="lineno">  286 </span><span class="spaces">    </span><span class="istickedoff">unless wasRange $ do</span>
-<span class="lineno">  287 </span><span class="spaces">      </span><span class="istickedoff">modifyResponse $ setResponseCode 200</span>
-<span class="lineno">  288 </span><span class="spaces">                     </span><span class="istickedoff">. setContentLength sz</span>
-<span class="lineno">  289 </span><span class="spaces">      </span><span class="istickedoff">sendFile fp</span>
-<span class="lineno">  290 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  291 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  292 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  293 </span><span class="spaces">    </span><span class="istickedoff">notModified = finishWith $</span>
-<span class="lineno">  294 </span><span class="spaces">                  </span><span class="istickedoff">setResponseCode 304 emptyResponse</span></span>
-<span class="lineno">  295 </span>
-<span class="lineno">  296 </span>
-<span class="lineno">  297 </span>------------------------------------------------------------------------------
-<span class="lineno">  298 </span>fileType :: MimeMap -&gt; FilePath -&gt; ByteString
-<span class="lineno">  299 </span><span class="decl"><span class="istickedoff">fileType mm f =</span>
-<span class="lineno">  300 </span><span class="spaces">    </span><span class="istickedoff">if null ext</span>
-<span class="lineno">  301 </span><span class="spaces">      </span><span class="istickedoff">then defaultMimeType</span>
-<span class="lineno">  302 </span><span class="spaces">      </span><span class="istickedoff">else fromMaybe (fileType mm (drop 1 ext))</span>
-<span class="lineno">  303 </span><span class="spaces">                     </span><span class="istickedoff">mbe</span>
-<span class="lineno">  304 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  305 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  306 </span><span class="spaces">    </span><span class="istickedoff">ext             = takeExtensions f</span>
-<span class="lineno">  307 </span><span class="spaces">    </span><span class="istickedoff">mbe             = Map.lookup ext mm</span></span>
-<span class="lineno">  308 </span>
-<span class="lineno">  309 </span>
-<span class="lineno">  310 </span>------------------------------------------------------------------------------
-<span class="lineno">  311 </span>defaultMimeType :: ByteString
-<span class="lineno">  312 </span><span class="decl"><span class="istickedoff">defaultMimeType = &quot;application/octet-stream&quot;</span></span>
-<span class="lineno">  313 </span>
-<span class="lineno">  314 </span>
-<span class="lineno">  315 </span>------------------------------------------------------------------------------
-<span class="lineno">  316 </span>data <span class="nottickedoff">RangeReq</span> = RangeReq { _rangeFirst :: !Int64
-<span class="lineno">  317 </span>                         , _rangeLast  :: !(Maybe Int64)
-<span class="lineno">  318 </span>                         }
-<span class="lineno">  319 </span>              | SuffixRangeReq { _suffixLength :: !Int64 }
-<span class="lineno">  320 </span>  deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>, <span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Prelude.Show</span></span></span></span>)
-<span class="lineno">  321 </span>
-<span class="lineno">  322 </span>
-<span class="lineno">  323 </span>------------------------------------------------------------------------------
-<span class="lineno">  324 </span>rangeParser :: Parser RangeReq
-<span class="lineno">  325 </span><span class="decl"><span class="istickedoff">rangeParser = string &quot;bytes=&quot; *&gt;</span>
-<span class="lineno">  326 </span><span class="spaces">              </span><span class="istickedoff">(byteRangeSpec &lt;|&gt; suffixByteRangeSpec) &lt;*</span>
-<span class="lineno">  327 </span><span class="spaces">              </span><span class="istickedoff">endOfInput</span>
-<span class="lineno">  328 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  329 </span><span class="spaces">    </span><span class="istickedoff">byteRangeSpec = do</span>
-<span class="lineno">  330 </span><span class="spaces">        </span><span class="istickedoff">start &lt;- parseNum</span>
-<span class="lineno">  331 </span><span class="spaces">        </span><span class="istickedoff">char '-'</span>
-<span class="lineno">  332 </span><span class="spaces">        </span><span class="istickedoff">end   &lt;- option Nothing $ liftM Just parseNum</span>
-<span class="lineno">  333 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  334 </span><span class="spaces">        </span><span class="istickedoff">return $ RangeReq start end</span>
-<span class="lineno">  335 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  336 </span><span class="spaces">    </span><span class="istickedoff">suffixByteRangeSpec = liftM SuffixRangeReq $ char '-' *&gt; parseNum</span></span>
-<span class="lineno">  337 </span>
-<span class="lineno">  338 </span>
-<span class="lineno">  339 </span>------------------------------------------------------------------------------
-<span class="lineno">  340 </span>checkRangeReq :: Request -&gt; FilePath -&gt; Int64 -&gt; Snap Bool
-<span class="lineno">  341 </span><span class="decl"><span class="istickedoff">checkRangeReq req fp sz = do</span>
-<span class="lineno">  342 </span><span class="spaces">    </span><span class="istickedoff">-- TODO/FIXME: multiple ranges</span>
-<span class="lineno">  343 </span><span class="spaces">    </span><span class="istickedoff">dbg $ &quot;checkRangeReq, fp=&quot; ++ fp ++ &quot;, sz=&quot; ++ Prelude.show sz</span>
-<span class="lineno">  344 </span><span class="spaces">    </span><span class="istickedoff">maybe (return False)</span>
-<span class="lineno">  345 </span><span class="spaces">          </span><span class="istickedoff">(\s -&gt; either (const $ return False)</span>
-<span class="lineno">  346 </span><span class="spaces">                        </span><span class="istickedoff">withRange</span>
-<span class="lineno">  347 </span><span class="spaces">                        </span><span class="istickedoff">(fullyParse s rangeParser))</span>
-<span class="lineno">  348 </span><span class="spaces">          </span><span class="istickedoff">(getHeader &quot;range&quot; req)</span>
-<span class="lineno">  349 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  350 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  351 </span><span class="spaces">    </span><span class="istickedoff">withRange rng@(RangeReq start mend) = do</span>
-<span class="lineno">  352 </span><span class="spaces">        </span><span class="istickedoff">dbg $ &quot;withRange: got Range request: &quot; ++ Prelude.show rng</span>
-<span class="lineno">  353 </span><span class="spaces">        </span><span class="istickedoff">let end = fromMaybe (sz-1) mend</span>
-<span class="lineno">  354 </span><span class="spaces">        </span><span class="istickedoff">dbg $ &quot;withRange: start=&quot; ++ Prelude.show start</span>
-<span class="lineno">  355 </span><span class="spaces">                  </span><span class="istickedoff">++ &quot;, end=&quot; ++ Prelude.show end</span>
-<span class="lineno">  356 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  357 </span><span class="spaces">        </span><span class="istickedoff">if start &lt; 0 || end &lt; start || start &gt;= sz || end &gt;= sz</span>
-<span class="lineno">  358 </span><span class="spaces">           </span><span class="istickedoff">then send416</span>
-<span class="lineno">  359 </span><span class="spaces">           </span><span class="istickedoff">else send206 start end</span>
-<span class="lineno">  360 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  361 </span><span class="spaces">    </span><span class="istickedoff">withRange rng@(SuffixRangeReq nbytes) = do</span>
+<span class="lineno">  271 </span><span class="spaces">    </span><span class="istickedoff">let sz = fromIntegral $ fileSize filestat</span>
+<span class="lineno">  272 </span><span class="spaces">    </span><span class="istickedoff">lm &lt;- liftIO $ formatHttpTime mt</span>
+<span class="lineno">  273 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  274 </span><span class="spaces">    </span><span class="istickedoff">-- ok, at this point we know the last-modified time and the</span>
+<span class="lineno">  275 </span><span class="spaces">    </span><span class="istickedoff">-- content-type. set those.</span>
+<span class="lineno">  276 </span><span class="spaces">    </span><span class="istickedoff">modifyResponse $ setHeader &quot;Last-Modified&quot; lm</span>
+<span class="lineno">  277 </span><span class="spaces">                   </span><span class="istickedoff">. setHeader &quot;Accept-Ranges&quot; &quot;bytes&quot;</span>
+<span class="lineno">  278 </span><span class="spaces">                   </span><span class="istickedoff">. setContentType mime</span>
+<span class="lineno">  279 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  280 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  281 </span><span class="spaces">    </span><span class="istickedoff">-- now check: is this a range request? If there is an 'If-Range' header</span>
+<span class="lineno">  282 </span><span class="spaces">    </span><span class="istickedoff">-- with an old modification time we skip this check and send a 200 response</span>
+<span class="lineno">  283 </span><span class="spaces">    </span><span class="istickedoff">let skipRangeCheck = maybe (False)</span>
+<span class="lineno">  284 </span><span class="spaces">                               </span><span class="istickedoff">(\lt -&gt; mt &gt; lt)</span>
+<span class="lineno">  285 </span><span class="spaces">                               </span><span class="istickedoff">mbIfRange</span>
+<span class="lineno">  286 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  287 </span><span class="spaces">    </span><span class="istickedoff">-- checkRangeReq checks for a Range: header in the request and sends a</span>
+<span class="lineno">  288 </span><span class="spaces">    </span><span class="istickedoff">-- partial response if it matches.</span>
+<span class="lineno">  289 </span><span class="spaces">    </span><span class="istickedoff">wasRange &lt;- if skipRangeCheck</span>
+<span class="lineno">  290 </span><span class="spaces">                  </span><span class="istickedoff">then return False</span>
+<span class="lineno">  291 </span><span class="spaces">                  </span><span class="istickedoff">else liftSnap $ checkRangeReq req fp sz</span>
+<span class="lineno">  292 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  293 </span><span class="spaces">    </span><span class="istickedoff">dbg $ &quot;was this a range request? &quot; ++ Prelude.show wasRange</span>
+<span class="lineno">  294 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  295 </span><span class="spaces">    </span><span class="istickedoff">-- if we didn't have a range request, we just do normal sendfile</span>
+<span class="lineno">  296 </span><span class="spaces">    </span><span class="istickedoff">unless wasRange $ do</span>
+<span class="lineno">  297 </span><span class="spaces">      </span><span class="istickedoff">modifyResponse $ setResponseCode 200</span>
+<span class="lineno">  298 </span><span class="spaces">                     </span><span class="istickedoff">. setContentLength sz</span>
+<span class="lineno">  299 </span><span class="spaces">      </span><span class="istickedoff">liftSnap $ sendFile fp</span>
+<span class="lineno">  300 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  301 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  302 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  303 </span><span class="spaces">    </span><span class="istickedoff">notModified = finishWith $</span>
+<span class="lineno">  304 </span><span class="spaces">                  </span><span class="istickedoff">setResponseCode 304 emptyResponse</span></span>
+<span class="lineno">  305 </span>
+<span class="lineno">  306 </span>
+<span class="lineno">  307 </span>------------------------------------------------------------------------------
+<span class="lineno">  308 </span>fileType :: MimeMap -&gt; FilePath -&gt; ByteString
+<span class="lineno">  309 </span><span class="decl"><span class="istickedoff">fileType mm f =</span>
+<span class="lineno">  310 </span><span class="spaces">    </span><span class="istickedoff">if null ext</span>
+<span class="lineno">  311 </span><span class="spaces">      </span><span class="istickedoff">then defaultMimeType</span>
+<span class="lineno">  312 </span><span class="spaces">      </span><span class="istickedoff">else fromMaybe (fileType mm (drop 1 ext))</span>
+<span class="lineno">  313 </span><span class="spaces">                     </span><span class="istickedoff">mbe</span>
+<span class="lineno">  314 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  315 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  316 </span><span class="spaces">    </span><span class="istickedoff">ext             = takeExtensions f</span>
+<span class="lineno">  317 </span><span class="spaces">    </span><span class="istickedoff">mbe             = Map.lookup ext mm</span></span>
+<span class="lineno">  318 </span>
+<span class="lineno">  319 </span>
+<span class="lineno">  320 </span>------------------------------------------------------------------------------
+<span class="lineno">  321 </span>defaultMimeType :: ByteString
+<span class="lineno">  322 </span><span class="decl"><span class="istickedoff">defaultMimeType = &quot;application/octet-stream&quot;</span></span>
+<span class="lineno">  323 </span>
+<span class="lineno">  324 </span>
+<span class="lineno">  325 </span>------------------------------------------------------------------------------
+<span class="lineno">  326 </span>data <span class="nottickedoff">RangeReq</span> = RangeReq { _rangeFirst :: !Int64
+<span class="lineno">  327 </span>                         , _rangeLast  :: !(Maybe Int64)
+<span class="lineno">  328 </span>                         }
+<span class="lineno">  329 </span>              | SuffixRangeReq { _suffixLength :: !Int64 }
+<span class="lineno">  330 </span>  deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>, <span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Prelude.Show</span></span></span></span>)
+<span class="lineno">  331 </span>
+<span class="lineno">  332 </span>
+<span class="lineno">  333 </span>------------------------------------------------------------------------------
+<span class="lineno">  334 </span>rangeParser :: Parser RangeReq
+<span class="lineno">  335 </span><span class="decl"><span class="istickedoff">rangeParser = string &quot;bytes=&quot; *&gt;</span>
+<span class="lineno">  336 </span><span class="spaces">              </span><span class="istickedoff">(byteRangeSpec &lt;|&gt; suffixByteRangeSpec) &lt;*</span>
+<span class="lineno">  337 </span><span class="spaces">              </span><span class="istickedoff">endOfInput</span>
+<span class="lineno">  338 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  339 </span><span class="spaces">    </span><span class="istickedoff">byteRangeSpec = do</span>
+<span class="lineno">  340 </span><span class="spaces">        </span><span class="istickedoff">start &lt;- parseNum</span>
+<span class="lineno">  341 </span><span class="spaces">        </span><span class="istickedoff">char '-'</span>
+<span class="lineno">  342 </span><span class="spaces">        </span><span class="istickedoff">end   &lt;- option Nothing $ liftM Just parseNum</span>
+<span class="lineno">  343 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  344 </span><span class="spaces">        </span><span class="istickedoff">return $ RangeReq start end</span>
+<span class="lineno">  345 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  346 </span><span class="spaces">    </span><span class="istickedoff">suffixByteRangeSpec = liftM SuffixRangeReq $ char '-' *&gt; parseNum</span></span>
+<span class="lineno">  347 </span>
+<span class="lineno">  348 </span>
+<span class="lineno">  349 </span>------------------------------------------------------------------------------
+<span class="lineno">  350 </span>checkRangeReq :: (MonadSnap m) =&gt; Request -&gt; FilePath -&gt; Int64 -&gt; m Bool
+<span class="lineno">  351 </span><span class="decl"><span class="istickedoff">checkRangeReq req fp sz = do</span>
+<span class="lineno">  352 </span><span class="spaces">    </span><span class="istickedoff">-- TODO/FIXME: multiple ranges</span>
+<span class="lineno">  353 </span><span class="spaces">    </span><span class="istickedoff">dbg $ &quot;checkRangeReq, fp=&quot; ++ fp ++ &quot;, sz=&quot; ++ Prelude.show sz</span>
+<span class="lineno">  354 </span><span class="spaces">    </span><span class="istickedoff">maybe (return False)</span>
+<span class="lineno">  355 </span><span class="spaces">          </span><span class="istickedoff">(\s -&gt; either (const $ return False)</span>
+<span class="lineno">  356 </span><span class="spaces">                        </span><span class="istickedoff">withRange</span>
+<span class="lineno">  357 </span><span class="spaces">                        </span><span class="istickedoff">(fullyParse s rangeParser))</span>
+<span class="lineno">  358 </span><span class="spaces">          </span><span class="istickedoff">(getHeader &quot;range&quot; req)</span>
+<span class="lineno">  359 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  360 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  361 </span><span class="spaces">    </span><span class="istickedoff">withRange rng@(RangeReq start mend) = do</span>
 <span class="lineno">  362 </span><span class="spaces">        </span><span class="istickedoff">dbg $ &quot;withRange: got Range request: &quot; ++ Prelude.show rng</span>
-<span class="lineno">  363 </span><span class="spaces">        </span><span class="istickedoff">let end   = sz-1</span>
-<span class="lineno">  364 </span><span class="spaces">        </span><span class="istickedoff">let start = sz - nbytes</span>
-<span class="lineno">  365 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  366 </span><span class="spaces">        </span><span class="istickedoff">dbg $ &quot;withRange: start=&quot; ++ Prelude.show start</span>
-<span class="lineno">  367 </span><span class="spaces">                  </span><span class="istickedoff">++ &quot;, end=&quot; ++ Prelude.show end</span>
-<span class="lineno">  368 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  369 </span><span class="spaces">        </span><span class="istickedoff">if start &lt; 0 || end &lt; start || start &gt;= sz || end &gt;= sz</span>
-<span class="lineno">  370 </span><span class="spaces">           </span><span class="istickedoff">then send416</span>
-<span class="lineno">  371 </span><span class="spaces">           </span><span class="istickedoff">else send206 start end</span>
-<span class="lineno">  372 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  373 </span><span class="spaces">    </span><span class="istickedoff">-- note: start and end INCLUSIVE here</span>
-<span class="lineno">  374 </span><span class="spaces">    </span><span class="istickedoff">send206 start end = do</span>
-<span class="lineno">  375 </span><span class="spaces">        </span><span class="istickedoff">dbg &quot;inside send206&quot;</span>
-<span class="lineno">  376 </span><span class="spaces">        </span><span class="istickedoff">let len = end-start+1</span>
-<span class="lineno">  377 </span><span class="spaces">        </span><span class="istickedoff">let crng = S.concat $</span>
-<span class="lineno">  378 </span><span class="spaces">                   </span><span class="istickedoff">L.toChunks $</span>
-<span class="lineno">  379 </span><span class="spaces">                   </span><span class="istickedoff">L.concat [ &quot;bytes &quot;</span>
-<span class="lineno">  380 </span><span class="spaces">                            </span><span class="istickedoff">, show start</span>
-<span class="lineno">  381 </span><span class="spaces">                            </span><span class="istickedoff">, &quot;-&quot;</span>
-<span class="lineno">  382 </span><span class="spaces">                            </span><span class="istickedoff">, show end</span>
-<span class="lineno">  383 </span><span class="spaces">                            </span><span class="istickedoff">, &quot;/&quot;</span>
-<span class="lineno">  384 </span><span class="spaces">                            </span><span class="istickedoff">, show sz ]</span>
-<span class="lineno">  385 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  386 </span><span class="spaces">        </span><span class="istickedoff">modifyResponse $ setResponseCode 206</span>
-<span class="lineno">  387 </span><span class="spaces">                       </span><span class="istickedoff">. setHeader &quot;Content-Range&quot; crng</span>
-<span class="lineno">  388 </span><span class="spaces">                       </span><span class="istickedoff">. setContentLength len</span>
-<span class="lineno">  389 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  390 </span><span class="spaces">        </span><span class="istickedoff">dbg $ &quot;send206: sending range (&quot; ++ Prelude.show start</span>
-<span class="lineno">  391 </span><span class="spaces">                </span><span class="istickedoff">++ &quot;,&quot; ++ Prelude.show (end+1) ++ &quot;) to sendFilePartial&quot;</span>
-<span class="lineno">  392 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  393 </span><span class="spaces">        </span><span class="istickedoff">-- end here was inclusive, sendFilePartial is exclusive</span>
-<span class="lineno">  394 </span><span class="spaces">        </span><span class="istickedoff">sendFilePartial fp (start,end+1)</span>
-<span class="lineno">  395 </span><span class="spaces">        </span><span class="istickedoff">return True</span>
-<span class="lineno">  396 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  397 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  398 </span><span class="spaces">    </span><span class="istickedoff">send416 = do</span>
-<span class="lineno">  399 </span><span class="spaces">        </span><span class="istickedoff">dbg &quot;inside send416&quot;</span>
-<span class="lineno">  400 </span><span class="spaces">        </span><span class="istickedoff">-- if there's an &quot;If-Range&quot; header in the request, then we just send</span>
-<span class="lineno">  401 </span><span class="spaces">        </span><span class="istickedoff">-- back 200</span>
-<span class="lineno">  402 </span><span class="spaces">        </span><span class="istickedoff">if getHeader &quot;If-Range&quot; req /= Nothing</span>
-<span class="lineno">  403 </span><span class="spaces">           </span><span class="istickedoff">then return False</span>
-<span class="lineno">  404 </span><span class="spaces">           </span><span class="istickedoff">else do</span>
-<span class="lineno">  405 </span><span class="spaces">               </span><span class="istickedoff">let crng = S.concat $</span>
-<span class="lineno">  406 </span><span class="spaces">                          </span><span class="istickedoff">L.toChunks $</span>
-<span class="lineno">  407 </span><span class="spaces">                          </span><span class="istickedoff">L.concat [&quot;bytes */&quot;, show sz]</span>
-<span class="lineno">  408 </span><span class="spaces">               </span><span class="istickedoff"></span>
-<span class="lineno">  409 </span><span class="spaces">               </span><span class="istickedoff">modifyResponse $ setResponseCode 416</span>
-<span class="lineno">  410 </span><span class="spaces">                              </span><span class="istickedoff">. setHeader &quot;Content-Range&quot; crng</span>
-<span class="lineno">  411 </span><span class="spaces">                              </span><span class="istickedoff">. setContentLength 0</span>
-<span class="lineno">  412 </span><span class="spaces">                              </span><span class="istickedoff">. deleteHeader &quot;Content-Type&quot;</span>
-<span class="lineno">  413 </span><span class="spaces">                              </span><span class="istickedoff">. deleteHeader &quot;Content-Encoding&quot;</span>
-<span class="lineno">  414 </span><span class="spaces">                              </span><span class="istickedoff">. deleteHeader &quot;Transfer-Encoding&quot;</span>
-<span class="lineno">  415 </span><span class="spaces">                              </span><span class="istickedoff">. setResponseBody (enumBS &quot;&quot;)</span>
-<span class="lineno">  416 </span><span class="spaces">               </span><span class="istickedoff"></span>
-<span class="lineno">  417 </span><span class="spaces">               </span><span class="istickedoff">return True</span></span>
-<span class="lineno">  418 </span>
-<span class="lineno">  419 </span>
-<span class="lineno">  420 </span>
-<span class="lineno">  421 </span>dbg :: (MonadIO m) =&gt; String -&gt; m ()
-<span class="lineno">  422 </span><span class="decl"><span class="istickedoff">dbg s = debug $ &quot;FileServe:&quot; ++ s</span></span>
+<span class="lineno">  363 </span><span class="spaces">        </span><span class="istickedoff">let end = fromMaybe (sz-1) mend</span>
+<span class="lineno">  364 </span><span class="spaces">        </span><span class="istickedoff">dbg $ &quot;withRange: start=&quot; ++ Prelude.show start</span>
+<span class="lineno">  365 </span><span class="spaces">                  </span><span class="istickedoff">++ &quot;, end=&quot; ++ Prelude.show end</span>
+<span class="lineno">  366 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  367 </span><span class="spaces">        </span><span class="istickedoff">if start &lt; 0 || end &lt; start || start &gt;= sz || end &gt;= sz</span>
+<span class="lineno">  368 </span><span class="spaces">           </span><span class="istickedoff">then send416</span>
+<span class="lineno">  369 </span><span class="spaces">           </span><span class="istickedoff">else send206 start end</span>
+<span class="lineno">  370 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  371 </span><span class="spaces">    </span><span class="istickedoff">withRange rng@(SuffixRangeReq nbytes) = do</span>
+<span class="lineno">  372 </span><span class="spaces">        </span><span class="istickedoff">dbg $ &quot;withRange: got Range request: &quot; ++ Prelude.show rng</span>
+<span class="lineno">  373 </span><span class="spaces">        </span><span class="istickedoff">let end   = sz-1</span>
+<span class="lineno">  374 </span><span class="spaces">        </span><span class="istickedoff">let start = sz - nbytes</span>
+<span class="lineno">  375 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  376 </span><span class="spaces">        </span><span class="istickedoff">dbg $ &quot;withRange: start=&quot; ++ Prelude.show start</span>
+<span class="lineno">  377 </span><span class="spaces">                  </span><span class="istickedoff">++ &quot;, end=&quot; ++ Prelude.show end</span>
+<span class="lineno">  378 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  379 </span><span class="spaces">        </span><span class="istickedoff">if start &lt; 0 || end &lt; start || start &gt;= sz || end &gt;= sz</span>
+<span class="lineno">  380 </span><span class="spaces">           </span><span class="istickedoff">then send416</span>
+<span class="lineno">  381 </span><span class="spaces">           </span><span class="istickedoff">else send206 start end</span>
+<span class="lineno">  382 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  383 </span><span class="spaces">    </span><span class="istickedoff">-- note: start and end INCLUSIVE here</span>
+<span class="lineno">  384 </span><span class="spaces">    </span><span class="istickedoff">send206 start end = do</span>
+<span class="lineno">  385 </span><span class="spaces">        </span><span class="istickedoff">dbg &quot;inside send206&quot;</span>
+<span class="lineno">  386 </span><span class="spaces">        </span><span class="istickedoff">let len = end-start+1</span>
+<span class="lineno">  387 </span><span class="spaces">        </span><span class="istickedoff">let crng = S.concat $</span>
+<span class="lineno">  388 </span><span class="spaces">                   </span><span class="istickedoff">L.toChunks $</span>
+<span class="lineno">  389 </span><span class="spaces">                   </span><span class="istickedoff">L.concat [ &quot;bytes &quot;</span>
+<span class="lineno">  390 </span><span class="spaces">                            </span><span class="istickedoff">, show start</span>
+<span class="lineno">  391 </span><span class="spaces">                            </span><span class="istickedoff">, &quot;-&quot;</span>
+<span class="lineno">  392 </span><span class="spaces">                            </span><span class="istickedoff">, show end</span>
+<span class="lineno">  393 </span><span class="spaces">                            </span><span class="istickedoff">, &quot;/&quot;</span>
+<span class="lineno">  394 </span><span class="spaces">                            </span><span class="istickedoff">, show sz ]</span>
+<span class="lineno">  395 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  396 </span><span class="spaces">        </span><span class="istickedoff">modifyResponse $ setResponseCode 206</span>
+<span class="lineno">  397 </span><span class="spaces">                       </span><span class="istickedoff">. setHeader &quot;Content-Range&quot; crng</span>
+<span class="lineno">  398 </span><span class="spaces">                       </span><span class="istickedoff">. setContentLength len</span>
+<span class="lineno">  399 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  400 </span><span class="spaces">        </span><span class="istickedoff">dbg $ &quot;send206: sending range (&quot; ++ Prelude.show start</span>
+<span class="lineno">  401 </span><span class="spaces">                </span><span class="istickedoff">++ &quot;,&quot; ++ Prelude.show (end+1) ++ &quot;) to sendFilePartial&quot;</span>
+<span class="lineno">  402 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  403 </span><span class="spaces">        </span><span class="istickedoff">-- end here was inclusive, sendFilePartial is exclusive</span>
+<span class="lineno">  404 </span><span class="spaces">        </span><span class="istickedoff">sendFilePartial fp (start,end+1)</span>
+<span class="lineno">  405 </span><span class="spaces">        </span><span class="istickedoff">return True</span>
+<span class="lineno">  406 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  407 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  408 </span><span class="spaces">    </span><span class="istickedoff">send416 = do</span>
+<span class="lineno">  409 </span><span class="spaces">        </span><span class="istickedoff">dbg &quot;inside send416&quot;</span>
+<span class="lineno">  410 </span><span class="spaces">        </span><span class="istickedoff">-- if there's an &quot;If-Range&quot; header in the request, then we just send</span>
+<span class="lineno">  411 </span><span class="spaces">        </span><span class="istickedoff">-- back 200</span>
+<span class="lineno">  412 </span><span class="spaces">        </span><span class="istickedoff">if getHeader &quot;If-Range&quot; req /= Nothing</span>
+<span class="lineno">  413 </span><span class="spaces">           </span><span class="istickedoff">then return False</span>
+<span class="lineno">  414 </span><span class="spaces">           </span><span class="istickedoff">else do</span>
+<span class="lineno">  415 </span><span class="spaces">               </span><span class="istickedoff">let crng = S.concat $</span>
+<span class="lineno">  416 </span><span class="spaces">                          </span><span class="istickedoff">L.toChunks $</span>
+<span class="lineno">  417 </span><span class="spaces">                          </span><span class="istickedoff">L.concat [&quot;bytes */&quot;, show sz]</span>
+<span class="lineno">  418 </span><span class="spaces">               </span><span class="istickedoff"></span>
+<span class="lineno">  419 </span><span class="spaces">               </span><span class="istickedoff">modifyResponse $ setResponseCode 416</span>
+<span class="lineno">  420 </span><span class="spaces">                              </span><span class="istickedoff">. setHeader &quot;Content-Range&quot; crng</span>
+<span class="lineno">  421 </span><span class="spaces">                              </span><span class="istickedoff">. setContentLength 0</span>
+<span class="lineno">  422 </span><span class="spaces">                              </span><span class="istickedoff">. deleteHeader &quot;Content-Type&quot;</span>
+<span class="lineno">  423 </span><span class="spaces">                              </span><span class="istickedoff">. deleteHeader &quot;Content-Encoding&quot;</span>
+<span class="lineno">  424 </span><span class="spaces">                              </span><span class="istickedoff">. deleteHeader &quot;Transfer-Encoding&quot;</span>
+<span class="lineno">  425 </span><span class="spaces">                              </span><span class="istickedoff">. setResponseBody (enumBS &quot;&quot;)</span>
+<span class="lineno">  426 </span><span class="spaces">               </span><span class="istickedoff"></span>
+<span class="lineno">  427 </span><span class="spaces">               </span><span class="istickedoff">return True</span></span>
+<span class="lineno">  428 </span>
+<span class="lineno">  429 </span>
+<span class="lineno">  430 </span>
+<span class="lineno">  431 </span>dbg :: (MonadIO m) =&gt; String -&gt; m ()
+<span class="lineno">  432 </span><span class="decl"><span class="istickedoff">dbg s = debug $ &quot;FileServe:&quot; ++ s</span></span>
 
 </pre>
 </html>

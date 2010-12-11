@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.2.13: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.3.0: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Internal-Iteratee-Debug.html"
 >Source code</A
@@ -100,6 +100,8 @@
 >debugIteratee</B
 > :: <A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
@@ -128,17 +130,17 @@
 ></A
 ><B
 >iterateeDebugWrapper</B
-> ::  <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+> :: (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Text-Show.html#t%3AShow"
+>Show</A
+> a, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
 >String</A
 > -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> a -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+> a m b -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> a</TD
+> a m b</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Iteratee-Debug.html#iterateeDebugWrapper"
 >Source</A

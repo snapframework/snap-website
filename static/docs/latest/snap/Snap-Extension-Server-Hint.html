@@ -1,0 +1,627 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Snap.Extension.Server.Hint</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+><SCRIPT TYPE="text/javascript"
+>window.onload = function () {setSynopsis("mini_Snap-Extension-Server-Hint.html")};</SCRIPT
+></HEAD
+><BODY
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topbar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
+></TD
+><TD CLASS="title"
+>snap-0.3.0: Snap: A Haskell Web Framework (Core)</TD
+><TD CLASS="topbut"
+><A HREF="src/Snap-Extension-Server-Hint.html"
+>Source code</A
+></TD
+><TD CLASS="topbut"
+><A HREF="index.html"
+>Contents</A
+></TD
+><TD CLASS="topbut"
+><A HREF="doc-index.html"
+>Index</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="modulebar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><FONT SIZE="6"
+>Snap.Extension.Server.Hint</FONT
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Description</TD
+></TR
+><TR
+><TD CLASS="doc"
+>This module provides replacements for the <TT
+><A HREF="Snap-Extension-Server-Hint.html#v%3AhttpServe"
+>httpServe</A
+></TT
+> and <TT
+><A HREF="Snap-Extension-Server-Hint.html#v%3AquickHttpServe"
+>quickHttpServe</A
+></TT
+>
+functions exported by Snap.Http.Server. By taking a <TT
+><A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+></TT
+> as an argument,
+these functions simplify the glue code that is needed to use Snap Extensions.
+In particular, Snap.Extension.Server.Hint provides function with identical
+type signatures to the ones exported by this module, but which dynamically
+reload their code on each request. See the README for details.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Synopsis</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+> <A HREF="#t%3AConfigExtend"
+>ConfigExtend</A
+> s = <A HREF="http://hackage.haskell.org/packages/archive/snap-server/latest/doc/html/Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> (<A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s) (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)] -&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AhttpServe"
+>httpServe</A
+> ::  <A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+> s -&gt; <A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+> s -&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AquickHttpServe"
+>quickHttpServe</A
+> ::  <A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+> s -&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AdefaultConfig"
+>defaultConfig</A
+> ::  <A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+> s</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetReloadHandler"
+>getReloadHandler</A
+> ::  <A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+> s -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)] -&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AsetReloadHandler"
+>setReloadHandler</A
+> ::  (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)] -&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>) -&gt; <A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+> s -&gt; <A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+> s</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>module <A HREF="http://hackage.haskell.org/packages/archive/snap-server/latest/doc/html/Snap-Http-Server-Config.html"
+>Snap.Http.Server.Config</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Documentation</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>type</SPAN
+> <A NAME="t:ConfigExtend"
+><A NAME="t%3AConfigExtend"
+></A
+></A
+><B
+>ConfigExtend</B
+> s = <A HREF="http://hackage.haskell.org/packages/archive/snap-server/latest/doc/html/Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> (<A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s) (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)] -&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Server-Hint.html#ConfigExtend"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><TT
+><A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+></TT
+> is similar to the <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-server/latest/doc/html/Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+></TT
+> exported by Snap.Http.Server,
+ but is augmented with a <TT
+>reloadHandler</TT
+> field which can be accessed using
+ <TT
+><A HREF="Snap-Extension-Server-Hint.html#v%3AgetReloadHandler"
+>getReloadHandler</A
+></TT
+> and <TT
+><A HREF="Snap-Extension-Server-Hint.html#v%3AsetReloadHandler"
+>setReloadHandler</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:httpServe"
+><A NAME="v%3AhttpServe"
+></A
+></A
+><B
+>httpServe</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Server-Hint.html#httpServe"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+> s</TD
+><TD CLASS="rdoc"
+>Any configuration options which override the defaults
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+> s</TD
+><TD CLASS="rdoc"
+>The <TT
+><A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+></TT
+> function for the application's monad
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+>The application to be served
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Starts serving HTTP requests using the given handler, with settings from
+ the <TT
+><A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+></TT
+> passed in. This function never returns; to shut down
+ the HTTP server, kill the controlling thread.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:quickHttpServe"
+><A NAME="v%3AquickHttpServe"
+></A
+></A
+><B
+>quickHttpServe</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Server-Hint.html#quickHttpServe"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+> s</TD
+><TD CLASS="rdoc"
+>The <TT
+><A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+></TT
+> function for the application's monad
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+>The application to be served
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Starts serving HTTP using the given handler. The configuration is read
+ from the options given on the command-line, as returned by
+ <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-server/latest/doc/html/Snap-Http-Server-Config.html#v%3AcommandLineConfig"
+>commandLineConfig</A
+></TT
+>.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:defaultConfig"
+><A NAME="v%3AdefaultConfig"
+></A
+></A
+><B
+>defaultConfig</B
+> ::  <A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+> s</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Server-Hint.html#defaultConfig"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>These are the default values for all the fields in <TT
+><A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+></TT
+>.
+</P
+><PRE
+> hostname      = &quot;localhost&quot;
+ address       = &quot;0.0.0.0&quot;
+ port          = 8000
+ accessLog     = &quot;log/access.log&quot;
+ errorLog      = &quot;log/error.log&quot;
+ locale        = &quot;en_US&quot;
+ compression   = True
+ verbose       = True
+ errorHandler  = prints the error message
+ reloadHandler = prints the result of each reload handler (error/success)
+</PRE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getReloadHandler"
+><A NAME="v%3AgetReloadHandler"
+></A
+></A
+><B
+>getReloadHandler</B
+> ::  <A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+> s -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)] -&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Server-Hint.html#getReloadHandler"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:setReloadHandler"
+><A NAME="v%3AsetReloadHandler"
+></A
+></A
+><B
+>setReloadHandler</B
+> ::  (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)] -&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>) -&gt; <A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+> s -&gt; <A HREF="Snap-Extension-Server-Hint.html#t%3AConfigExtend"
+>ConfigExtend</A
+> s</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Server-Hint.html#setReloadHandler"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+>module <A HREF="http://hackage.haskell.org/packages/archive/snap-server/latest/doc/html/Snap-Http-Server-Config.html"
+>Snap.Http.Server.Config</A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="botbar"
+>Produced by <A HREF="http://www.haskell.org/haddock/"
+>Haddock</A
+> version 2.6.1</TD
+></TR
+></TABLE
+></BODY
+></HTML
+>

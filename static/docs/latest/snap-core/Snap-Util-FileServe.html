@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.2.13: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.3.0: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Util-FileServe.html"
 >Source code</A
@@ -82,9 +82,9 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AgetSafePath"
 >getSafePath</A
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
 ></TD
 ></TR
@@ -96,11 +96,11 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AfileServe"
 >fileServe</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -112,13 +112,13 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AfileServe%27"
 >fileServe'</A
-> :: <A HREF="Snap-Util-FileServe.html#t%3AMimeMap"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Util-FileServe.html#t%3AMimeMap"
 >MimeMap</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -130,11 +130,11 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AfileServeSingle"
 >fileServeSingle</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -146,13 +146,13 @@
 ><TD CLASS="decl"
 ><A HREF="#v%3AfileServeSingle%27"
 >fileServeSingle'</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -212,9 +212,9 @@
 ></A
 ><B
 >getSafePath</B
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
 ></TD
 ><TD CLASS="declbut"
@@ -271,7 +271,15 @@
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
 ></TD
 ><TD CLASS="rdoc"
@@ -280,9 +288,7 @@
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="rdoc"
@@ -346,7 +352,15 @@
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: <A HREF="Snap-Util-FileServe.html#t%3AMimeMap"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="Snap-Util-FileServe.html#t%3AMimeMap"
 >MimeMap</A
 ></TD
 ><TD CLASS="rdoc"
@@ -364,9 +378,7 @@
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="rdoc"
@@ -413,7 +425,15 @@
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
 ></TD
 ><TD CLASS="rdoc"
@@ -422,9 +442,7 @@
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="rdoc"
@@ -469,7 +487,15 @@
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ><TD CLASS="rdoc"
@@ -487,9 +513,7 @@
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="rdoc"

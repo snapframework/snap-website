@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.2.13: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.3.0: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Types.html"
 >Source code</A
@@ -210,6 +210,8 @@ for HTTP as well as the <TT
 >Request</A
 > -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > (<A HREF="Snap-Types.html#t%3ARequest"
@@ -217,6 +219,48 @@ for HTTP as well as the <TT
 >, <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 >)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#t%3AMonadCatchIO"
+>MonadCatchIO</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonadPlus"
+>MonadPlus</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AFunctor"
+>Functor</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AApplicative"
+>Applicative</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AAlternative"
+>Alternative</A
+> m) =&gt; <A HREF="#t%3AMonadSnap"
+>MonadSnap</A
+> m  <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AliftSnap"
+>liftSnap</A
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; m a</TD
+></TR
+></TABLE
+></TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -238,13 +282,31 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AbracketSnap"
+>bracketSnap</A
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a -&gt; (a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> b) -&gt; (a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> c) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> c</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AfinishWith"
 >finishWith</A
-> ::  <A HREF="Snap-Types.html#t%3AResponse"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -254,9 +316,9 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3Apass"
 >pass</A
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -266,13 +328,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3Amethod"
 >method</A
-> ::  <A HREF="Snap-Types.html#t%3AMethod"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3AMethod"
 >Method</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> -&gt; m a -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -282,13 +342,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3Apath"
 >path</A
-> ::  <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> -&gt; m a -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -298,13 +356,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3Adir"
 >dir</A
-> ::  <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> -&gt; m a -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -314,11 +370,9 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AifTop"
 >ifTop</A
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m a -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -328,13 +382,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3Aroute"
 >route</A
-> ::  [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
->, <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a)] -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+>, m a)] -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -344,13 +396,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3ArouteLocal"
 >routeLocal</A
-> ::  [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
->, <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a)] -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+>, m a)] -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -360,9 +410,9 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AgetRequest"
 >getRequest</A
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="Snap-Types.html#t%3ARequest"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
 ></TD
 ></TR
@@ -374,9 +424,9 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AgetResponse"
 >getResponse</A
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="Snap-Types.html#t%3AResponse"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 ></TD
 ></TR
@@ -388,11 +438,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AputRequest"
 >putRequest</A
-> :: <A HREF="Snap-Types.html#t%3ARequest"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -404,11 +454,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AputResponse"
 >putResponse</A
-> :: <A HREF="Snap-Types.html#t%3AResponse"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -420,13 +470,13 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AmodifyRequest"
 >modifyRequest</A
-> :: (<A HREF="Snap-Types.html#t%3ARequest"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; (<A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
 > -&gt; <A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>) -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -438,13 +488,13 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AmodifyResponse"
 >modifyResponse</A
-> :: (<A HREF="Snap-Types.html#t%3AResponse"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; (<A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 > -&gt; <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>) -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -456,15 +506,13 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AlocalRequest"
 >localRequest</A
-> ::  (<A HREF="Snap-Types.html#t%3ARequest"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; (<A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
 > -&gt; <A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+>) -&gt; m a -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -474,13 +522,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AwithRequest"
 >withRequest</A
-> ::  (<A HREF="Snap-Types.html#t%3ARequest"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; (<A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> -&gt; m a) -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -490,13 +536,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AwithResponse"
 >withResponse</A
-> ::  (<A HREF="Snap-Types.html#t%3AResponse"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; (<A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> -&gt; m a) -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -506,11 +550,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AlogError"
 >logError</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -522,13 +566,15 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3ArunRequestBody"
 >runRequestBody</A
-> ::  <A HREF="Snap-Iteratee.html#t%3AIteratee"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> a -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -538,9 +584,9 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AgetRequestBody"
 >getRequestBody</A
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
 >ByteString</A
 ></TD
 ></TR
@@ -556,6 +602,10 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
@@ -882,9 +932,9 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AipHeaderFilter"
 >ipHeaderFilter</A
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -896,11 +946,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AipHeaderFilter%27"
 >ipHeaderFilter'</A
-> :: <A HREF="Data-CIByteString.html#t%3ACIByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Data-CIByteString.html#t%3ACIByteString"
 >CIByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -1156,11 +1206,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AgetParam"
 >getParam</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+> -&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
 > <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
@@ -1314,6 +1364,24 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AgetCookie"
+>getCookie</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AsetContentLength"
 >setContentLength</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
@@ -1346,11 +1414,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3Aredirect"
 >redirect</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -1362,13 +1430,13 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3Aredirect%27"
 >redirect'</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
 >Int</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -1384,6 +1452,10 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a) -&gt; <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 > -&gt; <A HREF="Snap-Types.html#t%3AResponse"
@@ -1402,8 +1474,16 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a -&gt; <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a) -&gt; <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 > -&gt; <A HREF="Snap-Types.html#t%3AResponse"
@@ -1418,13 +1498,17 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AaddToOutput"
 >addToOutput</A
-> :: (<SPAN CLASS="keyword"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; (<SPAN CLASS="keyword"
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a) -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -1436,11 +1520,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AwriteBS"
 >writeBS</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -1452,11 +1536,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AwriteLazyText"
 >writeLazyText</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text-Lazy.html#t%3AText"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text-Lazy.html#t%3AText"
 >Text</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -1468,11 +1552,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AwriteText"
 >writeText</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
 >Text</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -1484,11 +1568,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AwriteLBS"
 >writeLBS</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -1500,11 +1584,11 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AsendFile"
 >sendFile</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -1516,15 +1600,15 @@ for HTTP as well as the <TT
 ><TD CLASS="decl"
 ><A HREF="#v%3AsendFilePartial"
 >sendFilePartial</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
 > -&gt; (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
 >Int64</A
 >, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
 >Int64</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>) -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -1538,11 +1622,11 @@ for HTTP as well as the <TT
 >type</SPAN
 > <A HREF="#t%3AEnumerator"
 >Enumerator</A
-> a = <A HREF="Snap-Iteratee.html#t%3AEnumerator"
->Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> a</TD
+> a m b = <A HREF="Snap-Iteratee.html#t%3AStep"
+>Step</A
+> a m b -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> a m b</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -1560,6 +1644,10 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a)</TD
 ></TR
 ><TR
@@ -1664,6 +1752,192 @@ for HTTP as well as the <TT
 > a </TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#Snap"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:Snap')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:Snap" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AFunctor"
+>Functor</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable1"
+>Typeable1</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonadPlus"
+>MonadPlus</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AApplicative"
+>Applicative</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#t%3AMonadCatchIO"
+>MonadCatchIO</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AAlternative"
+>Alternative</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:runSnap"
+><A NAME="v%3ArunSnap"
+></A
+></A
+><B
+>runSnap</B
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; (<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>) -&gt; <A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+> -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+>, <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+>)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#runSnap"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Runs a <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad action in the 'Iteratee IO' monad.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>class</SPAN
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#t%3AMonadCatchIO"
+>MonadCatchIO</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonadPlus"
+>MonadPlus</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AFunctor"
+>Functor</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AApplicative"
+>Applicative</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AAlternative"
+>Alternative</A
+> m) =&gt; <A NAME="t:MonadSnap"
+><A NAME="t%3AMonadSnap"
+></A
+></A
+><B
+>MonadSnap</B
+> m  <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#MonadSnap"
 >Source</A
 ></TD
 ></TR
@@ -1820,80 +2094,233 @@ for HTTP as well as the <TT
 > a :: Snap ()
  a = liftIO fireTheMissiles
 </PRE
+><P
+>You may notice that most of the type signatures in this module contain a
+<TT
+>(MonadSnap m) =&gt; ...</TT
+> typeclass constraint. <TT
+><A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+></TT
+> is a typeclass which,
+in essence, says &quot;you can get back to the <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad from here&quot;. Using
+<TT
+><A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+></TT
+> you can extend the <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad with additional functionality and
+still have access to most of the <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> functions without writing <TT
+><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-Trans-Class.html#v%3Alift"
+>lift</A
+></TT
+>
+everywhere. Instances are already provided for most of the common monad
+transformers (ReaderT, WriterT, <TT
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-State-Lazy.html#t%3AStateT"
+>StateT</A
+></TT
+>, etc.).
+</P
+><P
+><TT
+><A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+></TT
+> is a type class, analogous to <TT
+><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+></TT
+> for <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+></TT
+>, that makes
+ it easy to wrap <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> inside monad transformers.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s8"
 ></TD
 ></TR
 ><TR
 ><TD CLASS="section4"
-><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:Snap')" ALT="show/hide"
+>Methods</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:liftSnap"
+><A NAME="v%3AliftSnap"
+></A
+></A
+><B
+>liftSnap</B
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; m a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#liftSnap"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:MonadSnap')" ALT="show/hide"
 > Instances</TD
 ></TR
 ><TR
 ><TD CLASS="body"
-><DIV ID="i:Snap" STYLE="display:block;"
+><DIV ID="i:MonadSnap" STYLE="display:block;"
 ><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
->Monad</A
+><A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
 > <A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 ></TD
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AFunctor"
->Functor</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
+><A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-List.html#t%3AListT"
+>ListT</A
+> m)</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable1"
->Typeable1</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
+><A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Cont.html#t%3AContT"
+>ContT</A
+> c m)</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonadPlus"
->MonadPlus</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
+>(<A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Error-Class.html#t%3AError"
+>Error</A
+> e) =&gt; <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Error.html#t%3AErrorT"
+>ErrorT</A
+> e m)</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AApplicative"
->Applicative</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
+><A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Reader.html#t%3AReaderT"
+>ReaderT</A
+> r m)</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#t%3AMonadCatchIO"
->MonadCatchIO</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
+><A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-State-Lazy.html#t%3AStateT"
+>StateT</A
+> s m)</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AAlternative"
->Alternative</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
+><A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-State-Strict.html#t%3AStateT"
+>StateT</A
+> s m)</TD
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TD
+>(<A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Monoid.html#t%3AMonoid"
+>Monoid</A
+> w) =&gt; <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Writer-Lazy.html#t%3AWriterT"
+>WriterT</A
+> w m)</TD
+></TR
+><TR
+><TD CLASS="decl"
+>(<A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Monoid.html#t%3AMonoid"
+>Monoid</A
+> w) =&gt; <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Writer-Strict.html#t%3AWriterT"
+>WriterT</A
+> w m)</TD
+></TR
+><TR
+><TD CLASS="decl"
+>(<A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Monoid.html#t%3AMonoid"
+>Monoid</A
+> w) =&gt; <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-RWS-Lazy.html#t%3ARWST"
+>RWST</A
+> r w s m)</TD
+></TR
+><TR
+><TD CLASS="decl"
+>(<A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Monoid.html#t%3AMonoid"
+>Monoid</A
+> w) =&gt; <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-RWS-Strict.html#t%3ARWST"
+>RWST</A
+> r w s m)</TD
 ></TR
 ></TABLE
 ></DIV
@@ -1901,57 +2328,6 @@ for HTTP as well as the <TT
 ></TR
 ></TABLE
 ></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:runSnap"
-><A NAME="v%3ArunSnap"
-></A
-></A
-><B
->runSnap</B
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; (<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
->) -&gt; <A HREF="Snap-Types.html#t%3ARequest"
->Request</A
-> -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
->Iteratee</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="Snap-Types.html#t%3ARequest"
->Request</A
->, <A HREF="Snap-Types.html#t%3AResponse"
->Response</A
->)</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Types.html#runSnap"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Runs a <TT
-><A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> monad action in the 'Iteratee IO' monad.
-</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -2083,17 +2459,90 @@ for HTTP as well as the <TT
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
+><A NAME="v:bracketSnap"
+><A NAME="v%3AbracketSnap"
+></A
+></A
+><B
+>bracketSnap</B
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> a -&gt; (a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> b) -&gt; (a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> c) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> c</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#bracketSnap"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>This function brackets a Snap action in resource acquisition and
+ release. This is provided because MonadCatchIO's <TT
+><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#v%3Abracket"
+>bracket</A
+></TT
+> function
+ doesn't work properly in the case of a short-circuit return from
+ the action being bracketed.
+</P
+><P
+>In order to prevent confusion regarding the effects of the
+ aquisition and release actions on the Snap state, this function
+ doesn't accept Snap actions for the acquire or release actions.
+</P
+><P
+>This function will run the release action in all cases where the
+ acquire action succeeded.  This includes the following behaviors
+ from the bracketed Snap action.
+</P
+><P
+>1. Normal completion
+</P
+><P
+>2. Short-circuit completion, either from calling <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#v%3Afail"
+>fail</A
+></TT
+> or <TT
+><A HREF="Snap-Types.html#v%3AfinishWith"
+>finishWith</A
+></TT
+>
+</P
+><P
+>3. An exception being thrown.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
 ><A NAME="v:finishWith"
 ><A NAME="v%3AfinishWith"
 ></A
 ></A
 ><B
 >finishWith</B
-> ::  <A HREF="Snap-Types.html#t%3AResponse"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> -&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#finishWith"
 >Source</A
@@ -2131,9 +2580,9 @@ for HTTP as well as the <TT
 ></A
 ><B
 >pass</B
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#pass"
 >Source</A
@@ -2181,13 +2630,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >method</B
-> ::  <A HREF="Snap-Types.html#t%3AMethod"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3AMethod"
 >Method</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> -&gt; m a -&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#method"
 >Source</A
@@ -2235,7 +2682,15 @@ for HTTP as well as the <TT
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ><TD CLASS="rdoc"
@@ -2244,18 +2699,14 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+>-&gt; m a</TD
 ><TD CLASS="rdoc"
 >handler to run
 </TD
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+>-&gt; m a</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -2319,7 +2770,15 @@ for HTTP as well as the <TT
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ><TD CLASS="rdoc"
@@ -2328,18 +2787,14 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+>-&gt; m a</TD
 ><TD CLASS="rdoc"
 >handler to run
 </TD
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+>-&gt; m a</TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
@@ -2398,11 +2853,9 @@ for HTTP as well as the <TT
 ></A
 ><B
 >ifTop</B
-> ::  <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m a -&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#ifTop"
 >Source</A
@@ -2439,13 +2892,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >route</B
-> ::  [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
->, <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a)] -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+>, m a)] -&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Routing.html#route"
 >Source</A
@@ -2585,13 +3036,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >routeLocal</B
-> ::  [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
->, <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a)] -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+>, m a)] -&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Routing.html#routeLocal"
 >Source</A
@@ -2646,9 +3095,9 @@ for HTTP as well as the <TT
 ></A
 ><B
 >getRequest</B
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="Snap-Types.html#t%3ARequest"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
 ></TD
 ><TD CLASS="declbut"
@@ -2687,9 +3136,9 @@ for HTTP as well as the <TT
 ></A
 ><B
 >getResponse</B
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="Snap-Types.html#t%3AResponse"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 ></TD
 ><TD CLASS="declbut"
@@ -2728,11 +3177,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >putRequest</B
-> :: <A HREF="Snap-Types.html#t%3ARequest"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -2771,11 +3220,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >putResponse</B
-> :: <A HREF="Snap-Types.html#t%3AResponse"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -2814,13 +3263,13 @@ for HTTP as well as the <TT
 ></A
 ><B
 >modifyRequest</B
-> :: (<A HREF="Snap-Types.html#t%3ARequest"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; (<A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
 > -&gt; <A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>) -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -2859,13 +3308,13 @@ for HTTP as well as the <TT
 ></A
 ><B
 >modifyResponse</B
-> :: (<A HREF="Snap-Types.html#t%3AResponse"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; (<A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 > -&gt; <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>) -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -2904,15 +3353,13 @@ for HTTP as well as the <TT
 ></A
 ><B
 >localRequest</B
-> ::  (<A HREF="Snap-Types.html#t%3ARequest"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; (<A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
 > -&gt; <A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+>) -&gt; m a -&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#localRequest"
 >Source</A
@@ -2955,13 +3402,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >withRequest</B
-> ::  (<A HREF="Snap-Types.html#t%3ARequest"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; (<A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> -&gt; m a) -&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#withRequest"
 >Source</A
@@ -2994,13 +3439,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >withResponse</B
-> ::  (<A HREF="Snap-Types.html#t%3AResponse"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; (<A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> -&gt; m a) -&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#withResponse"
 >Source</A
@@ -3046,11 +3489,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >logError</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -3098,13 +3541,15 @@ for HTTP as well as the <TT
 ></A
 ><B
 >runRequestBody</B
-> ::  <A HREF="Snap-Iteratee.html#t%3AIteratee"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
-> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> a</TD
+> a -&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#runRequestBody"
 >Source</A
@@ -3134,9 +3579,9 @@ for HTTP as well as the <TT
 ></A
 ><B
 >getRequestBody</B
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
 >ByteString</A
 ></TD
 ><TD CLASS="declbut"
@@ -3185,6 +3630,10 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a</TD
 ><TD CLASS="rdoc"
 >the output <TT
@@ -4231,9 +4680,9 @@ for HTTP as well as the <TT
 ></A
 ><B
 >ipHeaderFilter</B
-> :: <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -4287,11 +4736,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >ipHeaderFilter'</B
-> :: <A HREF="Data-CIByteString.html#t%3ACIByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Data-CIByteString.html#t%3ACIByteString"
 >CIByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -5044,7 +5493,15 @@ for HTTP as well as the <TT
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ><TD CLASS="rdoc"
@@ -5053,9 +5510,7 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>-&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
 > <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
@@ -5576,6 +6031,47 @@ for HTTP as well as the <TT
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
+><A NAME="v:getCookie"
+><A NAME="v%3AgetCookie"
+></A
+></A
+><B
+>getCookie</B
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+>)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#getCookie"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Gets the HTTP <TT
+><A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+></TT
+> with the specified name.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
 ><A NAME="v:setContentLength"
 ><A NAME="v%3AsetContentLength"
 ></A
@@ -5681,11 +6177,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >redirect</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -5730,13 +6226,13 @@ for HTTP as well as the <TT
 ></A
 ><B
 >redirect'</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
 >Int</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -5811,10 +6307,13 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a</TD
 ><TD CLASS="rdoc"
->new response body
- enumerator
+>new response body enumerator
 </TD
 ></TR
 ><TR
@@ -5865,8 +6364,16 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a -&gt; <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a) -&gt; <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 > -&gt; <A HREF="Snap-Types.html#t%3AResponse"
@@ -5914,10 +6421,22 @@ for HTTP as well as the <TT
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: <SPAN CLASS="keyword"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <SPAN CLASS="keyword"
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a</TD
 ><TD CLASS="rdoc"
 >output to add
@@ -5925,9 +6444,7 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="rdoc"
@@ -5965,11 +6482,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >writeBS</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -6024,11 +6541,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >writeLazyText</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text-Lazy.html#t%3AText"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text-Lazy.html#t%3AText"
 >Text</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -6083,11 +6600,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >writeText</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
 >Text</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -6142,11 +6659,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >writeLBS</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
 >ByteString</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -6201,11 +6718,11 @@ for HTTP as well as the <TT
 ></A
 ><B
 >sendFile</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
-> -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -6268,15 +6785,15 @@ for HTTP as well as the <TT
 ></A
 ><B
 >sendFilePartial</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
 > -&gt; (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
 >Int64</A
 >, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
 >Int64</A
->) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
->Snap</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>) -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="declbut"
@@ -6355,17 +6872,79 @@ for HTTP as well as the <TT
 ></A
 ><B
 >Enumerator</B
-> a = <A HREF="Snap-Iteratee.html#t%3AEnumerator"
->Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> a</TD
+> a m b = <A HREF="Snap-Iteratee.html#t%3AStep"
+>Step</A
+> a m b -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> a m b</TD
 ><TD CLASS="declbut"
-><A HREF="src/Snap-Internal-Http-Types.html#Enumerator"
+><A HREF="src/Data-Enumerator.html#Enumerator"
 >Source</A
 ></TD
 ></TR
 ></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>While <TT
+><A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+></TT
+>s consume data, enumerators generate it. Since
+ <TT
+><TT
+><A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+></TT
+></TT
+> is an alias for <TT
+>m (<TT
+><A HREF="Snap-Iteratee.html#t%3AStep"
+>Step</A
+></TT
+> a m b)</TT
+>, <TT
+><A HREF="Snap-Types.html#t%3AEnumerator"
+>Enumerator</A
+></TT
+>s can
+ be considered step transformers of type
+ <TT
+><TT
+><A HREF="Snap-Iteratee.html#t%3AStep"
+>Step</A
+></TT
+> a m b -&gt; m (<TT
+><A HREF="Snap-Iteratee.html#t%3AStep"
+>Step</A
+></TT
+> a m b)</TT
+>.
+</P
+><P
+><TT
+><A HREF="Snap-Types.html#t%3AEnumerator"
+>Enumerator</A
+></TT
+>s typically read from an external source (parser, handle,
+ random generator, etc). They feed chunks into an <TT
+><A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+></TT
+> until the
+ source runs out of data (triggering <TT
+><A HREF="Snap-Iteratee.html#v%3AEOF"
+>EOF</A
+></TT
+>) or the iteratee finishes
+ processing (<TT
+><A HREF="Snap-Iteratee.html#v%3AYield"
+>Yield</A
+></TT
+>s a value).
+</P
 ></TD
 ></TR
 ><TR
@@ -6425,6 +7004,10 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
 > a)</TD
 ><TD CLASS="rdoc"
 ></TD

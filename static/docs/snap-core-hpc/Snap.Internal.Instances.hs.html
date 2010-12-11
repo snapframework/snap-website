@@ -1,0 +1,96 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>{-# OPTIONS_GHC -fno-warn-orphans #-}
+<span class="lineno">    2 </span>{-# LANGUAGE PackageImports #-}
+<span class="lineno">    3 </span>
+<span class="lineno">    4 </span>module Snap.Internal.Instances where
+<span class="lineno">    5 </span>
+<span class="lineno">    6 </span>import                       Control.Applicative
+<span class="lineno">    7 </span>import                       Control.Monad.Cont
+<span class="lineno">    8 </span>import                       Control.Monad.Error
+<span class="lineno">    9 </span>import                       Control.Monad.List
+<span class="lineno">   10 </span>import                       Control.Monad.RWS.Strict hiding (pass)
+<span class="lineno">   11 </span>import qualified             Control.Monad.RWS.Lazy as LRWS
+<span class="lineno">   12 </span>import                       Control.Monad.Reader
+<span class="lineno">   13 </span>import                       Control.Monad.State.Strict
+<span class="lineno">   14 </span>import qualified             Control.Monad.State.Lazy as LState
+<span class="lineno">   15 </span>import                       Control.Monad.Writer.Strict hiding (pass)
+<span class="lineno">   16 </span>import qualified             Control.Monad.Writer.Lazy as LWriter
+<span class="lineno">   17 </span>import                       Prelude hiding (catch)
+<span class="lineno">   18 </span>
+<span class="lineno">   19 </span>------------------------------------------------------------------------------
+<span class="lineno">   20 </span>import                       Snap.Internal.Types
+<span class="lineno">   21 </span>
+<span class="lineno">   22 </span>
+<span class="lineno">   23 </span>------------------------------------------------------------------------------
+<span class="lineno">   24 </span>instance MonadPlus m =&gt; MonadPlus (ContT c m) where
+<span class="lineno">   25 </span>    <span class="decl"><span class="nottickedoff">mzero = lift mzero</span></span>
+<span class="lineno">   26 </span>    <span class="decl"><span class="nottickedoff">m `mplus` n = ContT $ \ f -&gt; runContT m f `mplus` runContT n f</span></span>
+<span class="lineno">   27 </span>
+<span class="lineno">   28 </span>
+<span class="lineno">   29 </span>------------------------------------------------------------------------------
+<span class="lineno">   30 </span>instance MonadPlus m =&gt; Alternative (ContT c m) where
+<span class="lineno">   31 </span>    <span class="decl"><span class="nottickedoff">empty = mzero</span></span>
+<span class="lineno">   32 </span>    <span class="decl"><span class="nottickedoff">(&lt;|&gt;) = mplus</span></span>
+<span class="lineno">   33 </span>
+<span class="lineno">   34 </span>
+<span class="lineno">   35 </span>------------------------------------------------------------------------------
+<span class="lineno">   36 </span>instance MonadSnap m =&gt; MonadSnap (ContT c m) where
+<span class="lineno">   37 </span>    <span class="decl"><span class="nottickedoff">liftSnap = lift . liftSnap</span></span>
+<span class="lineno">   38 </span>
+<span class="lineno">   39 </span>
+<span class="lineno">   40 </span>------------------------------------------------------------------------------
+<span class="lineno">   41 </span>instance (MonadSnap m, Error e) =&gt; MonadSnap (ErrorT e m) where
+<span class="lineno">   42 </span>    <span class="decl"><span class="nottickedoff">liftSnap = lift . liftSnap</span></span>
+<span class="lineno">   43 </span>
+<span class="lineno">   44 </span>
+<span class="lineno">   45 </span>------------------------------------------------------------------------------
+<span class="lineno">   46 </span>instance MonadSnap m =&gt; MonadSnap (ListT m) where
+<span class="lineno">   47 </span>    <span class="decl"><span class="nottickedoff">liftSnap = lift . liftSnap</span></span>
+<span class="lineno">   48 </span>
+<span class="lineno">   49 </span>
+<span class="lineno">   50 </span>------------------------------------------------------------------------------
+<span class="lineno">   51 </span>instance (MonadSnap m, Monoid w) =&gt; MonadSnap (RWST r w s m) where
+<span class="lineno">   52 </span>    <span class="decl"><span class="nottickedoff">liftSnap = lift . liftSnap</span></span>
+<span class="lineno">   53 </span>
+<span class="lineno">   54 </span>
+<span class="lineno">   55 </span>------------------------------------------------------------------------------
+<span class="lineno">   56 </span>instance (MonadSnap m, Monoid w) =&gt; MonadSnap (LRWS.RWST r w s m) where
+<span class="lineno">   57 </span>    <span class="decl"><span class="nottickedoff">liftSnap = lift . liftSnap</span></span>
+<span class="lineno">   58 </span>
+<span class="lineno">   59 </span>
+<span class="lineno">   60 </span>------------------------------------------------------------------------------
+<span class="lineno">   61 </span>instance MonadSnap m =&gt; MonadSnap (ReaderT r m) where
+<span class="lineno">   62 </span>    <span class="decl"><span class="nottickedoff">liftSnap = lift . liftSnap</span></span>
+<span class="lineno">   63 </span>
+<span class="lineno">   64 </span>
+<span class="lineno">   65 </span>------------------------------------------------------------------------------
+<span class="lineno">   66 </span>instance MonadSnap m =&gt; MonadSnap (StateT s m) where
+<span class="lineno">   67 </span>    <span class="decl"><span class="nottickedoff">liftSnap = lift . liftSnap</span></span>
+<span class="lineno">   68 </span>
+<span class="lineno">   69 </span>
+<span class="lineno">   70 </span>------------------------------------------------------------------------------
+<span class="lineno">   71 </span>instance MonadSnap m =&gt; MonadSnap (LState.StateT s m) where
+<span class="lineno">   72 </span>    <span class="decl"><span class="nottickedoff">liftSnap = lift . liftSnap</span></span>
+<span class="lineno">   73 </span>
+<span class="lineno">   74 </span>
+<span class="lineno">   75 </span>------------------------------------------------------------------------------
+<span class="lineno">   76 </span>instance (MonadSnap m, Monoid w) =&gt; MonadSnap (WriterT w m) where
+<span class="lineno">   77 </span>    <span class="decl"><span class="nottickedoff">liftSnap = lift . liftSnap</span></span>
+<span class="lineno">   78 </span>
+<span class="lineno">   79 </span>
+<span class="lineno">   80 </span>------------------------------------------------------------------------------
+<span class="lineno">   81 </span>instance (MonadSnap m, Monoid w) =&gt; MonadSnap (LWriter.WriterT w m) where
+<span class="lineno">   82 </span>    <span class="decl"><span class="nottickedoff">liftSnap = lift . liftSnap</span></span>
+
+</pre>
+</html>

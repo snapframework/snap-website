@@ -68,317 +68,317 @@ span.spaces    { background: white }
 <span class="lineno">   57 </span>
 <span class="lineno">   58 </span>------------------------------------------------------------------------------
 <span class="lineno">   59 </span>import           Data.CIByteString
-<span class="lineno">   60 </span>import qualified Snap.Iteratee as I
-<span class="lineno">   61 </span>
+<span class="lineno">   60 </span>import           Snap.Iteratee (Enumerator)
+<span class="lineno">   61 </span>import qualified Snap.Iteratee as I
 <span class="lineno">   62 </span>
-<span class="lineno">   63 </span>#ifndef PORTABLE
-<span class="lineno">   64 </span>
-<span class="lineno">   65 </span>------------------------------------------------------------------------------
-<span class="lineno">   66 </span>-- foreign imports from cbits
-<span class="lineno">   67 </span>
-<span class="lineno">   68 </span>foreign import ccall unsafe &quot;set_c_locale&quot;
-<span class="lineno">   69 </span>        set_c_locale :: IO ()
-<span class="lineno">   70 </span>
-<span class="lineno">   71 </span>foreign import ccall unsafe &quot;c_parse_http_time&quot;
-<span class="lineno">   72 </span>        c_parse_http_time :: CString -&gt; IO CTime
-<span class="lineno">   73 </span>
-<span class="lineno">   74 </span>foreign import ccall unsafe &quot;c_format_http_time&quot;
-<span class="lineno">   75 </span>        c_format_http_time :: CTime -&gt; CString -&gt; IO ()
-<span class="lineno">   76 </span>
-<span class="lineno">   77 </span>foreign import ccall unsafe &quot;c_format_log_time&quot;
-<span class="lineno">   78 </span>        c_format_log_time :: CTime -&gt; CString -&gt; IO ()
-<span class="lineno">   79 </span>
-<span class="lineno">   80 </span>#endif
-<span class="lineno">   81 </span>
-<span class="lineno">   82 </span>------------------------------------------------------------------------------
-<span class="lineno">   83 </span>type Enumerator a = I.Enumerator IO a
-<span class="lineno">   84 </span>
-<span class="lineno">   85 </span>------------------------------------------------------------------------------
-<span class="lineno">   86 </span>-- | A type alias for a case-insensitive key-value mapping.
-<span class="lineno">   87 </span>type Headers = Map CIByteString [ByteString]
+<span class="lineno">   63 </span>
+<span class="lineno">   64 </span>#ifndef PORTABLE
+<span class="lineno">   65 </span>
+<span class="lineno">   66 </span>------------------------------------------------------------------------------
+<span class="lineno">   67 </span>-- foreign imports from cbits
+<span class="lineno">   68 </span>
+<span class="lineno">   69 </span>foreign import ccall unsafe &quot;set_c_locale&quot;
+<span class="lineno">   70 </span>        set_c_locale :: IO ()
+<span class="lineno">   71 </span>
+<span class="lineno">   72 </span>foreign import ccall unsafe &quot;c_parse_http_time&quot;
+<span class="lineno">   73 </span>        c_parse_http_time :: CString -&gt; IO CTime
+<span class="lineno">   74 </span>
+<span class="lineno">   75 </span>foreign import ccall unsafe &quot;c_format_http_time&quot;
+<span class="lineno">   76 </span>        c_format_http_time :: CTime -&gt; CString -&gt; IO ()
+<span class="lineno">   77 </span>
+<span class="lineno">   78 </span>foreign import ccall unsafe &quot;c_format_log_time&quot;
+<span class="lineno">   79 </span>        c_format_log_time :: CTime -&gt; CString -&gt; IO ()
+<span class="lineno">   80 </span>
+<span class="lineno">   81 </span>#endif
+<span class="lineno">   82 </span>
+<span class="lineno">   83 </span>
+<span class="lineno">   84 </span>------------------------------------------------------------------------------
+<span class="lineno">   85 </span>-- | A type alias for a case-insensitive key-value mapping.
+<span class="lineno">   86 </span>type Headers = Map CIByteString [ByteString]
+<span class="lineno">   87 </span>
 <span class="lineno">   88 </span>
-<span class="lineno">   89 </span>
-<span class="lineno">   90 </span>------------------------------------------------------------------------------
-<span class="lineno">   91 </span>-- | A typeclass for datatypes which contain HTTP headers.
-<span class="lineno">   92 </span>class HasHeaders a where
-<span class="lineno">   93 </span>
-<span class="lineno">   94 </span>    -- | Modify the datatype's headers.
-<span class="lineno">   95 </span>    updateHeaders :: (Headers -&gt; Headers) -&gt; a -&gt; a
-<span class="lineno">   96 </span>
-<span class="lineno">   97 </span>    -- | Retrieve the headers from a datatype that has headers.
-<span class="lineno">   98 </span>    headers       :: a -&gt; Headers
+<span class="lineno">   89 </span>------------------------------------------------------------------------------
+<span class="lineno">   90 </span>-- | A typeclass for datatypes which contain HTTP headers.
+<span class="lineno">   91 </span>class HasHeaders a where
+<span class="lineno">   92 </span>
+<span class="lineno">   93 </span>    -- | Modify the datatype's headers.
+<span class="lineno">   94 </span>    updateHeaders :: (Headers -&gt; Headers) -&gt; a -&gt; a
+<span class="lineno">   95 </span>
+<span class="lineno">   96 </span>    -- | Retrieve the headers from a datatype that has headers.
+<span class="lineno">   97 </span>    headers       :: a -&gt; Headers
+<span class="lineno">   98 </span>
 <span class="lineno">   99 </span>
-<span class="lineno">  100 </span>
-<span class="lineno">  101 </span>------------------------------------------------------------------------------
-<span class="lineno">  102 </span>-- | Adds a header key-value-pair to the 'HasHeaders' datatype. If a header with
-<span class="lineno">  103 </span>-- the same name already exists, the new value is appended to the headers list.
-<span class="lineno">  104 </span>addHeader :: (HasHeaders a) =&gt; CIByteString -&gt; ByteString -&gt; a -&gt; a
-<span class="lineno">  105 </span><span class="decl"><span class="istickedoff">addHeader k v = updateHeaders $ Map.insertWith' (++) k [v]</span></span>
+<span class="lineno">  100 </span>------------------------------------------------------------------------------
+<span class="lineno">  101 </span>-- | Adds a header key-value-pair to the 'HasHeaders' datatype. If a header with
+<span class="lineno">  102 </span>-- the same name already exists, the new value is appended to the headers list.
+<span class="lineno">  103 </span>addHeader :: (HasHeaders a) =&gt; CIByteString -&gt; ByteString -&gt; a -&gt; a
+<span class="lineno">  104 </span><span class="decl"><span class="istickedoff">addHeader k v = updateHeaders $ Map.insertWith' (++) k [v]</span></span>
+<span class="lineno">  105 </span>
 <span class="lineno">  106 </span>
-<span class="lineno">  107 </span>
-<span class="lineno">  108 </span>------------------------------------------------------------------------------
-<span class="lineno">  109 </span>-- | Sets a header key-value-pair in a 'HasHeaders' datatype. If a header with
-<span class="lineno">  110 </span>-- the same name already exists, it is overwritten with the new value.
-<span class="lineno">  111 </span>setHeader :: (HasHeaders a) =&gt; CIByteString -&gt; ByteString -&gt; a -&gt; a
-<span class="lineno">  112 </span><span class="decl"><span class="istickedoff">setHeader k v = updateHeaders $ Map.insert k [v]</span></span>
+<span class="lineno">  107 </span>------------------------------------------------------------------------------
+<span class="lineno">  108 </span>-- | Sets a header key-value-pair in a 'HasHeaders' datatype. If a header with
+<span class="lineno">  109 </span>-- the same name already exists, it is overwritten with the new value.
+<span class="lineno">  110 </span>setHeader :: (HasHeaders a) =&gt; CIByteString -&gt; ByteString -&gt; a -&gt; a
+<span class="lineno">  111 </span><span class="decl"><span class="istickedoff">setHeader k v = updateHeaders $ Map.insert k [v]</span></span>
+<span class="lineno">  112 </span>
 <span class="lineno">  113 </span>
-<span class="lineno">  114 </span>
-<span class="lineno">  115 </span>------------------------------------------------------------------------------
-<span class="lineno">  116 </span>-- | Gets all of the values for a given header.
-<span class="lineno">  117 </span>getHeaders :: (HasHeaders a) =&gt; CIByteString -&gt; a -&gt; Maybe [ByteString]
-<span class="lineno">  118 </span><span class="decl"><span class="istickedoff">getHeaders k a = Map.lookup k $ headers a</span></span>
+<span class="lineno">  114 </span>------------------------------------------------------------------------------
+<span class="lineno">  115 </span>-- | Gets all of the values for a given header.
+<span class="lineno">  116 </span>getHeaders :: (HasHeaders a) =&gt; CIByteString -&gt; a -&gt; Maybe [ByteString]
+<span class="lineno">  117 </span><span class="decl"><span class="istickedoff">getHeaders k a = Map.lookup k $ headers a</span></span>
+<span class="lineno">  118 </span>
 <span class="lineno">  119 </span>
-<span class="lineno">  120 </span>
-<span class="lineno">  121 </span>------------------------------------------------------------------------------
-<span class="lineno">  122 </span>-- | Gets a header value out of a 'HasHeaders' datatype. If many headers came
-<span class="lineno">  123 </span>-- in with the same name, they will be catenated together.
-<span class="lineno">  124 </span>getHeader :: (HasHeaders a) =&gt; CIByteString -&gt; a -&gt; Maybe ByteString
-<span class="lineno">  125 </span><span class="decl"><span class="istickedoff">getHeader k a = liftM (S.intercalate &quot; &quot;) (Map.lookup k $ headers a)</span></span>
+<span class="lineno">  120 </span>------------------------------------------------------------------------------
+<span class="lineno">  121 </span>-- | Gets a header value out of a 'HasHeaders' datatype. If many headers came
+<span class="lineno">  122 </span>-- in with the same name, they will be catenated together.
+<span class="lineno">  123 </span>getHeader :: (HasHeaders a) =&gt; CIByteString -&gt; a -&gt; Maybe ByteString
+<span class="lineno">  124 </span><span class="decl"><span class="istickedoff">getHeader k a = liftM (S.intercalate &quot; &quot;) (Map.lookup k $ headers a)</span></span>
+<span class="lineno">  125 </span>
 <span class="lineno">  126 </span>
-<span class="lineno">  127 </span>
-<span class="lineno">  128 </span>------------------------------------------------------------------------------
-<span class="lineno">  129 </span>-- | Clears a header value from a 'HasHeaders' datatype.
-<span class="lineno">  130 </span>deleteHeader :: (HasHeaders a) =&gt; CIByteString -&gt; a -&gt; a
-<span class="lineno">  131 </span><span class="decl"><span class="istickedoff">deleteHeader k = updateHeaders $ Map.delete k</span></span>
+<span class="lineno">  127 </span>------------------------------------------------------------------------------
+<span class="lineno">  128 </span>-- | Clears a header value from a 'HasHeaders' datatype.
+<span class="lineno">  129 </span>deleteHeader :: (HasHeaders a) =&gt; CIByteString -&gt; a -&gt; a
+<span class="lineno">  130 </span><span class="decl"><span class="istickedoff">deleteHeader k = updateHeaders $ Map.delete k</span></span>
+<span class="lineno">  131 </span>
 <span class="lineno">  132 </span>
-<span class="lineno">  133 </span>
-<span class="lineno">  134 </span>------------------------------------------------------------------------------
-<span class="lineno">  135 </span>-- | Enumerates the HTTP method values (see
-<span class="lineno">  136 </span>-- &lt;http://tools.ietf.org/html/rfc2068.html#section-5.1.1&gt;).
-<span class="lineno">  137 </span>data Method  = GET | HEAD | POST | PUT | DELETE | TRACE | OPTIONS | CONNECT
-<span class="lineno">  138 </span>               deriving(<span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>,<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Read</span></span></span></span></span></span>,<span class="nottickedoff"><span class="decl"><span class="nottickedoff">Ord</span></span></span>,<span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>)
+<span class="lineno">  133 </span>------------------------------------------------------------------------------
+<span class="lineno">  134 </span>-- | Enumerates the HTTP method values (see
+<span class="lineno">  135 </span>-- &lt;http://tools.ietf.org/html/rfc2068.html#section-5.1.1&gt;).
+<span class="lineno">  136 </span>data Method  = GET | HEAD | POST | PUT | DELETE | TRACE | OPTIONS | CONNECT
+<span class="lineno">  137 </span>               deriving(<span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>,<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Read</span></span></span></span></span></span>,<span class="nottickedoff"><span class="decl"><span class="nottickedoff">Ord</span></span></span>,<span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>)
+<span class="lineno">  138 </span>
 <span class="lineno">  139 </span>
-<span class="lineno">  140 </span>
-<span class="lineno">  141 </span>------------------------------------------------------------------------------
-<span class="lineno">  142 </span>type HttpVersion = (Int,Int)
+<span class="lineno">  140 </span>------------------------------------------------------------------------------
+<span class="lineno">  141 </span>type HttpVersion = (Int,Int)
+<span class="lineno">  142 </span>
 <span class="lineno">  143 </span>
-<span class="lineno">  144 </span>
-<span class="lineno">  145 </span>------------------------------------------------------------------------------
-<span class="lineno">  146 </span>-- | A datatype representing an HTTP cookie.
-<span class="lineno">  147 </span>data <span class="nottickedoff">Cookie</span> = Cookie {
-<span class="lineno">  148 </span>      -- | The name of the cookie.
-<span class="lineno">  149 </span>      cookieName    :: !ByteString
-<span class="lineno">  150 </span>
-<span class="lineno">  151 </span>      -- | The cookie's string value.
-<span class="lineno">  152 </span>    , cookieValue   :: !ByteString
-<span class="lineno">  153 </span>
-<span class="lineno">  154 </span>      -- | The cookie's expiration value, if it has one.
-<span class="lineno">  155 </span>    , cookieExpires :: !(Maybe UTCTime)
-<span class="lineno">  156 </span>
-<span class="lineno">  157 </span>      -- | The cookie's \&quot;domain\&quot; value, if it has one.
-<span class="lineno">  158 </span>    , cookieDomain  :: !(Maybe ByteString)
-<span class="lineno">  159 </span>
-<span class="lineno">  160 </span>      -- | The cookie path.
-<span class="lineno">  161 </span>    , cookiePath    :: !(Maybe ByteString)
-<span class="lineno">  162 </span>} deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>, <span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>)
+<span class="lineno">  144 </span>------------------------------------------------------------------------------
+<span class="lineno">  145 </span>-- | A datatype representing an HTTP cookie.
+<span class="lineno">  146 </span>data <span class="nottickedoff">Cookie</span> = Cookie {
+<span class="lineno">  147 </span>      -- | The name of the cookie.
+<span class="lineno">  148 </span>      cookieName    :: !ByteString
+<span class="lineno">  149 </span>
+<span class="lineno">  150 </span>      -- | The cookie's string value.
+<span class="lineno">  151 </span>    , cookieValue   :: !ByteString
+<span class="lineno">  152 </span>
+<span class="lineno">  153 </span>      -- | The cookie's expiration value, if it has one.
+<span class="lineno">  154 </span>    , cookieExpires :: !(Maybe UTCTime)
+<span class="lineno">  155 </span>
+<span class="lineno">  156 </span>      -- | The cookie's \&quot;domain\&quot; value, if it has one.
+<span class="lineno">  157 </span>    , cookieDomain  :: !(Maybe ByteString)
+<span class="lineno">  158 </span>
+<span class="lineno">  159 </span>      -- | The cookie path.
+<span class="lineno">  160 </span>    , cookiePath    :: !(Maybe ByteString)
+<span class="lineno">  161 </span>} deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>, <span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>)
+<span class="lineno">  162 </span>
 <span class="lineno">  163 </span>
-<span class="lineno">  164 </span>
-<span class="lineno">  165 </span>------------------------------------------------------------------------------
-<span class="lineno">  166 </span>-- | A type alias for the HTTP parameters mapping. Each parameter
-<span class="lineno">  167 </span>-- key maps to a list of ByteString values; if a parameter is specified
-<span class="lineno">  168 </span>-- multiple times (e.g.: \&quot;@GET /foo?param=bar1&amp;param=bar2@\&quot;), looking up
-<span class="lineno">  169 </span>-- \&quot;@param@\&quot; in the mapping will give you @[\&quot;bar1\&quot;, \&quot;bar2\&quot;]@.
-<span class="lineno">  170 </span>type Params = Map ByteString [ByteString]
+<span class="lineno">  164 </span>------------------------------------------------------------------------------
+<span class="lineno">  165 </span>-- | A type alias for the HTTP parameters mapping. Each parameter
+<span class="lineno">  166 </span>-- key maps to a list of ByteString values; if a parameter is specified
+<span class="lineno">  167 </span>-- multiple times (e.g.: \&quot;@GET /foo?param=bar1&amp;param=bar2@\&quot;), looking up
+<span class="lineno">  168 </span>-- \&quot;@param@\&quot; in the mapping will give you @[\&quot;bar1\&quot;, \&quot;bar2\&quot;]@.
+<span class="lineno">  169 </span>type Params = Map ByteString [ByteString]
+<span class="lineno">  170 </span>
 <span class="lineno">  171 </span>
-<span class="lineno">  172 </span>
-<span class="lineno">  173 </span>------------------------------------------------------------------------------
-<span class="lineno">  174 </span>-- request type
-<span class="lineno">  175 </span>------------------------------------------------------------------------------
-<span class="lineno">  176 </span>
-<span class="lineno">  177 </span>-- | An existential wrapper for the 'Enumerator' type
-<span class="lineno">  178 </span>data SomeEnumerator = SomeEnumerator (forall a . Enumerator a)
+<span class="lineno">  172 </span>------------------------------------------------------------------------------
+<span class="lineno">  173 </span>-- request type
+<span class="lineno">  174 </span>------------------------------------------------------------------------------
+<span class="lineno">  175 </span>
+<span class="lineno">  176 </span>-- | An existential wrapper for the 'Enumerator' type
+<span class="lineno">  177 </span>data SomeEnumerator = SomeEnumerator (forall a . Enumerator ByteString IO a)
+<span class="lineno">  178 </span>
 <span class="lineno">  179 </span>
-<span class="lineno">  180 </span>
-<span class="lineno">  181 </span>------------------------------------------------------------------------------
-<span class="lineno">  182 </span>-- | Contains all of the information about an incoming HTTP request.
-<span class="lineno">  183 </span>data <span class="istickedoff"><span class="nottickedoff"><span class="istickedoff"><span class="nottickedoff"><span class="istickedoff">Request</span></span></span></span></span> = Request
-<span class="lineno">  184 </span>    { -- | The server name of the request, as it came in from the request's
-<span class="lineno">  185 </span>      -- @Host:@ header.
-<span class="lineno">  186 </span>      rqServerName     :: !ByteString
-<span class="lineno">  187 </span>
-<span class="lineno">  188 </span>      -- | Returns the port number the HTTP server is listening on.
-<span class="lineno">  189 </span>    , rqServerPort     :: !Int
-<span class="lineno">  190 </span>
-<span class="lineno">  191 </span>      -- | The remote IP address.
-<span class="lineno">  192 </span>    , rqRemoteAddr     :: !ByteString
-<span class="lineno">  193 </span>
-<span class="lineno">  194 </span>      -- | The remote TCP port number.
-<span class="lineno">  195 </span>    , rqRemotePort     :: !Int
-<span class="lineno">  196 </span>
-<span class="lineno">  197 </span>      -- | The local IP address for this request.
-<span class="lineno">  198 </span>    , rqLocalAddr      :: !ByteString
-<span class="lineno">  199 </span>
-<span class="lineno">  200 </span>      -- | Returns the port number the HTTP server is listening on.
-<span class="lineno">  201 </span>    , rqLocalPort      :: !Int
-<span class="lineno">  202 </span>
-<span class="lineno">  203 </span>      -- | Returns the HTTP server's idea of its local hostname.
-<span class="lineno">  204 </span>    , rqLocalHostname  :: !ByteString
-<span class="lineno">  205 </span>
-<span class="lineno">  206 </span>      -- | Returns @True@ if this is an @HTTPS@ session (currently always
-<span class="lineno">  207 </span>      -- @False@).
-<span class="lineno">  208 </span>    , rqIsSecure       :: !Bool
-<span class="lineno">  209 </span>    , rqHeaders        :: Headers
-<span class="lineno">  210 </span>    , rqBody           :: IORef SomeEnumerator
-<span class="lineno">  211 </span>
-<span class="lineno">  212 </span>      -- | Returns the @Content-Length@ of the HTTP request body.
-<span class="lineno">  213 </span>    , rqContentLength  :: !(Maybe Int)
-<span class="lineno">  214 </span>
-<span class="lineno">  215 </span>      -- | Returns the HTTP request method.
-<span class="lineno">  216 </span>    , rqMethod         :: !Method
-<span class="lineno">  217 </span>
-<span class="lineno">  218 </span>      -- | Returns the HTTP version used by the client.
-<span class="lineno">  219 </span>    , rqVersion        :: !HttpVersion
-<span class="lineno">  220 </span>
-<span class="lineno">  221 </span>      -- | Returns a list of the cookies that came in from the HTTP request
-<span class="lineno">  222 </span>      -- headers.
-<span class="lineno">  223 </span>    , rqCookies        :: [Cookie]
+<span class="lineno">  180 </span>------------------------------------------------------------------------------
+<span class="lineno">  181 </span>-- | Contains all of the information about an incoming HTTP request.
+<span class="lineno">  182 </span>data <span class="istickedoff"><span class="nottickedoff"><span class="istickedoff"><span class="nottickedoff"><span class="istickedoff">Request</span></span></span></span></span> = Request
+<span class="lineno">  183 </span>    { -- | The server name of the request, as it came in from the request's
+<span class="lineno">  184 </span>      -- @Host:@ header.
+<span class="lineno">  185 </span>      rqServerName     :: !ByteString
+<span class="lineno">  186 </span>
+<span class="lineno">  187 </span>      -- | Returns the port number the HTTP server is listening on.
+<span class="lineno">  188 </span>    , rqServerPort     :: !Int
+<span class="lineno">  189 </span>
+<span class="lineno">  190 </span>      -- | The remote IP address.
+<span class="lineno">  191 </span>    , rqRemoteAddr     :: !ByteString
+<span class="lineno">  192 </span>
+<span class="lineno">  193 </span>      -- | The remote TCP port number.
+<span class="lineno">  194 </span>    , rqRemotePort     :: !Int
+<span class="lineno">  195 </span>
+<span class="lineno">  196 </span>      -- | The local IP address for this request.
+<span class="lineno">  197 </span>    , rqLocalAddr      :: !ByteString
+<span class="lineno">  198 </span>
+<span class="lineno">  199 </span>      -- | Returns the port number the HTTP server is listening on.
+<span class="lineno">  200 </span>    , rqLocalPort      :: !Int
+<span class="lineno">  201 </span>
+<span class="lineno">  202 </span>      -- | Returns the HTTP server's idea of its local hostname.
+<span class="lineno">  203 </span>    , rqLocalHostname  :: !ByteString
+<span class="lineno">  204 </span>
+<span class="lineno">  205 </span>      -- | Returns @True@ if this is an @HTTPS@ session (currently always
+<span class="lineno">  206 </span>      -- @False@).
+<span class="lineno">  207 </span>    , rqIsSecure       :: !Bool
+<span class="lineno">  208 </span>    , rqHeaders        :: Headers
+<span class="lineno">  209 </span>    , rqBody           :: IORef SomeEnumerator
+<span class="lineno">  210 </span>
+<span class="lineno">  211 </span>      -- | Returns the @Content-Length@ of the HTTP request body.
+<span class="lineno">  212 </span>    , rqContentLength  :: !(Maybe Int)
+<span class="lineno">  213 </span>
+<span class="lineno">  214 </span>      -- | Returns the HTTP request method.
+<span class="lineno">  215 </span>    , rqMethod         :: !Method
+<span class="lineno">  216 </span>
+<span class="lineno">  217 </span>      -- | Returns the HTTP version used by the client.
+<span class="lineno">  218 </span>    , rqVersion        :: !HttpVersion
+<span class="lineno">  219 </span>
+<span class="lineno">  220 </span>      -- | Returns a list of the cookies that came in from the HTTP request
+<span class="lineno">  221 </span>      -- headers.
+<span class="lineno">  222 </span>    , rqCookies        :: [Cookie]
+<span class="lineno">  223 </span>
 <span class="lineno">  224 </span>
-<span class="lineno">  225 </span>
-<span class="lineno">  226 </span>      -- | We'll be doing web components (or \&quot;snaplets\&quot;) for version 0.2. The
-<span class="lineno">  227 </span>      -- \&quot;snaplet path\&quot; refers to the place on the URL where your containing
-<span class="lineno">  228 </span>      -- snaplet is hung. The value of 'rqSnapletPath' is either @\&quot;\&quot;@ (at the
-<span class="lineno">  229 </span>      -- top-level context) or is a path beginning with a slash, but not ending
-<span class="lineno">  230 </span>      -- with one.
-<span class="lineno">  231 </span>      --
-<span class="lineno">  232 </span>      -- An identity is that:
-<span class="lineno">  233 </span>      --
-<span class="lineno">  234 </span>      -- &gt; rqURI r == 'S.concat' [ rqSnapletPath r
-<span class="lineno">  235 </span>      -- &gt;                       , rqContextPath r
-<span class="lineno">  236 </span>      -- &gt;                       , rqPathInfo r ]
-<span class="lineno">  237 </span>      --
-<span class="lineno">  238 </span>      -- note that until we introduce snaplets in v0.2, 'rqSnapletPath' will be
-<span class="lineno">  239 </span>      -- \&quot;\&quot;
-<span class="lineno">  240 </span>    , rqSnapletPath    :: !ByteString
-<span class="lineno">  241 </span>
-<span class="lineno">  242 </span>      -- | Handlers can (/will be; --ed/) be hung on a @URI@ \&quot;entry point\&quot;;
-<span class="lineno">  243 </span>      -- this is called the \&quot;context path\&quot;. If a handler is hung on the
-<span class="lineno">  244 </span>      -- context path @\&quot;\/foo\/\&quot;@, and you request @\&quot;\/foo\/bar\&quot;@, the value
-<span class="lineno">  245 </span>      -- of 'rqPathInfo' will be @\&quot;bar\&quot;@.
-<span class="lineno">  246 </span>    , rqPathInfo       :: !ByteString
-<span class="lineno">  247 </span>
-<span class="lineno">  248 </span>      -- | The \&quot;context path\&quot; of the request; catenating 'rqContextPath', and
-<span class="lineno">  249 </span>      -- 'rqPathInfo' should get you back to the original 'rqURI'. The
-<span class="lineno">  250 </span>      -- 'rqContextPath' always begins and ends with a slash (@\&quot;\/\&quot;@)
-<span class="lineno">  251 </span>      -- character, and represents the path (relative to your
-<span class="lineno">  252 </span>      -- component\/snaplet) you took to get to your handler.
-<span class="lineno">  253 </span>    , rqContextPath    :: !ByteString
-<span class="lineno">  254 </span>
-<span class="lineno">  255 </span>      -- | Returns the @URI@ requested by the client.
-<span class="lineno">  256 </span>    , rqURI            :: !ByteString
-<span class="lineno">  257 </span>
-<span class="lineno">  258 </span>      -- | Returns the HTTP query string for this 'Request'.
-<span class="lineno">  259 </span>    , rqQueryString    :: !ByteString
-<span class="lineno">  260 </span>
-<span class="lineno">  261 </span>      -- | Returns the 'Params' mapping for this 'Request'. \&quot;Parameters\&quot; are
-<span class="lineno">  262 </span>      -- automatically decoded from the query string and @POST@ body and
-<span class="lineno">  263 </span>      -- entered into this mapping.
-<span class="lineno">  264 </span>    , rqParams         :: Params
-<span class="lineno">  265 </span>    }
+<span class="lineno">  225 </span>      -- | We'll be doing web components (or \&quot;snaplets\&quot;) for version 0.2. The
+<span class="lineno">  226 </span>      -- \&quot;snaplet path\&quot; refers to the place on the URL where your containing
+<span class="lineno">  227 </span>      -- snaplet is hung. The value of 'rqSnapletPath' is either @\&quot;\&quot;@ (at the
+<span class="lineno">  228 </span>      -- top-level context) or is a path beginning with a slash, but not ending
+<span class="lineno">  229 </span>      -- with one.
+<span class="lineno">  230 </span>      --
+<span class="lineno">  231 </span>      -- An identity is that:
+<span class="lineno">  232 </span>      --
+<span class="lineno">  233 </span>      -- &gt; rqURI r == 'S.concat' [ rqSnapletPath r
+<span class="lineno">  234 </span>      -- &gt;                       , rqContextPath r
+<span class="lineno">  235 </span>      -- &gt;                       , rqPathInfo r ]
+<span class="lineno">  236 </span>      --
+<span class="lineno">  237 </span>      -- note that until we introduce snaplets in v0.2, 'rqSnapletPath' will be
+<span class="lineno">  238 </span>      -- \&quot;\&quot;
+<span class="lineno">  239 </span>    , rqSnapletPath    :: !ByteString
+<span class="lineno">  240 </span>
+<span class="lineno">  241 </span>      -- | Handlers can (/will be; --ed/) be hung on a @URI@ \&quot;entry point\&quot;;
+<span class="lineno">  242 </span>      -- this is called the \&quot;context path\&quot;. If a handler is hung on the
+<span class="lineno">  243 </span>      -- context path @\&quot;\/foo\/\&quot;@, and you request @\&quot;\/foo\/bar\&quot;@, the value
+<span class="lineno">  244 </span>      -- of 'rqPathInfo' will be @\&quot;bar\&quot;@.
+<span class="lineno">  245 </span>    , rqPathInfo       :: !ByteString
+<span class="lineno">  246 </span>
+<span class="lineno">  247 </span>      -- | The \&quot;context path\&quot; of the request; catenating 'rqContextPath', and
+<span class="lineno">  248 </span>      -- 'rqPathInfo' should get you back to the original 'rqURI'. The
+<span class="lineno">  249 </span>      -- 'rqContextPath' always begins and ends with a slash (@\&quot;\/\&quot;@)
+<span class="lineno">  250 </span>      -- character, and represents the path (relative to your
+<span class="lineno">  251 </span>      -- component\/snaplet) you took to get to your handler.
+<span class="lineno">  252 </span>    , rqContextPath    :: !ByteString
+<span class="lineno">  253 </span>
+<span class="lineno">  254 </span>      -- | Returns the @URI@ requested by the client.
+<span class="lineno">  255 </span>    , rqURI            :: !ByteString
+<span class="lineno">  256 </span>
+<span class="lineno">  257 </span>      -- | Returns the HTTP query string for this 'Request'.
+<span class="lineno">  258 </span>    , rqQueryString    :: !ByteString
+<span class="lineno">  259 </span>
+<span class="lineno">  260 </span>      -- | Returns the 'Params' mapping for this 'Request'. \&quot;Parameters\&quot; are
+<span class="lineno">  261 </span>      -- automatically decoded from the query string and @POST@ body and
+<span class="lineno">  262 </span>      -- entered into this mapping.
+<span class="lineno">  263 </span>    , rqParams         :: Params
+<span class="lineno">  264 </span>    }
+<span class="lineno">  265 </span>
 <span class="lineno">  266 </span>
-<span class="lineno">  267 </span>
-<span class="lineno">  268 </span>------------------------------------------------------------------------------
-<span class="lineno">  269 </span>instance Show Request where
-<span class="lineno">  270 </span>  <span class="decl"><span class="istickedoff">show r = concat [ &quot;Request &lt;\n&quot;</span>
-<span class="lineno">  271 </span><span class="spaces">                  </span><span class="istickedoff">, body</span>
-<span class="lineno">  272 </span><span class="spaces">                  </span><span class="istickedoff">, &quot;&gt;&quot; ]</span>
-<span class="lineno">  273 </span><span class="spaces">    </span><span class="istickedoff">where</span>
-<span class="lineno">  274 </span><span class="spaces">      </span><span class="istickedoff">body = concat $ map ((&quot;    &quot;++) . (++ &quot;\n&quot;)) [</span>
-<span class="lineno">  275 </span><span class="spaces">                      </span><span class="istickedoff">sname</span>
-<span class="lineno">  276 </span><span class="spaces">                    </span><span class="istickedoff">, remote</span>
-<span class="lineno">  277 </span><span class="spaces">                    </span><span class="istickedoff">, local</span>
-<span class="lineno">  278 </span><span class="spaces">                    </span><span class="istickedoff">, beginheaders</span>
-<span class="lineno">  279 </span><span class="spaces">                    </span><span class="istickedoff">, hdrs</span>
-<span class="lineno">  280 </span><span class="spaces">                    </span><span class="istickedoff">, endheaders</span>
-<span class="lineno">  281 </span><span class="spaces">                    </span><span class="istickedoff">, contentlength</span>
-<span class="lineno">  282 </span><span class="spaces">                    </span><span class="istickedoff">, method</span>
-<span class="lineno">  283 </span><span class="spaces">                    </span><span class="istickedoff">, version</span>
-<span class="lineno">  284 </span><span class="spaces">                    </span><span class="istickedoff">, cookies</span>
-<span class="lineno">  285 </span><span class="spaces">                    </span><span class="istickedoff">, pathinfo</span>
-<span class="lineno">  286 </span><span class="spaces">                    </span><span class="istickedoff">, contextpath</span>
-<span class="lineno">  287 </span><span class="spaces">                    </span><span class="istickedoff">, snapletpath</span>
-<span class="lineno">  288 </span><span class="spaces">                    </span><span class="istickedoff">, uri</span>
-<span class="lineno">  289 </span><span class="spaces">                    </span><span class="istickedoff">, params</span>
-<span class="lineno">  290 </span><span class="spaces">                    </span><span class="istickedoff">]</span>
-<span class="lineno">  291 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  292 </span><span class="spaces">      </span><span class="istickedoff">sname         = concat [ &quot;server-name: &quot;, toStr $ rqServerName r ]</span>
-<span class="lineno">  293 </span><span class="spaces">      </span><span class="istickedoff">remote        = concat [ &quot;remote: &quot;</span>
-<span class="lineno">  294 </span><span class="spaces">                             </span><span class="istickedoff">, toStr $ rqRemoteAddr r</span>
-<span class="lineno">  295 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;:&quot;</span>
-<span class="lineno">  296 </span><span class="spaces">                             </span><span class="istickedoff">, show (rqRemotePort r)</span>
-<span class="lineno">  297 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
-<span class="lineno">  298 </span><span class="spaces">      </span><span class="istickedoff">local         = concat [ &quot;local: &quot;</span>
-<span class="lineno">  299 </span><span class="spaces">                             </span><span class="istickedoff">, toStr $ rqLocalAddr r</span>
-<span class="lineno">  300 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;:&quot;</span>
-<span class="lineno">  301 </span><span class="spaces">                             </span><span class="istickedoff">, show $ rqServerPort r</span>
-<span class="lineno">  302 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
-<span class="lineno">  303 </span><span class="spaces">      </span><span class="istickedoff">beginheaders  = &quot;Headers:\n      ========================================&quot;</span>
-<span class="lineno">  304 </span><span class="spaces">      </span><span class="istickedoff">endheaders    = &quot;  ========================================&quot;</span>
-<span class="lineno">  305 </span><span class="spaces">      </span><span class="istickedoff">hdrs' (a,b)   = (B.unpack $ unCI a) ++ &quot;: &quot; ++ (show (map B.unpack b))</span>
-<span class="lineno">  306 </span><span class="spaces">      </span><span class="istickedoff">hdrs          = &quot;      &quot; ++ (concat $ intersperse &quot;\n &quot; $</span>
-<span class="lineno">  307 </span><span class="spaces">                                   </span><span class="istickedoff">map hdrs' (Map.toAscList $ rqHeaders r))</span>
-<span class="lineno">  308 </span><span class="spaces">      </span><span class="istickedoff">contentlength = concat [ &quot;content-length: &quot;</span>
-<span class="lineno">  309 </span><span class="spaces">                             </span><span class="istickedoff">, show $ rqContentLength r</span>
-<span class="lineno">  310 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
-<span class="lineno">  311 </span><span class="spaces">      </span><span class="istickedoff">method        = concat [ &quot;method: &quot;</span>
-<span class="lineno">  312 </span><span class="spaces">                             </span><span class="istickedoff">, show $ rqMethod r</span>
-<span class="lineno">  313 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
-<span class="lineno">  314 </span><span class="spaces">      </span><span class="istickedoff">version       = concat [ &quot;version: &quot;</span>
-<span class="lineno">  315 </span><span class="spaces">                             </span><span class="istickedoff">, show $ rqVersion r</span>
-<span class="lineno">  316 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
-<span class="lineno">  317 </span><span class="spaces">      </span><span class="istickedoff">cookies'      = &quot;      &quot; ++ (concat $ intersperse &quot;\n &quot; $</span>
-<span class="lineno">  318 </span><span class="spaces">                                   </span><span class="istickedoff">map show $ rqCookies r)</span>
-<span class="lineno">  319 </span><span class="spaces">      </span><span class="istickedoff">cookies       = concat [ &quot;cookies:\n&quot;</span>
-<span class="lineno">  320 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;      ========================================\n&quot;</span>
-<span class="lineno">  321 </span><span class="spaces">                             </span><span class="istickedoff">, cookies'</span>
-<span class="lineno">  322 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;\n      ========================================&quot;</span>
-<span class="lineno">  323 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
-<span class="lineno">  324 </span><span class="spaces">      </span><span class="istickedoff">pathinfo      = concat [ &quot;pathinfo: &quot;, toStr $ rqPathInfo r ]</span>
-<span class="lineno">  325 </span><span class="spaces">      </span><span class="istickedoff">contextpath   = concat [ &quot;contextpath: &quot;, toStr $ rqContextPath r ]</span>
-<span class="lineno">  326 </span><span class="spaces">      </span><span class="istickedoff">snapletpath   = concat [ &quot;snapletpath: &quot;, toStr $ rqSnapletPath r ]</span>
-<span class="lineno">  327 </span><span class="spaces">      </span><span class="istickedoff">uri           = concat [ &quot;URI: &quot;, toStr $ rqURI r ]</span>
-<span class="lineno">  328 </span><span class="spaces">      </span><span class="istickedoff">params'       = &quot;      &quot; ++</span>
-<span class="lineno">  329 </span><span class="spaces">                      </span><span class="istickedoff">(concat $ intersperse &quot;\n &quot; $</span>
-<span class="lineno">  330 </span><span class="spaces">                       </span><span class="istickedoff">map (\ (a,b) -&gt; B.unpack a ++ &quot;: &quot; ++ show b) $</span>
-<span class="lineno">  331 </span><span class="spaces">                       </span><span class="istickedoff">Map.toAscList $ rqParams r)</span>
-<span class="lineno">  332 </span><span class="spaces">      </span><span class="istickedoff">params        = concat [ &quot;params:\n&quot;</span>
-<span class="lineno">  333 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;      ========================================\n&quot;</span>
-<span class="lineno">  334 </span><span class="spaces">                             </span><span class="istickedoff">, params'</span>
-<span class="lineno">  335 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;\n      ========================================&quot;</span>
-<span class="lineno">  336 </span><span class="spaces">                             </span><span class="istickedoff">]</span></span>
+<span class="lineno">  267 </span>------------------------------------------------------------------------------
+<span class="lineno">  268 </span>instance Show Request where
+<span class="lineno">  269 </span>  <span class="decl"><span class="istickedoff">show r = concat [ &quot;Request &lt;\n&quot;</span>
+<span class="lineno">  270 </span><span class="spaces">                  </span><span class="istickedoff">, body</span>
+<span class="lineno">  271 </span><span class="spaces">                  </span><span class="istickedoff">, &quot;&gt;&quot; ]</span>
+<span class="lineno">  272 </span><span class="spaces">    </span><span class="istickedoff">where</span>
+<span class="lineno">  273 </span><span class="spaces">      </span><span class="istickedoff">body = concat $ map ((&quot;    &quot;++) . (++ &quot;\n&quot;)) [</span>
+<span class="lineno">  274 </span><span class="spaces">                      </span><span class="istickedoff">sname</span>
+<span class="lineno">  275 </span><span class="spaces">                    </span><span class="istickedoff">, remote</span>
+<span class="lineno">  276 </span><span class="spaces">                    </span><span class="istickedoff">, local</span>
+<span class="lineno">  277 </span><span class="spaces">                    </span><span class="istickedoff">, beginheaders</span>
+<span class="lineno">  278 </span><span class="spaces">                    </span><span class="istickedoff">, hdrs</span>
+<span class="lineno">  279 </span><span class="spaces">                    </span><span class="istickedoff">, endheaders</span>
+<span class="lineno">  280 </span><span class="spaces">                    </span><span class="istickedoff">, contentlength</span>
+<span class="lineno">  281 </span><span class="spaces">                    </span><span class="istickedoff">, method</span>
+<span class="lineno">  282 </span><span class="spaces">                    </span><span class="istickedoff">, version</span>
+<span class="lineno">  283 </span><span class="spaces">                    </span><span class="istickedoff">, cookies</span>
+<span class="lineno">  284 </span><span class="spaces">                    </span><span class="istickedoff">, pathinfo</span>
+<span class="lineno">  285 </span><span class="spaces">                    </span><span class="istickedoff">, contextpath</span>
+<span class="lineno">  286 </span><span class="spaces">                    </span><span class="istickedoff">, snapletpath</span>
+<span class="lineno">  287 </span><span class="spaces">                    </span><span class="istickedoff">, uri</span>
+<span class="lineno">  288 </span><span class="spaces">                    </span><span class="istickedoff">, params</span>
+<span class="lineno">  289 </span><span class="spaces">                    </span><span class="istickedoff">]</span>
+<span class="lineno">  290 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  291 </span><span class="spaces">      </span><span class="istickedoff">sname         = concat [ &quot;server-name: &quot;, toStr $ rqServerName r ]</span>
+<span class="lineno">  292 </span><span class="spaces">      </span><span class="istickedoff">remote        = concat [ &quot;remote: &quot;</span>
+<span class="lineno">  293 </span><span class="spaces">                             </span><span class="istickedoff">, toStr $ rqRemoteAddr r</span>
+<span class="lineno">  294 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;:&quot;</span>
+<span class="lineno">  295 </span><span class="spaces">                             </span><span class="istickedoff">, show (rqRemotePort r)</span>
+<span class="lineno">  296 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
+<span class="lineno">  297 </span><span class="spaces">      </span><span class="istickedoff">local         = concat [ &quot;local: &quot;</span>
+<span class="lineno">  298 </span><span class="spaces">                             </span><span class="istickedoff">, toStr $ rqLocalAddr r</span>
+<span class="lineno">  299 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;:&quot;</span>
+<span class="lineno">  300 </span><span class="spaces">                             </span><span class="istickedoff">, show $ rqServerPort r</span>
+<span class="lineno">  301 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
+<span class="lineno">  302 </span><span class="spaces">      </span><span class="istickedoff">beginheaders  = &quot;Headers:\n      ========================================&quot;</span>
+<span class="lineno">  303 </span><span class="spaces">      </span><span class="istickedoff">endheaders    = &quot;  ========================================&quot;</span>
+<span class="lineno">  304 </span><span class="spaces">      </span><span class="istickedoff">hdrs' (a,b)   = (B.unpack $ unCI a) ++ &quot;: &quot; ++ (show (map B.unpack b))</span>
+<span class="lineno">  305 </span><span class="spaces">      </span><span class="istickedoff">hdrs          = &quot;      &quot; ++ (concat $ intersperse &quot;\n &quot; $</span>
+<span class="lineno">  306 </span><span class="spaces">                                   </span><span class="istickedoff">map hdrs' (Map.toAscList $ rqHeaders r))</span>
+<span class="lineno">  307 </span><span class="spaces">      </span><span class="istickedoff">contentlength = concat [ &quot;content-length: &quot;</span>
+<span class="lineno">  308 </span><span class="spaces">                             </span><span class="istickedoff">, show $ rqContentLength r</span>
+<span class="lineno">  309 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
+<span class="lineno">  310 </span><span class="spaces">      </span><span class="istickedoff">method        = concat [ &quot;method: &quot;</span>
+<span class="lineno">  311 </span><span class="spaces">                             </span><span class="istickedoff">, show $ rqMethod r</span>
+<span class="lineno">  312 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
+<span class="lineno">  313 </span><span class="spaces">      </span><span class="istickedoff">version       = concat [ &quot;version: &quot;</span>
+<span class="lineno">  314 </span><span class="spaces">                             </span><span class="istickedoff">, show $ rqVersion r</span>
+<span class="lineno">  315 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
+<span class="lineno">  316 </span><span class="spaces">      </span><span class="istickedoff">cookies'      = &quot;      &quot; ++ (concat $ intersperse &quot;\n &quot; $</span>
+<span class="lineno">  317 </span><span class="spaces">                                   </span><span class="istickedoff">map show $ rqCookies r)</span>
+<span class="lineno">  318 </span><span class="spaces">      </span><span class="istickedoff">cookies       = concat [ &quot;cookies:\n&quot;</span>
+<span class="lineno">  319 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;      ========================================\n&quot;</span>
+<span class="lineno">  320 </span><span class="spaces">                             </span><span class="istickedoff">, cookies'</span>
+<span class="lineno">  321 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;\n      ========================================&quot;</span>
+<span class="lineno">  322 </span><span class="spaces">                             </span><span class="istickedoff">]</span>
+<span class="lineno">  323 </span><span class="spaces">      </span><span class="istickedoff">pathinfo      = concat [ &quot;pathinfo: &quot;, toStr $ rqPathInfo r ]</span>
+<span class="lineno">  324 </span><span class="spaces">      </span><span class="istickedoff">contextpath   = concat [ &quot;contextpath: &quot;, toStr $ rqContextPath r ]</span>
+<span class="lineno">  325 </span><span class="spaces">      </span><span class="istickedoff">snapletpath   = concat [ &quot;snapletpath: &quot;, toStr $ rqSnapletPath r ]</span>
+<span class="lineno">  326 </span><span class="spaces">      </span><span class="istickedoff">uri           = concat [ &quot;URI: &quot;, toStr $ rqURI r ]</span>
+<span class="lineno">  327 </span><span class="spaces">      </span><span class="istickedoff">params'       = &quot;      &quot; ++</span>
+<span class="lineno">  328 </span><span class="spaces">                      </span><span class="istickedoff">(concat $ intersperse &quot;\n &quot; $</span>
+<span class="lineno">  329 </span><span class="spaces">                       </span><span class="istickedoff">map (\ (a,b) -&gt; B.unpack a ++ &quot;: &quot; ++ show b) $</span>
+<span class="lineno">  330 </span><span class="spaces">                       </span><span class="istickedoff">Map.toAscList $ rqParams r)</span>
+<span class="lineno">  331 </span><span class="spaces">      </span><span class="istickedoff">params        = concat [ &quot;params:\n&quot;</span>
+<span class="lineno">  332 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;      ========================================\n&quot;</span>
+<span class="lineno">  333 </span><span class="spaces">                             </span><span class="istickedoff">, params'</span>
+<span class="lineno">  334 </span><span class="spaces">                             </span><span class="istickedoff">, &quot;\n      ========================================&quot;</span>
+<span class="lineno">  335 </span><span class="spaces">                             </span><span class="istickedoff">]</span></span>
+<span class="lineno">  336 </span>
 <span class="lineno">  337 </span>
-<span class="lineno">  338 </span>
-<span class="lineno">  339 </span>------------------------------------------------------------------------------
-<span class="lineno">  340 </span>instance HasHeaders Request where
-<span class="lineno">  341 </span>    <span class="decl"><span class="istickedoff">headers           = rqHeaders</span></span>
-<span class="lineno">  342 </span>    <span class="decl"><span class="istickedoff">updateHeaders f r = r { rqHeaders = f (rqHeaders r) }</span></span>
+<span class="lineno">  338 </span>------------------------------------------------------------------------------
+<span class="lineno">  339 </span>instance HasHeaders Request where
+<span class="lineno">  340 </span>    <span class="decl"><span class="istickedoff">headers           = rqHeaders</span></span>
+<span class="lineno">  341 </span>    <span class="decl"><span class="istickedoff">updateHeaders f r = r { rqHeaders = f (rqHeaders r) }</span></span>
+<span class="lineno">  342 </span>
 <span class="lineno">  343 </span>
-<span class="lineno">  344 </span>
-<span class="lineno">  345 </span>------------------------------------------------------------------------------
-<span class="lineno">  346 </span>instance HasHeaders Headers where
-<span class="lineno">  347 </span>    <span class="decl"><span class="istickedoff">headers       = id</span></span>
-<span class="lineno">  348 </span>    <span class="decl"><span class="istickedoff">updateHeaders = id</span></span>
-<span class="lineno">  349 </span>
-<span class="lineno">  350 </span>------------------------------------------------------------------------------
-<span class="lineno">  351 </span>-- response type
-<span class="lineno">  352 </span>------------------------------------------------------------------------------
-<span class="lineno">  353 </span>
-<span class="lineno">  354 </span>data ResponseBody = Enum (forall a . Enumerator a)
-<span class="lineno">  355 </span>                      -- ^ output body is enumerator
-<span class="lineno">  356 </span>
-<span class="lineno">  357 </span>                  | SendFile FilePath (Maybe (Int64,Int64))
-<span class="lineno">  358 </span>                      -- ^ output body is sendfile(), optional second argument
-<span class="lineno">  359 </span>                      --   is a byte range to send
+<span class="lineno">  344 </span>------------------------------------------------------------------------------
+<span class="lineno">  345 </span>instance HasHeaders Headers where
+<span class="lineno">  346 </span>    <span class="decl"><span class="istickedoff">headers       = id</span></span>
+<span class="lineno">  347 </span>    <span class="decl"><span class="istickedoff">updateHeaders = id</span></span>
+<span class="lineno">  348 </span>
+<span class="lineno">  349 </span>------------------------------------------------------------------------------
+<span class="lineno">  350 </span>-- response type
+<span class="lineno">  351 </span>------------------------------------------------------------------------------
+<span class="lineno">  352 </span>
+<span class="lineno">  353 </span>data ResponseBody = Enum (forall a . Enumerator ByteString IO a)
+<span class="lineno">  354 </span>                      -- ^ output body is enumerator
+<span class="lineno">  355 </span>
+<span class="lineno">  356 </span>                  | SendFile FilePath (Maybe (Int64,Int64))
+<span class="lineno">  357 </span>                      -- ^ output body is sendfile(), optional second argument
+<span class="lineno">  358 </span>                      --   is a byte range to send
+<span class="lineno">  359 </span>
 <span class="lineno">  360 </span>
-<span class="lineno">  361 </span>
-<span class="lineno">  362 </span>------------------------------------------------------------------------------
-<span class="lineno">  363 </span>rspBodyMap :: (forall a . Enumerator a -&gt; Enumerator a)
+<span class="lineno">  361 </span>------------------------------------------------------------------------------
+<span class="lineno">  362 </span>rspBodyMap :: (forall a .
+<span class="lineno">  363 </span>               Enumerator ByteString IO a -&gt; Enumerator ByteString IO a)
 <span class="lineno">  364 </span>           -&gt; ResponseBody
 <span class="lineno">  365 </span>           -&gt; ResponseBody
 <span class="lineno">  366 </span><span class="decl"><span class="istickedoff">rspBodyMap f b      = Enum $ f $ rspBodyToEnum b</span></span>
 <span class="lineno">  367 </span>
 <span class="lineno">  368 </span>
 <span class="lineno">  369 </span>------------------------------------------------------------------------------
-<span class="lineno">  370 </span>rspBodyToEnum :: ResponseBody -&gt; Enumerator a
+<span class="lineno">  370 </span>rspBodyToEnum :: ResponseBody -&gt; Enumerator ByteString IO a
 <span class="lineno">  371 </span><span class="decl"><span class="istickedoff">rspBodyToEnum (Enum e) = e</span>
 <span class="lineno">  372 </span><span class="spaces"></span><span class="istickedoff">rspBodyToEnum (SendFile fp Nothing)  = I.enumFile fp</span>
 <span class="lineno">  373 </span><span class="spaces"></span><span class="istickedoff">rspBodyToEnum (SendFile fp (Just s)) = I.enumFilePartial fp s</span></span>
@@ -473,16 +473,16 @@ span.spaces    { background: white }
 <span class="lineno">  462 </span>------------------------------------------------------------------------------
 <span class="lineno">  463 </span>
 <span class="lineno">  464 </span>-- | An empty 'Response'.
-<span class="lineno">  465 </span>emptyResponse       :: Response
-<span class="lineno">  466 </span><span class="decl"><span class="istickedoff">emptyResponse       = Response Map.empty (1,1) Nothing (Enum return) 200</span>
-<span class="lineno">  467 </span><span class="spaces">                               </span><span class="istickedoff">&quot;OK&quot; False</span></span>
+<span class="lineno">  465 </span>emptyResponse :: Response
+<span class="lineno">  466 </span><span class="decl"><span class="istickedoff">emptyResponse = Response Map.empty (1,1) Nothing (Enum (I.enumBS &quot;&quot;)) 200</span>
+<span class="lineno">  467 </span><span class="spaces">                         </span><span class="istickedoff">&quot;OK&quot; False</span></span>
 <span class="lineno">  468 </span>
 <span class="lineno">  469 </span>
 <span class="lineno">  470 </span>------------------------------------------------------------------------------
 <span class="lineno">  471 </span>-- | Sets an HTTP response body to the given 'Enumerator' value.
-<span class="lineno">  472 </span>setResponseBody     :: (forall a . Enumerator a)  -- ^ new response body
-<span class="lineno">  473 </span>                                                  -- enumerator
-<span class="lineno">  474 </span>                    -&gt; Response                   -- ^ response to modify
+<span class="lineno">  472 </span>setResponseBody     :: (forall a . Enumerator ByteString IO a)
+<span class="lineno">  473 </span>                                   -- ^ new response body enumerator
+<span class="lineno">  474 </span>                    -&gt; Response    -- ^ response to modify
 <span class="lineno">  475 </span>                    -&gt; Response
 <span class="lineno">  476 </span><span class="decl"><span class="istickedoff">setResponseBody e r = r { rspBody = Enum e }</span></span>
 <span class="lineno">  477 </span>{-# INLINE setResponseBody #-}
@@ -513,273 +513,274 @@ span.spaces    { background: white }
 <span class="lineno">  502 </span>
 <span class="lineno">  503 </span>------------------------------------------------------------------------------
 <span class="lineno">  504 </span>-- | Modifies a response body.
-<span class="lineno">  505 </span>modifyResponseBody  :: (forall a . Enumerator a -&gt; Enumerator a)
-<span class="lineno">  506 </span>                    -&gt; Response
+<span class="lineno">  505 </span>modifyResponseBody  :: (forall a . Enumerator ByteString IO a
+<span class="lineno">  506 </span>                                -&gt; Enumerator ByteString IO a)
 <span class="lineno">  507 </span>                    -&gt; Response
-<span class="lineno">  508 </span><span class="decl"><span class="istickedoff">modifyResponseBody f r = r { rspBody = rspBodyMap f (rspBody r) }</span></span>
-<span class="lineno">  509 </span>{-# INLINE modifyResponseBody #-}
-<span class="lineno">  510 </span>
+<span class="lineno">  508 </span>                    -&gt; Response
+<span class="lineno">  509 </span><span class="decl"><span class="istickedoff">modifyResponseBody f r = r { rspBody = rspBodyMap f (rspBody r) }</span></span>
+<span class="lineno">  510 </span>{-# INLINE modifyResponseBody #-}
 <span class="lineno">  511 </span>
-<span class="lineno">  512 </span>------------------------------------------------------------------------------
-<span class="lineno">  513 </span>-- | Sets the @Content-Type@ in the 'Response' headers.
-<span class="lineno">  514 </span>setContentType      :: ByteString -&gt; Response -&gt; Response
-<span class="lineno">  515 </span><span class="decl"><span class="istickedoff">setContentType = setHeader &quot;Content-Type&quot;</span></span>
-<span class="lineno">  516 </span>{-# INLINE setContentType #-}
-<span class="lineno">  517 </span>
+<span class="lineno">  512 </span>
+<span class="lineno">  513 </span>------------------------------------------------------------------------------
+<span class="lineno">  514 </span>-- | Sets the @Content-Type@ in the 'Response' headers.
+<span class="lineno">  515 </span>setContentType      :: ByteString -&gt; Response -&gt; Response
+<span class="lineno">  516 </span><span class="decl"><span class="istickedoff">setContentType = setHeader &quot;Content-Type&quot;</span></span>
+<span class="lineno">  517 </span>{-# INLINE setContentType #-}
 <span class="lineno">  518 </span>
-<span class="lineno">  519 </span>------------------------------------------------------------------------------
-<span class="lineno">  520 </span>-- | Adds an HTTP 'Cookie' to the 'Response' headers.
-<span class="lineno">  521 </span>addCookie :: Cookie            -- ^ cookie value
-<span class="lineno">  522 </span>          -&gt; Response          -- ^ response to modify
-<span class="lineno">  523 </span>          -&gt; Response
-<span class="lineno">  524 </span><span class="decl"><span class="istickedoff">addCookie (Cookie k v mbExpTime mbDomain mbPath) = updateHeaders f</span>
-<span class="lineno">  525 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  526 </span><span class="spaces">    </span><span class="istickedoff">f       = Map.insertWith' (++) &quot;Set-Cookie&quot; [cookie]</span>
-<span class="lineno">  527 </span><span class="spaces">    </span><span class="istickedoff">cookie  = S.concat [k, &quot;=&quot;, v, path, exptime, domain]</span>
-<span class="lineno">  528 </span><span class="spaces">    </span><span class="istickedoff">path    = maybe &quot;&quot; (S.append &quot;; path=&quot;) mbPath</span>
-<span class="lineno">  529 </span><span class="spaces">    </span><span class="istickedoff">domain  = maybe &quot;&quot; (S.append &quot;; domain=&quot;) mbDomain</span>
-<span class="lineno">  530 </span><span class="spaces">    </span><span class="istickedoff">exptime = maybe &quot;&quot; (S.append &quot;; expires=&quot; . fmt) mbExpTime</span>
-<span class="lineno">  531 </span><span class="spaces">    </span><span class="istickedoff">fmt     = fromStr . formatTime defaultTimeLocale &quot;%a, %d-%b-%Y %H:%M:%S GMT&quot;</span></span>
-<span class="lineno">  532 </span>
+<span class="lineno">  519 </span>
+<span class="lineno">  520 </span>------------------------------------------------------------------------------
+<span class="lineno">  521 </span>-- | Adds an HTTP 'Cookie' to the 'Response' headers.
+<span class="lineno">  522 </span>addCookie :: Cookie            -- ^ cookie value
+<span class="lineno">  523 </span>          -&gt; Response          -- ^ response to modify
+<span class="lineno">  524 </span>          -&gt; Response
+<span class="lineno">  525 </span><span class="decl"><span class="istickedoff">addCookie (Cookie k v mbExpTime mbDomain mbPath) = updateHeaders f</span>
+<span class="lineno">  526 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  527 </span><span class="spaces">    </span><span class="istickedoff">f       = Map.insertWith' (++) &quot;Set-Cookie&quot; [cookie]</span>
+<span class="lineno">  528 </span><span class="spaces">    </span><span class="istickedoff">cookie  = S.concat [k, &quot;=&quot;, v, path, exptime, domain]</span>
+<span class="lineno">  529 </span><span class="spaces">    </span><span class="istickedoff">path    = maybe &quot;&quot; (S.append &quot;; path=&quot;) mbPath</span>
+<span class="lineno">  530 </span><span class="spaces">    </span><span class="istickedoff">domain  = maybe &quot;&quot; (S.append &quot;; domain=&quot;) mbDomain</span>
+<span class="lineno">  531 </span><span class="spaces">    </span><span class="istickedoff">exptime = maybe &quot;&quot; (S.append &quot;; expires=&quot; . fmt) mbExpTime</span>
+<span class="lineno">  532 </span><span class="spaces">    </span><span class="istickedoff">fmt     = fromStr . formatTime defaultTimeLocale &quot;%a, %d-%b-%Y %H:%M:%S GMT&quot;</span></span>
 <span class="lineno">  533 </span>
-<span class="lineno">  534 </span>------------------------------------------------------------------------------
-<span class="lineno">  535 </span>-- | A note here: if you want to set the @Content-Length@ for the response,
-<span class="lineno">  536 </span>-- Snap forces you to do it with this function rather than by setting it in the
-<span class="lineno">  537 </span>-- headers; the @Content-Length@ in the headers will be ignored.
-<span class="lineno">  538 </span>--
-<span class="lineno">  539 </span>-- The reason for this is that Snap needs to look up the value of
-<span class="lineno">  540 </span>-- @Content-Length@ for each request, and looking the string value up in the
-<span class="lineno">  541 </span>-- headers and parsing the number out of the text will be too expensive.
-<span class="lineno">  542 </span>--
-<span class="lineno">  543 </span>-- If you don't set a content length in your response, HTTP keep-alive will be
-<span class="lineno">  544 </span>-- disabled for HTTP\/1.0 clients, forcing a @Connection: close@. For HTTP\/1.1
-<span class="lineno">  545 </span>-- clients, Snap will switch to the chunked transfer encoding if
-<span class="lineno">  546 </span>-- @Content-Length@ is not specified.
-<span class="lineno">  547 </span>setContentLength    :: Int64 -&gt; Response -&gt; Response
-<span class="lineno">  548 </span><span class="decl"><span class="istickedoff">setContentLength l r = r { rspContentLength = Just l }</span></span>
-<span class="lineno">  549 </span>{-# INLINE setContentLength #-}
-<span class="lineno">  550 </span>
+<span class="lineno">  534 </span>
+<span class="lineno">  535 </span>------------------------------------------------------------------------------
+<span class="lineno">  536 </span>-- | A note here: if you want to set the @Content-Length@ for the response,
+<span class="lineno">  537 </span>-- Snap forces you to do it with this function rather than by setting it in the
+<span class="lineno">  538 </span>-- headers; the @Content-Length@ in the headers will be ignored.
+<span class="lineno">  539 </span>--
+<span class="lineno">  540 </span>-- The reason for this is that Snap needs to look up the value of
+<span class="lineno">  541 </span>-- @Content-Length@ for each request, and looking the string value up in the
+<span class="lineno">  542 </span>-- headers and parsing the number out of the text will be too expensive.
+<span class="lineno">  543 </span>--
+<span class="lineno">  544 </span>-- If you don't set a content length in your response, HTTP keep-alive will be
+<span class="lineno">  545 </span>-- disabled for HTTP\/1.0 clients, forcing a @Connection: close@. For HTTP\/1.1
+<span class="lineno">  546 </span>-- clients, Snap will switch to the chunked transfer encoding if
+<span class="lineno">  547 </span>-- @Content-Length@ is not specified.
+<span class="lineno">  548 </span>setContentLength    :: Int64 -&gt; Response -&gt; Response
+<span class="lineno">  549 </span><span class="decl"><span class="istickedoff">setContentLength l r = r { rspContentLength = Just l }</span></span>
+<span class="lineno">  550 </span>{-# INLINE setContentLength #-}
 <span class="lineno">  551 </span>
-<span class="lineno">  552 </span>------------------------------------------------------------------------------
-<span class="lineno">  553 </span>-- | Removes any @Content-Length@ set in the 'Response'.
-<span class="lineno">  554 </span>clearContentLength :: Response -&gt; Response
-<span class="lineno">  555 </span><span class="decl"><span class="istickedoff">clearContentLength r = r { rspContentLength = Nothing }</span></span>
-<span class="lineno">  556 </span>{-# INLINE clearContentLength #-}
-<span class="lineno">  557 </span>
+<span class="lineno">  552 </span>
+<span class="lineno">  553 </span>------------------------------------------------------------------------------
+<span class="lineno">  554 </span>-- | Removes any @Content-Length@ set in the 'Response'.
+<span class="lineno">  555 </span>clearContentLength :: Response -&gt; Response
+<span class="lineno">  556 </span><span class="decl"><span class="istickedoff">clearContentLength r = r { rspContentLength = Nothing }</span></span>
+<span class="lineno">  557 </span>{-# INLINE clearContentLength #-}
 <span class="lineno">  558 </span>
-<span class="lineno">  559 </span>------------------------------------------------------------------------------
-<span class="lineno">  560 </span>-- HTTP dates
-<span class="lineno">  561 </span>
-<span class="lineno">  562 </span>-- | Converts a 'CTime' into an HTTP timestamp.
-<span class="lineno">  563 </span>formatHttpTime :: CTime -&gt; IO ByteString
-<span class="lineno">  564 </span>
-<span class="lineno">  565 </span>-- | Converts a 'CTime' into common log entry format.
-<span class="lineno">  566 </span>formatLogTime :: CTime -&gt; IO ByteString
-<span class="lineno">  567 </span>
-<span class="lineno">  568 </span>-- | Converts an HTTP timestamp into a 'CTime'.
-<span class="lineno">  569 </span>parseHttpTime :: ByteString -&gt; IO CTime
-<span class="lineno">  570 </span>
-<span class="lineno">  571 </span>#ifdef PORTABLE
-<span class="lineno">  572 </span>
-<span class="lineno">  573 </span>formatHttpTime = return . format . toUTCTime
-<span class="lineno">  574 </span>  where
-<span class="lineno">  575 </span>    format :: UTCTime -&gt; ByteString
-<span class="lineno">  576 </span>    format = fromStr . formatTime defaultTimeLocale &quot;%a, %d %b %Y %X GMT&quot;
-<span class="lineno">  577 </span>
-<span class="lineno">  578 </span>    toUTCTime :: CTime -&gt; UTCTime
-<span class="lineno">  579 </span>    toUTCTime = posixSecondsToUTCTime . realToFrac
-<span class="lineno">  580 </span>
-<span class="lineno">  581 </span>formatLogTime ctime = do
-<span class="lineno">  582 </span>  t &lt;- utcToLocalZonedTime $ toUTCTime ctime
-<span class="lineno">  583 </span>  return $ format t
-<span class="lineno">  584 </span>
-<span class="lineno">  585 </span>  where
-<span class="lineno">  586 </span>    format :: ZonedTime -&gt; ByteString
-<span class="lineno">  587 </span>    format = fromStr . formatTime defaultTimeLocale &quot;%d/%b/%Y:%H:%M:%S %z&quot;
-<span class="lineno">  588 </span>
-<span class="lineno">  589 </span>    toUTCTime :: CTime -&gt; UTCTime
-<span class="lineno">  590 </span>    toUTCTime = posixSecondsToUTCTime . realToFrac
-<span class="lineno">  591 </span>
+<span class="lineno">  559 </span>
+<span class="lineno">  560 </span>------------------------------------------------------------------------------
+<span class="lineno">  561 </span>-- HTTP dates
+<span class="lineno">  562 </span>
+<span class="lineno">  563 </span>-- | Converts a 'CTime' into an HTTP timestamp.
+<span class="lineno">  564 </span>formatHttpTime :: CTime -&gt; IO ByteString
+<span class="lineno">  565 </span>
+<span class="lineno">  566 </span>-- | Converts a 'CTime' into common log entry format.
+<span class="lineno">  567 </span>formatLogTime :: CTime -&gt; IO ByteString
+<span class="lineno">  568 </span>
+<span class="lineno">  569 </span>-- | Converts an HTTP timestamp into a 'CTime'.
+<span class="lineno">  570 </span>parseHttpTime :: ByteString -&gt; IO CTime
+<span class="lineno">  571 </span>
+<span class="lineno">  572 </span>#ifdef PORTABLE
+<span class="lineno">  573 </span>
+<span class="lineno">  574 </span>formatHttpTime = return . format . toUTCTime
+<span class="lineno">  575 </span>  where
+<span class="lineno">  576 </span>    format :: UTCTime -&gt; ByteString
+<span class="lineno">  577 </span>    format = fromStr . formatTime defaultTimeLocale &quot;%a, %d %b %Y %X GMT&quot;
+<span class="lineno">  578 </span>
+<span class="lineno">  579 </span>    toUTCTime :: CTime -&gt; UTCTime
+<span class="lineno">  580 </span>    toUTCTime = posixSecondsToUTCTime . realToFrac
+<span class="lineno">  581 </span>
+<span class="lineno">  582 </span>formatLogTime ctime = do
+<span class="lineno">  583 </span>  t &lt;- utcToLocalZonedTime $ toUTCTime ctime
+<span class="lineno">  584 </span>  return $ format t
+<span class="lineno">  585 </span>
+<span class="lineno">  586 </span>  where
+<span class="lineno">  587 </span>    format :: ZonedTime -&gt; ByteString
+<span class="lineno">  588 </span>    format = fromStr . formatTime defaultTimeLocale &quot;%d/%b/%Y:%H:%M:%S %z&quot;
+<span class="lineno">  589 </span>
+<span class="lineno">  590 </span>    toUTCTime :: CTime -&gt; UTCTime
+<span class="lineno">  591 </span>    toUTCTime = posixSecondsToUTCTime . realToFrac
 <span class="lineno">  592 </span>
-<span class="lineno">  593 </span>parseHttpTime = return . toCTime . parse . toStr
-<span class="lineno">  594 </span>  where
-<span class="lineno">  595 </span>    parse :: String -&gt; Maybe UTCTime
-<span class="lineno">  596 </span>    parse = parseTime defaultTimeLocale &quot;%a, %d %b %Y %H:%M:%S GMT&quot;
-<span class="lineno">  597 </span>
-<span class="lineno">  598 </span>    toCTime :: Maybe UTCTime -&gt; CTime
-<span class="lineno">  599 </span>    toCTime (Just t) = fromInteger $ truncate $ utcTimeToPOSIXSeconds t
-<span class="lineno">  600 </span>    toCTime Nothing  = fromInteger 0
-<span class="lineno">  601 </span>
-<span class="lineno">  602 </span>#else
-<span class="lineno">  603 </span>
-<span class="lineno">  604 </span><span class="decl"><span class="istickedoff">formatLogTime t = do</span>
-<span class="lineno">  605 </span><span class="spaces">    </span><span class="istickedoff">ptr &lt;- mallocBytes 40</span>
-<span class="lineno">  606 </span><span class="spaces">    </span><span class="istickedoff">c_format_log_time t ptr</span>
-<span class="lineno">  607 </span><span class="spaces">    </span><span class="istickedoff">S.unsafePackMallocCString ptr</span></span>
-<span class="lineno">  608 </span>
-<span class="lineno">  609 </span><span class="decl"><span class="istickedoff">formatHttpTime t = do</span>
-<span class="lineno">  610 </span><span class="spaces">    </span><span class="istickedoff">ptr &lt;- mallocBytes 40</span>
-<span class="lineno">  611 </span><span class="spaces">    </span><span class="istickedoff">c_format_http_time t ptr</span>
-<span class="lineno">  612 </span><span class="spaces">    </span><span class="istickedoff">S.unsafePackMallocCString ptr</span></span>
-<span class="lineno">  613 </span>
-<span class="lineno">  614 </span><span class="decl"><span class="istickedoff">parseHttpTime s = S.unsafeUseAsCString s $ \ptr -&gt;</span>
-<span class="lineno">  615 </span><span class="spaces">    </span><span class="istickedoff">c_parse_http_time ptr</span></span>
-<span class="lineno">  616 </span>
-<span class="lineno">  617 </span>#endif
-<span class="lineno">  618 </span>
+<span class="lineno">  593 </span>
+<span class="lineno">  594 </span>parseHttpTime = return . toCTime . prs . toStr
+<span class="lineno">  595 </span>  where
+<span class="lineno">  596 </span>    prs :: String -&gt; Maybe UTCTime
+<span class="lineno">  597 </span>    prs = parseTime defaultTimeLocale &quot;%a, %d %b %Y %H:%M:%S GMT&quot;
+<span class="lineno">  598 </span>
+<span class="lineno">  599 </span>    toCTime :: Maybe UTCTime -&gt; CTime
+<span class="lineno">  600 </span>    toCTime (Just t) = fromInteger $ truncate $ utcTimeToPOSIXSeconds t
+<span class="lineno">  601 </span>    toCTime Nothing  = fromInteger 0
+<span class="lineno">  602 </span>
+<span class="lineno">  603 </span>#else
+<span class="lineno">  604 </span>
+<span class="lineno">  605 </span><span class="decl"><span class="istickedoff">formatLogTime t = do</span>
+<span class="lineno">  606 </span><span class="spaces">    </span><span class="istickedoff">ptr &lt;- mallocBytes 40</span>
+<span class="lineno">  607 </span><span class="spaces">    </span><span class="istickedoff">c_format_log_time t ptr</span>
+<span class="lineno">  608 </span><span class="spaces">    </span><span class="istickedoff">S.unsafePackMallocCString ptr</span></span>
+<span class="lineno">  609 </span>
+<span class="lineno">  610 </span><span class="decl"><span class="istickedoff">formatHttpTime t = do</span>
+<span class="lineno">  611 </span><span class="spaces">    </span><span class="istickedoff">ptr &lt;- mallocBytes 40</span>
+<span class="lineno">  612 </span><span class="spaces">    </span><span class="istickedoff">c_format_http_time t ptr</span>
+<span class="lineno">  613 </span><span class="spaces">    </span><span class="istickedoff">S.unsafePackMallocCString ptr</span></span>
+<span class="lineno">  614 </span>
+<span class="lineno">  615 </span><span class="decl"><span class="istickedoff">parseHttpTime s = S.unsafeUseAsCString s $ \ptr -&gt;</span>
+<span class="lineno">  616 </span><span class="spaces">    </span><span class="istickedoff">c_parse_http_time ptr</span></span>
+<span class="lineno">  617 </span>
+<span class="lineno">  618 </span>#endif
 <span class="lineno">  619 </span>
-<span class="lineno">  620 </span>------------------------------------------------------------------------------
-<span class="lineno">  621 </span>-- URL ENCODING
-<span class="lineno">  622 </span>------------------------------------------------------------------------------
-<span class="lineno">  623 </span>
-<span class="lineno">  624 </span>parseToCompletion :: Parser a -&gt; ByteString -&gt; Maybe a
-<span class="lineno">  625 </span><span class="decl"><span class="istickedoff">parseToCompletion p s = toResult $ finish r</span>
-<span class="lineno">  626 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  627 </span><span class="spaces">    </span><span class="istickedoff">r = parse p s</span>
-<span class="lineno">  628 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  629 </span><span class="spaces">    </span><span class="istickedoff">toResult (Atto.Done _ c) = Just c</span>
-<span class="lineno">  630 </span><span class="spaces">    </span><span class="istickedoff">toResult _               = Nothing</span></span>
-<span class="lineno">  631 </span>
+<span class="lineno">  620 </span>
+<span class="lineno">  621 </span>------------------------------------------------------------------------------
+<span class="lineno">  622 </span>-- URL ENCODING
+<span class="lineno">  623 </span>------------------------------------------------------------------------------
+<span class="lineno">  624 </span>
+<span class="lineno">  625 </span>parseToCompletion :: Parser a -&gt; ByteString -&gt; Maybe a
+<span class="lineno">  626 </span><span class="decl"><span class="istickedoff">parseToCompletion p s = toResult $ finish r</span>
+<span class="lineno">  627 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  628 </span><span class="spaces">    </span><span class="istickedoff">r = parse p s</span>
+<span class="lineno">  629 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  630 </span><span class="spaces">    </span><span class="istickedoff">toResult (Atto.Done _ c) = Just c</span>
+<span class="lineno">  631 </span><span class="spaces">    </span><span class="istickedoff">toResult _               = Nothing</span></span>
 <span class="lineno">  632 </span>
-<span class="lineno">  633 </span>------------------------------------------------------------------------------
-<span class="lineno">  634 </span>pUrlEscaped :: Parser ByteString
-<span class="lineno">  635 </span><span class="decl"><span class="istickedoff">pUrlEscaped = do</span>
-<span class="lineno">  636 </span><span class="spaces">    </span><span class="istickedoff">sq &lt;- nextChunk DL.empty</span>
-<span class="lineno">  637 </span><span class="spaces">    </span><span class="istickedoff">return $ S.concat $ DL.toList sq</span>
-<span class="lineno">  638 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  639 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  640 </span><span class="spaces">    </span><span class="istickedoff">nextChunk :: DList ByteString -&gt; Parser (DList ByteString)</span>
-<span class="lineno">  641 </span><span class="spaces">    </span><span class="istickedoff">nextChunk s = (endOfInput *&gt; pure s) &lt;|&gt; do</span>
-<span class="lineno">  642 </span><span class="spaces">        </span><span class="istickedoff">c &lt;- anyWord8</span>
-<span class="lineno">  643 </span><span class="spaces">        </span><span class="istickedoff">case w2c c of</span>
-<span class="lineno">  644 </span><span class="spaces">          </span><span class="istickedoff">'+' -&gt; plusSpace s</span>
-<span class="lineno">  645 </span><span class="spaces">          </span><span class="istickedoff">'%' -&gt; percentEncoded s</span>
-<span class="lineno">  646 </span><span class="spaces">          </span><span class="istickedoff">_   -&gt; unEncoded c s</span>
-<span class="lineno">  647 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  648 </span><span class="spaces">    </span><span class="istickedoff">percentEncoded :: DList ByteString -&gt; Parser (DList ByteString)</span>
-<span class="lineno">  649 </span><span class="spaces">    </span><span class="istickedoff">percentEncoded l = do</span>
-<span class="lineno">  650 </span><span class="spaces">        </span><span class="istickedoff">hx &lt;- take 2</span>
-<span class="lineno">  651 </span><span class="spaces">        </span><span class="istickedoff">when (S.length hx /= 2 ||</span>
-<span class="lineno">  652 </span><span class="spaces">               </span><span class="istickedoff">(not $ S.all (isHexDigit . w2c) hx)) $</span>
-<span class="lineno">  653 </span><span class="spaces">             </span><span class="istickedoff">fail <span class="nottickedoff">&quot;bad hex in url&quot;</span></span>
-<span class="lineno">  654 </span><span class="spaces">          </span><span class="istickedoff"></span>
-<span class="lineno">  655 </span><span class="spaces">        </span><span class="istickedoff">let code = (Cvt.hex hx) :: Word8</span>
-<span class="lineno">  656 </span><span class="spaces">        </span><span class="istickedoff">nextChunk $ DL.snoc l (S.singleton code)</span>
-<span class="lineno">  657 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  658 </span><span class="spaces">    </span><span class="istickedoff">unEncoded :: Word8 -&gt; DList ByteString -&gt; Parser (DList ByteString)</span>
-<span class="lineno">  659 </span><span class="spaces">    </span><span class="istickedoff">unEncoded c l' = do</span>
-<span class="lineno">  660 </span><span class="spaces">        </span><span class="istickedoff">let l = DL.snoc l' (S.singleton c)</span>
-<span class="lineno">  661 </span><span class="spaces">        </span><span class="istickedoff">bs &lt;- takeTill (flip elem (map c2w &quot;%+&quot;))</span>
-<span class="lineno">  662 </span><span class="spaces">        </span><span class="istickedoff">if S.null bs</span>
-<span class="lineno">  663 </span><span class="spaces">          </span><span class="istickedoff">then nextChunk l</span>
-<span class="lineno">  664 </span><span class="spaces">          </span><span class="istickedoff">else nextChunk $ DL.snoc l bs</span>
-<span class="lineno">  665 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  666 </span><span class="spaces">    </span><span class="istickedoff">plusSpace :: DList ByteString -&gt; Parser (DList ByteString)</span>
-<span class="lineno">  667 </span><span class="spaces">    </span><span class="istickedoff">plusSpace l = nextChunk (DL.snoc l (S.singleton $ c2w ' '))</span></span>
-<span class="lineno">  668 </span>
+<span class="lineno">  633 </span>
+<span class="lineno">  634 </span>------------------------------------------------------------------------------
+<span class="lineno">  635 </span>pUrlEscaped :: Parser ByteString
+<span class="lineno">  636 </span><span class="decl"><span class="istickedoff">pUrlEscaped = do</span>
+<span class="lineno">  637 </span><span class="spaces">    </span><span class="istickedoff">sq &lt;- nextChunk DL.empty</span>
+<span class="lineno">  638 </span><span class="spaces">    </span><span class="istickedoff">return $ S.concat $ DL.toList sq</span>
+<span class="lineno">  639 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  640 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  641 </span><span class="spaces">    </span><span class="istickedoff">nextChunk :: DList ByteString -&gt; Parser (DList ByteString)</span>
+<span class="lineno">  642 </span><span class="spaces">    </span><span class="istickedoff">nextChunk s = (endOfInput *&gt; pure s) &lt;|&gt; do</span>
+<span class="lineno">  643 </span><span class="spaces">        </span><span class="istickedoff">c &lt;- anyWord8</span>
+<span class="lineno">  644 </span><span class="spaces">        </span><span class="istickedoff">case w2c c of</span>
+<span class="lineno">  645 </span><span class="spaces">          </span><span class="istickedoff">'+' -&gt; plusSpace s</span>
+<span class="lineno">  646 </span><span class="spaces">          </span><span class="istickedoff">'%' -&gt; percentEncoded s</span>
+<span class="lineno">  647 </span><span class="spaces">          </span><span class="istickedoff">_   -&gt; unEncoded c s</span>
+<span class="lineno">  648 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  649 </span><span class="spaces">    </span><span class="istickedoff">percentEncoded :: DList ByteString -&gt; Parser (DList ByteString)</span>
+<span class="lineno">  650 </span><span class="spaces">    </span><span class="istickedoff">percentEncoded l = do</span>
+<span class="lineno">  651 </span><span class="spaces">        </span><span class="istickedoff">hx &lt;- take 2</span>
+<span class="lineno">  652 </span><span class="spaces">        </span><span class="istickedoff">when (S.length hx /= 2 ||</span>
+<span class="lineno">  653 </span><span class="spaces">               </span><span class="istickedoff">(not $ S.all (isHexDigit . w2c) hx)) $</span>
+<span class="lineno">  654 </span><span class="spaces">             </span><span class="istickedoff">fail <span class="nottickedoff">&quot;bad hex in url&quot;</span></span>
+<span class="lineno">  655 </span><span class="spaces">          </span><span class="istickedoff"></span>
+<span class="lineno">  656 </span><span class="spaces">        </span><span class="istickedoff">let code = (Cvt.hex hx) :: Word8</span>
+<span class="lineno">  657 </span><span class="spaces">        </span><span class="istickedoff">nextChunk $ DL.snoc l (S.singleton code)</span>
+<span class="lineno">  658 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  659 </span><span class="spaces">    </span><span class="istickedoff">unEncoded :: Word8 -&gt; DList ByteString -&gt; Parser (DList ByteString)</span>
+<span class="lineno">  660 </span><span class="spaces">    </span><span class="istickedoff">unEncoded c l' = do</span>
+<span class="lineno">  661 </span><span class="spaces">        </span><span class="istickedoff">let l = DL.snoc l' (S.singleton c)</span>
+<span class="lineno">  662 </span><span class="spaces">        </span><span class="istickedoff">bs &lt;- takeTill (flip elem (map c2w &quot;%+&quot;))</span>
+<span class="lineno">  663 </span><span class="spaces">        </span><span class="istickedoff">if S.null bs</span>
+<span class="lineno">  664 </span><span class="spaces">          </span><span class="istickedoff">then nextChunk l</span>
+<span class="lineno">  665 </span><span class="spaces">          </span><span class="istickedoff">else nextChunk $ DL.snoc l bs</span>
+<span class="lineno">  666 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  667 </span><span class="spaces">    </span><span class="istickedoff">plusSpace :: DList ByteString -&gt; Parser (DList ByteString)</span>
+<span class="lineno">  668 </span><span class="spaces">    </span><span class="istickedoff">plusSpace l = nextChunk (DL.snoc l (S.singleton $ c2w ' '))</span></span>
 <span class="lineno">  669 </span>
-<span class="lineno">  670 </span>------------------------------------------------------------------------------
-<span class="lineno">  671 </span>-- | Decodes an URL-escaped string (see
-<span class="lineno">  672 </span>-- &lt;http://tools.ietf.org/html/rfc2396.html#section-2.4&gt;)
-<span class="lineno">  673 </span>urlDecode :: ByteString -&gt; Maybe ByteString
-<span class="lineno">  674 </span><span class="decl"><span class="istickedoff">urlDecode = parseToCompletion pUrlEscaped</span></span>
-<span class="lineno">  675 </span>
+<span class="lineno">  670 </span>
+<span class="lineno">  671 </span>------------------------------------------------------------------------------
+<span class="lineno">  672 </span>-- | Decodes an URL-escaped string (see
+<span class="lineno">  673 </span>-- &lt;http://tools.ietf.org/html/rfc2396.html#section-2.4&gt;)
+<span class="lineno">  674 </span>urlDecode :: ByteString -&gt; Maybe ByteString
+<span class="lineno">  675 </span><span class="decl"><span class="istickedoff">urlDecode = parseToCompletion pUrlEscaped</span></span>
 <span class="lineno">  676 </span>
-<span class="lineno">  677 </span>------------------------------------------------------------------------------
-<span class="lineno">  678 </span>-- &quot;...Only alphanumerics [0-9a-zA-Z], the special characters &quot;$-_.+!*'(),&quot;
-<span class="lineno">  679 </span>-- [not including the quotes - ed], and reserved characters used for their
-<span class="lineno">  680 </span>-- reserved purposes may be used unencoded within a URL.&quot;
-<span class="lineno">  681 </span>
-<span class="lineno">  682 </span>-- | URL-escapes a string (see
-<span class="lineno">  683 </span>-- &lt;http://tools.ietf.org/html/rfc2396.html#section-2.4&gt;)
-<span class="lineno">  684 </span>urlEncode :: ByteString -&gt; ByteString
-<span class="lineno">  685 </span><span class="decl"><span class="istickedoff">urlEncode = toByteString . S.foldl' f empty</span>
-<span class="lineno">  686 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  687 </span><span class="spaces">    </span><span class="istickedoff">f b c =</span>
-<span class="lineno">  688 </span><span class="spaces">        </span><span class="istickedoff">if c == c2w ' '</span>
-<span class="lineno">  689 </span><span class="spaces">          </span><span class="istickedoff">then b `mappend` singleton (c2w '+')</span>
-<span class="lineno">  690 </span><span class="spaces">          </span><span class="istickedoff">else if isKosher c</span>
-<span class="lineno">  691 </span><span class="spaces">                 </span><span class="istickedoff">then b `mappend` singleton c</span>
-<span class="lineno">  692 </span><span class="spaces">                 </span><span class="istickedoff">else b `mappend` hexd c</span>
-<span class="lineno">  693 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  694 </span><span class="spaces">    </span><span class="istickedoff">isKosher w = any ($ c) [ isAlphaNum</span>
-<span class="lineno">  695 </span><span class="spaces">                           </span><span class="istickedoff">, flip elem ['$', '-', '.', '!', '*'</span>
-<span class="lineno">  696 </span><span class="spaces">                                       </span><span class="istickedoff">, '\'', '(', ')', ',' ]]</span>
-<span class="lineno">  697 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  698 </span><span class="spaces">        </span><span class="istickedoff">c = w2c w</span></span>
-<span class="lineno">  699 </span>
+<span class="lineno">  677 </span>
+<span class="lineno">  678 </span>------------------------------------------------------------------------------
+<span class="lineno">  679 </span>-- &quot;...Only alphanumerics [0-9a-zA-Z], the special characters &quot;$-_.+!*'(),&quot;
+<span class="lineno">  680 </span>-- [not including the quotes - ed], and reserved characters used for their
+<span class="lineno">  681 </span>-- reserved purposes may be used unencoded within a URL.&quot;
+<span class="lineno">  682 </span>
+<span class="lineno">  683 </span>-- | URL-escapes a string (see
+<span class="lineno">  684 </span>-- &lt;http://tools.ietf.org/html/rfc2396.html#section-2.4&gt;)
+<span class="lineno">  685 </span>urlEncode :: ByteString -&gt; ByteString
+<span class="lineno">  686 </span><span class="decl"><span class="istickedoff">urlEncode = toByteString . S.foldl' f empty</span>
+<span class="lineno">  687 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  688 </span><span class="spaces">    </span><span class="istickedoff">f b c =</span>
+<span class="lineno">  689 </span><span class="spaces">        </span><span class="istickedoff">if c == c2w ' '</span>
+<span class="lineno">  690 </span><span class="spaces">          </span><span class="istickedoff">then b `mappend` singleton (c2w '+')</span>
+<span class="lineno">  691 </span><span class="spaces">          </span><span class="istickedoff">else if isKosher c</span>
+<span class="lineno">  692 </span><span class="spaces">                 </span><span class="istickedoff">then b `mappend` singleton c</span>
+<span class="lineno">  693 </span><span class="spaces">                 </span><span class="istickedoff">else b `mappend` hexd c</span>
+<span class="lineno">  694 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  695 </span><span class="spaces">    </span><span class="istickedoff">isKosher w = any ($ c) [ isAlphaNum</span>
+<span class="lineno">  696 </span><span class="spaces">                           </span><span class="istickedoff">, flip elem ['$', '-', '.', '!', '*'</span>
+<span class="lineno">  697 </span><span class="spaces">                                       </span><span class="istickedoff">, '\'', '(', ')', ',' ]]</span>
+<span class="lineno">  698 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  699 </span><span class="spaces">        </span><span class="istickedoff">c = w2c w</span></span>
 <span class="lineno">  700 </span>
-<span class="lineno">  701 </span>------------------------------------------------------------------------------
-<span class="lineno">  702 </span>hexd :: Word8 -&gt; Builder
-<span class="lineno">  703 </span><span class="decl"><span class="istickedoff">hexd c = singleton (c2w '%') `mappend` singleton hi `mappend` singleton low</span>
-<span class="lineno">  704 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  705 </span><span class="spaces">    </span><span class="istickedoff">d   = c2w . intToDigit</span>
-<span class="lineno">  706 </span><span class="spaces">    </span><span class="istickedoff">low = d $ fromEnum $ c .&amp;. 0xf</span>
-<span class="lineno">  707 </span><span class="spaces">    </span><span class="istickedoff">hi  = d $ fromEnum $ (c .&amp;. 0xf0) `shift` (-4)</span></span>
-<span class="lineno">  708 </span>
+<span class="lineno">  701 </span>
+<span class="lineno">  702 </span>------------------------------------------------------------------------------
+<span class="lineno">  703 </span>hexd :: Word8 -&gt; Builder
+<span class="lineno">  704 </span><span class="decl"><span class="istickedoff">hexd c = singleton (c2w '%') `mappend` singleton hi `mappend` singleton low</span>
+<span class="lineno">  705 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  706 </span><span class="spaces">    </span><span class="istickedoff">d   = c2w . intToDigit</span>
+<span class="lineno">  707 </span><span class="spaces">    </span><span class="istickedoff">low = d $ fromEnum $ c .&amp;. 0xf</span>
+<span class="lineno">  708 </span><span class="spaces">    </span><span class="istickedoff">hi  = d $ fromEnum $ (c .&amp;. 0xf0) `shift` (-4)</span></span>
 <span class="lineno">  709 </span>
-<span class="lineno">  710 </span>------------------------------------------------------------------------------
-<span class="lineno">  711 </span>finish :: Atto.Result a -&gt; Atto.Result a
-<span class="lineno">  712 </span><span class="decl"><span class="istickedoff">finish (Atto.Partial f) = flip feed &quot;&quot; $ f &quot;&quot;</span>
-<span class="lineno">  713 </span><span class="spaces"></span><span class="istickedoff">finish x                = x</span></span>
-<span class="lineno">  714 </span>
+<span class="lineno">  710 </span>
+<span class="lineno">  711 </span>------------------------------------------------------------------------------
+<span class="lineno">  712 </span>finish :: Atto.Result a -&gt; Atto.Result a
+<span class="lineno">  713 </span><span class="decl"><span class="istickedoff">finish (Atto.Partial f) = flip feed &quot;&quot; $ f &quot;&quot;</span>
+<span class="lineno">  714 </span><span class="spaces"></span><span class="istickedoff">finish x                = x</span></span>
 <span class="lineno">  715 </span>
-<span class="lineno">  716 </span>------------------------------------------------------------------------------
-<span class="lineno">  717 </span>-- local definitions
-<span class="lineno">  718 </span>fromStr :: String -&gt; ByteString
-<span class="lineno">  719 </span><span class="decl"><span class="istickedoff">fromStr = S.pack . map c2w</span></span>
-<span class="lineno">  720 </span>{-# INLINE fromStr #-}
-<span class="lineno">  721 </span>
-<span class="lineno">  722 </span>------------------------------------------------------------------------------
-<span class="lineno">  723 </span>-- private helper functions
-<span class="lineno">  724 </span>toStr :: ByteString -&gt; String
-<span class="lineno">  725 </span><span class="decl"><span class="istickedoff">toStr = map w2c . S.unpack</span></span>
-<span class="lineno">  726 </span>
+<span class="lineno">  716 </span>
+<span class="lineno">  717 </span>------------------------------------------------------------------------------
+<span class="lineno">  718 </span>-- local definitions
+<span class="lineno">  719 </span>fromStr :: String -&gt; ByteString
+<span class="lineno">  720 </span><span class="decl"><span class="istickedoff">fromStr = S.pack . map c2w</span></span>
+<span class="lineno">  721 </span>{-# INLINE fromStr #-}
+<span class="lineno">  722 </span>
+<span class="lineno">  723 </span>------------------------------------------------------------------------------
+<span class="lineno">  724 </span>-- private helper functions
+<span class="lineno">  725 </span>toStr :: ByteString -&gt; String
+<span class="lineno">  726 </span><span class="decl"><span class="istickedoff">toStr = map w2c . S.unpack</span></span>
 <span class="lineno">  727 </span>
-<span class="lineno">  728 </span>------------------------------------------------------------------------------
-<span class="lineno">  729 </span>statusReasonMap :: IM.IntMap ByteString
-<span class="lineno">  730 </span><span class="decl"><span class="istickedoff">statusReasonMap = IM.fromList [</span>
-<span class="lineno">  731 </span><span class="spaces">        </span><span class="istickedoff">(100, <span class="nottickedoff">&quot;Continue&quot;</span>),</span>
-<span class="lineno">  732 </span><span class="spaces">        </span><span class="istickedoff">(101, <span class="nottickedoff">&quot;Switching Protocols&quot;</span>),</span>
-<span class="lineno">  733 </span><span class="spaces">        </span><span class="istickedoff">(200, &quot;OK&quot;),</span>
-<span class="lineno">  734 </span><span class="spaces">        </span><span class="istickedoff">(201, <span class="nottickedoff">&quot;Created&quot;</span>),</span>
-<span class="lineno">  735 </span><span class="spaces">        </span><span class="istickedoff">(202, <span class="nottickedoff">&quot;Accepted&quot;</span>),</span>
-<span class="lineno">  736 </span><span class="spaces">        </span><span class="istickedoff">(203, <span class="nottickedoff">&quot;Non-Authoritative Information&quot;</span>),</span>
-<span class="lineno">  737 </span><span class="spaces">        </span><span class="istickedoff">(204, <span class="nottickedoff">&quot;No Content&quot;</span>),</span>
-<span class="lineno">  738 </span><span class="spaces">        </span><span class="istickedoff">(205, <span class="nottickedoff">&quot;Reset Content&quot;</span>),</span>
-<span class="lineno">  739 </span><span class="spaces">        </span><span class="istickedoff">(206, &quot;Partial Content&quot;),</span>
-<span class="lineno">  740 </span><span class="spaces">        </span><span class="istickedoff">(300, <span class="nottickedoff">&quot;Multiple Choices&quot;</span>),</span>
-<span class="lineno">  741 </span><span class="spaces">        </span><span class="istickedoff">(301, <span class="nottickedoff">&quot;Moved Permanently&quot;</span>),</span>
-<span class="lineno">  742 </span><span class="spaces">        </span><span class="istickedoff">(302, &quot;Found&quot;),</span>
-<span class="lineno">  743 </span><span class="spaces">        </span><span class="istickedoff">(303, <span class="nottickedoff">&quot;See Other&quot;</span>),</span>
-<span class="lineno">  744 </span><span class="spaces">        </span><span class="istickedoff">(304, &quot;Not Modified&quot;),</span>
-<span class="lineno">  745 </span><span class="spaces">        </span><span class="istickedoff">(305, <span class="nottickedoff">&quot;Use Proxy&quot;</span>),</span>
-<span class="lineno">  746 </span><span class="spaces">        </span><span class="istickedoff">(307, &quot;Temporary Redirect&quot;),</span>
-<span class="lineno">  747 </span><span class="spaces">        </span><span class="istickedoff">(400, <span class="nottickedoff">&quot;Bad Request&quot;</span>),</span>
-<span class="lineno">  748 </span><span class="spaces">        </span><span class="istickedoff">(401, <span class="nottickedoff">&quot;Unauthorized&quot;</span>),</span>
-<span class="lineno">  749 </span><span class="spaces">        </span><span class="istickedoff">(402, <span class="nottickedoff">&quot;Payment Required&quot;</span>),</span>
-<span class="lineno">  750 </span><span class="spaces">        </span><span class="istickedoff">(403, <span class="nottickedoff">&quot;Forbidden&quot;</span>),</span>
-<span class="lineno">  751 </span><span class="spaces">        </span><span class="istickedoff">(404, <span class="nottickedoff">&quot;Not Found&quot;</span>),</span>
-<span class="lineno">  752 </span><span class="spaces">        </span><span class="istickedoff">(405, <span class="nottickedoff">&quot;Method Not Allowed&quot;</span>),</span>
-<span class="lineno">  753 </span><span class="spaces">        </span><span class="istickedoff">(406, <span class="nottickedoff">&quot;Not Acceptable&quot;</span>),</span>
-<span class="lineno">  754 </span><span class="spaces">        </span><span class="istickedoff">(407, <span class="nottickedoff">&quot;Proxy Authentication Required&quot;</span>),</span>
-<span class="lineno">  755 </span><span class="spaces">        </span><span class="istickedoff">(408, <span class="nottickedoff">&quot;Request Time-out&quot;</span>),</span>
-<span class="lineno">  756 </span><span class="spaces">        </span><span class="istickedoff">(409, <span class="nottickedoff">&quot;Conflict&quot;</span>),</span>
-<span class="lineno">  757 </span><span class="spaces">        </span><span class="istickedoff">(410, <span class="nottickedoff">&quot;Gone&quot;</span>),</span>
-<span class="lineno">  758 </span><span class="spaces">        </span><span class="istickedoff">(411, <span class="nottickedoff">&quot;Length Required&quot;</span>),</span>
-<span class="lineno">  759 </span><span class="spaces">        </span><span class="istickedoff">(412, <span class="nottickedoff">&quot;Precondition Failed&quot;</span>),</span>
-<span class="lineno">  760 </span><span class="spaces">        </span><span class="istickedoff">(413, <span class="nottickedoff">&quot;Request Entity Too Large&quot;</span>),</span>
-<span class="lineno">  761 </span><span class="spaces">        </span><span class="istickedoff">(414, <span class="nottickedoff">&quot;Request-URI Too Large&quot;</span>),</span>
-<span class="lineno">  762 </span><span class="spaces">        </span><span class="istickedoff">(415, <span class="nottickedoff">&quot;Unsupported Media Type&quot;</span>),</span>
-<span class="lineno">  763 </span><span class="spaces">        </span><span class="istickedoff">(416, &quot;Requested range not satisfiable&quot;),</span>
-<span class="lineno">  764 </span><span class="spaces">        </span><span class="istickedoff">(417, <span class="nottickedoff">&quot;Expectation Failed&quot;</span>),</span>
-<span class="lineno">  765 </span><span class="spaces">        </span><span class="istickedoff">(500, <span class="nottickedoff">&quot;Internal Server Error&quot;</span>),</span>
-<span class="lineno">  766 </span><span class="spaces">        </span><span class="istickedoff">(501, <span class="nottickedoff">&quot;Not Implemented&quot;</span>),</span>
-<span class="lineno">  767 </span><span class="spaces">        </span><span class="istickedoff">(502, <span class="nottickedoff">&quot;Bad Gateway&quot;</span>),</span>
-<span class="lineno">  768 </span><span class="spaces">        </span><span class="istickedoff">(503, <span class="nottickedoff">&quot;Service Unavailable&quot;</span>),</span>
-<span class="lineno">  769 </span><span class="spaces">        </span><span class="istickedoff">(504, <span class="nottickedoff">&quot;Gateway Time-out&quot;</span>),</span>
-<span class="lineno">  770 </span><span class="spaces">        </span><span class="istickedoff">(505, <span class="nottickedoff">&quot;HTTP Version not supported&quot;</span>)</span>
-<span class="lineno">  771 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
+<span class="lineno">  728 </span>
+<span class="lineno">  729 </span>------------------------------------------------------------------------------
+<span class="lineno">  730 </span>statusReasonMap :: IM.IntMap ByteString
+<span class="lineno">  731 </span><span class="decl"><span class="istickedoff">statusReasonMap = IM.fromList [</span>
+<span class="lineno">  732 </span><span class="spaces">        </span><span class="istickedoff">(100, <span class="nottickedoff">&quot;Continue&quot;</span>),</span>
+<span class="lineno">  733 </span><span class="spaces">        </span><span class="istickedoff">(101, <span class="nottickedoff">&quot;Switching Protocols&quot;</span>),</span>
+<span class="lineno">  734 </span><span class="spaces">        </span><span class="istickedoff">(200, &quot;OK&quot;),</span>
+<span class="lineno">  735 </span><span class="spaces">        </span><span class="istickedoff">(201, <span class="nottickedoff">&quot;Created&quot;</span>),</span>
+<span class="lineno">  736 </span><span class="spaces">        </span><span class="istickedoff">(202, <span class="nottickedoff">&quot;Accepted&quot;</span>),</span>
+<span class="lineno">  737 </span><span class="spaces">        </span><span class="istickedoff">(203, <span class="nottickedoff">&quot;Non-Authoritative Information&quot;</span>),</span>
+<span class="lineno">  738 </span><span class="spaces">        </span><span class="istickedoff">(204, <span class="nottickedoff">&quot;No Content&quot;</span>),</span>
+<span class="lineno">  739 </span><span class="spaces">        </span><span class="istickedoff">(205, <span class="nottickedoff">&quot;Reset Content&quot;</span>),</span>
+<span class="lineno">  740 </span><span class="spaces">        </span><span class="istickedoff">(206, &quot;Partial Content&quot;),</span>
+<span class="lineno">  741 </span><span class="spaces">        </span><span class="istickedoff">(300, <span class="nottickedoff">&quot;Multiple Choices&quot;</span>),</span>
+<span class="lineno">  742 </span><span class="spaces">        </span><span class="istickedoff">(301, <span class="nottickedoff">&quot;Moved Permanently&quot;</span>),</span>
+<span class="lineno">  743 </span><span class="spaces">        </span><span class="istickedoff">(302, &quot;Found&quot;),</span>
+<span class="lineno">  744 </span><span class="spaces">        </span><span class="istickedoff">(303, <span class="nottickedoff">&quot;See Other&quot;</span>),</span>
+<span class="lineno">  745 </span><span class="spaces">        </span><span class="istickedoff">(304, &quot;Not Modified&quot;),</span>
+<span class="lineno">  746 </span><span class="spaces">        </span><span class="istickedoff">(305, <span class="nottickedoff">&quot;Use Proxy&quot;</span>),</span>
+<span class="lineno">  747 </span><span class="spaces">        </span><span class="istickedoff">(307, &quot;Temporary Redirect&quot;),</span>
+<span class="lineno">  748 </span><span class="spaces">        </span><span class="istickedoff">(400, <span class="nottickedoff">&quot;Bad Request&quot;</span>),</span>
+<span class="lineno">  749 </span><span class="spaces">        </span><span class="istickedoff">(401, <span class="nottickedoff">&quot;Unauthorized&quot;</span>),</span>
+<span class="lineno">  750 </span><span class="spaces">        </span><span class="istickedoff">(402, <span class="nottickedoff">&quot;Payment Required&quot;</span>),</span>
+<span class="lineno">  751 </span><span class="spaces">        </span><span class="istickedoff">(403, <span class="nottickedoff">&quot;Forbidden&quot;</span>),</span>
+<span class="lineno">  752 </span><span class="spaces">        </span><span class="istickedoff">(404, <span class="nottickedoff">&quot;Not Found&quot;</span>),</span>
+<span class="lineno">  753 </span><span class="spaces">        </span><span class="istickedoff">(405, <span class="nottickedoff">&quot;Method Not Allowed&quot;</span>),</span>
+<span class="lineno">  754 </span><span class="spaces">        </span><span class="istickedoff">(406, <span class="nottickedoff">&quot;Not Acceptable&quot;</span>),</span>
+<span class="lineno">  755 </span><span class="spaces">        </span><span class="istickedoff">(407, <span class="nottickedoff">&quot;Proxy Authentication Required&quot;</span>),</span>
+<span class="lineno">  756 </span><span class="spaces">        </span><span class="istickedoff">(408, <span class="nottickedoff">&quot;Request Time-out&quot;</span>),</span>
+<span class="lineno">  757 </span><span class="spaces">        </span><span class="istickedoff">(409, <span class="nottickedoff">&quot;Conflict&quot;</span>),</span>
+<span class="lineno">  758 </span><span class="spaces">        </span><span class="istickedoff">(410, <span class="nottickedoff">&quot;Gone&quot;</span>),</span>
+<span class="lineno">  759 </span><span class="spaces">        </span><span class="istickedoff">(411, <span class="nottickedoff">&quot;Length Required&quot;</span>),</span>
+<span class="lineno">  760 </span><span class="spaces">        </span><span class="istickedoff">(412, <span class="nottickedoff">&quot;Precondition Failed&quot;</span>),</span>
+<span class="lineno">  761 </span><span class="spaces">        </span><span class="istickedoff">(413, <span class="nottickedoff">&quot;Request Entity Too Large&quot;</span>),</span>
+<span class="lineno">  762 </span><span class="spaces">        </span><span class="istickedoff">(414, <span class="nottickedoff">&quot;Request-URI Too Large&quot;</span>),</span>
+<span class="lineno">  763 </span><span class="spaces">        </span><span class="istickedoff">(415, <span class="nottickedoff">&quot;Unsupported Media Type&quot;</span>),</span>
+<span class="lineno">  764 </span><span class="spaces">        </span><span class="istickedoff">(416, &quot;Requested range not satisfiable&quot;),</span>
+<span class="lineno">  765 </span><span class="spaces">        </span><span class="istickedoff">(417, <span class="nottickedoff">&quot;Expectation Failed&quot;</span>),</span>
+<span class="lineno">  766 </span><span class="spaces">        </span><span class="istickedoff">(500, <span class="nottickedoff">&quot;Internal Server Error&quot;</span>),</span>
+<span class="lineno">  767 </span><span class="spaces">        </span><span class="istickedoff">(501, <span class="nottickedoff">&quot;Not Implemented&quot;</span>),</span>
+<span class="lineno">  768 </span><span class="spaces">        </span><span class="istickedoff">(502, <span class="nottickedoff">&quot;Bad Gateway&quot;</span>),</span>
+<span class="lineno">  769 </span><span class="spaces">        </span><span class="istickedoff">(503, <span class="nottickedoff">&quot;Service Unavailable&quot;</span>),</span>
+<span class="lineno">  770 </span><span class="spaces">        </span><span class="istickedoff">(504, <span class="nottickedoff">&quot;Gateway Time-out&quot;</span>),</span>
+<span class="lineno">  771 </span><span class="spaces">        </span><span class="istickedoff">(505, <span class="nottickedoff">&quot;HTTP Version not supported&quot;</span>)</span>
+<span class="lineno">  772 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
 
 </pre>
 </html>
