@@ -120,7 +120,7 @@
             </strong> is a management consultant living in NYC. He holds a long
             running interest in web technologies, data mining, computational
             science and modeling. He uses Haskell at work to help companies
-            make better business decisions.
+            make sound business decisions.
           </p>
         </div><!--end developers-->
         <div>
