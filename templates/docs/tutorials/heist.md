@@ -394,15 +394,16 @@ template is rendered.
 All of Heist's splices, templates, and hooks are stored in
 `TemplateState`.  Heist provides `TemplateState` modifier functions
 for configuration.  `emptyTemplateState` gives you reasonable defaults
-that you build on to suit your needs.  Let's look at an example to
-illustrate.
+that you build on to suit your needs.  It takes one argument: the path
+to the root of the directory tree where templates are stored.  Let's
+look at an example to illustrate.
 
 ~~~~~~~~~~~~~~~ {.haskell}
 myHeistState =
     addOnLoadHook onLoad $
     addPreRunHook preRun $
     addPostRunHook postRun $
-    bindSplice "fact" factSplice emptyTemplateState
+    bindSplice "fact" factSplice (emptyTemplateState "templates")
 
 main = do
     ets <- loadTemplates "templates" myHeistState
