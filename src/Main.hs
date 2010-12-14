@@ -61,7 +61,7 @@ initSiteState = do
 
     (origTs,staticState) <- bindStaticTag .
                             bindSplice "snap-version" serverVersion
-                            $ emptyTemplateState
+                            $ emptyTemplateState "templates"
 
     ets <- loadTemplates "templates" origTs
     let ts = either error id ets
