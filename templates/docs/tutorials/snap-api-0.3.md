@@ -113,11 +113,10 @@ responsibility for creating a response to this function." In the echo case,
 `stuff` is used as a named argument for whatever comes after `/echo/`, used by 
 the `echo` handler below.  
 
-Also note the `<|> fileServe` part: 
-`<|>`, coming from the `Applicative` type, is here used to say "try the first 
-thing, and if that doesn't work, try this second thing." `fileServe` is a 
-handler that lets you serve static content, such as CSS or images, as visible 
-in some directory.
+Also note the `<|> fileServe` part.  `<|>` comes from the `Applicative` type,
+and is here used to say "try the first thing, and if that doesn't work, try
+this second thing." `fileServe` is a handler that lets you serve static
+content, such as CSS or images, as visible in some directory.
 
 Next, let's take a look at the `echo` handler:
 
