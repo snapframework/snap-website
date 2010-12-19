@@ -55,6 +55,66 @@
 ></TD
 ></TR
 ><TR
+><TD
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+><B
+>Contents</B
+></TD
+></TR
+><TR
+><TD
+><DL
+><DT
+><A HREF="#1"
+>Introduction
+</A
+></DT
+><DD
+><DL
+><DT
+><A HREF="#2"
+>Using Snap Extensions
+</A
+></DT
+><DD
+><DL
+><DT
+><A HREF="#3"
+>Define Application State and Monad
+</A
+></DT
+><DT
+><A HREF="#4"
+>Provide Instances For &quot;HasState&quot; Classes
+</A
+></DT
+><DT
+><A HREF="#5"
+>Define The Initializer
+</A
+></DT
+><DT
+><A HREF="#6"
+>Simplified Snap Extension Server
+</A
+></DT
+></DL
+></DD
+></DL
+></DD
+></DL
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
 ><TD CLASS="s15"
 ></TD
 ></TR
@@ -179,8 +239,8 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="#v%3ArunInitializerHint"
->runInitializerHint</A
+><A HREF="#v%3ArunInitializerWithReloadAction"
+>runInitializerWithReloadAction</A
 > ::  <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
 >Bool</A
 > -&gt; <A HREF="Snap-Extension.html#t%3AInitializer"
@@ -203,17 +263,35 @@
 >()</A
 >) -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
-> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> s, s -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
->, s -&gt; <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+> (<A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
 >Snap</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
 >)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ArunInitializerHint"
+>runInitializerHint</A
+> ::  <A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+> s -&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -281,8 +359,454 @@
 ></TD
 ></TR
 ><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
 ><TD CLASS="section1"
->Documentation</TD
+><A NAME="1"
+><A NAME="1"
+>Introduction
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Snap Extensions is a library which makes it easy to create reusable plugins
+  that extend your Snap application with modular chunks of functionality such
+  as session management, user authentication, templating, or database
+  connection pooling.
+</P
+><P
+>We achieve this by requiring that you create a datatype that holds an
+  environment for your application and wrap it around the Snap monad. This new
+  construct becomes your application's handler monad and gives you access to
+  your application state throughout your handlers.
+</P
+><P
+>Warning: this interface is still EXPERIMENTAL and has a very high likelihood
+  of changing substantially in coming versions of Snap.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section2"
+><A NAME="2"
+><A NAME="2"
+>Using Snap Extensions
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Every extension has an interface and at least one implementation of that
+  interface. 
+</P
+><P
+>For some extensions, like Heist, there is only ever going to be one
+  implementation of the interface. In these cases, both the interface and the
+  implementation are exported from the same module, Snap.Extension.Heist.Impl.
+</P
+><P
+>Hypothetically, for something like session management though, there could be
+  multiple implementations, one using a HDBC backend, one using a MongoDB
+  backend and one just using an encrypted cookie as backend. In these cases,
+  the interface is exported from Snap.Extension.Session, and the
+  implementations live in Snap.Extension.Session.HDBC,
+  Snap.Extension.Session.MongoDB and Snap.Extension.Session.CookieStore.
+</P
+><P
+>Keeping this in mind, there are a number of things you need to do to use Snap
+  extensions in your application. Let's walk through how to set up a simple
+  application with the Heist extension turned on.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section3"
+><A NAME="3"
+><A NAME="3"
+>Define Application State and Monad
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>First, we define a record type AppState for holding our application's state,
+  including the state needed by the extensions we're using.
+</P
+><P
+>At the same time, we also define the monad for our application, App, as
+  a type alias to <TT
+>SnapExtend AppState</TT
+>. <TT
+><A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+></TT
+> is a <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+></TT
+> and
+  a <TT
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Reader-Class.html#t%3AMonadReader"
+>MonadReader</A
+></TT
+>, whose environment is a given type; in our case, AppState.
+</P
+><PRE
+>
+module App where
+
+import Database.HDBC
+import Database.HDBC.ODBC
+import Snap.Extension
+import Snap.Extension.Heist
+import Snap.Types
+
+type App = SnapExtend AppState
+
+data AppState = AppState
+    { heistState  :: HeistState App }
+</PRE
+><P
+>An important thing to note is that the -State types that we use in the fields
+  of AppState are specific to each implementation of a extension's interface.
+  That is, Snap.Extension.Session.HDBC will export a different SessionState to
+  Snap.Extension.Session.CookieStore, whose internal representation might be
+  completely different.
+</P
+><P
+>This state is what the extension's implementation needs to be able to do its
+  job.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section3"
+><A NAME="4"
+><A NAME="4"
+>Provide Instances For &quot;HasState&quot; Classes
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Now we have a datatype that contains all the internal state needed by our
+  application and the extensions it uses. That's a great start! But when do we
+  actually get to use this interface and all the functionality that these
+  extensions export?  What is actually being extended?
+</P
+><P
+>We use the interface provided by an extension inside our application's monad,
+  App. Snap extensions extend our App with new functionality by allowing us to
+  user their exported functions inside of our handlers. For example, the Heist
+  extension provides the function:
+</P
+><P
+><TT
+>render :: MonadHeist m =&gt; ByteString -&gt; m ()</TT
+> that renders a template by its
+  name.
+</P
+><P
+>Is App a MonadHeist? Well, not quite yet. Any <TT
+><A HREF="http://hackage.haskell.org/packages/archive/mtl/latest/doc/html/Control-Monad-Reader-Class.html#t%3AMonadReader"
+>MonadReader</A
+></TT
+> which is also
+  a <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+></TT
+> whose environment contains a HeistState is a MonadHeist.
+  That sounds a lot like our App, doesn't it? We just have to tell the Heist
+  extension how to find the HeistState in our AppState:
+</P
+><PRE
+>
+instance HasHeistState AppState where
+    getHeistState = heistState
+    setHeistState hs as = as { heistState = hs }
+</PRE
+><P
+>Stated another way, if we give our AppState the ability to hold a HeistState
+  and let the HasHeistState typeclass know how to get/set this state, we are
+  <EM
+>automagically</EM
+> given the ability to render heist templates in our handlers.
+</P
+><P
+>With these instances, our application's monad App is now a MonadHeist 
+  giving it access to operations like:
+</P
+><PRE
+>render :: MonadHeist m =&gt; ByteString -&gt; m ()</PRE
+><P
+>and
+</P
+><PRE
+>heistLocal :: (TemplateState n -&gt; TemplateState n) -&gt; m a -&gt; m a</PRE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section3"
+><A NAME="5"
+><A NAME="5"
+>Define The Initializer
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>So, our monad is now a MonadHeist, but how do we actually construct our
+  AppState and turn an App () into a <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> ()? We need to do this upfront,
+  once and right before our web server starts listening for connections.
+</P
+><P
+>Snap extensions have a thing called an <TT
+><A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+></TT
+> that does these things.
+  Each implementation of a Snap extension interface provides an <TT
+><A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+></TT
+>
+  for its -State type. We must construct an initializer type for our -State
+  type, AppState. An <TT
+><A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+></TT
+> monad is provided in this library to make
+  it easy to do this. For your convenience, <TT
+><A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+></TT
+> is an instance of
+  <TT
+><A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+></TT
+>.
+</P
+><PRE
+>
+appInitializer :: Initializer AppState
+appInitializer = do
+    hs &lt;- heistInitializer &quot;resources/templates&quot;
+    return $ AppState hs
+</PRE
+><P
+>In addition to constructing the AppState, the Initializer monad also
+  constructs the init, destroy and reload functions for our application from
+  the init, reload and destroy functions for the extensions. 
+</P
+><P
+>Although it won't cause a compile-time error, it is important to get the
+  order of the initializers correct as much as possible, otherwise they may be
+  reloaded and destroyed in the wrong order. The <A HREF="right.html"
+>right</A
+> order is an order
+  where every extension's dependencies are initialised before that extension.
+  For example, Snap.Extension.Session.HDBC would depend on something which
+  would extend the monad with MonadConnectionPool, i.e.,
+  Snap.Extension.ConnectionPool. If you had this configuration it would be
+  important that you put the connectionPoolInitializer before the
+  sessionInitializer in your appInitializer.
+</P
+><P
+>This Initializer AppState can then be passed to <TT
+><A HREF="Snap-Extension.html#v%3ArunInitializer"
+>runInitializer</A
+></TT
+>, which
+  combines our initializer action with our application's handler to produce a
+  <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> handler (which can be passed to httpServe), a cleanup action (which
+  you can run after httpServe finishes), and a reload action (which, for
+  example, you may want to use in your handler for the path &quot;admin/reload&quot;.
+</P
+><P
+>The following is an example of how you might use this in main:
+</P
+><PRE
+>
+main :: IO ()
+main = do
+    (snap,cleanup,reload) &lt;- runInitializer appInitializer appSite
+    let site = snap 
+               <A HREF="|"
+>|</A
+> path <A HREF="admin/reload.html"
+>admin/reload</A
+> $ defaultReloadHandler reload cleanup
+    quickHttpServe site <TT
+><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#v%3Afinally"
+>finally</A
+></TT
+> cleanup
+</PRE
+><P
+>You'll notice we're using <TT
+><A HREF="Snap-Extension.html#v%3AdefaultReloadHandler"
+>defaultReloadHandler</A
+></TT
+>. This is a function exported
+  by <A HREF="Snap-Extension.html"
+>Snap.Extension</A
+> with the type signature
+</P
+><P
+><TT
+>MonadSnap m =&gt; IO [(ByteString, Maybe ByteString)] -&gt; m ()</TT
+> It takes the
+  reload action returned by <TT
+><A HREF="Snap-Extension.html#v%3ArunInitializer"
+>runInitializer</A
+></TT
+> and returns a <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> action which
+  renders a simple page showing how the reload went. To avoid denial-of-service
+  attacks, the reload handler only works for requests made from the local host.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section3"
+><A NAME="6"
+><A NAME="6"
+>Simplified Snap Extension Server
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>This is, of course, a lot of avoidable boilerplate. Snap extensions framework
+ comes with another module <A HREF="Snap-Extension-Server.html"
+>Snap.Extension.Server</A
+>, which provides an interface
+ mimicking that of <A HREF="Snap-Http-Server.html"
+>Snap.Http.Server</A
+>. Their function names clash, so if you
+ need to use both of them in the same module, use a qualified import. Using
+ this module, the example above becomes:
+</P
+><PRE
+>
+import Snap.Extension.Server
+
+main :: IO ()
+main = quickHttpServe appRunner site
+</PRE
+><P
+>All it needs is a Initializer AppState and an App () and it is ready to go.
+  You might be wondering what happened to all the reload handler bits we
+  had before: That stuff has been absorbed into the config for the server.
+</P
+><P
+>One quick note: quickHttpServe doesn't take a config, instead it uses the
+  defaults augmented with any options specified on the command-line.  The
+  default reload handler path in this case is <A HREF="admin/reload.html"
+>admin/reload</A
+>. 
+</P
+><P
+>If you wanted to change this to nullReloadHandler, this is what you would do:
+</P
+><PRE
+>
+import Snap.Extension.Server
+
+main :: IO ()
+main = do
+    config &lt;- commandLineConfig emptyConfig
+    httpServe (setReloadHandler nullReloadHandler config) appRunner site
+</PRE
+><P
+>This behaves exactly as the above example apart from the reload handler.
+</P
+><P
+>With this, we now have a fully functional base application that makes use of
+  the Snap Extensions mechanism.
+</P
+><P
+>To initialize a directory with all of this setup provided as a starting
+  point, simply <TT
+>cd</TT
+> into the desired location and type: <TT
+>snap init</TT
+>. An
+  example &quot;Timer&quot; extension will also be included for your convenience.
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -755,7 +1279,7 @@
 >()</A
 ></TD
 ><TD CLASS="rdoc"
->An action in your application's monad
+>A web handler in your application's monad
 </TD
 ></TR
 ><TR
@@ -780,7 +1304,17 @@
 >ByteString</A
 >)])</TD
 ><TD CLASS="rdoc"
->This is documented thoroughly in the README
+>Returns a <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> handler, a cleanup action, and a reload action. The
+ list returned by the reload action is for error reporting. There is one
+ tuple in the list for each Snap extension; the first element of the
+ tuple is the name of the Snap extension, and the second is a Maybe
+ which contains Nothing if there was no error reloading that extension
+ and a Just with the ByteString containing the error message if there
+ was.
 </TD
 ></TR
 ><TR
@@ -796,6 +1330,126 @@
 ></TT
 > action, a
  cleanup action and a reload action.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:runInitializerWithReloadAction"
+><A NAME="v%3ArunInitializerWithReloadAction"
+></A
+></A
+><B
+>runInitializerWithReloadAction</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension.html#runInitializerWithReloadAction"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
+><TD CLASS="rdoc"
+>Verbosity; info is printed to <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/GHC-IO-Handle-FD.html#v%3Astderr"
+>stderr</A
+></TT
+> when this is <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#v%3ATrue"
+>True</A
+></TT
+>
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+> s</TD
+><TD CLASS="rdoc"
+>The Initializer value
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+>A web handler in your application's monad.
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)] -&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+>Your desired &quot;reload&quot; handler; it gets passed the reload
+ action. This handler is always run, so you have to guard the path
+ yourself (with.
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+><TD CLASS="rdoc"
+>Your <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> handler and a cleanup action.
+</TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Serves the same purpose as <TT
+><A HREF="Snap-Extension.html#v%3ArunInitializer"
+>runInitializer</A
+></TT
+>, but combines the
+   application's web handler with a user-supplied action to be run to reload
+   the application's state.
 </TD
 ></TR
 ></TABLE
@@ -830,25 +1484,7 @@
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="arg"
->:: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
->Bool</A
-></TD
-><TD CLASS="rdoc"
->Verbosity; info is printed to <TT
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/GHC-IO-Handle-FD.html#v%3Astderr"
->stderr</A
-></TT
-> when this is
- <TT
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#v%3ATrue"
->True</A
-></TT
->
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; <A HREF="Snap-Extension.html#t%3AInitializer"
+>:: <A HREF="Snap-Extension.html#t%3AInitializer"
 >Initializer</A
 > s</TD
 ><TD CLASS="rdoc"
@@ -868,56 +1504,19 @@
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
->Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->)] -&gt; <A HREF="Snap-Extension.html#t%3ASnapExtend"
->SnapExtend</A
-> s <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-><TD CLASS="rdoc"
->See README and <TT
-><A HREF="Snap-Extension.html#v%3AdefaultReloadHandler"
->defaultReloadHandler</A
-></TT
->
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> s, s -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
->IO</A
-> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
->, s -&gt; <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
 >Snap</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
->)</TD
+></TD
 ><TD CLASS="rdoc"
->A tuple of values which can be passed to <TT
->loadSnapTH</TT
->.
-</TD
+></TD
 ></TR
 ><TR
 ><TD CLASS="ndoc" COLSPAN="2"
->Serves the same purpose as <TT
-><A HREF="Snap-Extension.html#v%3ArunInitializer"
->runInitializer</A
-></TT
->, but can be used with Hint.
- This is explained in the README.
+>Runs an initializer, obtains state, runs the handler, and tears everything
+ down all in one request. Used with the hint backend which reloads everything
+ every time.
 </TD
 ></TR
 ></TABLE

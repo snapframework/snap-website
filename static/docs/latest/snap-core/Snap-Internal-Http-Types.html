@@ -1581,8 +1581,9 @@
 ><A HREF="Snap-Internal-Http-Types.html#t%3AHasHeaders"
 >HasHeaders</A
 ></TT
-> datatype. If a header with
- the same name already exists, the new value is appended to the headers list.
+> datatype. If a header
+ with the same name already exists, the new value is appended to the headers
+ list.
 </TD
 ></TR
 ><TR
@@ -2548,17 +2549,17 @@
 ></TD
 ><TD CLASS="rdoc"
 ><P
->We'll be doing web components (or &quot;snaplets&quot;) for version 0.2. The
- &quot;snaplet path&quot; refers to the place on the URL where your containing
- snaplet is hung. The value of <TT
+>We'll be doing web components (or &quot;snaplets&quot;) for version 0.2.
+ The &quot;snaplet path&quot; refers to the place on the URL where your
+ containing snaplet is hung. The value of <TT
 ><A HREF="Snap-Internal-Http-Types.html#v%3ArqSnapletPath"
 >rqSnapletPath</A
 ></TT
-> is either <TT
+> is either
+ <TT
 >&quot;&quot;</TT
-> (at the
- top-level context) or is a path beginning with a slash, but not ending
- with one.
+> (at the top-level context) or is a path beginning with a
+ slash, but not ending with one.
 </P
 ><P
 >An identity is that:
@@ -2573,8 +2574,8 @@
 ><A HREF="Snap-Internal-Http-Types.html#v%3ArqSnapletPath"
 >rqSnapletPath</A
 ></TT
-> will be
- &quot;&quot;
+> will
+ be &quot;&quot;
 </P
 ></TD
 ></TR
@@ -2600,8 +2601,8 @@
 >&quot;/foo/&quot;</TT
 >, and you request <TT
 >&quot;/foo/bar&quot;</TT
->, the value
- of <TT
+>, the
+ value of <TT
 ><A HREF="Snap-Internal-Http-Types.html#v%3ArqPathInfo"
 >rqPathInfo</A
 ></TT
@@ -2626,8 +2627,8 @@
 ><A HREF="Snap-Internal-Http-Types.html#v%3ArqContextPath"
 >rqContextPath</A
 ></TT
->, and
- <TT
+>,
+ and <TT
 ><A HREF="Snap-Internal-Http-Types.html#v%3ArqPathInfo"
 >rqPathInfo</A
 ></TT
@@ -3171,8 +3172,8 @@
 >Content-Type</TT
 > is <TT
 >application/x-www-form-urlencoded</TT
->). Parameter
- values can be modified within handlers using <A HREF="rqModifyParams.html"
+>).
+ Parameter values can be modified within handlers using <A HREF="rqModifyParams.html"
 >rqModifyParams</A
 >.
 </TD
@@ -3216,8 +3217,8 @@
 ><TD CLASS="doc"
 >Modifies the parameters mapping (which is a <TT
 >Map ByteString ByteString</TT
->) in
- a <TT
+>)
+ in a <TT
 ><A HREF="Snap-Internal-Http-Types.html#t%3ARequest"
 >Request</A
 ></TT
@@ -3288,7 +3289,8 @@
 ></TR
 ><TR
 ><TD CLASS="ndoc" COLSPAN="2"
->Writes a key-value pair to the parameters mapping within the given request.
+>Writes a key-value pair to the parameters mapping within the given
+ request.
 </TD
 ></TR
 ></TABLE
@@ -3729,8 +3731,8 @@
 >A note here: if you want to set the <TT
 >Content-Length</TT
 > for the response,
- Snap forces you to do it with this function rather than by setting it in the
- headers; the <TT
+ Snap forces you to do it with this function rather than by setting it in
+ the headers; the <TT
 >Content-Length</TT
 > in the headers will be ignored.
 </P
@@ -3745,8 +3747,8 @@
 >If you don't set a content length in your response, HTTP keep-alive will be
  disabled for HTTP/1.0 clients, forcing a <TT
 >Connection: close</TT
->. For HTTP/1.1
- clients, Snap will switch to the chunked transfer encoding if
+>. For
+ HTTP/1.1 clients, Snap will switch to the chunked transfer encoding if
  <TT
 >Content-Length</TT
 > is not specified.

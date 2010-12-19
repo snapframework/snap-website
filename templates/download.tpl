@@ -14,7 +14,7 @@
           you already have Cabal set up, then getting Snap should be as simple
           as running two commands:</p>
         <pre class="code">$ cabal update
-$ cabal install snap-server</pre>
+$ cabal install snap</pre>
 
         <p>If you don't have <tt>GHC</tt> and <tt>cabal</tt> installed, the
           easiest way to get them is with

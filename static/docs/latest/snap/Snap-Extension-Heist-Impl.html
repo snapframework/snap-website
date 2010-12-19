@@ -55,6 +55,43 @@
 ></TD
 ></TR
 ><TR
+><TD
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+><B
+>Contents</B
+></TD
+></TR
+><TR
+><TD
+><DL
+><DT
+><A HREF="#1"
+>Heist State Definitions
+</A
+></DT
+><DT
+><A HREF="#2"
+>The MonadHeist Interface
+</A
+></DT
+><DT
+><A HREF="#3"
+>Convenience Functions
+</A
+></DT
+></DL
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
 ><TD CLASS="section1"
 >Description</TD
 ></TR
@@ -224,68 +261,6 @@ interfaces from any other Snap Extension.
 ><TD CLASS="decl"
 ><SPAN CLASS="keyword"
 >class</SPAN
-> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
->Monad</A
-> n, <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
->MonadSnap</A
-> m) =&gt; <A HREF="#t%3AMonadHeist"
->MonadHeist</A
-> n m | m -&gt; n <SPAN CLASS="keyword"
->where</SPAN
-></TD
-></TR
-><TR
-><TD CLASS="body"
-><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3Arender"
->render</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AheistLocal"
->heistLocal</A
-> ::  (<A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
->TemplateState</A
-> n -&gt; <A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
->TemplateState</A
-> n) -&gt; m a -&gt; m a</TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AheistServe"
->heistServe</A
-> :: m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AheistServeSingle"
->heistServeSingle</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><SPAN CLASS="keyword"
->class</SPAN
 > <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
 >MonadSnap</A
 > m =&gt; <A HREF="#t%3AHasHeistState"
@@ -350,6 +325,68 @@ interfaces from any other Snap Extension.
 ></TR
 ><TR
 ><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> n, <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m) =&gt; <A HREF="#t%3AMonadHeist"
+>MonadHeist</A
+> n m | m -&gt; n <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Arender"
+>render</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AheistLocal"
+>heistLocal</A
+> ::  (<A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> n -&gt; <A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> n) -&gt; m a -&gt; m a</TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AheistServe"
+>heistServe</A
+> :: m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AheistServeSingle"
+>heistServeSingle</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AregisterSplices"
 >registerSplices</A
 > :: (<A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
@@ -374,8 +411,17 @@ interfaces from any other Snap Extension.
 ></TD
 ></TR
 ><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
 ><TD CLASS="section1"
->Documentation</TD
+><A NAME="1"
+><A NAME="1"
+>Heist State Definitions
+</A
+></A
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -471,6 +517,259 @@ interfaces from any other Snap Extension.
 ></TD
 ></TR
 ></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>class</SPAN
+> <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A NAME="t:HasHeistState"
+><A NAME="t%3AHasHeistState"
+></A
+></A
+><B
+>HasHeistState</B
+> m s | s -&gt; m <SPAN CLASS="keyword"
+>where</SPAN
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist-Impl.html#HasHeistState"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="ndoc"
+><P
+>For you appliaction's monad to be a <TT
+><A HREF="Snap-Extension-Heist-Impl.html#t%3AMonadHeist"
+>MonadHeist</A
+></TT
+>, your application's
+ state needs to be an instance of <TT
+><A HREF="Snap-Extension-Heist-Impl.html#t%3AHasHeistState"
+>HasHeistState</A
+></TT
+>. Minimal complete
+ definition: <TT
+><A HREF="Snap-Extension-Heist-Impl.html#v%3AgetHeistState"
+>getHeistState</A
+></TT
+>, <TT
+><A HREF="Snap-Extension-Heist-Impl.html#v%3AsetHeistState"
+>setHeistState</A
+></TT
+>.
+</P
+><P
+>Unlike other <TT
+>HasState</TT
+> type classes, this is a type class has two
+ parameters. Among other things, this means that you will need to enable the
+ <TT
+>FlexibleInstances</TT
+> and <TT
+>MultiParameterTypeClasses</TT
+> language extensions to
+ be able to create an instance of <TT
+>HasHeistState</TT
+>. In most cases, the last
+ parameter will as usual be your application's state, and the additional
+ first one will be the monad formed by wrapping <TT
+><A HREF="Snap-Extension.html#t%3ASnapExtend"
+>SnapExtend</A
+></TT
+> around your
+ application's state.
+</P
+><P
+>However, if you are developing your own Snap Extension which uses its own
+ internal <TT
+><A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
+>HeistState</A
+></TT
+>, the last parameter will be your Snap Extension's
+ internal state, and the additional first parameter will be any monad formed
+ by wrapping <TT
+>SnapExtend</TT
+> around a type which has an instance of the
+ <TT
+>HasState</TT
+> class for your monad. These two use cases are subtly different,
+ which is why <TT
+><A HREF="Snap-Extension-Heist-Impl.html#t%3AHasHeistState"
+>HasHeistState</A
+></TT
+> needs two type parameters.
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="section4"
+>Methods</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getHeistState"
+><A NAME="v%3AgetHeistState"
+></A
+></A
+><B
+>getHeistState</B
+> :: s -&gt; <A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
+>HeistState</A
+> m</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist-Impl.html#getHeistState"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:setHeistState"
+><A NAME="v%3AsetHeistState"
+></A
+></A
+><B
+>setHeistState</B
+> :: <A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
+>HeistState</A
+> m -&gt; s -&gt; s</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist-Impl.html#setHeistState"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:modifyHeistState"
+><A NAME="v%3AmodifyHeistState"
+></A
+></A
+><B
+>modifyHeistState</B
+> :: (<A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
+>HeistState</A
+> m -&gt; <A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
+>HeistState</A
+> m) -&gt; s -&gt; s</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist-Impl.html#modifyHeistState"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:heistInitializer"
+><A NAME="v%3AheistInitializer"
+></A
+></A
+><B
+>heistInitializer</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; <A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+> (<A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
+>HeistState</A
+> m)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist-Impl.html#heistInitializer"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>The <TT
+><A HREF="Snap-Extension.html#t%3AInitializer"
+>Initializer</A
+></TT
+> for <TT
+><A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
+>HeistState</A
+></TT
+>. It takes one argument, a path to a
+ template directory containing <TT
+>.tpl</TT
+> files.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+><A NAME="2"
+><A NAME="2"
+>The MonadHeist Interface
+</A
+></A
 ></TD
 ></TR
 ><TR
@@ -737,240 +1036,13 @@ interfaces from any other Snap Extension.
 ></TD
 ></TR
 ><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><SPAN CLASS="keyword"
->class</SPAN
-> <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
->MonadSnap</A
-> m =&gt; <A NAME="t:HasHeistState"
-><A NAME="t%3AHasHeistState"
+><TD CLASS="section1"
+><A NAME="3"
+><A NAME="3"
+>Convenience Functions
+</A
 ></A
-></A
-><B
->HasHeistState</B
-> m s | s -&gt; m <SPAN CLASS="keyword"
->where</SPAN
 ></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Extension-Heist-Impl.html#HasHeistState"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="body"
-><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
-><TR
-><TD CLASS="ndoc"
-><P
->For you appliaction's monad to be a <TT
-><A HREF="Snap-Extension-Heist-Impl.html#t%3AMonadHeist"
->MonadHeist</A
-></TT
->, your application's
- state needs to be an instance of <TT
-><A HREF="Snap-Extension-Heist-Impl.html#t%3AHasHeistState"
->HasHeistState</A
-></TT
->. Minimal complete
- definition: <TT
-><A HREF="Snap-Extension-Heist-Impl.html#v%3AgetHeistState"
->getHeistState</A
-></TT
->, <TT
-><A HREF="Snap-Extension-Heist-Impl.html#v%3AsetHeistState"
->setHeistState</A
-></TT
->.
-</P
-><P
->Unlike other <TT
->HasState</TT
-> type classes, this is a type class has two
- parameters. Among other things, this means that you will need to enable the
- <TT
->FlexibleInstances</TT
-> and <TT
->MultiParameterTypeClasses</TT
-> language extensions to
- be able to create an instance of <TT
->HasHeistState</TT
->. In most cases, the last
- parameter will as usual be your application's state, and the additional
- first one will be the monad formed by wrapping <TT
-><A HREF="Snap-Extension.html#t%3ASnapExtend"
->SnapExtend</A
-></TT
-> around your
- application's state.
-</P
-><P
->However, if you are developing your own Snap Extension which uses its own
- internal <TT
-><A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
->HeistState</A
-></TT
->, the last parameter will be your Snap Extension's
- internal state, and the additional first parameter will be any monad formed
- by wrapping <TT
->SnapExtend</TT
-> around a type which has an instance of the
- <TT
->HasState</TT
-> class for your monad. These two use cases are subtly different,
- which is why <TT
-><A HREF="Snap-Extension-Heist-Impl.html#t%3AHasHeistState"
->HasHeistState</A
-></TT
-> needs two type parameters.
-</P
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="section4"
->Methods</TD
-></TR
-><TR
-><TD CLASS="body"
-><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:getHeistState"
-><A NAME="v%3AgetHeistState"
-></A
-></A
-><B
->getHeistState</B
-> :: s -&gt; <A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
->HeistState</A
-> m</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Extension-Heist-Impl.html#getHeistState"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:setHeistState"
-><A NAME="v%3AsetHeistState"
-></A
-></A
-><B
->setHeistState</B
-> :: <A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
->HeistState</A
-> m -&gt; s -&gt; s</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Extension-Heist-Impl.html#setHeistState"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:modifyHeistState"
-><A NAME="v%3AmodifyHeistState"
-></A
-></A
-><B
->modifyHeistState</B
-> :: (<A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
->HeistState</A
-> m -&gt; <A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
->HeistState</A
-> m) -&gt; s -&gt; s</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Extension-Heist-Impl.html#modifyHeistState"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-></TABLE
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:heistInitializer"
-><A NAME="v%3AheistInitializer"
-></A
-></A
-><B
->heistInitializer</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
->MonadSnap</A
-> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
->FilePath</A
-> -&gt; <A HREF="Snap-Extension.html#t%3AInitializer"
->Initializer</A
-> (<A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
->HeistState</A
-> m)</TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Extension-Heist-Impl.html#heistInitializer"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->The <TT
-><A HREF="Snap-Extension.html#t%3AInitializer"
->Initializer</A
-></TT
-> for <TT
-><A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
->HeistState</A
-></TT
->. It takes one argument, a path to a
- template directory containing <TT
->.tpl</TT
-> files.
-</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -1052,6 +1124,18 @@ interfaces from any other Snap Extension.
 >Typical use cases are dynamically generated components that are present in
  many of your views. 
 </P
+><P
+>Example Usage:
+</P
+><PRE
+>
+ appInit :: Initializer AppState
+ appInit = do
+  hs &lt;- heistInitializer &quot;templates&quot;
+  registerSplices hs $ 
+   [ (&quot;tabs&quot;, tabsSplice)
+   , (&quot;loginLogout&quot;, loginLogoutSplice) ] 
+</PRE
 ></TD
 ></TR
 ></TABLE

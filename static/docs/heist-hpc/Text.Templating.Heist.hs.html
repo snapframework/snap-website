@@ -136,12 +136,12 @@ span.spaces    { background: white }
 <span class="lineno">  125 </span>
 <span class="lineno">  126 </span>------------------------------------------------------------------------------
 <span class="lineno">  127 </span>-- | The default set of built-in splices.
-<span class="lineno">  128 </span>defaultSpliceMap :: MonadIO m =&gt; SpliceMap m
-<span class="lineno">  129 </span><span class="decl"><span class="istickedoff">defaultSpliceMap = Map.fromList</span>
+<span class="lineno">  128 </span>defaultSpliceMap :: MonadIO m =&gt; FilePath -&gt; SpliceMap m
+<span class="lineno">  129 </span><span class="decl"><span class="istickedoff">defaultSpliceMap templatePath = Map.fromList</span>
 <span class="lineno">  130 </span><span class="spaces">    </span><span class="istickedoff">[(applyTag, applyImpl)</span>
 <span class="lineno">  131 </span><span class="spaces">    </span><span class="istickedoff">,(bindTag, bindImpl)</span>
 <span class="lineno">  132 </span><span class="spaces">    </span><span class="istickedoff">,(ignoreTag, <span class="nottickedoff">ignoreImpl</span>)</span>
-<span class="lineno">  133 </span><span class="spaces">    </span><span class="istickedoff">,(markdownTag, markdownSplice)</span>
+<span class="lineno">  133 </span><span class="spaces">    </span><span class="istickedoff">,(markdownTag, markdownSplice templatePath)</span>
 <span class="lineno">  134 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
 <span class="lineno">  135 </span>
 <span class="lineno">  136 </span>
@@ -149,22 +149,23 @@ span.spaces    { background: white }
 <span class="lineno">  138 </span>-- | An empty template state, with Heist's default splices (@\&lt;apply\&gt;@,
 <span class="lineno">  139 </span>-- @\&lt;bind\&gt;@, @\&lt;ignore\&gt;@, and @\&lt;markdown\&gt;@) mapped.  The static tag is
 <span class="lineno">  140 </span>-- not mapped here because it must be mapped manually in your application.
-<span class="lineno">  141 </span>emptyTemplateState :: MonadIO m =&gt; TemplateState m
-<span class="lineno">  142 </span><span class="decl"><span class="istickedoff">emptyTemplateState = TemplateState defaultSpliceMap Map.empty True [] 0</span>
-<span class="lineno">  143 </span><span class="spaces">                                   </span><span class="istickedoff">return return return []</span></span>
-<span class="lineno">  144 </span>
+<span class="lineno">  141 </span>emptyTemplateState :: MonadIO m =&gt; FilePath -&gt; TemplateState m
+<span class="lineno">  142 </span><span class="decl"><span class="istickedoff">emptyTemplateState templatePath =</span>
+<span class="lineno">  143 </span><span class="spaces">    </span><span class="istickedoff">TemplateState (defaultSpliceMap templatePath) Map.empty</span>
+<span class="lineno">  144 </span><span class="spaces">                  </span><span class="istickedoff">True [] 0 return return return []</span></span>
 <span class="lineno">  145 </span>
-<span class="lineno">  146 </span>-- $hookDoc
-<span class="lineno">  147 </span>-- Heist hooks allow you to modify templates when they are loaded and before
-<span class="lineno">  148 </span>-- and after they are run.  Every time you call one of the addAbcHook
-<span class="lineno">  149 </span>-- functions the hook is added to onto the processing pipeline.  The hooks
-<span class="lineno">  150 </span>-- processes the template in the order that they were added to the
-<span class="lineno">  151 </span>-- TemplateState.
-<span class="lineno">  152 </span>--
-<span class="lineno">  153 </span>-- The pre-run and post-run hooks are run before and after every template is
-<span class="lineno">  154 </span>-- run/rendered.  You should be careful what code you put in these hooks
-<span class="lineno">  155 </span>-- because it can significantly affect the performance of your site.
-<span class="lineno">  156 </span>
+<span class="lineno">  146 </span>
+<span class="lineno">  147 </span>-- $hookDoc
+<span class="lineno">  148 </span>-- Heist hooks allow you to modify templates when they are loaded and before
+<span class="lineno">  149 </span>-- and after they are run.  Every time you call one of the addAbcHook
+<span class="lineno">  150 </span>-- functions the hook is added to onto the processing pipeline.  The hooks
+<span class="lineno">  151 </span>-- processes the template in the order that they were added to the
+<span class="lineno">  152 </span>-- TemplateState.
+<span class="lineno">  153 </span>--
+<span class="lineno">  154 </span>-- The pre-run and post-run hooks are run before and after every template is
+<span class="lineno">  155 </span>-- run/rendered.  You should be careful what code you put in these hooks
+<span class="lineno">  156 </span>-- because it can significantly affect the performance of your site.
+<span class="lineno">  157 </span>
 
 </pre>
 </html>

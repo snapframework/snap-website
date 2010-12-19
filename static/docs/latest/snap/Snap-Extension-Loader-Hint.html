@@ -4,12 +4,12 @@
 ><HEAD
 ><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
 ><TITLE
->Snap.Loader.Static</TITLE
+>Snap.Extension.Loader.Hint</TITLE
 ><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
 ><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
 ></SCRIPT
 ><SCRIPT TYPE="text/javascript"
->window.onload = function () {setSynopsis("mini_Snap-Loader-Static.html")};</SCRIPT
+>window.onload = function () {setSynopsis("mini_Snap-Extension-Loader-Hint.html")};</SCRIPT
 ></HEAD
 ><BODY
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
@@ -23,7 +23,7 @@
 ><TD CLASS="title"
 >snap-0.3.0: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
-><A HREF="src/Snap-Loader-Static.html"
+><A HREF="src/Snap-Extension-Loader-Hint.html"
 >Source code</A
 ></TD
 ><TD CLASS="topbut"
@@ -44,7 +44,7 @@
 ><TR
 ><TD
 ><FONT SIZE="6"
->Snap.Loader.Static</FONT
+>Snap.Extension.Loader.Hint</FONT
 ></TD
 ></TR
 ></TABLE
@@ -60,21 +60,12 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
-><P
->This module is a source-compatible replacement for
- <A HREF="Snap-Loader-Hint.html"
->Snap.Loader.Hint</A
->.  It does not import the GHC api, directly or
- transitively, resulting in a greatly decreased binary size, as
- compared to the Hint loader.
-</P
-><P
->This module results in the same code as using the actions in the
- obvious, straight-forward manner.  It is present *only* as a
- source-level replacement for the Hint loader, to enable quickly
- switching the Hint loader off with only a changed import.
-</P
-></TD
+>This module includes the machinery necessary to use hint to load
+ action code dynamically.  It includes a Template Haskell function
+ to gather the necessary compile-time information about code
+ location, compiler arguments, etc, and bind that information into
+ the calls to the dynamic loader.
+</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -96,8 +87,6 @@
 ><A HREF="#v%3AloadSnapTH"
 >loadSnapTH</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
->Name</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
 >Name</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
 >Name</A
@@ -137,15 +126,13 @@
 >Name</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
 >Name</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
->Name</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AQ"
 >Q</A
 > <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AExp"
 >Exp</A
 ></TD
 ><TD CLASS="declbut"
-><A HREF="src/Snap-Loader-Static.html#loadSnapTH"
+><A HREF="src/Snap-Extension-Loader-Hint.html#loadSnapTH"
 >Source</A
 ></TD
 ></TR
@@ -155,18 +142,34 @@
 ><TR
 ><TD CLASS="doc"
 ><P
->This function is a shim for source compatibility with loadSnapTH
- in <A HREF="Snap-Loader-Hint.html"
->Snap.Loader.Hint</A
->.  This function is a TH wrapper around a
- hypothetical function:
+>This function derives all the information necessary to use the
+ interpreter from the compile-time environment, and compiles it in
+ to the generated code.
+</P
+><P
+>This could be considered a TH wrapper around a function
 </P
 ><PRE
-> loadSnap :: IO a -&gt; (a -&gt; IO ()) -&gt; (a -&gt; Snap ()) -&gt; IO (IO (), Snap ())
- loadSnap initialize cleanup action = do
-     i &lt;- initialize
-     return (cleanup i, action i)
+> loadSnap :: Initializer s -&gt; SnapExtend s () -&gt; IO (Snap ())
 </PRE
+><P
+>with a magical implementation.
+</P
+><P
+>The returned Snap action runs the Initializer, runs the <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> handler,
+ and does the cleanup.  This means that the whole application state will be
+ loaded and unloaded for each request.  To make this worthwhile, those steps
+ should be made quite fast.
+</P
+><P
+>The upshot is that you shouldn't need to recompile your server
+ during development unless your .cabal file changes, or the code
+ that uses this splice changes.
+</P
 ></TD
 ></TR
 ><TR

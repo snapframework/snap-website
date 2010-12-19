@@ -13,59 +13,86 @@ span.spaces    { background: white }
 <span class="lineno">    2 </span>
 <span class="lineno">    3 </span>module Snap.Internal.Http.Server.ListenHelpers where
 <span class="lineno">    4 </span>
-<span class="lineno">    5 </span>import           Data.ByteString (ByteString)
-<span class="lineno">    6 </span>import           Foreign.C
-<span class="lineno">    7 </span>import           Network.Socket (Socket, sClose)
-<span class="lineno">    8 </span>import           Snap.Internal.Http.Server.Backend
-<span class="lineno">    9 </span>import qualified Snap.Internal.Http.Server.HttpPort as Http
-<span class="lineno">   10 </span>import qualified Snap.Internal.Http.Server.GnuTLS   as TLS
-<span class="lineno">   11 </span>
-<span class="lineno">   12 </span>listenSocket :: ListenSocket -&gt; Socket
-<span class="lineno">   13 </span><span class="decl"><span class="istickedoff">listenSocket (ListenHttp s) = s</span>
-<span class="lineno">   14 </span><span class="spaces"></span><span class="istickedoff">listenSocket (ListenHttps s _ _) = <span class="nottickedoff">s</span></span></span>
-<span class="lineno">   15 </span>
-<span class="lineno">   16 </span>isSecure :: ListenSocket -&gt; Bool
-<span class="lineno">   17 </span><span class="decl"><span class="istickedoff">isSecure (ListenHttp _)      = False</span>
-<span class="lineno">   18 </span><span class="spaces"></span><span class="istickedoff">isSecure (ListenHttps _ _ _) = <span class="nottickedoff">True</span></span></span>
+<span class="lineno">    5 </span>
+<span class="lineno">    6 </span>------------------------------------------------------------------------------
+<span class="lineno">    7 </span>import           Data.ByteString (ByteString)
+<span class="lineno">    8 </span>import           Foreign.C
+<span class="lineno">    9 </span>import           Network.Socket (Socket, sClose)
+<span class="lineno">   10 </span>import           Snap.Internal.Http.Server.Backend
+<span class="lineno">   11 </span>import qualified Snap.Internal.Http.Server.HttpPort as Http
+<span class="lineno">   12 </span>import qualified Snap.Internal.Http.Server.GnuTLS   as TLS
+<span class="lineno">   13 </span>
+<span class="lineno">   14 </span>
+<span class="lineno">   15 </span>------------------------------------------------------------------------------
+<span class="lineno">   16 </span>listenSocket :: ListenSocket -&gt; Socket
+<span class="lineno">   17 </span><span class="decl"><span class="istickedoff">listenSocket (ListenHttp s) = s</span>
+<span class="lineno">   18 </span><span class="spaces"></span><span class="istickedoff">listenSocket (ListenHttps s _ _) = s</span></span>
 <span class="lineno">   19 </span>
-<span class="lineno">   20 </span>closeSocket :: ListenSocket -&gt; IO ()
-<span class="lineno">   21 </span><span class="decl"><span class="istickedoff">closeSocket (ListenHttp s)      = sClose s</span>
-<span class="lineno">   22 </span><span class="spaces"></span><span class="istickedoff">closeSocket p@(ListenHttps s _ _) = <span class="nottickedoff">do TLS.freePort p</span></span>
-<span class="lineno">   23 </span><span class="spaces">                                       </span><span class="istickedoff"><span class="nottickedoff">sClose s</span></span></span>
-<span class="lineno">   24 </span>
-<span class="lineno">   25 </span>createSession :: ListenSocket -&gt; Int -&gt; CInt -&gt; IO () -&gt; IO NetworkSession
-<span class="lineno">   26 </span><span class="decl"><span class="istickedoff">createSession (ListenHttp _)        = Http.createSession</span>
-<span class="lineno">   27 </span><span class="spaces"></span><span class="istickedoff">createSession p@(ListenHttps _ _ _) = <span class="nottickedoff">TLS.createSession p</span></span></span>
-<span class="lineno">   28 </span>
-<span class="lineno">   29 </span>endSession :: ListenSocket -&gt; NetworkSession -&gt; IO ()
-<span class="lineno">   30 </span><span class="decl"><span class="istickedoff">endSession (ListenHttp _)      = Http.endSession</span>
-<span class="lineno">   31 </span><span class="spaces"></span><span class="istickedoff">endSession (ListenHttps _ _ _) = <span class="nottickedoff">TLS.endSession</span></span></span>
+<span class="lineno">   20 </span>
+<span class="lineno">   21 </span>------------------------------------------------------------------------------
+<span class="lineno">   22 </span>isSecure :: ListenSocket -&gt; Bool
+<span class="lineno">   23 </span><span class="decl"><span class="istickedoff">isSecure (ListenHttp _)      = False</span>
+<span class="lineno">   24 </span><span class="spaces"></span><span class="istickedoff">isSecure (ListenHttps _ _ _) = True</span></span>
+<span class="lineno">   25 </span>
+<span class="lineno">   26 </span>
+<span class="lineno">   27 </span>------------------------------------------------------------------------------
+<span class="lineno">   28 </span>closeSocket :: ListenSocket -&gt; IO ()
+<span class="lineno">   29 </span><span class="decl"><span class="istickedoff">closeSocket (ListenHttp s)      = sClose s</span>
+<span class="lineno">   30 </span><span class="spaces"></span><span class="istickedoff">closeSocket p@(ListenHttps s _ _) = do TLS.freePort p</span>
+<span class="lineno">   31 </span><span class="spaces">                                       </span><span class="istickedoff">sClose s</span></span>
 <span class="lineno">   32 </span>
-<span class="lineno">   33 </span>#ifdef PORTABLE
-<span class="lineno">   34 </span>-- For portable builds, we can't call read/write directly so we need the original
-<span class="lineno">   35 </span>-- haskell socket to use with network-bytestring package.
-<span class="lineno">   36 </span>-- Only the simple backend creates sockets in haskell so the following
-<span class="lineno">   37 </span>-- functions only work with the simple backend.
+<span class="lineno">   33 </span>
+<span class="lineno">   34 </span>------------------------------------------------------------------------------
+<span class="lineno">   35 </span>createSession :: ListenSocket -&gt; Int -&gt; CInt -&gt; IO () -&gt; IO NetworkSession
+<span class="lineno">   36 </span><span class="decl"><span class="istickedoff">createSession (ListenHttp _)        = Http.createSession</span>
+<span class="lineno">   37 </span><span class="spaces"></span><span class="istickedoff">createSession p@(ListenHttps _ _ _) = TLS.createSession p</span></span>
 <span class="lineno">   38 </span>
-<span class="lineno">   39 </span>recv :: ListenSocket -&gt; Socket -&gt; IO () -&gt; NetworkSession -&gt; IO (Maybe ByteString)
-<span class="lineno">   40 </span>recv (ListenHttp _)      s = Http.recv s
-<span class="lineno">   41 </span>recv (ListenHttps _ _ _) _ = TLS.recv
-<span class="lineno">   42 </span>
-<span class="lineno">   43 </span>send :: ListenSocket -&gt; Socket -&gt; IO () -&gt; IO () -&gt; NetworkSession -&gt; ByteString -&gt; IO ()
-<span class="lineno">   44 </span>send (ListenHttp _)      s = Http.send s
-<span class="lineno">   45 </span>send (ListenHttps _ _ _) _ = TLS.send
-<span class="lineno">   46 </span>
-<span class="lineno">   47 </span>#else
+<span class="lineno">   39 </span>
+<span class="lineno">   40 </span>------------------------------------------------------------------------------
+<span class="lineno">   41 </span>endSession :: ListenSocket -&gt; NetworkSession -&gt; IO ()
+<span class="lineno">   42 </span><span class="decl"><span class="istickedoff">endSession (ListenHttp _)      = Http.endSession</span>
+<span class="lineno">   43 </span><span class="spaces"></span><span class="istickedoff">endSession (ListenHttps _ _ _) = TLS.endSession</span></span>
+<span class="lineno">   44 </span>
+<span class="lineno">   45 </span>
+<span class="lineno">   46 </span>#ifdef PORTABLE
+<span class="lineno">   47 </span>
 <span class="lineno">   48 </span>
-<span class="lineno">   49 </span>recv :: ListenSocket -&gt; IO () -&gt; NetworkSession -&gt; IO (Maybe ByteString)
-<span class="lineno">   50 </span><span class="decl"><span class="istickedoff">recv (ListenHttp _)      = Http.recv</span>
-<span class="lineno">   51 </span><span class="spaces"></span><span class="istickedoff">recv (ListenHttps _ _ _) = <span class="nottickedoff">TLS.recv</span></span></span>
-<span class="lineno">   52 </span>
-<span class="lineno">   53 </span>send :: ListenSocket -&gt; IO () -&gt; IO () -&gt; NetworkSession -&gt; ByteString -&gt; IO ()
-<span class="lineno">   54 </span><span class="decl"><span class="istickedoff">send (ListenHttp _)      = Http.send</span>
-<span class="lineno">   55 </span><span class="spaces"></span><span class="istickedoff">send (ListenHttps _ _ _) = <span class="nottickedoff">TLS.send</span></span></span>
-<span class="lineno">   56 </span>
-<span class="lineno">   57 </span>#endif
+<span class="lineno">   49 </span>-- For portable builds, we can't call read/write directly so we need the
+<span class="lineno">   50 </span>-- original haskell socket to use with network-bytestring package.
+<span class="lineno">   51 </span>-- Only the simple backend creates sockets in haskell so the following
+<span class="lineno">   52 </span>-- functions only work with the simple backend.
+<span class="lineno">   53 </span>
+<span class="lineno">   54 </span>
+<span class="lineno">   55 </span>------------------------------------------------------------------------------
+<span class="lineno">   56 </span>recv :: ListenSocket -&gt; Socket -&gt; IO () -&gt; NetworkSession
+<span class="lineno">   57 </span>     -&gt; IO (Maybe ByteString)
+<span class="lineno">   58 </span>recv (ListenHttp _)      s = Http.recv s
+<span class="lineno">   59 </span>recv (ListenHttps _ _ _) _ = TLS.recv
+<span class="lineno">   60 </span>
+<span class="lineno">   61 </span>
+<span class="lineno">   62 </span>------------------------------------------------------------------------------
+<span class="lineno">   63 </span>send :: ListenSocket -&gt; Socket -&gt; IO () -&gt; IO () -&gt; NetworkSession
+<span class="lineno">   64 </span>     -&gt; ByteString -&gt; IO ()
+<span class="lineno">   65 </span>send (ListenHttp _)      s = Http.send s
+<span class="lineno">   66 </span>send (ListenHttps _ _ _) _ = TLS.send
+<span class="lineno">   67 </span>
+<span class="lineno">   68 </span>
+<span class="lineno">   69 </span>#else
+<span class="lineno">   70 </span>
+<span class="lineno">   71 </span>
+<span class="lineno">   72 </span>------------------------------------------------------------------------------
+<span class="lineno">   73 </span>recv :: ListenSocket -&gt; IO () -&gt; NetworkSession -&gt; IO (Maybe ByteString)
+<span class="lineno">   74 </span><span class="decl"><span class="istickedoff">recv (ListenHttp _)      = Http.recv</span>
+<span class="lineno">   75 </span><span class="spaces"></span><span class="istickedoff">recv (ListenHttps _ _ _) = TLS.recv</span></span>
+<span class="lineno">   76 </span>
+<span class="lineno">   77 </span>
+<span class="lineno">   78 </span>------------------------------------------------------------------------------
+<span class="lineno">   79 </span>send :: ListenSocket -&gt; IO () -&gt; IO () -&gt; NetworkSession -&gt; ByteString
+<span class="lineno">   80 </span>     -&gt; IO ()
+<span class="lineno">   81 </span><span class="decl"><span class="istickedoff">send (ListenHttp _)      = Http.send</span>
+<span class="lineno">   82 </span><span class="spaces"></span><span class="istickedoff">send (ListenHttps _ _ _) = TLS.send</span></span>
+<span class="lineno">   83 </span>
+<span class="lineno">   84 </span>#endif
 
 </pre>
 </html>

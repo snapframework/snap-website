@@ -46,7 +46,7 @@ application, run the following commands:
 
 ~~~~~~ {.shell}
 $ cabal install
-$ myproject 8000
+$ myproject -p 8000
 ~~~~~~
 
 Now point your web browser to [http://localhost:8000/](http://localhost:8000/);

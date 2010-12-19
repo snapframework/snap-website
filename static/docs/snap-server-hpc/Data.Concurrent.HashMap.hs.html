@@ -103,36 +103,36 @@ span.spaces    { background: white }
 <span class="lineno">   92 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
 <span class="lineno">   93 </span><span class="spaces">    </span><span class="nottickedoff">f mv = withMVar mv (return . IM.null)</span></span>
 <span class="lineno">   94 </span>
-<span class="lineno">   95 </span>new' :: Eq k =&gt;
-<span class="lineno">   96 </span>        Int            -- ^ number of locks to use
-<span class="lineno">   97 </span>     -&gt; (k -&gt; Word)     -- ^ hash function
-<span class="lineno">   98 </span>     -&gt; IO (HashMap k v)
-<span class="lineno">   99 </span><span class="decl"><span class="istickedoff">new' numLocks hashFunc = do</span>
-<span class="lineno">  100 </span><span class="spaces">    </span><span class="istickedoff">vector &lt;- V.replicateM (fromEnum n) (newMVar IM.empty)</span>
-<span class="lineno">  101 </span><span class="spaces">    </span><span class="istickedoff">return $! HM hf bh vector</span>
-<span class="lineno">  102 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  103 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  104 </span><span class="spaces">    </span><span class="istickedoff">hf !x = hashFunc x</span>
-<span class="lineno">  105 </span><span class="spaces">    </span><span class="istickedoff">bh !x = x .&amp;. (n-1)</span>
-<span class="lineno">  106 </span><span class="spaces">    </span><span class="istickedoff">!n    = nextHighestPowerOf2 $ toEnum numLocks</span></span>
-<span class="lineno">  107 </span>
+<span class="lineno">   95 </span>
+<span class="lineno">   96 </span>new' :: Eq k =&gt;
+<span class="lineno">   97 </span>        Int            -- ^ number of locks to use
+<span class="lineno">   98 </span>     -&gt; (k -&gt; Word)    -- ^ hash function
+<span class="lineno">   99 </span>     -&gt; IO (HashMap k v)
+<span class="lineno">  100 </span><span class="decl"><span class="istickedoff">new' numLocks hashFunc = do</span>
+<span class="lineno">  101 </span><span class="spaces">    </span><span class="istickedoff">vector &lt;- V.replicateM (fromEnum n) (newMVar IM.empty)</span>
+<span class="lineno">  102 </span><span class="spaces">    </span><span class="istickedoff">return $! HM hf bh vector</span>
+<span class="lineno">  103 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  104 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  105 </span><span class="spaces">    </span><span class="istickedoff">hf !x = hashFunc x</span>
+<span class="lineno">  106 </span><span class="spaces">    </span><span class="istickedoff">bh !x = x .&amp;. (n-1)</span>
+<span class="lineno">  107 </span><span class="spaces">    </span><span class="istickedoff">!n    = nextHighestPowerOf2 $ toEnum numLocks</span></span>
 <span class="lineno">  108 </span>
-<span class="lineno">  109 </span>new :: Eq k =&gt;
-<span class="lineno">  110 </span>       (k -&gt; Word)      -- ^ hash function
-<span class="lineno">  111 </span>    -&gt; IO (HashMap k v)
-<span class="lineno">  112 </span><span class="decl"><span class="istickedoff">new = new' defaultNumberOfLocks</span></span>
-<span class="lineno">  113 </span>
+<span class="lineno">  109 </span>
+<span class="lineno">  110 </span>new :: Eq k =&gt;
+<span class="lineno">  111 </span>       (k -&gt; Word)      -- ^ hash function
+<span class="lineno">  112 </span>    -&gt; IO (HashMap k v)
+<span class="lineno">  113 </span><span class="decl"><span class="istickedoff">new = new' defaultNumberOfLocks</span></span>
 <span class="lineno">  114 </span>
-<span class="lineno">  115 </span>insert :: k -&gt; v -&gt; HashMap k v -&gt; IO ()
-<span class="lineno">  116 </span><span class="decl"><span class="istickedoff">insert key value ht =</span>
-<span class="lineno">  117 </span><span class="spaces">    </span><span class="istickedoff">modifyMVar_ submap $ \m -&gt;</span>
-<span class="lineno">  118 </span><span class="spaces">        </span><span class="istickedoff">return $! insSubmap hashcode key value m</span>
-<span class="lineno">  119 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  120 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  121 </span><span class="spaces">    </span><span class="istickedoff">hashcode = _hash ht key</span>
-<span class="lineno">  122 </span><span class="spaces">    </span><span class="istickedoff">bucket   = _hashToBucket ht hashcode</span>
-<span class="lineno">  123 </span><span class="spaces">    </span><span class="istickedoff">submap   = V.unsafeIndex (_maps ht) (fromEnum bucket)</span></span>
-<span class="lineno">  124 </span>
+<span class="lineno">  115 </span>
+<span class="lineno">  116 </span>insert :: k -&gt; v -&gt; HashMap k v -&gt; IO ()
+<span class="lineno">  117 </span><span class="decl"><span class="istickedoff">insert key value ht =</span>
+<span class="lineno">  118 </span><span class="spaces">    </span><span class="istickedoff">modifyMVar_ submap $ \m -&gt;</span>
+<span class="lineno">  119 </span><span class="spaces">        </span><span class="istickedoff">return $! insSubmap hashcode key value m</span>
+<span class="lineno">  120 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  121 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  122 </span><span class="spaces">    </span><span class="istickedoff">hashcode = _hash ht key</span>
+<span class="lineno">  123 </span><span class="spaces">    </span><span class="istickedoff">bucket   = _hashToBucket ht hashcode</span>
+<span class="lineno">  124 </span><span class="spaces">    </span><span class="istickedoff">submap   = V.unsafeIndex (_maps ht) (fromEnum bucket)</span></span>
 <span class="lineno">  125 </span>
 <span class="lineno">  126 </span>
 <span class="lineno">  127 </span>delete :: (Eq k) =&gt; k -&gt; HashMap k v -&gt; IO ()
@@ -182,72 +182,70 @@ span.spaces    { background: white }
 <span class="lineno">  171 </span>-- helper functions
 <span class="lineno">  172 </span>------------------------------------------------------------------------------
 <span class="lineno">  173 </span>
-<span class="lineno">  174 </span>
+<span class="lineno">  174 </span>-- nicked this technique from Data.IntMap
 <span class="lineno">  175 </span>
-<span class="lineno">  176 </span>-- nicked this technique from Data.IntMap
-<span class="lineno">  177 </span>
-<span class="lineno">  178 </span>shiftRL :: Word -&gt; Int -&gt; Word
-<span class="lineno">  179 </span>#if __GLASGOW_HASKELL__
-<span class="lineno">  180 </span>{--------------------------------------------------------------------
-<span class="lineno">  181 </span>  GHC: use unboxing to get @shiftRL@ inlined.
-<span class="lineno">  182 </span>--------------------------------------------------------------------}
-<span class="lineno">  183 </span><span class="decl"><span class="istickedoff">shiftRL (W# x) (I# i)</span>
-<span class="lineno">  184 </span><span class="spaces">  </span><span class="istickedoff">= W# (shiftRL# x i)</span></span>
-<span class="lineno">  185 </span>#else
-<span class="lineno">  186 </span>shiftRL x i   = shiftR x i
-<span class="lineno">  187 </span>#endif
-<span class="lineno">  188 </span>
+<span class="lineno">  176 </span>shiftRL :: Word -&gt; Int -&gt; Word
+<span class="lineno">  177 </span>#if __GLASGOW_HASKELL__
+<span class="lineno">  178 </span>{--------------------------------------------------------------------
+<span class="lineno">  179 </span>  GHC: use unboxing to get @shiftRL@ inlined.
+<span class="lineno">  180 </span>--------------------------------------------------------------------}
+<span class="lineno">  181 </span><span class="decl"><span class="istickedoff">shiftRL (W# x) (I# i)</span>
+<span class="lineno">  182 </span><span class="spaces">  </span><span class="istickedoff">= W# (shiftRL# x i)</span></span>
+<span class="lineno">  183 </span>#else
+<span class="lineno">  184 </span>shiftRL x i   = shiftR x i
+<span class="lineno">  185 </span>#endif
+<span class="lineno">  186 </span>
+<span class="lineno">  187 </span>
+<span class="lineno">  188 </span>type Submap k v = IntMap [(k,v)]
 <span class="lineno">  189 </span>
-<span class="lineno">  190 </span>type Submap k v = IntMap [(k,v)]
-<span class="lineno">  191 </span>
-<span class="lineno">  192 </span>
-<span class="lineno">  193 </span>nextHighestPowerOf2 :: Word -&gt; Word
-<span class="lineno">  194 </span><span class="decl"><span class="istickedoff">nextHighestPowerOf2 w = highestBitMask (w-1) + 1</span></span>
-<span class="lineno">  195 </span>
-<span class="lineno">  196 </span>
-<span class="lineno">  197 </span>highestBitMask :: Word -&gt; Word
-<span class="lineno">  198 </span><span class="decl"><span class="istickedoff">highestBitMask !x0 = case (x0 .|. shiftRL x0 1) of</span>
-<span class="lineno">  199 </span><span class="spaces">                      </span><span class="istickedoff">x1 -&gt; case (x1 .|. shiftRL x1 2) of</span>
-<span class="lineno">  200 </span><span class="spaces">                       </span><span class="istickedoff">x2 -&gt; case (x2 .|. shiftRL x2 4) of</span>
-<span class="lineno">  201 </span><span class="spaces">                        </span><span class="istickedoff">x3 -&gt; case (x3 .|. shiftRL x3 8) of</span>
-<span class="lineno">  202 </span><span class="spaces">                         </span><span class="istickedoff">x4 -&gt; case (x4 .|. shiftRL x4 16) of</span>
-<span class="lineno">  203 </span><span class="spaces">                          </span><span class="istickedoff">x5 -&gt; x5 .|. shiftRL x5 32</span></span>
+<span class="lineno">  190 </span>
+<span class="lineno">  191 </span>nextHighestPowerOf2 :: Word -&gt; Word
+<span class="lineno">  192 </span><span class="decl"><span class="istickedoff">nextHighestPowerOf2 w = highestBitMask (w-1) + 1</span></span>
+<span class="lineno">  193 </span>
+<span class="lineno">  194 </span>
+<span class="lineno">  195 </span>highestBitMask :: Word -&gt; Word
+<span class="lineno">  196 </span><span class="decl"><span class="istickedoff">highestBitMask !x0 = case (x0 .|. shiftRL x0 1) of</span>
+<span class="lineno">  197 </span><span class="spaces">                      </span><span class="istickedoff">x1 -&gt; case (x1 .|. shiftRL x1 2) of</span>
+<span class="lineno">  198 </span><span class="spaces">                       </span><span class="istickedoff">x2 -&gt; case (x2 .|. shiftRL x2 4) of</span>
+<span class="lineno">  199 </span><span class="spaces">                        </span><span class="istickedoff">x3 -&gt; case (x3 .|. shiftRL x3 8) of</span>
+<span class="lineno">  200 </span><span class="spaces">                         </span><span class="istickedoff">x4 -&gt; case (x4 .|. shiftRL x4 16) of</span>
+<span class="lineno">  201 </span><span class="spaces">                          </span><span class="istickedoff">x5 -&gt; x5 .|. shiftRL x5 32</span></span>
+<span class="lineno">  202 </span>
+<span class="lineno">  203 </span>
 <span class="lineno">  204 </span>
-<span class="lineno">  205 </span>
-<span class="lineno">  206 </span>
-<span class="lineno">  207 </span>insSubmap :: Word -&gt; k -&gt; v -&gt; Submap k v -&gt; Submap k v
-<span class="lineno">  208 </span><span class="decl"><span class="istickedoff">insSubmap hashcode key value m = let !x = f m in x</span>
-<span class="lineno">  209 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  210 </span><span class="spaces">    </span><span class="istickedoff">f = IM.insertWith (++) (fromIntegral hashcode) [(key,value)]</span></span>
-<span class="lineno">  211 </span>
-<span class="lineno">  212 </span>
-<span class="lineno">  213 </span>delSubmap :: (Eq k) =&gt; Word -&gt; k -&gt; Submap k v -&gt; Submap k v
-<span class="lineno">  214 </span><span class="decl"><span class="istickedoff">delSubmap hashcode key m =</span>
-<span class="lineno">  215 </span><span class="spaces">    </span><span class="istickedoff">let !z = IM.update f (fromIntegral hashcode) m in z</span>
-<span class="lineno">  216 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  217 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  218 </span><span class="spaces">    </span><span class="istickedoff">f l = let l' = del l in if Prelude.null l' then Nothing else Just l'</span>
-<span class="lineno">  219 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  220 </span><span class="spaces">    </span><span class="istickedoff">del = filter ((/= key) . fst)</span></span>
-<span class="lineno">  221 </span>
-<span class="lineno">  222 </span>
-<span class="lineno">  223 </span>lookupSubmap :: (Eq k) =&gt; Word -&gt; k -&gt; Submap k v -&gt; Maybe v
-<span class="lineno">  224 </span><span class="decl"><span class="istickedoff">lookupSubmap hashcode key m = maybe Nothing (Prelude.lookup key) mbBucket</span>
-<span class="lineno">  225 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  226 </span><span class="spaces">    </span><span class="istickedoff">mbBucket = IM.lookup (fromIntegral hashcode) m</span></span>
-<span class="lineno">  227 </span>
-<span class="lineno">  228 </span>
-<span class="lineno">  229 </span>updateSubmap :: (Eq k) =&gt; Word -&gt; k -&gt; v -&gt; Submap k v -&gt; (Submap k v, Bool)
-<span class="lineno">  230 </span><span class="decl"><span class="istickedoff">updateSubmap hashcode key value m = (m'', b)</span>
-<span class="lineno">  231 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  232 </span><span class="spaces">    </span><span class="istickedoff">oldV = lookupSubmap hashcode key m</span>
-<span class="lineno">  233 </span><span class="spaces">    </span><span class="istickedoff">m'   = maybe m (const $ delSubmap hashcode key m) oldV</span>
-<span class="lineno">  234 </span><span class="spaces">    </span><span class="istickedoff">m''  = insSubmap hashcode key value m'</span>
-<span class="lineno">  235 </span><span class="spaces">    </span><span class="istickedoff">b    = isJust oldV</span></span>
-<span class="lineno">  236 </span>    
-<span class="lineno">  237 </span>
-<span class="lineno">  238 </span>defaultNumberOfLocks :: Int
-<span class="lineno">  239 </span><span class="decl"><span class="istickedoff">defaultNumberOfLocks = 8 * numCapabilities</span></span>
+<span class="lineno">  205 </span>insSubmap :: Word -&gt; k -&gt; v -&gt; Submap k v -&gt; Submap k v
+<span class="lineno">  206 </span><span class="decl"><span class="istickedoff">insSubmap hashcode key value m = let !x = f m in x</span>
+<span class="lineno">  207 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  208 </span><span class="spaces">    </span><span class="istickedoff">f = IM.insertWith (++) (fromIntegral hashcode) [(key,value)]</span></span>
+<span class="lineno">  209 </span>
+<span class="lineno">  210 </span>
+<span class="lineno">  211 </span>delSubmap :: (Eq k) =&gt; Word -&gt; k -&gt; Submap k v -&gt; Submap k v
+<span class="lineno">  212 </span><span class="decl"><span class="istickedoff">delSubmap hashcode key m =</span>
+<span class="lineno">  213 </span><span class="spaces">    </span><span class="istickedoff">let !z = IM.update f (fromIntegral hashcode) m in z</span>
+<span class="lineno">  214 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  215 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  216 </span><span class="spaces">    </span><span class="istickedoff">f l = let l' = del l in if Prelude.null l' then Nothing else Just l'</span>
+<span class="lineno">  217 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  218 </span><span class="spaces">    </span><span class="istickedoff">del = filter ((/= key) . fst)</span></span>
+<span class="lineno">  219 </span>
+<span class="lineno">  220 </span>
+<span class="lineno">  221 </span>lookupSubmap :: (Eq k) =&gt; Word -&gt; k -&gt; Submap k v -&gt; Maybe v
+<span class="lineno">  222 </span><span class="decl"><span class="istickedoff">lookupSubmap hashcode key m = maybe Nothing (Prelude.lookup key) mbBucket</span>
+<span class="lineno">  223 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  224 </span><span class="spaces">    </span><span class="istickedoff">mbBucket = IM.lookup (fromIntegral hashcode) m</span></span>
+<span class="lineno">  225 </span>
+<span class="lineno">  226 </span>
+<span class="lineno">  227 </span>updateSubmap :: (Eq k) =&gt; Word -&gt; k -&gt; v -&gt; Submap k v -&gt; (Submap k v, Bool)
+<span class="lineno">  228 </span><span class="decl"><span class="istickedoff">updateSubmap hashcode key value m = (m'', b)</span>
+<span class="lineno">  229 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  230 </span><span class="spaces">    </span><span class="istickedoff">oldV = lookupSubmap hashcode key m</span>
+<span class="lineno">  231 </span><span class="spaces">    </span><span class="istickedoff">m'   = maybe m (const $ delSubmap hashcode key m) oldV</span>
+<span class="lineno">  232 </span><span class="spaces">    </span><span class="istickedoff">m''  = insSubmap hashcode key value m'</span>
+<span class="lineno">  233 </span><span class="spaces">    </span><span class="istickedoff">b    = isJust oldV</span></span>
+<span class="lineno">  234 </span>
+<span class="lineno">  235 </span>
+<span class="lineno">  236 </span>defaultNumberOfLocks :: Int
+<span class="lineno">  237 </span><span class="decl"><span class="istickedoff">defaultNumberOfLocks = 8 * numCapabilities</span></span>
 
 </pre>
 </html>

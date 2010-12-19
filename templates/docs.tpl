@@ -18,9 +18,9 @@
               <a class="book" href="docs/tutorials/snap-api">
                 <img src="/media/css/book.png" />
               </a>
-              An in-depth tutorial on the Snap API. Covers installation,
-              iteratee I/O, the &ldquo;snap&rdquo; command-line tool, the Snap
-              monad, and URL routing.</dd>
+              A quick tutorial on the Snap API. Covers installation, the
+              &ldquo;snap&rdquo; command-line tool, and a walkthough of the
+              Snap starter application.</dd>
 
             <dt><a href="docs/tutorials/heist">Heist Template Tutorial</a></dt>
             <dd>

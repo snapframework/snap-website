@@ -77,444 +77,456 @@ span.spaces    { background: white }
 <span class="lineno">   66 </span>--  and the path to the private key in PEM format
 <span class="lineno">   67 </span>data ConfigListen = ListenHttp  ByteString Int
 <span class="lineno">   68 </span>                  | ListenHttps ByteString Int FilePath FilePath
-<span class="lineno">   69 </span>instance Show ConfigListen where
-<span class="lineno">   70 </span>    <span class="decl"><span class="nottickedoff">show (ListenHttp b p) = &quot;http(&quot; ++ show b ++ &quot;:&quot; ++ show p ++ &quot;)&quot;</span>
-<span class="lineno">   71 </span><span class="spaces">    </span><span class="nottickedoff">show (ListenHttps b p c k) = &quot;https(&quot; ++ show b ++ &quot;:&quot; ++ show p ++</span>
-<span class="lineno">   72 </span><span class="spaces">                                     </span><span class="nottickedoff">&quot;, cert = &quot; ++ show c ++</span>
-<span class="lineno">   73 </span><span class="spaces">                                     </span><span class="nottickedoff">&quot;, key = &quot; ++ show k ++ &quot;)&quot;</span></span>
-<span class="lineno">   74 </span>
-<span class="lineno">   75 </span>------------------------------------------------------------------------------
-<span class="lineno">   76 </span>-- | A data type to record which backend event loop should be used when
-<span class="lineno">   77 </span>-- serving data.
-<span class="lineno">   78 </span>data ConfigBackend = ConfigSimpleBackend
-<span class="lineno">   79 </span>                   | ConfigLibEvBackend
-<span class="lineno">   80 </span>    deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>,<span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>)
-<span class="lineno">   81 </span>
-<span class="lineno">   82 </span>------------------------------------------------------------------------------
-<span class="lineno">   83 </span>-- | A record type which represents partial configurations (for 'httpServe')
-<span class="lineno">   84 </span>-- by wrapping all of its fields in a 'Maybe'. Values of this type are usually
-<span class="lineno">   85 </span>-- constructed via its 'Monoid' instance by doing something like:
-<span class="lineno">   86 </span>--
-<span class="lineno">   87 </span>-- &gt; setPort 9000 mempty
-<span class="lineno">   88 </span>--
-<span class="lineno">   89 </span>-- Any fields which are unspecified in the 'Config' passed to 'httpServe' (and
-<span class="lineno">   90 </span>-- this is the norm) are filled in with default values from 'defaultConfig'.
-<span class="lineno">   91 </span>data MonadSnap m =&gt; <span class="istickedoff"><span class="nottickedoff">Config</span></span> m a = Config
-<span class="lineno">   92 </span>    { hostname     :: Maybe ByteString
-<span class="lineno">   93 </span>      -- ^ The name of the server
-<span class="lineno">   94 </span>    , listen       :: [ConfigListen]
-<span class="lineno">   95 </span>      -- ^ The local interfaces to listen on
-<span class="lineno">   96 </span>    , accessLog    :: Maybe (Maybe FilePath)
-<span class="lineno">   97 </span>      -- ^ The path to the access log
-<span class="lineno">   98 </span>    , errorLog     :: Maybe (Maybe FilePath)
-<span class="lineno">   99 </span>      -- ^ The path to the error log
-<span class="lineno">  100 </span>    , locale       :: Maybe String
-<span class="lineno">  101 </span>      -- ^ The locale to use
-<span class="lineno">  102 </span>    , backend      :: Maybe ConfigBackend
-<span class="lineno">  103 </span>      -- ^ The backend to use
-<span class="lineno">  104 </span>    , compression  :: Maybe Bool
-<span class="lineno">  105 </span>      -- ^ Whether to use compression
-<span class="lineno">  106 </span>    , verbose      :: Maybe Bool
-<span class="lineno">  107 </span>      -- ^ Whether to write server status updates to stderr
-<span class="lineno">  108 </span>    , errorHandler :: Maybe (SomeException -&gt; m ())
-<span class="lineno">  109 </span>      -- ^ A MonadSnap action to handle 500 errors
-<span class="lineno">  110 </span>    , other        :: Maybe a
-<span class="lineno">  111 </span>      -- ^ This is for any other state needed to initialize a custom server
-<span class="lineno">  112 </span>    }
-<span class="lineno">  113 </span>
-<span class="lineno">  114 </span>
-<span class="lineno">  115 </span>------------------------------------------------------------------------------
-<span class="lineno">  116 </span>instance <span class="nottickedoff">MonadSnap m =&gt; Show (Config m a)</span> where
-<span class="lineno">  117 </span>    <span class="decl"><span class="nottickedoff">show c = &quot;Config {&quot; ++ concat (intersperse &quot;, &quot; $ filter (/=&quot;&quot;) $ map ($c)</span>
-<span class="lineno">  118 </span><span class="spaces">        </span><span class="nottickedoff">[ showM &quot;hostname&quot; . hostname</span>
-<span class="lineno">  119 </span><span class="spaces">        </span><span class="nottickedoff">, showL &quot;listen&quot; . listen</span>
-<span class="lineno">  120 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;accessLog&quot; . accessLog</span>
-<span class="lineno">  121 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;errorLog&quot; . errorLog</span>
-<span class="lineno">  122 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;locale&quot; . locale</span>
-<span class="lineno">  123 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;backend&quot; . backend</span>
-<span class="lineno">  124 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;compression&quot; . compression</span>
-<span class="lineno">  125 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;verbose&quot; . verbose</span>
-<span class="lineno">  126 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;errorHandler&quot; . fmap (const ()) . errorHandler</span>
-<span class="lineno">  127 </span><span class="spaces">        </span><span class="nottickedoff">]) ++ &quot;}&quot;</span>
-<span class="lineno">  128 </span><span class="spaces">      </span><span class="nottickedoff">where</span>
-<span class="lineno">  129 </span><span class="spaces">        </span><span class="nottickedoff">showM s   = maybe &quot;&quot; ((++) (s ++ &quot; = &quot;) . show)</span>
-<span class="lineno">  130 </span><span class="spaces">        </span><span class="nottickedoff">showL s l = s ++ &quot; = &quot; ++ show l</span></span>
-<span class="lineno">  131 </span>
-<span class="lineno">  132 </span>
-<span class="lineno">  133 </span>------------------------------------------------------------------------------
-<span class="lineno">  134 </span>-- | Returns a completely empty 'Config'. Equivalent to 'mempty' from
-<span class="lineno">  135 </span>-- 'Config''s 'Monoid' instance.
-<span class="lineno">  136 </span>emptyConfig :: MonadSnap m =&gt; Config m a
-<span class="lineno">  137 </span><span class="decl"><span class="nottickedoff">emptyConfig = mempty</span></span>
-<span class="lineno">  138 </span>
-<span class="lineno">  139 </span>
-<span class="lineno">  140 </span>------------------------------------------------------------------------------
-<span class="lineno">  141 </span>instance MonadSnap m =&gt; Monoid (Config m a) where
-<span class="lineno">  142 </span>    <span class="decl"><span class="nottickedoff">mempty = Config</span>
-<span class="lineno">  143 </span><span class="spaces">        </span><span class="nottickedoff">{ hostname     = Nothing</span>
-<span class="lineno">  144 </span><span class="spaces">        </span><span class="nottickedoff">, listen       = []</span>
-<span class="lineno">  145 </span><span class="spaces">        </span><span class="nottickedoff">, accessLog    = Nothing</span>
-<span class="lineno">  146 </span><span class="spaces">        </span><span class="nottickedoff">, errorLog     = Nothing</span>
-<span class="lineno">  147 </span><span class="spaces">        </span><span class="nottickedoff">, locale       = Nothing</span>
-<span class="lineno">  148 </span><span class="spaces">        </span><span class="nottickedoff">, backend      = Nothing</span>
-<span class="lineno">  149 </span><span class="spaces">        </span><span class="nottickedoff">, compression  = Nothing</span>
-<span class="lineno">  150 </span><span class="spaces">        </span><span class="nottickedoff">, verbose      = Nothing</span>
-<span class="lineno">  151 </span><span class="spaces">        </span><span class="nottickedoff">, errorHandler = Nothing</span>
-<span class="lineno">  152 </span><span class="spaces">        </span><span class="nottickedoff">, other        = Nothing</span>
-<span class="lineno">  153 </span><span class="spaces">        </span><span class="nottickedoff">}</span></span>
-<span class="lineno">  154 </span>
-<span class="lineno">  155 </span>    <span class="decl"><span class="istickedoff">a `mappend` b = Config</span>
-<span class="lineno">  156 </span><span class="spaces">        </span><span class="istickedoff">{ hostname     = (hostname     b) `mplus` <span class="nottickedoff">(hostname     a)</span></span>
-<span class="lineno">  157 </span><span class="spaces">        </span><span class="istickedoff">, listen       = (listen       b)   ++    (listen       a)</span>
-<span class="lineno">  158 </span><span class="spaces">        </span><span class="istickedoff">, accessLog    = (accessLog    b) `mplus` <span class="nottickedoff">(accessLog    a)</span></span>
-<span class="lineno">  159 </span><span class="spaces">        </span><span class="istickedoff">, errorLog     = (errorLog     b) `mplus` <span class="nottickedoff">(errorLog     a)</span></span>
-<span class="lineno">  160 </span><span class="spaces">        </span><span class="istickedoff">, locale       = (locale       b) `mplus` <span class="nottickedoff">(locale       a)</span></span>
-<span class="lineno">  161 </span><span class="spaces">        </span><span class="istickedoff">, backend      = (backend      b) `mplus` <span class="nottickedoff">(backend      a)</span></span>
-<span class="lineno">  162 </span><span class="spaces">        </span><span class="istickedoff">, compression  = (compression  b) `mplus` <span class="nottickedoff">(compression  a)</span></span>
-<span class="lineno">  163 </span><span class="spaces">        </span><span class="istickedoff">, verbose      = (verbose      b) `mplus` <span class="nottickedoff">(verbose      a)</span></span>
-<span class="lineno">  164 </span><span class="spaces">        </span><span class="istickedoff">, errorHandler = <span class="nottickedoff">(errorHandler b) `mplus` (errorHandler a)</span></span>
-<span class="lineno">  165 </span><span class="spaces">        </span><span class="istickedoff">, other        = <span class="nottickedoff">(other        b) `mplus` (other        a)</span></span>
-<span class="lineno">  166 </span><span class="spaces">        </span><span class="istickedoff">}</span></span>
-<span class="lineno">  167 </span>
-<span class="lineno">  168 </span>
-<span class="lineno">  169 </span>------------------------------------------------------------------------------
-<span class="lineno">  170 </span>-- | These are the default values for all the fields in 'Config'.
-<span class="lineno">  171 </span>--
-<span class="lineno">  172 </span>-- &gt; hostname     = &quot;localhost&quot;
-<span class="lineno">  173 </span>-- &gt; listen       = []
-<span class="lineno">  174 </span>-- &gt; accessLog    = &quot;log/access.log&quot;
-<span class="lineno">  175 </span>-- &gt; errorLog     = &quot;log/error.log&quot;
-<span class="lineno">  176 </span>-- &gt; locale       = &quot;en_US&quot;
-<span class="lineno">  177 </span>-- &gt; backend      = Nothing (the backend is selected based on compile options)
-<span class="lineno">  178 </span>-- &gt; compression  = True
-<span class="lineno">  179 </span>-- &gt; verbose      = True
-<span class="lineno">  180 </span>-- &gt; errorHandler = prints the error message
-<span class="lineno">  181 </span>--
-<span class="lineno">  182 </span>defaultConfig :: MonadSnap m =&gt; Config m a
-<span class="lineno">  183 </span><span class="decl"><span class="istickedoff">defaultConfig = Config</span>
-<span class="lineno">  184 </span><span class="spaces">    </span><span class="istickedoff">{ hostname     = Just &quot;localhost&quot;</span>
-<span class="lineno">  185 </span><span class="spaces">    </span><span class="istickedoff">, listen       = []</span>
-<span class="lineno">  186 </span><span class="spaces">    </span><span class="istickedoff">, accessLog    = <span class="nottickedoff">Just $ Just &quot;log/access.log&quot;</span></span>
-<span class="lineno">  187 </span><span class="spaces">    </span><span class="istickedoff">, errorLog     = <span class="nottickedoff">Just $ Just &quot;log/error.log&quot;</span></span>
-<span class="lineno">  188 </span><span class="spaces">    </span><span class="istickedoff">, locale       = Just &quot;en_US&quot;</span>
-<span class="lineno">  189 </span><span class="spaces">    </span><span class="istickedoff">, backend      = <span class="nottickedoff">Nothing</span></span>
-<span class="lineno">  190 </span><span class="spaces">    </span><span class="istickedoff">, compression  = Just True</span>
-<span class="lineno">  191 </span><span class="spaces">    </span><span class="istickedoff">, verbose      = <span class="nottickedoff">Just True</span></span>
-<span class="lineno">  192 </span><span class="spaces">    </span><span class="istickedoff">, errorHandler = <span class="nottickedoff">Just $ \e -&gt; do</span></span>
-<span class="lineno">  193 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">let err = U.fromString $ show e</span></span>
-<span class="lineno">  194 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">msg = mappend &quot;A web handler threw an exception. Details:\n&quot; err</span></span>
-<span class="lineno">  195 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">finishWith $ setContentType &quot;text/plain; charset=utf-8&quot;</span></span>
-<span class="lineno">  196 </span><span class="spaces">                   </span><span class="istickedoff"><span class="nottickedoff">. setContentLength (fromIntegral $ B.length msg)</span></span>
-<span class="lineno">  197 </span><span class="spaces">                   </span><span class="istickedoff"><span class="nottickedoff">. setResponseStatus 500 &quot;Internal Server Error&quot;</span></span>
-<span class="lineno">  198 </span><span class="spaces">                   </span><span class="istickedoff"><span class="nottickedoff">. modifyResponseBody (&gt;==&gt; enumBS msg)</span></span>
-<span class="lineno">  199 </span><span class="spaces">                   </span><span class="istickedoff"><span class="nottickedoff">$ emptyResponse</span></span>
-<span class="lineno">  200 </span><span class="spaces">    </span><span class="istickedoff">, other        = <span class="nottickedoff">Nothing</span></span>
-<span class="lineno">  201 </span><span class="spaces">    </span><span class="istickedoff">}</span></span>
-<span class="lineno">  202 </span>
-<span class="lineno">  203 </span>
-<span class="lineno">  204 </span>------------------------------------------------------------------------------
-<span class="lineno">  205 </span>-- | Completes a partial 'Config' by filling in the unspecified values with
-<span class="lineno">  206 </span>-- the default values from 'defaultConfig'.  Also, if no listeners are
-<span class="lineno">  207 </span>-- specified, adds a http listener on 0.0.0.0:8000
-<span class="lineno">  208 </span>completeConfig :: MonadSnap m =&gt; Config m a -&gt; Config m a
-<span class="lineno">  209 </span><span class="decl"><span class="istickedoff">completeConfig c = case listen c' of</span>
-<span class="lineno">  210 </span><span class="spaces">                    </span><span class="istickedoff">[] -&gt; <span class="nottickedoff">addListen (ListenHttp &quot;0.0.0.0&quot; 8000) c'</span></span>
-<span class="lineno">  211 </span><span class="spaces">                    </span><span class="istickedoff">_  -&gt; c'</span>
-<span class="lineno">  212 </span><span class="spaces">    </span><span class="istickedoff">where c' = mappend defaultConfig c</span></span>
-<span class="lineno">  213 </span>
-<span class="lineno">  214 </span>------------------------------------------------------------------------------
-<span class="lineno">  215 </span>-- | A data structure used during command-line option parsing
-<span class="lineno">  216 </span>--
-<span class="lineno">  217 </span>-- The Config data type allows a list of listen ports, but the command line
-<span class="lineno">  218 </span>-- options only allow one http and one https listener.  This data structure
-<span class="lineno">  219 </span>-- is used during option parsing
-<span class="lineno">  220 </span>data MonadSnap m =&gt; <span class="nottickedoff">OptionData</span> m a = OptionData
-<span class="lineno">  221 </span>    { config  :: Config m a
-<span class="lineno">  222 </span>    , bind    :: Maybe ByteString
-<span class="lineno">  223 </span>    , port    :: Maybe Int
-<span class="lineno">  224 </span>    , sslbind :: Maybe ByteString
-<span class="lineno">  225 </span>    , sslport :: Maybe Int
-<span class="lineno">  226 </span>    , sslcert :: Maybe FilePath
-<span class="lineno">  227 </span>    , sslkey  :: Maybe FilePath
-<span class="lineno">  228 </span>    }
-<span class="lineno">  229 </span>
-<span class="lineno">  230 </span>
-<span class="lineno">  231 </span>------------------------------------------------------------------------------
-<span class="lineno">  232 </span>instance MonadSnap m =&gt; Monoid (OptionData m a) where
-<span class="lineno">  233 </span>    <span class="decl"><span class="nottickedoff">mempty = OptionData</span>
-<span class="lineno">  234 </span><span class="spaces">        </span><span class="nottickedoff">{ config  = mempty</span>
-<span class="lineno">  235 </span><span class="spaces">        </span><span class="nottickedoff">, bind    = Nothing</span>
-<span class="lineno">  236 </span><span class="spaces">        </span><span class="nottickedoff">, port    = Nothing</span>
-<span class="lineno">  237 </span><span class="spaces">        </span><span class="nottickedoff">, sslbind = Nothing</span>
-<span class="lineno">  238 </span><span class="spaces">        </span><span class="nottickedoff">, sslport = Nothing</span>
-<span class="lineno">  239 </span><span class="spaces">        </span><span class="nottickedoff">, sslcert = Nothing</span>
-<span class="lineno">  240 </span><span class="spaces">        </span><span class="nottickedoff">, sslkey  = Nothing</span>
-<span class="lineno">  241 </span><span class="spaces">        </span><span class="nottickedoff">}</span></span>
-<span class="lineno">  242 </span>
-<span class="lineno">  243 </span>    <span class="decl"><span class="nottickedoff">a `mappend` b = OptionData</span>
-<span class="lineno">  244 </span><span class="spaces">        </span><span class="nottickedoff">{ config       = (config       b) `mappend` (config       a)</span>
-<span class="lineno">  245 </span><span class="spaces">        </span><span class="nottickedoff">, bind         = (bind         b) `mplus`   (bind         a)</span>
-<span class="lineno">  246 </span><span class="spaces">        </span><span class="nottickedoff">, port         = (port         b) `mplus`   (port         a)</span>
-<span class="lineno">  247 </span><span class="spaces">        </span><span class="nottickedoff">, sslbind      = (sslbind      b) `mplus`   (sslbind      a)</span>
-<span class="lineno">  248 </span><span class="spaces">        </span><span class="nottickedoff">, sslport      = (sslport      b) `mplus`   (sslport      a)</span>
-<span class="lineno">  249 </span><span class="spaces">        </span><span class="nottickedoff">, sslcert      = (sslcert      b) `mplus`   (sslcert      a)</span>
-<span class="lineno">  250 </span><span class="spaces">        </span><span class="nottickedoff">, sslkey       = (sslkey       b) `mplus`   (sslkey       a)</span>
-<span class="lineno">  251 </span><span class="spaces">        </span><span class="nottickedoff">}</span></span>
-<span class="lineno">  252 </span>
-<span class="lineno">  253 </span>------------------------------------------------------------------------------
-<span class="lineno">  254 </span>-- | These are the default values for the options
-<span class="lineno">  255 </span>defaultOptions :: MonadSnap m =&gt; OptionData m a
-<span class="lineno">  256 </span><span class="decl"><span class="nottickedoff">defaultOptions = OptionData</span>
-<span class="lineno">  257 </span><span class="spaces">    </span><span class="nottickedoff">{ config  = defaultConfig</span>
-<span class="lineno">  258 </span><span class="spaces">    </span><span class="nottickedoff">, bind    = Just &quot;0.0.0.0&quot;</span>
-<span class="lineno">  259 </span><span class="spaces">    </span><span class="nottickedoff">, port    = Just 8000</span>
-<span class="lineno">  260 </span><span class="spaces">    </span><span class="nottickedoff">, sslbind = Just &quot;0.0.0.0&quot;</span>
-<span class="lineno">  261 </span><span class="spaces">    </span><span class="nottickedoff">, sslport = Nothing</span>
-<span class="lineno">  262 </span><span class="spaces">    </span><span class="nottickedoff">, sslcert = Just &quot;cert.pem&quot;</span>
-<span class="lineno">  263 </span><span class="spaces">    </span><span class="nottickedoff">, sslkey  = Just &quot;key.pem&quot;</span>
-<span class="lineno">  264 </span><span class="spaces">    </span><span class="nottickedoff">}</span></span>
-<span class="lineno">  265 </span>
-<span class="lineno">  266 </span>
-<span class="lineno">  267 </span>------------------------------------------------------------------------------
-<span class="lineno">  268 </span>-- | Convert options to config
-<span class="lineno">  269 </span>optionsToConfig :: MonadSnap m =&gt; OptionData m a -&gt; Config m a
-<span class="lineno">  270 </span><span class="decl"><span class="nottickedoff">optionsToConfig o = mconcat $ [config o] ++ http ++ https</span>
-<span class="lineno">  271 </span><span class="spaces">    </span><span class="nottickedoff">where lhttp  = maybe2 [] ListenHttp  (bind o) (port o)</span>
-<span class="lineno">  272 </span><span class="spaces">          </span><span class="nottickedoff">lhttps = maybe4 [] ListenHttps (sslbind o)</span>
-<span class="lineno">  273 </span><span class="spaces">                                         </span><span class="nottickedoff">(sslport o)</span>
-<span class="lineno">  274 </span><span class="spaces">                                         </span><span class="nottickedoff">(sslcert o)</span>
-<span class="lineno">  275 </span><span class="spaces">                                         </span><span class="nottickedoff">(sslkey  o)</span>
-<span class="lineno">  276 </span><span class="spaces">          </span><span class="nottickedoff">http  = map (flip addListen mempty) lhttp</span>
-<span class="lineno">  277 </span><span class="spaces">          </span><span class="nottickedoff">https = map (flip addListen mempty) lhttps</span>
-<span class="lineno">  278 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  279 </span><span class="spaces">          </span><span class="nottickedoff">maybe2 _ f (Just a) (Just b) = [f a b]</span>
-<span class="lineno">  280 </span><span class="spaces">          </span><span class="nottickedoff">maybe2 d _ _        _        = d</span>
-<span class="lineno">  281 </span><span class="spaces">          </span><span class="nottickedoff">maybe4 _ f (Just a) (Just b) (Just c) (Just d) = [f a b c d]</span>
-<span class="lineno">  282 </span><span class="spaces">          </span><span class="nottickedoff">maybe4 d _ _        _        _        _        = d</span></span>
-<span class="lineno">  283 </span>
-<span class="lineno">  284 </span>------------------------------------------------------------------------------
-<span class="lineno">  285 </span>-- | Convert config to options
-<span class="lineno">  286 </span>configToOptions :: MonadSnap m =&gt; Config m a -&gt; OptionData m a
-<span class="lineno">  287 </span><span class="decl"><span class="nottickedoff">configToOptions c = OptionData</span>
-<span class="lineno">  288 </span><span class="spaces">    </span><span class="nottickedoff">{ config  = c</span>
-<span class="lineno">  289 </span><span class="spaces">    </span><span class="nottickedoff">, bind    = Nothing</span>
-<span class="lineno">  290 </span><span class="spaces">    </span><span class="nottickedoff">, port    = Nothing</span>
-<span class="lineno">  291 </span><span class="spaces">    </span><span class="nottickedoff">, sslbind = Nothing</span>
-<span class="lineno">  292 </span><span class="spaces">    </span><span class="nottickedoff">, sslport = Nothing</span>
-<span class="lineno">  293 </span><span class="spaces">    </span><span class="nottickedoff">, sslcert = Nothing</span>
-<span class="lineno">  294 </span><span class="spaces">    </span><span class="nottickedoff">, sslkey  = Nothing</span>
-<span class="lineno">  295 </span><span class="spaces">    </span><span class="nottickedoff">}</span></span>
-<span class="lineno">  296 </span>
-<span class="lineno">  297 </span>------------------------------------------------------------------------------
-<span class="lineno">  298 </span>-- | A description of the command-line options accepted by
-<span class="lineno">  299 </span>-- 'commandLineConfig'.
-<span class="lineno">  300 </span>--
-<span class="lineno">  301 </span>-- The 'OptionData' parameter is just for specifying any default values which are
-<span class="lineno">  302 </span>-- to override those in 'defaultOptions'. This is so the usage message can
-<span class="lineno">  303 </span>-- accurately inform the user what the default values for the options are. In
-<span class="lineno">  304 </span>-- most cases, you will probably just end up passing 'mempty' for this
-<span class="lineno">  305 </span>-- parameter.
-<span class="lineno">  306 </span>--
-<span class="lineno">  307 </span>-- The return type is a list of options describing a @'Maybe' ('OptionData' m)@
-<span class="lineno">  308 </span>-- as opposed to a @'OptionData' m@, because if the @--help@ option is given,
-<span class="lineno">  309 </span>-- the set of command-line options no longer describe a config, but an action
-<span class="lineno">  310 </span>-- (printing out the usage message).
-<span class="lineno">  311 </span>options :: MonadSnap m =&gt; OptionData m a -&gt; [OptDescr (Maybe (OptionData m a))]
-<span class="lineno">  312 </span><span class="nottickedoff"><span class="decl"><span class="nottickedoff">options defaults =</span>
-<span class="lineno">  313 </span><span class="spaces">    </span><span class="nottickedoff">[ Option [] [&quot;hostname&quot;]</span>
-<span class="lineno">  314 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (Just . setConfig setHostname . U.fromString) &quot;NAME&quot;)</span>
-<span class="lineno">  315 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;local hostname&quot; ++ defaultC getHostname</span>
-<span class="lineno">  316 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['b'] [&quot;address&quot;]</span>
-<span class="lineno">  317 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { bind = Just $ U.fromString s }) &quot;ADDRESS&quot;)</span>
-<span class="lineno">  318 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;address to bind to&quot; ++ defaultO bind</span>
-<span class="lineno">  319 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['p'] [&quot;port&quot;]</span>
-<span class="lineno">  320 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { port = Just $ read s}) &quot;PORT&quot;)</span>
-<span class="lineno">  321 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;port to listen on&quot; ++ defaultO port</span>
-<span class="lineno">  322 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;ssl-address&quot;]</span>
-<span class="lineno">  323 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { sslbind = Just $ U.fromString s }) &quot;ADDRESS&quot;)</span>
-<span class="lineno">  324 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;ssl address to bind to&quot; ++ defaultO sslbind</span>
-<span class="lineno">  325 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;ssl-port&quot;]</span>
-<span class="lineno">  326 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { sslport = Just $ read s}) &quot;PORT&quot;)</span>
-<span class="lineno">  327 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;ssl port to listen on&quot; ++ defaultO sslport</span>
-<span class="lineno">  328 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;ssl-cert&quot;]</span>
-<span class="lineno">  329 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { sslcert = Just $ read s}) &quot;PATH&quot;)</span>
-<span class="lineno">  330 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;path to ssl certificate in PEM format&quot; ++ defaultO sslcert</span>
-<span class="lineno">  331 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;ssl-key&quot;]</span>
-<span class="lineno">  332 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { sslkey = Just $ read s}) &quot;PATH&quot;)</span>
-<span class="lineno">  333 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;path to ssl private key in PEM format&quot; ++ defaultO sslkey</span>
-<span class="lineno">  334 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;access-log&quot;]</span>
-<span class="lineno">  335 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (Just . setConfig setAccessLog . Just) &quot;PATH&quot;)</span>
-<span class="lineno">  336 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;access log&quot; ++ (defaultC $ join . getAccessLog)</span>
-<span class="lineno">  337 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;error-log&quot;]</span>
-<span class="lineno">  338 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (Just . setConfig setErrorLog . Just) &quot;PATH&quot;)</span>
-<span class="lineno">  339 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;error log&quot; ++ (defaultC $ join . getErrorLog)</span>
-<span class="lineno">  340 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;no-access-log&quot;]</span>
-<span class="lineno">  341 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setErrorLog Nothing)</span>
-<span class="lineno">  342 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;don't have an access log&quot;</span>
-<span class="lineno">  343 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;no-error-log&quot;]</span>
-<span class="lineno">  344 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setAccessLog Nothing)</span>
-<span class="lineno">  345 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;don't have an error log&quot;</span>
-<span class="lineno">  346 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['c'] [&quot;compression&quot;]</span>
-<span class="lineno">  347 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setCompression True)</span>
-<span class="lineno">  348 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;use gzip compression on responses&quot;</span>
-<span class="lineno">  349 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;no-compression&quot;]</span>
-<span class="lineno">  350 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setCompression False)</span>
-<span class="lineno">  351 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;serve responses uncompressed&quot;</span>
-<span class="lineno">  352 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['v'] [&quot;verbose&quot;]</span>
-<span class="lineno">  353 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setVerbose True)</span>
-<span class="lineno">  354 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;print server status updates to stderr&quot;</span>
-<span class="lineno">  355 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['q'] [&quot;quiet&quot;]</span>
-<span class="lineno">  356 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setVerbose False)</span>
-<span class="lineno">  357 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;do not print anything to stderr&quot;</span>
-<span class="lineno">  358 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['h'] [&quot;help&quot;]</span>
-<span class="lineno">  359 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg Nothing)</span>
-<span class="lineno">  360 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;display this help and exit&quot;</span>
-<span class="lineno">  361 </span><span class="spaces">    </span><span class="nottickedoff">]</span>
-<span class="lineno">  362 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
-<span class="lineno">  363 </span><span class="spaces">    </span><span class="nottickedoff">setConfig f c = configToOptions $ f c mempty</span>
-<span class="lineno">  364 </span><span class="spaces">    </span><span class="nottickedoff">conf          = completeConfig $ config defaults</span>
-<span class="lineno">  365 </span><span class="spaces">    </span><span class="nottickedoff">opts          = mappend defaultOptions defaults</span>
-<span class="lineno">  366 </span><span class="spaces">    </span><span class="nottickedoff">defaultC f    = maybe &quot;&quot; ((&quot;, default &quot; ++) . show) $ f conf</span>
-<span class="lineno">  367 </span><span class="spaces">    </span><span class="nottickedoff">defaultO f    = maybe &quot;, default off&quot; ((&quot;, default &quot; ++) . show) $ f opts</span></span></span>
-<span class="lineno">  368 </span>
-<span class="lineno">  369 </span>
-<span class="lineno">  370 </span>------------------------------------------------------------------------------
-<span class="lineno">  371 </span>-- | This returns a 'Config' gotten from parsing the options specified on the
-<span class="lineno">  372 </span>-- command-line.
-<span class="lineno">  373 </span>--
-<span class="lineno">  374 </span>-- The 'Config' parameter is just for specifying any default values which are
-<span class="lineno">  375 </span>-- to override those in 'defaultConfig'. This is so the usage message can
-<span class="lineno">  376 </span>-- accurately inform the user what the default values for the options are. In
-<span class="lineno">  377 </span>-- most cases, you will probably just end up passing 'mempty' for this
-<span class="lineno">  378 </span>-- parameter.
-<span class="lineno">  379 </span>--
-<span class="lineno">  380 </span>-- On Unix systems, the locale is read from the @LANG@ environment variable.
-<span class="lineno">  381 </span>commandLineConfig :: MonadSnap m =&gt; Config m a -&gt; IO (Config m a)
-<span class="lineno">  382 </span><span class="nottickedoff"><span class="decl"><span class="nottickedoff">commandLineConfig defaults = do</span>
-<span class="lineno">  383 </span><span class="spaces">    </span><span class="nottickedoff">args &lt;- getArgs</span>
-<span class="lineno">  384 </span><span class="spaces">    </span><span class="nottickedoff">prog &lt;- getProgName</span>
-<span class="lineno">  385 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  386 </span><span class="spaces">    </span><span class="nottickedoff">result &lt;- either (usage prog) return $ case getOpt Permute opts args of</span>
-<span class="lineno">  387 </span><span class="spaces">        </span><span class="nottickedoff">(f, _, []  ) -&gt; maybe (Left []) Right $ fmap mconcat $ sequence f</span>
-<span class="lineno">  388 </span><span class="spaces">        </span><span class="nottickedoff">(_, _, errs) -&gt; Left errs</span>
-<span class="lineno">  389 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  390 </span><span class="spaces">    </span><span class="nottickedoff">let result' = optionsToConfig $ mappend defaultOptions result</span>
-<span class="lineno">  391 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  392 </span><span class="spaces"></span><span class="nottickedoff">#ifndef PORTABLE</span>
-<span class="lineno">  393 </span><span class="spaces">    </span><span class="nottickedoff">lang &lt;- getEnv &quot;LANG&quot;</span>
-<span class="lineno">  394 </span><span class="spaces">    </span><span class="nottickedoff">return $ mconcat [defaults, result', mempty {locale = fmap upToUtf8 lang}]</span>
-<span class="lineno">  395 </span><span class="spaces"></span><span class="nottickedoff">#else</span>
-<span class="lineno">  396 </span><span class="spaces">    </span><span class="nottickedoff">return $ mconcat [defaults, result']</span>
-<span class="lineno">  397 </span><span class="spaces"></span><span class="nottickedoff">#endif</span>
-<span class="lineno">  398 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  399 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
-<span class="lineno">  400 </span><span class="spaces">    </span><span class="nottickedoff">opts = options $ configToOptions defaults</span>
-<span class="lineno">  401 </span><span class="spaces">    </span><span class="nottickedoff">usage prog errs = do</span>
-<span class="lineno">  402 </span><span class="spaces">        </span><span class="nottickedoff">let hdr = &quot;Usage:\n  &quot; ++ prog ++ &quot; [OPTION...]\n\nOptions:&quot;</span>
-<span class="lineno">  403 </span><span class="spaces">        </span><span class="nottickedoff">let msg = concat errs ++ usageInfo hdr opts</span>
-<span class="lineno">  404 </span><span class="spaces">        </span><span class="nottickedoff">hPutStrLn stderr msg</span>
-<span class="lineno">  405 </span><span class="spaces">        </span><span class="nottickedoff">exitFailure</span>
-<span class="lineno">  406 </span><span class="spaces">    </span><span class="nottickedoff">upToUtf8 = takeWhile $ \c -&gt; isAlpha c || '_' == c</span></span></span>
-<span class="lineno">  407 </span>
-<span class="lineno">  408 </span>
-<span class="lineno">  409 </span>------------------------------------------------------------------------------
-<span class="lineno">  410 </span>getHostname :: MonadSnap m =&gt; Config m a -&gt; Maybe ByteString
-<span class="lineno">  411 </span><span class="decl"><span class="istickedoff">getHostname = hostname</span></span>
-<span class="lineno">  412 </span>
-<span class="lineno">  413 </span>
-<span class="lineno">  414 </span>------------------------------------------------------------------------------
-<span class="lineno">  415 </span>getListen :: MonadSnap m =&gt; Config m a -&gt; [ConfigListen]
-<span class="lineno">  416 </span><span class="decl"><span class="istickedoff">getListen = listen</span></span>
-<span class="lineno">  417 </span>
-<span class="lineno">  418 </span>
-<span class="lineno">  419 </span>------------------------------------------------------------------------------
-<span class="lineno">  420 </span>getAccessLog :: MonadSnap m =&gt; Config m a -&gt; Maybe (Maybe FilePath)
-<span class="lineno">  421 </span><span class="decl"><span class="istickedoff">getAccessLog = accessLog</span></span>
-<span class="lineno">  422 </span>
-<span class="lineno">  423 </span>
-<span class="lineno">  424 </span>------------------------------------------------------------------------------
-<span class="lineno">  425 </span>getErrorLog :: MonadSnap m =&gt; Config m a -&gt; Maybe (Maybe FilePath)
-<span class="lineno">  426 </span><span class="decl"><span class="istickedoff">getErrorLog = errorLog</span></span>
-<span class="lineno">  427 </span>
-<span class="lineno">  428 </span>
-<span class="lineno">  429 </span>------------------------------------------------------------------------------
-<span class="lineno">  430 </span>getLocale :: MonadSnap m =&gt; Config m a -&gt; Maybe String
-<span class="lineno">  431 </span><span class="decl"><span class="istickedoff">getLocale = locale</span></span>
-<span class="lineno">  432 </span>
-<span class="lineno">  433 </span>
-<span class="lineno">  434 </span>------------------------------------------------------------------------------
-<span class="lineno">  435 </span>getBackend :: MonadSnap m =&gt; Config m a -&gt; Maybe ConfigBackend
-<span class="lineno">  436 </span><span class="decl"><span class="istickedoff">getBackend = backend</span></span>
-<span class="lineno">  437 </span>
-<span class="lineno">  438 </span>------------------------------------------------------------------------------
-<span class="lineno">  439 </span>getCompression :: MonadSnap m =&gt; Config m a -&gt; Maybe Bool
-<span class="lineno">  440 </span><span class="decl"><span class="istickedoff">getCompression = compression</span></span>
-<span class="lineno">  441 </span>
-<span class="lineno">  442 </span>
-<span class="lineno">  443 </span>------------------------------------------------------------------------------
-<span class="lineno">  444 </span>getVerbose :: MonadSnap m =&gt; Config m a -&gt; Maybe Bool
-<span class="lineno">  445 </span><span class="decl"><span class="istickedoff">getVerbose = verbose</span></span>
-<span class="lineno">  446 </span>
-<span class="lineno">  447 </span>
-<span class="lineno">  448 </span>------------------------------------------------------------------------------
-<span class="lineno">  449 </span>getErrorHandler :: MonadSnap m =&gt; Config m a -&gt; Maybe (SomeException -&gt; m ())
-<span class="lineno">  450 </span><span class="decl"><span class="nottickedoff">getErrorHandler = errorHandler</span></span>
-<span class="lineno">  451 </span>
-<span class="lineno">  452 </span>
-<span class="lineno">  453 </span>------------------------------------------------------------------------------
-<span class="lineno">  454 </span>getOther :: MonadSnap m =&gt; Config m a -&gt; Maybe a
-<span class="lineno">  455 </span><span class="decl"><span class="nottickedoff">getOther = other</span></span>
-<span class="lineno">  456 </span>
-<span class="lineno">  457 </span>
-<span class="lineno">  458 </span>------------------------------------------------------------------------------
-<span class="lineno">  459 </span>setHostname :: MonadSnap m =&gt; ByteString -&gt; Config m a -&gt; Config m a
-<span class="lineno">  460 </span><span class="decl"><span class="nottickedoff">setHostname a m = m {hostname = Just a}</span></span>
-<span class="lineno">  461 </span>
-<span class="lineno">  462 </span>
-<span class="lineno">  463 </span>------------------------------------------------------------------------------
-<span class="lineno">  464 </span>addListen :: MonadSnap m =&gt; ConfigListen -&gt; Config m a -&gt; Config m a
-<span class="lineno">  465 </span><span class="decl"><span class="istickedoff">addListen a m = m {listen = a : listen m}</span></span>
-<span class="lineno">  466 </span>
-<span class="lineno">  467 </span>
-<span class="lineno">  468 </span>------------------------------------------------------------------------------
-<span class="lineno">  469 </span>setAccessLog :: MonadSnap m =&gt; Maybe FilePath -&gt; Config m a -&gt; Config m a
-<span class="lineno">  470 </span><span class="decl"><span class="istickedoff">setAccessLog a m = m {accessLog = Just a}</span></span>
-<span class="lineno">  471 </span>
-<span class="lineno">  472 </span>
-<span class="lineno">  473 </span>------------------------------------------------------------------------------
-<span class="lineno">  474 </span>setErrorLog :: MonadSnap m =&gt; Maybe FilePath -&gt; Config m a -&gt; Config m a
-<span class="lineno">  475 </span><span class="decl"><span class="istickedoff">setErrorLog a m = m {errorLog = Just a}</span></span>
-<span class="lineno">  476 </span>
-<span class="lineno">  477 </span>
-<span class="lineno">  478 </span>------------------------------------------------------------------------------
-<span class="lineno">  479 </span>setLocale :: MonadSnap m =&gt; String -&gt; Config m a -&gt; Config m a
-<span class="lineno">  480 </span><span class="decl"><span class="nottickedoff">setLocale a m = m {locale = Just a}</span></span>
-<span class="lineno">  481 </span>
-<span class="lineno">  482 </span>
-<span class="lineno">  483 </span>------------------------------------------------------------------------------
-<span class="lineno">  484 </span>setBackend :: MonadSnap m =&gt; ConfigBackend -&gt; Config m a -&gt; Config m a
-<span class="lineno">  485 </span><span class="decl"><span class="istickedoff">setBackend a m = m { backend = Just a}</span></span>
-<span class="lineno">  486 </span>
-<span class="lineno">  487 </span>
-<span class="lineno">  488 </span>------------------------------------------------------------------------------
-<span class="lineno">  489 </span>setCompression :: MonadSnap m =&gt; Bool -&gt; Config m a -&gt; Config m a
-<span class="lineno">  490 </span><span class="decl"><span class="nottickedoff">setCompression a m = m {compression = Just a}</span></span>
-<span class="lineno">  491 </span>
-<span class="lineno">  492 </span>
-<span class="lineno">  493 </span>------------------------------------------------------------------------------
-<span class="lineno">  494 </span>setVerbose :: MonadSnap m =&gt; Bool -&gt; Config m a -&gt; Config m a
-<span class="lineno">  495 </span><span class="decl"><span class="istickedoff">setVerbose a m = m {verbose = Just a}</span></span>
-<span class="lineno">  496 </span>
-<span class="lineno">  497 </span>
-<span class="lineno">  498 </span>------------------------------------------------------------------------------
-<span class="lineno">  499 </span>setErrorHandler :: MonadSnap m =&gt; (SomeException -&gt; m ()) -&gt; Config m a
-<span class="lineno">  500 </span>                -&gt; Config m a
-<span class="lineno">  501 </span><span class="decl"><span class="nottickedoff">setErrorHandler a m = m {errorHandler = Just a}</span></span>
-<span class="lineno">  502 </span>
+<span class="lineno">   69 </span>
+<span class="lineno">   70 </span>
+<span class="lineno">   71 </span>instance Show ConfigListen where
+<span class="lineno">   72 </span>    <span class="decl"><span class="nottickedoff">show (ListenHttp b p) = &quot;http(&quot; ++ show b ++ &quot;:&quot; ++ show p ++ &quot;)&quot;</span>
+<span class="lineno">   73 </span><span class="spaces">    </span><span class="nottickedoff">show (ListenHttps b p c k) = &quot;https(&quot; ++ show b ++ &quot;:&quot; ++ show p ++</span>
+<span class="lineno">   74 </span><span class="spaces">                                     </span><span class="nottickedoff">&quot;, cert = &quot; ++ show c ++</span>
+<span class="lineno">   75 </span><span class="spaces">                                     </span><span class="nottickedoff">&quot;, key = &quot; ++ show k ++ &quot;)&quot;</span></span>
+<span class="lineno">   76 </span>
+<span class="lineno">   77 </span>
+<span class="lineno">   78 </span>------------------------------------------------------------------------------
+<span class="lineno">   79 </span>-- | A data type to record which backend event loop should be used when
+<span class="lineno">   80 </span>-- serving data.
+<span class="lineno">   81 </span>data ConfigBackend = ConfigSimpleBackend
+<span class="lineno">   82 </span>                   | ConfigLibEvBackend
+<span class="lineno">   83 </span>    deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>,<span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>)
+<span class="lineno">   84 </span>
+<span class="lineno">   85 </span>
+<span class="lineno">   86 </span>------------------------------------------------------------------------------
+<span class="lineno">   87 </span>-- | A record type which represents partial configurations (for 'httpServe')
+<span class="lineno">   88 </span>-- by wrapping all of its fields in a 'Maybe'. Values of this type are usually
+<span class="lineno">   89 </span>-- constructed via its 'Monoid' instance by doing something like:
+<span class="lineno">   90 </span>--
+<span class="lineno">   91 </span>-- &gt; setPort 9000 mempty
+<span class="lineno">   92 </span>--
+<span class="lineno">   93 </span>-- Any fields which are unspecified in the 'Config' passed to 'httpServe' (and
+<span class="lineno">   94 </span>-- this is the norm) are filled in with default values from 'defaultConfig'.
+<span class="lineno">   95 </span>data MonadSnap m =&gt; <span class="istickedoff"><span class="nottickedoff">Config</span></span> m a = Config
+<span class="lineno">   96 </span>    { hostname     :: Maybe ByteString
+<span class="lineno">   97 </span>      -- ^ The name of the server
+<span class="lineno">   98 </span>    , listen       :: [ConfigListen]
+<span class="lineno">   99 </span>      -- ^ The local interfaces to listen on
+<span class="lineno">  100 </span>    , accessLog    :: Maybe (Maybe FilePath)
+<span class="lineno">  101 </span>      -- ^ The path to the access log
+<span class="lineno">  102 </span>    , errorLog     :: Maybe (Maybe FilePath)
+<span class="lineno">  103 </span>      -- ^ The path to the error log
+<span class="lineno">  104 </span>    , locale       :: Maybe String
+<span class="lineno">  105 </span>      -- ^ The locale to use
+<span class="lineno">  106 </span>    , backend      :: Maybe ConfigBackend
+<span class="lineno">  107 </span>      -- ^ The backend to use
+<span class="lineno">  108 </span>    , compression  :: Maybe Bool
+<span class="lineno">  109 </span>      -- ^ Whether to use compression
+<span class="lineno">  110 </span>    , verbose      :: Maybe Bool
+<span class="lineno">  111 </span>      -- ^ Whether to write server status updates to stderr
+<span class="lineno">  112 </span>    , errorHandler :: Maybe (SomeException -&gt; m ())
+<span class="lineno">  113 </span>      -- ^ A MonadSnap action to handle 500 errors
+<span class="lineno">  114 </span>    , other        :: Maybe a
+<span class="lineno">  115 </span>      -- ^ This is for any other state needed to initialize a custom server
+<span class="lineno">  116 </span>    }
+<span class="lineno">  117 </span>
+<span class="lineno">  118 </span>
+<span class="lineno">  119 </span>------------------------------------------------------------------------------
+<span class="lineno">  120 </span>instance <span class="nottickedoff">MonadSnap m =&gt; Show (Config m a)</span> where
+<span class="lineno">  121 </span>    <span class="decl"><span class="nottickedoff">show c = &quot;Config {&quot; ++ concat (intersperse &quot;, &quot; $ filter (/=&quot;&quot;) $ map ($c)</span>
+<span class="lineno">  122 </span><span class="spaces">        </span><span class="nottickedoff">[ showM &quot;hostname&quot; . hostname</span>
+<span class="lineno">  123 </span><span class="spaces">        </span><span class="nottickedoff">, showL &quot;listen&quot; . listen</span>
+<span class="lineno">  124 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;accessLog&quot; . accessLog</span>
+<span class="lineno">  125 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;errorLog&quot; . errorLog</span>
+<span class="lineno">  126 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;locale&quot; . locale</span>
+<span class="lineno">  127 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;backend&quot; . backend</span>
+<span class="lineno">  128 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;compression&quot; . compression</span>
+<span class="lineno">  129 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;verbose&quot; . verbose</span>
+<span class="lineno">  130 </span><span class="spaces">        </span><span class="nottickedoff">, showM &quot;errorHandler&quot; . fmap (const ()) . errorHandler</span>
+<span class="lineno">  131 </span><span class="spaces">        </span><span class="nottickedoff">]) ++ &quot;}&quot;</span>
+<span class="lineno">  132 </span><span class="spaces">      </span><span class="nottickedoff">where</span>
+<span class="lineno">  133 </span><span class="spaces">        </span><span class="nottickedoff">showM s   = maybe &quot;&quot; ((++) (s ++ &quot; = &quot;) . show)</span>
+<span class="lineno">  134 </span><span class="spaces">        </span><span class="nottickedoff">showL s l = s ++ &quot; = &quot; ++ show l</span></span>
+<span class="lineno">  135 </span>
+<span class="lineno">  136 </span>
+<span class="lineno">  137 </span>------------------------------------------------------------------------------
+<span class="lineno">  138 </span>-- | Returns a completely empty 'Config'. Equivalent to 'mempty' from
+<span class="lineno">  139 </span>-- 'Config''s 'Monoid' instance.
+<span class="lineno">  140 </span>emptyConfig :: MonadSnap m =&gt; Config m a
+<span class="lineno">  141 </span><span class="decl"><span class="nottickedoff">emptyConfig = mempty</span></span>
+<span class="lineno">  142 </span>
+<span class="lineno">  143 </span>
+<span class="lineno">  144 </span>------------------------------------------------------------------------------
+<span class="lineno">  145 </span>instance MonadSnap m =&gt; Monoid (Config m a) where
+<span class="lineno">  146 </span>    <span class="decl"><span class="nottickedoff">mempty = Config</span>
+<span class="lineno">  147 </span><span class="spaces">        </span><span class="nottickedoff">{ hostname     = Nothing</span>
+<span class="lineno">  148 </span><span class="spaces">        </span><span class="nottickedoff">, listen       = []</span>
+<span class="lineno">  149 </span><span class="spaces">        </span><span class="nottickedoff">, accessLog    = Nothing</span>
+<span class="lineno">  150 </span><span class="spaces">        </span><span class="nottickedoff">, errorLog     = Nothing</span>
+<span class="lineno">  151 </span><span class="spaces">        </span><span class="nottickedoff">, locale       = Nothing</span>
+<span class="lineno">  152 </span><span class="spaces">        </span><span class="nottickedoff">, backend      = Nothing</span>
+<span class="lineno">  153 </span><span class="spaces">        </span><span class="nottickedoff">, compression  = Nothing</span>
+<span class="lineno">  154 </span><span class="spaces">        </span><span class="nottickedoff">, verbose      = Nothing</span>
+<span class="lineno">  155 </span><span class="spaces">        </span><span class="nottickedoff">, errorHandler = Nothing</span>
+<span class="lineno">  156 </span><span class="spaces">        </span><span class="nottickedoff">, other        = Nothing</span>
+<span class="lineno">  157 </span><span class="spaces">        </span><span class="nottickedoff">}</span></span>
+<span class="lineno">  158 </span>
+<span class="lineno">  159 </span>    <span class="decl"><span class="istickedoff">a `mappend` b = Config</span>
+<span class="lineno">  160 </span><span class="spaces">        </span><span class="istickedoff">{ hostname     = (hostname     b) `mplus` <span class="nottickedoff">(hostname     a)</span></span>
+<span class="lineno">  161 </span><span class="spaces">        </span><span class="istickedoff">, listen       = (listen       b)   ++    (listen       a)</span>
+<span class="lineno">  162 </span><span class="spaces">        </span><span class="istickedoff">, accessLog    = (accessLog    b) `mplus` <span class="nottickedoff">(accessLog    a)</span></span>
+<span class="lineno">  163 </span><span class="spaces">        </span><span class="istickedoff">, errorLog     = (errorLog     b) `mplus` <span class="nottickedoff">(errorLog     a)</span></span>
+<span class="lineno">  164 </span><span class="spaces">        </span><span class="istickedoff">, locale       = (locale       b) `mplus` <span class="nottickedoff">(locale       a)</span></span>
+<span class="lineno">  165 </span><span class="spaces">        </span><span class="istickedoff">, backend      = (backend      b) `mplus` <span class="nottickedoff">(backend      a)</span></span>
+<span class="lineno">  166 </span><span class="spaces">        </span><span class="istickedoff">, compression  = (compression  b) `mplus` <span class="nottickedoff">(compression  a)</span></span>
+<span class="lineno">  167 </span><span class="spaces">        </span><span class="istickedoff">, verbose      = (verbose      b) `mplus` <span class="nottickedoff">(verbose      a)</span></span>
+<span class="lineno">  168 </span><span class="spaces">        </span><span class="istickedoff">, errorHandler = <span class="nottickedoff">(errorHandler b) `mplus` (errorHandler a)</span></span>
+<span class="lineno">  169 </span><span class="spaces">        </span><span class="istickedoff">, other        = <span class="nottickedoff">(other        b) `mplus` (other        a)</span></span>
+<span class="lineno">  170 </span><span class="spaces">        </span><span class="istickedoff">}</span></span>
+<span class="lineno">  171 </span>
+<span class="lineno">  172 </span>
+<span class="lineno">  173 </span>------------------------------------------------------------------------------
+<span class="lineno">  174 </span>-- | These are the default values for all the fields in 'Config'.
+<span class="lineno">  175 </span>--
+<span class="lineno">  176 </span>-- &gt; hostname     = &quot;localhost&quot;
+<span class="lineno">  177 </span>-- &gt; listen       = []
+<span class="lineno">  178 </span>-- &gt; accessLog    = &quot;log/access.log&quot;
+<span class="lineno">  179 </span>-- &gt; errorLog     = &quot;log/error.log&quot;
+<span class="lineno">  180 </span>-- &gt; locale       = &quot;en_US&quot;
+<span class="lineno">  181 </span>-- &gt; backend      = Nothing (the backend is selected based on compile options)
+<span class="lineno">  182 </span>-- &gt; compression  = True
+<span class="lineno">  183 </span>-- &gt; verbose      = True
+<span class="lineno">  184 </span>-- &gt; errorHandler = prints the error message
+<span class="lineno">  185 </span>--
+<span class="lineno">  186 </span>defaultConfig :: MonadSnap m =&gt; Config m a
+<span class="lineno">  187 </span><span class="decl"><span class="istickedoff">defaultConfig = Config</span>
+<span class="lineno">  188 </span><span class="spaces">    </span><span class="istickedoff">{ hostname     = Just &quot;localhost&quot;</span>
+<span class="lineno">  189 </span><span class="spaces">    </span><span class="istickedoff">, listen       = []</span>
+<span class="lineno">  190 </span><span class="spaces">    </span><span class="istickedoff">, accessLog    = <span class="nottickedoff">Just $ Just &quot;log/access.log&quot;</span></span>
+<span class="lineno">  191 </span><span class="spaces">    </span><span class="istickedoff">, errorLog     = <span class="nottickedoff">Just $ Just &quot;log/error.log&quot;</span></span>
+<span class="lineno">  192 </span><span class="spaces">    </span><span class="istickedoff">, locale       = Just &quot;en_US&quot;</span>
+<span class="lineno">  193 </span><span class="spaces">    </span><span class="istickedoff">, backend      = <span class="nottickedoff">Nothing</span></span>
+<span class="lineno">  194 </span><span class="spaces">    </span><span class="istickedoff">, compression  = Just True</span>
+<span class="lineno">  195 </span><span class="spaces">    </span><span class="istickedoff">, verbose      = <span class="nottickedoff">Just True</span></span>
+<span class="lineno">  196 </span><span class="spaces">    </span><span class="istickedoff">, errorHandler = <span class="nottickedoff">Just $ \e -&gt; do</span></span>
+<span class="lineno">  197 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">let err = U.fromString $ show e</span></span>
+<span class="lineno">  198 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">msg = mappend &quot;A web handler threw an exception. Details:\n&quot; err</span></span>
+<span class="lineno">  199 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">finishWith $ setContentType &quot;text/plain; charset=utf-8&quot;</span></span>
+<span class="lineno">  200 </span><span class="spaces">                   </span><span class="istickedoff"><span class="nottickedoff">. setContentLength (fromIntegral $ B.length msg)</span></span>
+<span class="lineno">  201 </span><span class="spaces">                   </span><span class="istickedoff"><span class="nottickedoff">. setResponseStatus 500 &quot;Internal Server Error&quot;</span></span>
+<span class="lineno">  202 </span><span class="spaces">                   </span><span class="istickedoff"><span class="nottickedoff">. modifyResponseBody (&gt;==&gt; enumBS msg)</span></span>
+<span class="lineno">  203 </span><span class="spaces">                   </span><span class="istickedoff"><span class="nottickedoff">$ emptyResponse</span></span>
+<span class="lineno">  204 </span><span class="spaces">    </span><span class="istickedoff">, other        = <span class="nottickedoff">Nothing</span></span>
+<span class="lineno">  205 </span><span class="spaces">    </span><span class="istickedoff">}</span></span>
+<span class="lineno">  206 </span>
+<span class="lineno">  207 </span>
+<span class="lineno">  208 </span>------------------------------------------------------------------------------
+<span class="lineno">  209 </span>-- | Completes a partial 'Config' by filling in the unspecified values with
+<span class="lineno">  210 </span>-- the default values from 'defaultConfig'.  Also, if no listeners are
+<span class="lineno">  211 </span>-- specified, adds a http listener on 0.0.0.0:8000
+<span class="lineno">  212 </span>completeConfig :: MonadSnap m =&gt; Config m a -&gt; Config m a
+<span class="lineno">  213 </span><span class="decl"><span class="istickedoff">completeConfig c = case listen c' of</span>
+<span class="lineno">  214 </span><span class="spaces">                    </span><span class="istickedoff">[] -&gt; <span class="nottickedoff">addListen (ListenHttp &quot;0.0.0.0&quot; 8000) c'</span></span>
+<span class="lineno">  215 </span><span class="spaces">                    </span><span class="istickedoff">_  -&gt; c'</span>
+<span class="lineno">  216 </span><span class="spaces">    </span><span class="istickedoff">where c' = mappend defaultConfig c</span></span>
+<span class="lineno">  217 </span>
+<span class="lineno">  218 </span>
+<span class="lineno">  219 </span>------------------------------------------------------------------------------
+<span class="lineno">  220 </span>-- | A data structure used during command-line option parsing
+<span class="lineno">  221 </span>--
+<span class="lineno">  222 </span>-- The Config data type allows a list of listen ports, but the command line
+<span class="lineno">  223 </span>-- options only allow one http and one https listener.  This data structure
+<span class="lineno">  224 </span>-- is used during option parsing
+<span class="lineno">  225 </span>data MonadSnap m =&gt; <span class="nottickedoff">OptionData</span> m a = OptionData
+<span class="lineno">  226 </span>    { config  :: Config m a
+<span class="lineno">  227 </span>    , bind    :: Maybe ByteString
+<span class="lineno">  228 </span>    , port    :: Maybe Int
+<span class="lineno">  229 </span>    , sslbind :: Maybe ByteString
+<span class="lineno">  230 </span>    , sslport :: Maybe Int
+<span class="lineno">  231 </span>    , sslcert :: Maybe FilePath
+<span class="lineno">  232 </span>    , sslkey  :: Maybe FilePath
+<span class="lineno">  233 </span>    }
+<span class="lineno">  234 </span>
+<span class="lineno">  235 </span>
+<span class="lineno">  236 </span>------------------------------------------------------------------------------
+<span class="lineno">  237 </span>instance MonadSnap m =&gt; Monoid (OptionData m a) where
+<span class="lineno">  238 </span>    <span class="decl"><span class="nottickedoff">mempty = OptionData</span>
+<span class="lineno">  239 </span><span class="spaces">        </span><span class="nottickedoff">{ config  = mempty</span>
+<span class="lineno">  240 </span><span class="spaces">        </span><span class="nottickedoff">, bind    = Nothing</span>
+<span class="lineno">  241 </span><span class="spaces">        </span><span class="nottickedoff">, port    = Nothing</span>
+<span class="lineno">  242 </span><span class="spaces">        </span><span class="nottickedoff">, sslbind = Nothing</span>
+<span class="lineno">  243 </span><span class="spaces">        </span><span class="nottickedoff">, sslport = Nothing</span>
+<span class="lineno">  244 </span><span class="spaces">        </span><span class="nottickedoff">, sslcert = Nothing</span>
+<span class="lineno">  245 </span><span class="spaces">        </span><span class="nottickedoff">, sslkey  = Nothing</span>
+<span class="lineno">  246 </span><span class="spaces">        </span><span class="nottickedoff">}</span></span>
+<span class="lineno">  247 </span>
+<span class="lineno">  248 </span>    <span class="decl"><span class="nottickedoff">a `mappend` b = OptionData</span>
+<span class="lineno">  249 </span><span class="spaces">        </span><span class="nottickedoff">{ config       = (config       b) `mappend` (config       a)</span>
+<span class="lineno">  250 </span><span class="spaces">        </span><span class="nottickedoff">, bind         = (bind         b) `mplus`   (bind         a)</span>
+<span class="lineno">  251 </span><span class="spaces">        </span><span class="nottickedoff">, port         = (port         b) `mplus`   (port         a)</span>
+<span class="lineno">  252 </span><span class="spaces">        </span><span class="nottickedoff">, sslbind      = (sslbind      b) `mplus`   (sslbind      a)</span>
+<span class="lineno">  253 </span><span class="spaces">        </span><span class="nottickedoff">, sslport      = (sslport      b) `mplus`   (sslport      a)</span>
+<span class="lineno">  254 </span><span class="spaces">        </span><span class="nottickedoff">, sslcert      = (sslcert      b) `mplus`   (sslcert      a)</span>
+<span class="lineno">  255 </span><span class="spaces">        </span><span class="nottickedoff">, sslkey       = (sslkey       b) `mplus`   (sslkey       a)</span>
+<span class="lineno">  256 </span><span class="spaces">        </span><span class="nottickedoff">}</span></span>
+<span class="lineno">  257 </span>
+<span class="lineno">  258 </span>
+<span class="lineno">  259 </span>------------------------------------------------------------------------------
+<span class="lineno">  260 </span>-- | These are the default values for the options
+<span class="lineno">  261 </span>defaultOptions :: MonadSnap m =&gt; OptionData m a
+<span class="lineno">  262 </span><span class="decl"><span class="nottickedoff">defaultOptions = OptionData</span>
+<span class="lineno">  263 </span><span class="spaces">    </span><span class="nottickedoff">{ config  = defaultConfig</span>
+<span class="lineno">  264 </span><span class="spaces">    </span><span class="nottickedoff">, bind    = Just &quot;0.0.0.0&quot;</span>
+<span class="lineno">  265 </span><span class="spaces">    </span><span class="nottickedoff">, port    = Just 8000</span>
+<span class="lineno">  266 </span><span class="spaces">    </span><span class="nottickedoff">, sslbind = Just &quot;0.0.0.0&quot;</span>
+<span class="lineno">  267 </span><span class="spaces">    </span><span class="nottickedoff">, sslport = Nothing</span>
+<span class="lineno">  268 </span><span class="spaces">    </span><span class="nottickedoff">, sslcert = Just &quot;cert.pem&quot;</span>
+<span class="lineno">  269 </span><span class="spaces">    </span><span class="nottickedoff">, sslkey  = Just &quot;key.pem&quot;</span>
+<span class="lineno">  270 </span><span class="spaces">    </span><span class="nottickedoff">}</span></span>
+<span class="lineno">  271 </span>
+<span class="lineno">  272 </span>
+<span class="lineno">  273 </span>------------------------------------------------------------------------------
+<span class="lineno">  274 </span>-- | Convert options to config
+<span class="lineno">  275 </span>optionsToConfig :: MonadSnap m =&gt; OptionData m a -&gt; Config m a
+<span class="lineno">  276 </span><span class="decl"><span class="nottickedoff">optionsToConfig o = mconcat $ [config o] ++ http ++ https</span>
+<span class="lineno">  277 </span><span class="spaces">    </span><span class="nottickedoff">where lhttp  = maybe2 [] ListenHttp  (bind o) (port o)</span>
+<span class="lineno">  278 </span><span class="spaces">          </span><span class="nottickedoff">lhttps = maybe4 [] ListenHttps (sslbind o)</span>
+<span class="lineno">  279 </span><span class="spaces">                                         </span><span class="nottickedoff">(sslport o)</span>
+<span class="lineno">  280 </span><span class="spaces">                                         </span><span class="nottickedoff">(sslcert o)</span>
+<span class="lineno">  281 </span><span class="spaces">                                         </span><span class="nottickedoff">(sslkey  o)</span>
+<span class="lineno">  282 </span><span class="spaces">          </span><span class="nottickedoff">http  = map (flip addListen mempty) lhttp</span>
+<span class="lineno">  283 </span><span class="spaces">          </span><span class="nottickedoff">https = map (flip addListen mempty) lhttps</span>
+<span class="lineno">  284 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  285 </span><span class="spaces">          </span><span class="nottickedoff">maybe2 _ f (Just a) (Just b) = [f a b]</span>
+<span class="lineno">  286 </span><span class="spaces">          </span><span class="nottickedoff">maybe2 d _ _        _        = d</span>
+<span class="lineno">  287 </span><span class="spaces">          </span><span class="nottickedoff">maybe4 _ f (Just a) (Just b) (Just c) (Just d) = [f a b c d]</span>
+<span class="lineno">  288 </span><span class="spaces">          </span><span class="nottickedoff">maybe4 d _ _        _        _        _        = d</span></span>
+<span class="lineno">  289 </span>
+<span class="lineno">  290 </span>
+<span class="lineno">  291 </span>------------------------------------------------------------------------------
+<span class="lineno">  292 </span>-- | Convert config to options
+<span class="lineno">  293 </span>configToOptions :: MonadSnap m =&gt; Config m a -&gt; OptionData m a
+<span class="lineno">  294 </span><span class="decl"><span class="nottickedoff">configToOptions c = OptionData</span>
+<span class="lineno">  295 </span><span class="spaces">    </span><span class="nottickedoff">{ config  = c</span>
+<span class="lineno">  296 </span><span class="spaces">    </span><span class="nottickedoff">, bind    = Nothing</span>
+<span class="lineno">  297 </span><span class="spaces">    </span><span class="nottickedoff">, port    = Nothing</span>
+<span class="lineno">  298 </span><span class="spaces">    </span><span class="nottickedoff">, sslbind = Nothing</span>
+<span class="lineno">  299 </span><span class="spaces">    </span><span class="nottickedoff">, sslport = Nothing</span>
+<span class="lineno">  300 </span><span class="spaces">    </span><span class="nottickedoff">, sslcert = Nothing</span>
+<span class="lineno">  301 </span><span class="spaces">    </span><span class="nottickedoff">, sslkey  = Nothing</span>
+<span class="lineno">  302 </span><span class="spaces">    </span><span class="nottickedoff">}</span></span>
+<span class="lineno">  303 </span>
+<span class="lineno">  304 </span>
+<span class="lineno">  305 </span>------------------------------------------------------------------------------
+<span class="lineno">  306 </span>-- | A description of the command-line options accepted by
+<span class="lineno">  307 </span>-- 'commandLineConfig'.
+<span class="lineno">  308 </span>--
+<span class="lineno">  309 </span>-- The 'OptionData' parameter is just for specifying any default values which
+<span class="lineno">  310 </span>-- are to override those in 'defaultOptions'. This is so the usage message can
+<span class="lineno">  311 </span>-- accurately inform the user what the default values for the options are. In
+<span class="lineno">  312 </span>-- most cases, you will probably just end up passing 'mempty' for this
+<span class="lineno">  313 </span>-- parameter.
+<span class="lineno">  314 </span>--
+<span class="lineno">  315 </span>-- The return type is a list of options describing @'Maybe' ('OptionData' m)@
+<span class="lineno">  316 </span>-- as opposed to @'OptionData' m@, because if the @--help@ option is given,
+<span class="lineno">  317 </span>-- the set of command-line options no longer describe a config, but an action
+<span class="lineno">  318 </span>-- (printing out the usage message).
+<span class="lineno">  319 </span>options :: MonadSnap m
+<span class="lineno">  320 </span>        =&gt; OptionData m a
+<span class="lineno">  321 </span>        -&gt; [OptDescr (Maybe (OptionData m a))]
+<span class="lineno">  322 </span><span class="nottickedoff"><span class="decl"><span class="nottickedoff">options defaults =</span>
+<span class="lineno">  323 </span><span class="spaces">    </span><span class="nottickedoff">[ Option [] [&quot;hostname&quot;]</span>
+<span class="lineno">  324 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (Just . setConfig setHostname . U.fromString) &quot;NAME&quot;)</span>
+<span class="lineno">  325 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;local hostname&quot; ++ defaultC getHostname</span>
+<span class="lineno">  326 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['b'] [&quot;address&quot;]</span>
+<span class="lineno">  327 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { bind = Just $ U.fromString s })</span>
+<span class="lineno">  328 </span><span class="spaces">                     </span><span class="nottickedoff">&quot;ADDRESS&quot;)</span>
+<span class="lineno">  329 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;address to bind to&quot; ++ defaultO bind</span>
+<span class="lineno">  330 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['p'] [&quot;port&quot;]</span>
+<span class="lineno">  331 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { port = Just $ read s}) &quot;PORT&quot;)</span>
+<span class="lineno">  332 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;port to listen on&quot; ++ defaultO port</span>
+<span class="lineno">  333 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;ssl-address&quot;]</span>
+<span class="lineno">  334 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { sslbind = Just $ U.fromString s })</span>
+<span class="lineno">  335 </span><span class="spaces">                     </span><span class="nottickedoff">&quot;ADDRESS&quot;)</span>
+<span class="lineno">  336 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;ssl address to bind to&quot; ++ defaultO sslbind</span>
+<span class="lineno">  337 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;ssl-port&quot;]</span>
+<span class="lineno">  338 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { sslport = Just $ read s}) &quot;PORT&quot;)</span>
+<span class="lineno">  339 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;ssl port to listen on&quot; ++ defaultO sslport</span>
+<span class="lineno">  340 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;ssl-cert&quot;]</span>
+<span class="lineno">  341 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { sslcert = Just $ read s}) &quot;PATH&quot;)</span>
+<span class="lineno">  342 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;path to ssl certificate in PEM format&quot; ++ defaultO sslcert</span>
+<span class="lineno">  343 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;ssl-key&quot;]</span>
+<span class="lineno">  344 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (\s -&gt; Just $ mempty { sslkey = Just $ read s}) &quot;PATH&quot;)</span>
+<span class="lineno">  345 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;path to ssl private key in PEM format&quot; ++ defaultO sslkey</span>
+<span class="lineno">  346 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;access-log&quot;]</span>
+<span class="lineno">  347 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (Just . setConfig setAccessLog . Just) &quot;PATH&quot;)</span>
+<span class="lineno">  348 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;access log&quot; ++ (defaultC $ join . getAccessLog)</span>
+<span class="lineno">  349 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;error-log&quot;]</span>
+<span class="lineno">  350 </span><span class="spaces">             </span><span class="nottickedoff">(ReqArg (Just . setConfig setErrorLog . Just) &quot;PATH&quot;)</span>
+<span class="lineno">  351 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;error log&quot; ++ (defaultC $ join . getErrorLog)</span>
+<span class="lineno">  352 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;no-access-log&quot;]</span>
+<span class="lineno">  353 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setErrorLog Nothing)</span>
+<span class="lineno">  354 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;don't have an access log&quot;</span>
+<span class="lineno">  355 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;no-error-log&quot;]</span>
+<span class="lineno">  356 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setAccessLog Nothing)</span>
+<span class="lineno">  357 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;don't have an error log&quot;</span>
+<span class="lineno">  358 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['c'] [&quot;compression&quot;]</span>
+<span class="lineno">  359 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setCompression True)</span>
+<span class="lineno">  360 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;use gzip compression on responses&quot;</span>
+<span class="lineno">  361 </span><span class="spaces">    </span><span class="nottickedoff">, Option [] [&quot;no-compression&quot;]</span>
+<span class="lineno">  362 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setCompression False)</span>
+<span class="lineno">  363 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;serve responses uncompressed&quot;</span>
+<span class="lineno">  364 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['v'] [&quot;verbose&quot;]</span>
+<span class="lineno">  365 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setVerbose True)</span>
+<span class="lineno">  366 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;print server status updates to stderr&quot;</span>
+<span class="lineno">  367 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['q'] [&quot;quiet&quot;]</span>
+<span class="lineno">  368 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg $ Just $ setConfig setVerbose False)</span>
+<span class="lineno">  369 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;do not print anything to stderr&quot;</span>
+<span class="lineno">  370 </span><span class="spaces">    </span><span class="nottickedoff">, Option ['h'] [&quot;help&quot;]</span>
+<span class="lineno">  371 </span><span class="spaces">             </span><span class="nottickedoff">(NoArg Nothing)</span>
+<span class="lineno">  372 </span><span class="spaces">             </span><span class="nottickedoff">$ &quot;display this help and exit&quot;</span>
+<span class="lineno">  373 </span><span class="spaces">    </span><span class="nottickedoff">]</span>
+<span class="lineno">  374 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
+<span class="lineno">  375 </span><span class="spaces">    </span><span class="nottickedoff">setConfig f c = configToOptions $ f c mempty</span>
+<span class="lineno">  376 </span><span class="spaces">    </span><span class="nottickedoff">conf          = completeConfig $ config defaults</span>
+<span class="lineno">  377 </span><span class="spaces">    </span><span class="nottickedoff">opts          = mappend defaultOptions defaults</span>
+<span class="lineno">  378 </span><span class="spaces">    </span><span class="nottickedoff">defaultC f    = maybe &quot;&quot; ((&quot;, default &quot; ++) . show) $ f conf</span>
+<span class="lineno">  379 </span><span class="spaces">    </span><span class="nottickedoff">defaultO f    = maybe &quot;, default off&quot; ((&quot;, default &quot; ++) . show) $ f opts</span></span></span>
+<span class="lineno">  380 </span>
+<span class="lineno">  381 </span>
+<span class="lineno">  382 </span>------------------------------------------------------------------------------
+<span class="lineno">  383 </span>-- | This returns a 'Config' gotten from parsing the options specified on the
+<span class="lineno">  384 </span>-- command-line.
+<span class="lineno">  385 </span>--
+<span class="lineno">  386 </span>-- The 'Config' parameter is just for specifying any default values which are
+<span class="lineno">  387 </span>-- to override those in 'defaultConfig'. This is so the usage message can
+<span class="lineno">  388 </span>-- accurately inform the user what the default values for the options are. In
+<span class="lineno">  389 </span>-- most cases, you will probably just end up passing 'mempty' for this
+<span class="lineno">  390 </span>-- parameter.
+<span class="lineno">  391 </span>--
+<span class="lineno">  392 </span>-- On Unix systems, the locale is read from the @LANG@ environment variable.
+<span class="lineno">  393 </span>commandLineConfig :: MonadSnap m =&gt; Config m a -&gt; IO (Config m a)
+<span class="lineno">  394 </span><span class="nottickedoff"><span class="decl"><span class="nottickedoff">commandLineConfig defaults = do</span>
+<span class="lineno">  395 </span><span class="spaces">    </span><span class="nottickedoff">args &lt;- getArgs</span>
+<span class="lineno">  396 </span><span class="spaces">    </span><span class="nottickedoff">prog &lt;- getProgName</span>
+<span class="lineno">  397 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  398 </span><span class="spaces">    </span><span class="nottickedoff">result &lt;- either (usage prog) return $ case getOpt Permute opts args of</span>
+<span class="lineno">  399 </span><span class="spaces">        </span><span class="nottickedoff">(f, _, []  ) -&gt; maybe (Left []) Right $ fmap mconcat $ sequence f</span>
+<span class="lineno">  400 </span><span class="spaces">        </span><span class="nottickedoff">(_, _, errs) -&gt; Left errs</span>
+<span class="lineno">  401 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  402 </span><span class="spaces">    </span><span class="nottickedoff">let result' = optionsToConfig $ mappend defaultOptions result</span>
+<span class="lineno">  403 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  404 </span><span class="spaces"></span><span class="nottickedoff">#ifndef PORTABLE</span>
+<span class="lineno">  405 </span><span class="spaces">    </span><span class="nottickedoff">lang &lt;- getEnv &quot;LANG&quot;</span>
+<span class="lineno">  406 </span><span class="spaces">    </span><span class="nottickedoff">return $ mconcat [defaults, result', mempty {locale = fmap upToUtf8 lang}]</span>
+<span class="lineno">  407 </span><span class="spaces"></span><span class="nottickedoff">#else</span>
+<span class="lineno">  408 </span><span class="spaces">    </span><span class="nottickedoff">return $ mconcat [defaults, result']</span>
+<span class="lineno">  409 </span><span class="spaces"></span><span class="nottickedoff">#endif</span>
+<span class="lineno">  410 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  411 </span><span class="spaces">  </span><span class="nottickedoff">where</span>
+<span class="lineno">  412 </span><span class="spaces">    </span><span class="nottickedoff">opts = options $ configToOptions defaults</span>
+<span class="lineno">  413 </span><span class="spaces">    </span><span class="nottickedoff">usage prog errs = do</span>
+<span class="lineno">  414 </span><span class="spaces">        </span><span class="nottickedoff">let hdr = &quot;Usage:\n  &quot; ++ prog ++ &quot; [OPTION...]\n\nOptions:&quot;</span>
+<span class="lineno">  415 </span><span class="spaces">        </span><span class="nottickedoff">let msg = concat errs ++ usageInfo hdr opts</span>
+<span class="lineno">  416 </span><span class="spaces">        </span><span class="nottickedoff">hPutStrLn stderr msg</span>
+<span class="lineno">  417 </span><span class="spaces">        </span><span class="nottickedoff">exitFailure</span>
+<span class="lineno">  418 </span><span class="spaces">    </span><span class="nottickedoff">upToUtf8 = takeWhile $ \c -&gt; isAlpha c || '_' == c</span></span></span>
+<span class="lineno">  419 </span>
+<span class="lineno">  420 </span>
+<span class="lineno">  421 </span>------------------------------------------------------------------------------
+<span class="lineno">  422 </span>getHostname :: MonadSnap m =&gt; Config m a -&gt; Maybe ByteString
+<span class="lineno">  423 </span><span class="decl"><span class="istickedoff">getHostname = hostname</span></span>
+<span class="lineno">  424 </span>
+<span class="lineno">  425 </span>
+<span class="lineno">  426 </span>------------------------------------------------------------------------------
+<span class="lineno">  427 </span>getListen :: MonadSnap m =&gt; Config m a -&gt; [ConfigListen]
+<span class="lineno">  428 </span><span class="decl"><span class="istickedoff">getListen = listen</span></span>
+<span class="lineno">  429 </span>
+<span class="lineno">  430 </span>
+<span class="lineno">  431 </span>------------------------------------------------------------------------------
+<span class="lineno">  432 </span>getAccessLog :: MonadSnap m =&gt; Config m a -&gt; Maybe (Maybe FilePath)
+<span class="lineno">  433 </span><span class="decl"><span class="istickedoff">getAccessLog = accessLog</span></span>
+<span class="lineno">  434 </span>
+<span class="lineno">  435 </span>
+<span class="lineno">  436 </span>------------------------------------------------------------------------------
+<span class="lineno">  437 </span>getErrorLog :: MonadSnap m =&gt; Config m a -&gt; Maybe (Maybe FilePath)
+<span class="lineno">  438 </span><span class="decl"><span class="istickedoff">getErrorLog = errorLog</span></span>
+<span class="lineno">  439 </span>
+<span class="lineno">  440 </span>
+<span class="lineno">  441 </span>------------------------------------------------------------------------------
+<span class="lineno">  442 </span>getLocale :: MonadSnap m =&gt; Config m a -&gt; Maybe String
+<span class="lineno">  443 </span><span class="decl"><span class="istickedoff">getLocale = locale</span></span>
+<span class="lineno">  444 </span>
+<span class="lineno">  445 </span>
+<span class="lineno">  446 </span>------------------------------------------------------------------------------
+<span class="lineno">  447 </span>getBackend :: MonadSnap m =&gt; Config m a -&gt; Maybe ConfigBackend
+<span class="lineno">  448 </span><span class="decl"><span class="istickedoff">getBackend = backend</span></span>
+<span class="lineno">  449 </span>
+<span class="lineno">  450 </span>------------------------------------------------------------------------------
+<span class="lineno">  451 </span>getCompression :: MonadSnap m =&gt; Config m a -&gt; Maybe Bool
+<span class="lineno">  452 </span><span class="decl"><span class="istickedoff">getCompression = compression</span></span>
+<span class="lineno">  453 </span>
+<span class="lineno">  454 </span>
+<span class="lineno">  455 </span>------------------------------------------------------------------------------
+<span class="lineno">  456 </span>getVerbose :: MonadSnap m =&gt; Config m a -&gt; Maybe Bool
+<span class="lineno">  457 </span><span class="decl"><span class="istickedoff">getVerbose = verbose</span></span>
+<span class="lineno">  458 </span>
+<span class="lineno">  459 </span>
+<span class="lineno">  460 </span>------------------------------------------------------------------------------
+<span class="lineno">  461 </span>getErrorHandler :: MonadSnap m =&gt; Config m a -&gt; Maybe (SomeException -&gt; m ())
+<span class="lineno">  462 </span><span class="decl"><span class="nottickedoff">getErrorHandler = errorHandler</span></span>
+<span class="lineno">  463 </span>
+<span class="lineno">  464 </span>
+<span class="lineno">  465 </span>------------------------------------------------------------------------------
+<span class="lineno">  466 </span>getOther :: MonadSnap m =&gt; Config m a -&gt; Maybe a
+<span class="lineno">  467 </span><span class="decl"><span class="nottickedoff">getOther = other</span></span>
+<span class="lineno">  468 </span>
+<span class="lineno">  469 </span>
+<span class="lineno">  470 </span>------------------------------------------------------------------------------
+<span class="lineno">  471 </span>setHostname :: MonadSnap m =&gt; ByteString -&gt; Config m a -&gt; Config m a
+<span class="lineno">  472 </span><span class="decl"><span class="nottickedoff">setHostname a m = m {hostname = Just a}</span></span>
+<span class="lineno">  473 </span>
+<span class="lineno">  474 </span>
+<span class="lineno">  475 </span>------------------------------------------------------------------------------
+<span class="lineno">  476 </span>addListen :: MonadSnap m =&gt; ConfigListen -&gt; Config m a -&gt; Config m a
+<span class="lineno">  477 </span><span class="decl"><span class="istickedoff">addListen a m = m {listen = a : listen m}</span></span>
+<span class="lineno">  478 </span>
+<span class="lineno">  479 </span>
+<span class="lineno">  480 </span>------------------------------------------------------------------------------
+<span class="lineno">  481 </span>setAccessLog :: MonadSnap m =&gt; Maybe FilePath -&gt; Config m a -&gt; Config m a
+<span class="lineno">  482 </span><span class="decl"><span class="istickedoff">setAccessLog a m = m {accessLog = Just a}</span></span>
+<span class="lineno">  483 </span>
+<span class="lineno">  484 </span>
+<span class="lineno">  485 </span>------------------------------------------------------------------------------
+<span class="lineno">  486 </span>setErrorLog :: MonadSnap m =&gt; Maybe FilePath -&gt; Config m a -&gt; Config m a
+<span class="lineno">  487 </span><span class="decl"><span class="istickedoff">setErrorLog a m = m {errorLog = Just a}</span></span>
+<span class="lineno">  488 </span>
+<span class="lineno">  489 </span>
+<span class="lineno">  490 </span>------------------------------------------------------------------------------
+<span class="lineno">  491 </span>setLocale :: MonadSnap m =&gt; String -&gt; Config m a -&gt; Config m a
+<span class="lineno">  492 </span><span class="decl"><span class="nottickedoff">setLocale a m = m {locale = Just a}</span></span>
+<span class="lineno">  493 </span>
+<span class="lineno">  494 </span>
+<span class="lineno">  495 </span>------------------------------------------------------------------------------
+<span class="lineno">  496 </span>setBackend :: MonadSnap m =&gt; ConfigBackend -&gt; Config m a -&gt; Config m a
+<span class="lineno">  497 </span><span class="decl"><span class="istickedoff">setBackend a m = m { backend = Just a}</span></span>
+<span class="lineno">  498 </span>
+<span class="lineno">  499 </span>
+<span class="lineno">  500 </span>------------------------------------------------------------------------------
+<span class="lineno">  501 </span>setCompression :: MonadSnap m =&gt; Bool -&gt; Config m a -&gt; Config m a
+<span class="lineno">  502 </span><span class="decl"><span class="nottickedoff">setCompression a m = m {compression = Just a}</span></span>
 <span class="lineno">  503 </span>
-<span class="lineno">  504 </span>------------------------------------------------------------------------------
-<span class="lineno">  505 </span>setOther :: MonadSnap m =&gt; a -&gt; Config m a -&gt; Config m a
-<span class="lineno">  506 </span><span class="decl"><span class="nottickedoff">setOther a m = m {other = Just a}</span></span>
+<span class="lineno">  504 </span>
+<span class="lineno">  505 </span>------------------------------------------------------------------------------
+<span class="lineno">  506 </span>setVerbose :: MonadSnap m =&gt; Bool -&gt; Config m a -&gt; Config m a
+<span class="lineno">  507 </span><span class="decl"><span class="istickedoff">setVerbose a m = m {verbose = Just a}</span></span>
+<span class="lineno">  508 </span>
+<span class="lineno">  509 </span>
+<span class="lineno">  510 </span>------------------------------------------------------------------------------
+<span class="lineno">  511 </span>setErrorHandler :: MonadSnap m =&gt; (SomeException -&gt; m ()) -&gt; Config m a
+<span class="lineno">  512 </span>                -&gt; Config m a
+<span class="lineno">  513 </span><span class="decl"><span class="nottickedoff">setErrorHandler a m = m {errorHandler = Just a}</span></span>
+<span class="lineno">  514 </span>
+<span class="lineno">  515 </span>
+<span class="lineno">  516 </span>------------------------------------------------------------------------------
+<span class="lineno">  517 </span>setOther :: MonadSnap m =&gt; a -&gt; Config m a -&gt; Config m a
+<span class="lineno">  518 </span><span class="decl"><span class="nottickedoff">setOther a m = m {other = Just a}</span></span>
 
 </pre>
 </html>

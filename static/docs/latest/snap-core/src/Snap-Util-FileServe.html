@@ -195,9 +195,9 @@
 <a name="line-186"></a>
 <a name="line-187"></a><a name="fileServe"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
 <a name="line-188"></a><span class='hs-comment'>-- | Serves files out of the given directory. The relative path given in</span>
-<a name="line-189"></a><span class='hs-comment'>-- 'rqPathInfo' is searched for the given file, and the file is served with the</span>
-<a name="line-190"></a><span class='hs-comment'>-- appropriate mime type if it is found. Absolute paths and \"@..@\" are prohibited</span>
-<a name="line-191"></a><span class='hs-comment'>-- to prevent files from being served from outside the sandbox.</span>
+<a name="line-189"></a><span class='hs-comment'>-- 'rqPathInfo' is searched for the given file, and the file is served with</span>
+<a name="line-190"></a><span class='hs-comment'>-- the appropriate mime type if it is found. Absolute paths and \"@..@\" are</span>
+<a name="line-191"></a><span class='hs-comment'>-- prohibited to prevent files from being served from outside the sandbox.</span>
 <a name="line-192"></a><span class='hs-comment'>--</span>
 <a name="line-193"></a><span class='hs-comment'>-- Uses 'defaultMimeTypes' to determine the @Content-Type@ based on the file's</span>
 <a name="line-194"></a><span class='hs-comment'>-- extension.</span>
@@ -288,156 +288,157 @@
 <a name="line-279"></a>
 <a name="line-280"></a>
 <a name="line-281"></a>    <span class='hs-comment'>-- now check: is this a range request? If there is an 'If-Range' header</span>
-<a name="line-282"></a>    <span class='hs-comment'>-- with an old modification time we skip this check and send a 200 response</span>
-<a name="line-283"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>skipRangeCheck</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-conid'>False</span><span class='hs-layout'>)</span>
-<a name="line-284"></a>                               <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>lt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>mt</span> <span class='hs-varop'>&gt;</span> <span class='hs-varid'>lt</span><span class='hs-layout'>)</span>
-<a name="line-285"></a>                               <span class='hs-varid'>mbIfRange</span>
-<a name="line-286"></a>
-<a name="line-287"></a>    <span class='hs-comment'>-- checkRangeReq checks for a Range: header in the request and sends a</span>
-<a name="line-288"></a>    <span class='hs-comment'>-- partial response if it matches.</span>
-<a name="line-289"></a>    <span class='hs-varid'>wasRange</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-keyword'>if</span> <span class='hs-varid'>skipRangeCheck</span>
-<a name="line-290"></a>                  <span class='hs-keyword'>then</span> <span class='hs-varid'>return</span> <span class='hs-conid'>False</span>
-<a name="line-291"></a>                  <span class='hs-keyword'>else</span> <span class='hs-varid'>liftSnap</span> <span class='hs-varop'>$</span> <span class='hs-varid'>checkRangeReq</span> <span class='hs-varid'>req</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>sz</span>
-<a name="line-292"></a>
-<a name="line-293"></a>    <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"was this a range request? "</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>wasRange</span>
-<a name="line-294"></a>
-<a name="line-295"></a>    <span class='hs-comment'>-- if we didn't have a range request, we just do normal sendfile</span>
-<a name="line-296"></a>    <span class='hs-varid'>unless</span> <span class='hs-varid'>wasRange</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>do</span>
-<a name="line-297"></a>      <span class='hs-varid'>modifyResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>setResponseCode</span> <span class='hs-num'>200</span>
-<a name="line-298"></a>                     <span class='hs-varop'>.</span> <span class='hs-varid'>setContentLength</span> <span class='hs-varid'>sz</span>
-<a name="line-299"></a>      <span class='hs-varid'>liftSnap</span> <span class='hs-varop'>$</span> <span class='hs-varid'>sendFile</span> <span class='hs-varid'>fp</span>
-<a name="line-300"></a>
-<a name="line-301"></a>  <span class='hs-keyword'>where</span>
-<a name="line-302"></a>    <span class='hs-comment'>--------------------------------------------------------------------------</span>
-<a name="line-303"></a>    <span class='hs-varid'>notModified</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>finishWith</span> <span class='hs-varop'>$</span>
-<a name="line-304"></a>                  <span class='hs-varid'>setResponseCode</span> <span class='hs-num'>304</span> <span class='hs-varid'>emptyResponse</span>
-<a name="line-305"></a>
+<a name="line-282"></a>    <span class='hs-comment'>-- with an old modification time we skip this check and send a 200</span>
+<a name="line-283"></a>    <span class='hs-comment'>-- response</span>
+<a name="line-284"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>skipRangeCheck</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-conid'>False</span><span class='hs-layout'>)</span>
+<a name="line-285"></a>                               <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>lt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>mt</span> <span class='hs-varop'>&gt;</span> <span class='hs-varid'>lt</span><span class='hs-layout'>)</span>
+<a name="line-286"></a>                               <span class='hs-varid'>mbIfRange</span>
+<a name="line-287"></a>
+<a name="line-288"></a>    <span class='hs-comment'>-- checkRangeReq checks for a Range: header in the request and sends a</span>
+<a name="line-289"></a>    <span class='hs-comment'>-- partial response if it matches.</span>
+<a name="line-290"></a>    <span class='hs-varid'>wasRange</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-keyword'>if</span> <span class='hs-varid'>skipRangeCheck</span>
+<a name="line-291"></a>                  <span class='hs-keyword'>then</span> <span class='hs-varid'>return</span> <span class='hs-conid'>False</span>
+<a name="line-292"></a>                  <span class='hs-keyword'>else</span> <span class='hs-varid'>liftSnap</span> <span class='hs-varop'>$</span> <span class='hs-varid'>checkRangeReq</span> <span class='hs-varid'>req</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>sz</span>
+<a name="line-293"></a>
+<a name="line-294"></a>    <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"was this a range request? "</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>wasRange</span>
+<a name="line-295"></a>
+<a name="line-296"></a>    <span class='hs-comment'>-- if we didn't have a range request, we just do normal sendfile</span>
+<a name="line-297"></a>    <span class='hs-varid'>unless</span> <span class='hs-varid'>wasRange</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>do</span>
+<a name="line-298"></a>      <span class='hs-varid'>modifyResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>setResponseCode</span> <span class='hs-num'>200</span>
+<a name="line-299"></a>                     <span class='hs-varop'>.</span> <span class='hs-varid'>setContentLength</span> <span class='hs-varid'>sz</span>
+<a name="line-300"></a>      <span class='hs-varid'>liftSnap</span> <span class='hs-varop'>$</span> <span class='hs-varid'>sendFile</span> <span class='hs-varid'>fp</span>
+<a name="line-301"></a>
+<a name="line-302"></a>  <span class='hs-keyword'>where</span>
+<a name="line-303"></a>    <span class='hs-comment'>--------------------------------------------------------------------------</span>
+<a name="line-304"></a>    <span class='hs-varid'>notModified</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>finishWith</span> <span class='hs-varop'>$</span>
+<a name="line-305"></a>                  <span class='hs-varid'>setResponseCode</span> <span class='hs-num'>304</span> <span class='hs-varid'>emptyResponse</span>
 <a name="line-306"></a>
-<a name="line-307"></a><a name="fileType"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-308"></a><span class='hs-definition'>fileType</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>MimeMap</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span>
-<a name="line-309"></a><span class='hs-definition'>fileType</span> <span class='hs-varid'>mm</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span>
-<a name="line-310"></a>    <span class='hs-keyword'>if</span> <span class='hs-varid'>null</span> <span class='hs-varid'>ext</span>
-<a name="line-311"></a>      <span class='hs-keyword'>then</span> <span class='hs-varid'>defaultMimeType</span>
-<a name="line-312"></a>      <span class='hs-keyword'>else</span> <span class='hs-varid'>fromMaybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>fileType</span> <span class='hs-varid'>mm</span> <span class='hs-layout'>(</span><span class='hs-varid'>drop</span> <span class='hs-num'>1</span> <span class='hs-varid'>ext</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-313"></a>                     <span class='hs-varid'>mbe</span>
-<a name="line-314"></a>
-<a name="line-315"></a>  <span class='hs-keyword'>where</span>
-<a name="line-316"></a>    <span class='hs-varid'>ext</span>             <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeExtensions</span> <span class='hs-varid'>f</span>
-<a name="line-317"></a>    <span class='hs-varid'>mbe</span>             <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Map</span><span class='hs-varop'>.</span><span class='hs-varid'>lookup</span> <span class='hs-varid'>ext</span> <span class='hs-varid'>mm</span>
-<a name="line-318"></a>
+<a name="line-307"></a>
+<a name="line-308"></a><a name="fileType"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-309"></a><span class='hs-definition'>fileType</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>MimeMap</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span>
+<a name="line-310"></a><span class='hs-definition'>fileType</span> <span class='hs-varid'>mm</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span>
+<a name="line-311"></a>    <span class='hs-keyword'>if</span> <span class='hs-varid'>null</span> <span class='hs-varid'>ext</span>
+<a name="line-312"></a>      <span class='hs-keyword'>then</span> <span class='hs-varid'>defaultMimeType</span>
+<a name="line-313"></a>      <span class='hs-keyword'>else</span> <span class='hs-varid'>fromMaybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>fileType</span> <span class='hs-varid'>mm</span> <span class='hs-layout'>(</span><span class='hs-varid'>drop</span> <span class='hs-num'>1</span> <span class='hs-varid'>ext</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-314"></a>                     <span class='hs-varid'>mbe</span>
+<a name="line-315"></a>
+<a name="line-316"></a>  <span class='hs-keyword'>where</span>
+<a name="line-317"></a>    <span class='hs-varid'>ext</span>             <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeExtensions</span> <span class='hs-varid'>f</span>
+<a name="line-318"></a>    <span class='hs-varid'>mbe</span>             <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Map</span><span class='hs-varop'>.</span><span class='hs-varid'>lookup</span> <span class='hs-varid'>ext</span> <span class='hs-varid'>mm</span>
 <a name="line-319"></a>
-<a name="line-320"></a><a name="defaultMimeType"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-321"></a><span class='hs-definition'>defaultMimeType</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span>
-<a name="line-322"></a><span class='hs-definition'>defaultMimeType</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"application/octet-stream"</span>
-<a name="line-323"></a>
+<a name="line-320"></a>
+<a name="line-321"></a><a name="defaultMimeType"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-322"></a><span class='hs-definition'>defaultMimeType</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span>
+<a name="line-323"></a><span class='hs-definition'>defaultMimeType</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"application/octet-stream"</span>
 <a name="line-324"></a>
-<a name="line-325"></a><a name="RangeReq"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-326"></a><a name="RangeReq"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>RangeReq</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>RangeReq</span> <span class='hs-layout'>{</span> <span class='hs-sel'>_rangeFirst</span> <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-conid'>Int64</span>
-<a name="line-327"></a>                         <span class='hs-layout'>,</span> <span class='hs-sel'>_rangeLast</span>  <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-conid'>Int64</span><span class='hs-layout'>)</span>
-<a name="line-328"></a>                         <span class='hs-layout'>}</span>
-<a name="line-329"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-conid'>SuffixRangeReq</span> <span class='hs-layout'>{</span> <span class='hs-sel'>_suffixLength</span> <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-conid'>Int64</span> <span class='hs-layout'>}</span>
-<a name="line-330"></a>  <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Eq</span><span class='hs-layout'>,</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-conid'>Show</span><span class='hs-layout'>)</span>
-<a name="line-331"></a>
+<a name="line-325"></a>
+<a name="line-326"></a><a name="RangeReq"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-327"></a><a name="RangeReq"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>RangeReq</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>RangeReq</span> <span class='hs-layout'>{</span> <span class='hs-sel'>_rangeFirst</span> <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-conid'>Int64</span>
+<a name="line-328"></a>                         <span class='hs-layout'>,</span> <span class='hs-sel'>_rangeLast</span>  <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-conid'>Int64</span><span class='hs-layout'>)</span>
+<a name="line-329"></a>                         <span class='hs-layout'>}</span>
+<a name="line-330"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-conid'>SuffixRangeReq</span> <span class='hs-layout'>{</span> <span class='hs-sel'>_suffixLength</span> <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-conid'>Int64</span> <span class='hs-layout'>}</span>
+<a name="line-331"></a>  <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Eq</span><span class='hs-layout'>,</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-conid'>Show</span><span class='hs-layout'>)</span>
 <a name="line-332"></a>
-<a name="line-333"></a><a name="rangeParser"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-334"></a><span class='hs-definition'>rangeParser</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>RangeReq</span>
-<a name="line-335"></a><span class='hs-definition'>rangeParser</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>string</span> <span class='hs-str'>"bytes="</span> <span class='hs-varop'>*&gt;</span>
-<a name="line-336"></a>              <span class='hs-layout'>(</span><span class='hs-varid'>byteRangeSpec</span> <span class='hs-varop'>&lt;|&gt;</span> <span class='hs-varid'>suffixByteRangeSpec</span><span class='hs-layout'>)</span> <span class='hs-varop'>&lt;*</span>
-<a name="line-337"></a>              <span class='hs-varid'>endOfInput</span>
-<a name="line-338"></a>  <span class='hs-keyword'>where</span>
-<a name="line-339"></a>    <span class='hs-varid'>byteRangeSpec</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-340"></a>        <span class='hs-varid'>start</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>parseNum</span>
-<a name="line-341"></a>        <span class='hs-varid'>char</span> <span class='hs-chr'>'-'</span>
-<a name="line-342"></a>        <span class='hs-varid'>end</span>   <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>option</span> <span class='hs-conid'>Nothing</span> <span class='hs-varop'>$</span> <span class='hs-varid'>liftM</span> <span class='hs-conid'>Just</span> <span class='hs-varid'>parseNum</span>
-<a name="line-343"></a>
-<a name="line-344"></a>        <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>RangeReq</span> <span class='hs-varid'>start</span> <span class='hs-varid'>end</span>
-<a name="line-345"></a>
-<a name="line-346"></a>    <span class='hs-varid'>suffixByteRangeSpec</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>liftM</span> <span class='hs-conid'>SuffixRangeReq</span> <span class='hs-varop'>$</span> <span class='hs-varid'>char</span> <span class='hs-chr'>'-'</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>parseNum</span>
-<a name="line-347"></a>
+<a name="line-333"></a>
+<a name="line-334"></a><a name="rangeParser"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-335"></a><span class='hs-definition'>rangeParser</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>RangeReq</span>
+<a name="line-336"></a><span class='hs-definition'>rangeParser</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>string</span> <span class='hs-str'>"bytes="</span> <span class='hs-varop'>*&gt;</span>
+<a name="line-337"></a>              <span class='hs-layout'>(</span><span class='hs-varid'>byteRangeSpec</span> <span class='hs-varop'>&lt;|&gt;</span> <span class='hs-varid'>suffixByteRangeSpec</span><span class='hs-layout'>)</span> <span class='hs-varop'>&lt;*</span>
+<a name="line-338"></a>              <span class='hs-varid'>endOfInput</span>
+<a name="line-339"></a>  <span class='hs-keyword'>where</span>
+<a name="line-340"></a>    <span class='hs-varid'>byteRangeSpec</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-341"></a>        <span class='hs-varid'>start</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>parseNum</span>
+<a name="line-342"></a>        <span class='hs-varid'>char</span> <span class='hs-chr'>'-'</span>
+<a name="line-343"></a>        <span class='hs-varid'>end</span>   <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>option</span> <span class='hs-conid'>Nothing</span> <span class='hs-varop'>$</span> <span class='hs-varid'>liftM</span> <span class='hs-conid'>Just</span> <span class='hs-varid'>parseNum</span>
+<a name="line-344"></a>
+<a name="line-345"></a>        <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>RangeReq</span> <span class='hs-varid'>start</span> <span class='hs-varid'>end</span>
+<a name="line-346"></a>
+<a name="line-347"></a>    <span class='hs-varid'>suffixByteRangeSpec</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>liftM</span> <span class='hs-conid'>SuffixRangeReq</span> <span class='hs-varop'>$</span> <span class='hs-varid'>char</span> <span class='hs-chr'>'-'</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>parseNum</span>
 <a name="line-348"></a>
-<a name="line-349"></a><a name="checkRangeReq"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-350"></a><span class='hs-definition'>checkRangeReq</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>MonadSnap</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Request</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int64</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>m</span> <span class='hs-conid'>Bool</span>
-<a name="line-351"></a><span class='hs-definition'>checkRangeReq</span> <span class='hs-varid'>req</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>sz</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-352"></a>    <span class='hs-comment'>-- TODO/FIXME: multiple ranges</span>
-<a name="line-353"></a>    <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"checkRangeReq, fp="</span> <span class='hs-varop'>++</span> <span class='hs-varid'>fp</span> <span class='hs-varop'>++</span> <span class='hs-str'>", sz="</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>sz</span>
-<a name="line-354"></a>    <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-conid'>False</span><span class='hs-layout'>)</span>
-<a name="line-355"></a>          <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>s</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>either</span> <span class='hs-layout'>(</span><span class='hs-varid'>const</span> <span class='hs-varop'>$</span> <span class='hs-varid'>return</span> <span class='hs-conid'>False</span><span class='hs-layout'>)</span>
-<a name="line-356"></a>                        <span class='hs-varid'>withRange</span>
-<a name="line-357"></a>                        <span class='hs-layout'>(</span><span class='hs-varid'>fullyParse</span> <span class='hs-varid'>s</span> <span class='hs-varid'>rangeParser</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-358"></a>          <span class='hs-layout'>(</span><span class='hs-varid'>getHeader</span> <span class='hs-str'>"range"</span> <span class='hs-varid'>req</span><span class='hs-layout'>)</span>
-<a name="line-359"></a>
-<a name="line-360"></a>  <span class='hs-keyword'>where</span>
-<a name="line-361"></a>    <span class='hs-varid'>withRange</span> <span class='hs-varid'>rng</span><span class='hs-keyglyph'>@</span><span class='hs-layout'>(</span><span class='hs-conid'>RangeReq</span> <span class='hs-varid'>start</span> <span class='hs-varid'>mend</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-362"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"withRange: got Range request: "</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>rng</span>
-<a name="line-363"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>end</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fromMaybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>sz</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>mend</span>
-<a name="line-364"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"withRange: start="</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>start</span>
-<a name="line-365"></a>                  <span class='hs-varop'>++</span> <span class='hs-str'>", end="</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>end</span>
-<a name="line-366"></a>
-<a name="line-367"></a>        <span class='hs-keyword'>if</span> <span class='hs-varid'>start</span> <span class='hs-varop'>&lt;</span> <span class='hs-num'>0</span> <span class='hs-varop'>||</span> <span class='hs-varid'>end</span> <span class='hs-varop'>&lt;</span> <span class='hs-varid'>start</span> <span class='hs-varop'>||</span> <span class='hs-varid'>start</span> <span class='hs-varop'>&gt;=</span> <span class='hs-varid'>sz</span> <span class='hs-varop'>||</span> <span class='hs-varid'>end</span> <span class='hs-varop'>&gt;=</span> <span class='hs-varid'>sz</span>
-<a name="line-368"></a>           <span class='hs-keyword'>then</span> <span class='hs-varid'>send416</span>
-<a name="line-369"></a>           <span class='hs-keyword'>else</span> <span class='hs-varid'>send206</span> <span class='hs-varid'>start</span> <span class='hs-varid'>end</span>
-<a name="line-370"></a>
-<a name="line-371"></a>    <span class='hs-varid'>withRange</span> <span class='hs-varid'>rng</span><span class='hs-keyglyph'>@</span><span class='hs-layout'>(</span><span class='hs-conid'>SuffixRangeReq</span> <span class='hs-varid'>nbytes</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-372"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"withRange: got Range request: "</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>rng</span>
-<a name="line-373"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>end</span>   <span class='hs-keyglyph'>=</span> <span class='hs-varid'>sz</span><span class='hs-comment'>-</span><span class='hs-num'>1</span>
-<a name="line-374"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>start</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>sz</span> <span class='hs-comment'>-</span> <span class='hs-varid'>nbytes</span>
-<a name="line-375"></a>
-<a name="line-376"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"withRange: start="</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>start</span>
-<a name="line-377"></a>                  <span class='hs-varop'>++</span> <span class='hs-str'>", end="</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>end</span>
-<a name="line-378"></a>
-<a name="line-379"></a>        <span class='hs-keyword'>if</span> <span class='hs-varid'>start</span> <span class='hs-varop'>&lt;</span> <span class='hs-num'>0</span> <span class='hs-varop'>||</span> <span class='hs-varid'>end</span> <span class='hs-varop'>&lt;</span> <span class='hs-varid'>start</span> <span class='hs-varop'>||</span> <span class='hs-varid'>start</span> <span class='hs-varop'>&gt;=</span> <span class='hs-varid'>sz</span> <span class='hs-varop'>||</span> <span class='hs-varid'>end</span> <span class='hs-varop'>&gt;=</span> <span class='hs-varid'>sz</span>
-<a name="line-380"></a>           <span class='hs-keyword'>then</span> <span class='hs-varid'>send416</span>
-<a name="line-381"></a>           <span class='hs-keyword'>else</span> <span class='hs-varid'>send206</span> <span class='hs-varid'>start</span> <span class='hs-varid'>end</span>
-<a name="line-382"></a>
-<a name="line-383"></a>    <span class='hs-comment'>-- note: start and end INCLUSIVE here</span>
-<a name="line-384"></a>    <span class='hs-varid'>send206</span> <span class='hs-varid'>start</span> <span class='hs-varid'>end</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-385"></a>        <span class='hs-varid'>dbg</span> <span class='hs-str'>"inside send206"</span>
-<a name="line-386"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>len</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>end</span><span class='hs-comment'>-</span><span class='hs-varid'>start</span><span class='hs-varop'>+</span><span class='hs-num'>1</span>
-<a name="line-387"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>crng</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-varop'>$</span>
-<a name="line-388"></a>                   <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-varid'>toChunks</span> <span class='hs-varop'>$</span>
-<a name="line-389"></a>                   <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-keyglyph'>[</span> <span class='hs-str'>"bytes "</span>
-<a name="line-390"></a>                            <span class='hs-layout'>,</span> <span class='hs-varid'>show</span> <span class='hs-varid'>start</span>
-<a name="line-391"></a>                            <span class='hs-layout'>,</span> <span class='hs-str'>"-"</span>
-<a name="line-392"></a>                            <span class='hs-layout'>,</span> <span class='hs-varid'>show</span> <span class='hs-varid'>end</span>
-<a name="line-393"></a>                            <span class='hs-layout'>,</span> <span class='hs-str'>"/"</span>
-<a name="line-394"></a>                            <span class='hs-layout'>,</span> <span class='hs-varid'>show</span> <span class='hs-varid'>sz</span> <span class='hs-keyglyph'>]</span>
-<a name="line-395"></a>
-<a name="line-396"></a>        <span class='hs-varid'>modifyResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>setResponseCode</span> <span class='hs-num'>206</span>
-<a name="line-397"></a>                       <span class='hs-varop'>.</span> <span class='hs-varid'>setHeader</span> <span class='hs-str'>"Content-Range"</span> <span class='hs-varid'>crng</span>
-<a name="line-398"></a>                       <span class='hs-varop'>.</span> <span class='hs-varid'>setContentLength</span> <span class='hs-varid'>len</span>
-<a name="line-399"></a>
-<a name="line-400"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"send206: sending range ("</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>start</span>
-<a name="line-401"></a>                <span class='hs-varop'>++</span> <span class='hs-str'>","</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-varid'>end</span><span class='hs-varop'>+</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varop'>++</span> <span class='hs-str'>") to sendFilePartial"</span>
-<a name="line-402"></a>
-<a name="line-403"></a>        <span class='hs-comment'>-- end here was inclusive, sendFilePartial is exclusive</span>
-<a name="line-404"></a>        <span class='hs-varid'>sendFilePartial</span> <span class='hs-varid'>fp</span> <span class='hs-layout'>(</span><span class='hs-varid'>start</span><span class='hs-layout'>,</span><span class='hs-varid'>end</span><span class='hs-varop'>+</span><span class='hs-num'>1</span><span class='hs-layout'>)</span>
-<a name="line-405"></a>        <span class='hs-varid'>return</span> <span class='hs-conid'>True</span>
-<a name="line-406"></a>
+<a name="line-349"></a>
+<a name="line-350"></a><a name="checkRangeReq"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-351"></a><span class='hs-definition'>checkRangeReq</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>MonadSnap</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Request</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int64</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>m</span> <span class='hs-conid'>Bool</span>
+<a name="line-352"></a><span class='hs-definition'>checkRangeReq</span> <span class='hs-varid'>req</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>sz</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-353"></a>    <span class='hs-comment'>-- TODO/FIXME: multiple ranges</span>
+<a name="line-354"></a>    <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"checkRangeReq, fp="</span> <span class='hs-varop'>++</span> <span class='hs-varid'>fp</span> <span class='hs-varop'>++</span> <span class='hs-str'>", sz="</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>sz</span>
+<a name="line-355"></a>    <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-conid'>False</span><span class='hs-layout'>)</span>
+<a name="line-356"></a>          <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>s</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>either</span> <span class='hs-layout'>(</span><span class='hs-varid'>const</span> <span class='hs-varop'>$</span> <span class='hs-varid'>return</span> <span class='hs-conid'>False</span><span class='hs-layout'>)</span>
+<a name="line-357"></a>                        <span class='hs-varid'>withRange</span>
+<a name="line-358"></a>                        <span class='hs-layout'>(</span><span class='hs-varid'>fullyParse</span> <span class='hs-varid'>s</span> <span class='hs-varid'>rangeParser</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-359"></a>          <span class='hs-layout'>(</span><span class='hs-varid'>getHeader</span> <span class='hs-str'>"range"</span> <span class='hs-varid'>req</span><span class='hs-layout'>)</span>
+<a name="line-360"></a>
+<a name="line-361"></a>  <span class='hs-keyword'>where</span>
+<a name="line-362"></a>    <span class='hs-varid'>withRange</span> <span class='hs-varid'>rng</span><span class='hs-keyglyph'>@</span><span class='hs-layout'>(</span><span class='hs-conid'>RangeReq</span> <span class='hs-varid'>start</span> <span class='hs-varid'>mend</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-363"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"withRange: got Range request: "</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>rng</span>
+<a name="line-364"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>end</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fromMaybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>sz</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>mend</span>
+<a name="line-365"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"withRange: start="</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>start</span>
+<a name="line-366"></a>                  <span class='hs-varop'>++</span> <span class='hs-str'>", end="</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>end</span>
+<a name="line-367"></a>
+<a name="line-368"></a>        <span class='hs-keyword'>if</span> <span class='hs-varid'>start</span> <span class='hs-varop'>&lt;</span> <span class='hs-num'>0</span> <span class='hs-varop'>||</span> <span class='hs-varid'>end</span> <span class='hs-varop'>&lt;</span> <span class='hs-varid'>start</span> <span class='hs-varop'>||</span> <span class='hs-varid'>start</span> <span class='hs-varop'>&gt;=</span> <span class='hs-varid'>sz</span> <span class='hs-varop'>||</span> <span class='hs-varid'>end</span> <span class='hs-varop'>&gt;=</span> <span class='hs-varid'>sz</span>
+<a name="line-369"></a>           <span class='hs-keyword'>then</span> <span class='hs-varid'>send416</span>
+<a name="line-370"></a>           <span class='hs-keyword'>else</span> <span class='hs-varid'>send206</span> <span class='hs-varid'>start</span> <span class='hs-varid'>end</span>
+<a name="line-371"></a>
+<a name="line-372"></a>    <span class='hs-varid'>withRange</span> <span class='hs-varid'>rng</span><span class='hs-keyglyph'>@</span><span class='hs-layout'>(</span><span class='hs-conid'>SuffixRangeReq</span> <span class='hs-varid'>nbytes</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-373"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"withRange: got Range request: "</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>rng</span>
+<a name="line-374"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>end</span>   <span class='hs-keyglyph'>=</span> <span class='hs-varid'>sz</span><span class='hs-comment'>-</span><span class='hs-num'>1</span>
+<a name="line-375"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>start</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>sz</span> <span class='hs-comment'>-</span> <span class='hs-varid'>nbytes</span>
+<a name="line-376"></a>
+<a name="line-377"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"withRange: start="</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>start</span>
+<a name="line-378"></a>                  <span class='hs-varop'>++</span> <span class='hs-str'>", end="</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>end</span>
+<a name="line-379"></a>
+<a name="line-380"></a>        <span class='hs-keyword'>if</span> <span class='hs-varid'>start</span> <span class='hs-varop'>&lt;</span> <span class='hs-num'>0</span> <span class='hs-varop'>||</span> <span class='hs-varid'>end</span> <span class='hs-varop'>&lt;</span> <span class='hs-varid'>start</span> <span class='hs-varop'>||</span> <span class='hs-varid'>start</span> <span class='hs-varop'>&gt;=</span> <span class='hs-varid'>sz</span> <span class='hs-varop'>||</span> <span class='hs-varid'>end</span> <span class='hs-varop'>&gt;=</span> <span class='hs-varid'>sz</span>
+<a name="line-381"></a>           <span class='hs-keyword'>then</span> <span class='hs-varid'>send416</span>
+<a name="line-382"></a>           <span class='hs-keyword'>else</span> <span class='hs-varid'>send206</span> <span class='hs-varid'>start</span> <span class='hs-varid'>end</span>
+<a name="line-383"></a>
+<a name="line-384"></a>    <span class='hs-comment'>-- note: start and end INCLUSIVE here</span>
+<a name="line-385"></a>    <span class='hs-varid'>send206</span> <span class='hs-varid'>start</span> <span class='hs-varid'>end</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-386"></a>        <span class='hs-varid'>dbg</span> <span class='hs-str'>"inside send206"</span>
+<a name="line-387"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>len</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>end</span><span class='hs-comment'>-</span><span class='hs-varid'>start</span><span class='hs-varop'>+</span><span class='hs-num'>1</span>
+<a name="line-388"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>crng</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-varop'>$</span>
+<a name="line-389"></a>                   <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-varid'>toChunks</span> <span class='hs-varop'>$</span>
+<a name="line-390"></a>                   <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-keyglyph'>[</span> <span class='hs-str'>"bytes "</span>
+<a name="line-391"></a>                            <span class='hs-layout'>,</span> <span class='hs-varid'>show</span> <span class='hs-varid'>start</span>
+<a name="line-392"></a>                            <span class='hs-layout'>,</span> <span class='hs-str'>"-"</span>
+<a name="line-393"></a>                            <span class='hs-layout'>,</span> <span class='hs-varid'>show</span> <span class='hs-varid'>end</span>
+<a name="line-394"></a>                            <span class='hs-layout'>,</span> <span class='hs-str'>"/"</span>
+<a name="line-395"></a>                            <span class='hs-layout'>,</span> <span class='hs-varid'>show</span> <span class='hs-varid'>sz</span> <span class='hs-keyglyph'>]</span>
+<a name="line-396"></a>
+<a name="line-397"></a>        <span class='hs-varid'>modifyResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>setResponseCode</span> <span class='hs-num'>206</span>
+<a name="line-398"></a>                       <span class='hs-varop'>.</span> <span class='hs-varid'>setHeader</span> <span class='hs-str'>"Content-Range"</span> <span class='hs-varid'>crng</span>
+<a name="line-399"></a>                       <span class='hs-varop'>.</span> <span class='hs-varid'>setContentLength</span> <span class='hs-varid'>len</span>
+<a name="line-400"></a>
+<a name="line-401"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"send206: sending range ("</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-varid'>start</span>
+<a name="line-402"></a>                <span class='hs-varop'>++</span> <span class='hs-str'>","</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-varid'>end</span><span class='hs-varop'>+</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varop'>++</span> <span class='hs-str'>") to sendFilePartial"</span>
+<a name="line-403"></a>
+<a name="line-404"></a>        <span class='hs-comment'>-- end here was inclusive, sendFilePartial is exclusive</span>
+<a name="line-405"></a>        <span class='hs-varid'>sendFilePartial</span> <span class='hs-varid'>fp</span> <span class='hs-layout'>(</span><span class='hs-varid'>start</span><span class='hs-layout'>,</span><span class='hs-varid'>end</span><span class='hs-varop'>+</span><span class='hs-num'>1</span><span class='hs-layout'>)</span>
+<a name="line-406"></a>        <span class='hs-varid'>return</span> <span class='hs-conid'>True</span>
 <a name="line-407"></a>
-<a name="line-408"></a>    <span class='hs-varid'>send416</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-409"></a>        <span class='hs-varid'>dbg</span> <span class='hs-str'>"inside send416"</span>
-<a name="line-410"></a>        <span class='hs-comment'>-- if there's an "If-Range" header in the request, then we just send</span>
-<a name="line-411"></a>        <span class='hs-comment'>-- back 200</span>
-<a name="line-412"></a>        <span class='hs-keyword'>if</span> <span class='hs-varid'>getHeader</span> <span class='hs-str'>"If-Range"</span> <span class='hs-varid'>req</span> <span class='hs-varop'>/=</span> <span class='hs-conid'>Nothing</span>
-<a name="line-413"></a>           <span class='hs-keyword'>then</span> <span class='hs-varid'>return</span> <span class='hs-conid'>False</span>
-<a name="line-414"></a>           <span class='hs-keyword'>else</span> <span class='hs-keyword'>do</span>
-<a name="line-415"></a>               <span class='hs-keyword'>let</span> <span class='hs-varid'>crng</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-varop'>$</span>
-<a name="line-416"></a>                          <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-varid'>toChunks</span> <span class='hs-varop'>$</span>
-<a name="line-417"></a>                          <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-keyglyph'>[</span><span class='hs-str'>"bytes */"</span><span class='hs-layout'>,</span> <span class='hs-varid'>show</span> <span class='hs-varid'>sz</span><span class='hs-keyglyph'>]</span>
-<a name="line-418"></a>               
-<a name="line-419"></a>               <span class='hs-varid'>modifyResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>setResponseCode</span> <span class='hs-num'>416</span>
-<a name="line-420"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>setHeader</span> <span class='hs-str'>"Content-Range"</span> <span class='hs-varid'>crng</span>
-<a name="line-421"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>setContentLength</span> <span class='hs-num'>0</span>
-<a name="line-422"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>deleteHeader</span> <span class='hs-str'>"Content-Type"</span>
-<a name="line-423"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>deleteHeader</span> <span class='hs-str'>"Content-Encoding"</span>
-<a name="line-424"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>deleteHeader</span> <span class='hs-str'>"Transfer-Encoding"</span>
-<a name="line-425"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>setResponseBody</span> <span class='hs-layout'>(</span><span class='hs-varid'>enumBS</span> <span class='hs-str'>""</span><span class='hs-layout'>)</span>
-<a name="line-426"></a>               
-<a name="line-427"></a>               <span class='hs-varid'>return</span> <span class='hs-conid'>True</span>
-<a name="line-428"></a>
+<a name="line-408"></a>
+<a name="line-409"></a>    <span class='hs-varid'>send416</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-410"></a>        <span class='hs-varid'>dbg</span> <span class='hs-str'>"inside send416"</span>
+<a name="line-411"></a>        <span class='hs-comment'>-- if there's an "If-Range" header in the request, then we just send</span>
+<a name="line-412"></a>        <span class='hs-comment'>-- back 200</span>
+<a name="line-413"></a>        <span class='hs-keyword'>if</span> <span class='hs-varid'>getHeader</span> <span class='hs-str'>"If-Range"</span> <span class='hs-varid'>req</span> <span class='hs-varop'>/=</span> <span class='hs-conid'>Nothing</span>
+<a name="line-414"></a>           <span class='hs-keyword'>then</span> <span class='hs-varid'>return</span> <span class='hs-conid'>False</span>
+<a name="line-415"></a>           <span class='hs-keyword'>else</span> <span class='hs-keyword'>do</span>
+<a name="line-416"></a>               <span class='hs-keyword'>let</span> <span class='hs-varid'>crng</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-varop'>$</span>
+<a name="line-417"></a>                          <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-varid'>toChunks</span> <span class='hs-varop'>$</span>
+<a name="line-418"></a>                          <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-keyglyph'>[</span><span class='hs-str'>"bytes */"</span><span class='hs-layout'>,</span> <span class='hs-varid'>show</span> <span class='hs-varid'>sz</span><span class='hs-keyglyph'>]</span>
+<a name="line-419"></a>
+<a name="line-420"></a>               <span class='hs-varid'>modifyResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>setResponseCode</span> <span class='hs-num'>416</span>
+<a name="line-421"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>setHeader</span> <span class='hs-str'>"Content-Range"</span> <span class='hs-varid'>crng</span>
+<a name="line-422"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>setContentLength</span> <span class='hs-num'>0</span>
+<a name="line-423"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>deleteHeader</span> <span class='hs-str'>"Content-Type"</span>
+<a name="line-424"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>deleteHeader</span> <span class='hs-str'>"Content-Encoding"</span>
+<a name="line-425"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>deleteHeader</span> <span class='hs-str'>"Transfer-Encoding"</span>
+<a name="line-426"></a>                              <span class='hs-varop'>.</span> <span class='hs-varid'>setResponseBody</span> <span class='hs-layout'>(</span><span class='hs-varid'>enumBS</span> <span class='hs-str'>""</span><span class='hs-layout'>)</span>
+<a name="line-427"></a>
+<a name="line-428"></a>               <span class='hs-varid'>return</span> <span class='hs-conid'>True</span>
 <a name="line-429"></a>
 <a name="line-430"></a>
-<a name="line-431"></a><a name="dbg"></a><span class='hs-definition'>dbg</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>MonadIO</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>String</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>m</span> <span class='hs-conid'>()</span>
-<a name="line-432"></a><span class='hs-definition'>dbg</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"FileServe:"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>s</span>
+<a name="line-431"></a><a name="dbg"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-432"></a><span class='hs-definition'>dbg</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>MonadIO</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>String</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>m</span> <span class='hs-conid'>()</span>
+<a name="line-433"></a><span class='hs-definition'>dbg</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"FileServe:"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>s</span>
 </pre></body>
 </html>

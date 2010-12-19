@@ -83,12 +83,25 @@ operations are <TT
 ><A HREF="Snap-Extension-Heist.html#v%3Arender"
 >render</A
 ></TT
->.
+>. As
+a convenience, we also provide <TT
+><A HREF="Snap-Extension-Heist.html#v%3ArenderWithSplices"
+>renderWithSplices</A
+></TT
+> that combines <TT
+><A HREF="Snap-Extension-Heist.html#v%3AheistLocal"
+>heistLocal</A
+></TT
+>
+and <TT
+><A HREF="Snap-Extension-Heist.html#v%3Arender"
+>render</A
+></TT
+> into a single function call.
 </P
 ><P
->Snap.Extension.Heist.Heist contains the only implementation of this
-interface and can be used to turn your application's monad into a
-<TT
+>Snap.Extension.Heist.Impl contains the only implementation of this interface
+and can be used to turn your application's monad into a <TT
 ><A HREF="Snap-Extension-Heist.html#t%3AMonadHeist"
 >MonadHeist</A
 ></TT
@@ -100,13 +113,19 @@ interface and can be used to turn your application's monad into a
 >MonadHeist</A
 ></TT
 > is unusual among Snap extensions in that it's a multi-parameter
-typeclass. The last parameter is your application's monad, and the first is
-the monad you want the <TT
+typeclass. The last parameter is your application's monad, and the first is the
+monad you want the <TT
 ><A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 ></TT
-> to use. This is usually, but not
-always, also your application's monad.
+> to use. This is usually, but not always,
+also your application's monad.
+</P
+><P
+>This module should not be used directly. Instead, import
+<A HREF="Snap-Extension-Heist-Impl.html"
+>Snap.Extension.Heist.Impl</A
+> in your application.
 </P
 ></TD
 ></TR

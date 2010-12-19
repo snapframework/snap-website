@@ -2072,8 +2072,8 @@ for HTTP as well as the <TT
 ><A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 ></TT
-> value
-   will be returned from <TT
+>
+   value will be returned from <TT
 ><A HREF="Snap-Types.html#v%3ArunSnap"
 >runSnap</A
 ></TT
@@ -2720,13 +2720,13 @@ transformers (ReaderT, WriterT, <TT
 ><A HREF="Snap-Types.html#v%3ArqPathInfo"
 >rqPathInfo</A
 ></TT
-> is exactly
- equal to the given string. If the path matches, locally sets <TT
+> is
+ exactly equal to the given string. If the path matches, locally sets
+ <TT
 ><A HREF="Snap-Types.html#v%3ArqContextPath"
 >rqContextPath</A
 ></TT
->
- to the old value of <TT
+> to the old value of <TT
 ><A HREF="Snap-Types.html#v%3ArqPathInfo"
 >rqPathInfo</A
 ></TT
@@ -2734,8 +2734,8 @@ transformers (ReaderT, WriterT, <TT
 ><A HREF="Snap-Types.html#v%3ArqPathInfo"
 >rqPathInfo</A
 ></TT
->=&quot;&quot;, and runs the given
- handler.
+>=&quot;&quot;,
+ and runs the given handler.
 </TD
 ></TR
 ></TABLE
@@ -2995,8 +2995,8 @@ transformers (ReaderT, WriterT, <TT
 >/a/s</TT
 >&quot; for any <EM
 >s</EM
-> will go
- to <TT
+> will
+ go to <TT
 >h3</TT
 >, and &quot;<TT
 >/a</TT
@@ -3057,8 +3057,8 @@ transformers (ReaderT, WriterT, <TT
 ></TT
 > function is the same as <TT
 >route'</TT
->, except it doesn't change
- the request's context path. This is useful if you want to route to a
+>, except it doesn't
+ change the request's context path. This is useful if you want to route to a
  particular handler but you want that handler to receive the <TT
 ><A HREF="Snap-Types.html#v%3ArqPathInfo"
 >rqPathInfo</A
@@ -3671,14 +3671,14 @@ transformers (ReaderT, WriterT, <TT
 ><TR
 ><TD CLASS="ndoc" COLSPAN="2"
 ><P
->Normally Snap is careful to ensure that the request body is fully consumed
- after your web handler runs, but before the <TT
+>Normally Snap is careful to ensure that the request body is fully
+ consumed after your web handler runs, but before the <TT
 ><A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 ></TT
-> enumerator is
- streamed out the socket. If you want to transform the request body into some
- output in O(1) space, you should use this function.
+> enumerator
+ is streamed out the socket. If you want to transform the request body into
+ some output in O(1) space, you should use this function.
 </P
 ><P
 >Note that upon calling this function, response processing finishes early as
@@ -4542,8 +4542,9 @@ transformers (ReaderT, WriterT, <TT
 ><A HREF="Snap-Types.html#t%3AHasHeaders"
 >HasHeaders</A
 ></TT
-> datatype. If a header with
- the same name already exists, the new value is appended to the headers list.
+> datatype. If a header
+ with the same name already exists, the new value is appended to the headers
+ list.
 </TD
 ></TR
 ><TR
@@ -5210,8 +5211,8 @@ transformers (ReaderT, WriterT, <TT
 >&quot;/foo/&quot;</TT
 >, and you request <TT
 >&quot;/foo/bar&quot;</TT
->, the value
- of <TT
+>, the
+ value of <TT
 ><A HREF="Snap-Types.html#v%3ArqPathInfo"
 >rqPathInfo</A
 ></TT
@@ -5254,8 +5255,8 @@ transformers (ReaderT, WriterT, <TT
 ><A HREF="Snap-Types.html#v%3ArqContextPath"
 >rqContextPath</A
 ></TT
->, and
- <TT
+>,
+ and <TT
 ><A HREF="Snap-Types.html#v%3ArqPathInfo"
 >rqPathInfo</A
 ></TT
@@ -5455,8 +5456,8 @@ transformers (ReaderT, WriterT, <TT
 >Content-Type</TT
 > is <TT
 >application/x-www-form-urlencoded</TT
->). Parameter
- values can be modified within handlers using <A HREF="rqModifyParams.html"
+>).
+ Parameter values can be modified within handlers using <A HREF="rqModifyParams.html"
 >rqModifyParams</A
 >.
 </TD
@@ -5584,8 +5585,8 @@ transformers (ReaderT, WriterT, <TT
 ><TD CLASS="doc"
 >Modifies the parameters mapping (which is a <TT
 >Map ByteString ByteString</TT
->) in
- a <TT
+>)
+ in a <TT
 ><A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
 ></TT
@@ -5656,7 +5657,8 @@ transformers (ReaderT, WriterT, <TT
 ></TR
 ><TR
 ><TD CLASS="ndoc" COLSPAN="2"
->Writes a key-value pair to the parameters mapping within the given request.
+>Writes a key-value pair to the parameters mapping within the given
+ request.
 </TD
 ></TR
 ></TABLE
@@ -6099,8 +6101,8 @@ transformers (ReaderT, WriterT, <TT
 >A note here: if you want to set the <TT
 >Content-Length</TT
 > for the response,
- Snap forces you to do it with this function rather than by setting it in the
- headers; the <TT
+ Snap forces you to do it with this function rather than by setting it in
+ the headers; the <TT
 >Content-Length</TT
 > in the headers will be ignored.
 </P
@@ -6115,8 +6117,8 @@ transformers (ReaderT, WriterT, <TT
 >If you don't set a content length in your response, HTTP keep-alive will be
  disabled for HTTP/1.0 clients, forcing a <TT
 >Connection: close</TT
->. For HTTP/1.1
- clients, Snap will switch to the chunked transfer encoding if
+>. For
+ HTTP/1.1 clients, Snap will switch to the chunked transfer encoding if
  <TT
 >Content-Length</TT
 > is not specified.
@@ -6206,9 +6208,9 @@ transformers (ReaderT, WriterT, <TT
 ><A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 ></TT
-> monad. Note that the target URL is not validated in any way. Consider
- using 'redirect\'' instead, which allows you to choose the correct status
- code.
+> monad. Note that the target URL is not validated in any way.
+ Consider using 'redirect\'' instead, which allows you to choose the correct
+ status code.
 </TD
 ></TR
 ><TR
@@ -6508,8 +6510,8 @@ transformers (ReaderT, WriterT, <TT
 ><A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 ></TT
-> stored in
- the <TT
+> stored
+ in the <TT
 ><A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 ></TT
@@ -6626,8 +6628,8 @@ transformers (ReaderT, WriterT, <TT
 ><A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 ></TT
-> stored in the
- <TT
+> stored in
+ the <TT
 ><A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 ></TT
@@ -6685,8 +6687,8 @@ transformers (ReaderT, WriterT, <TT
 ><A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 ></TT
-> stored in
- the <TT
+> stored
+ in the <TT
 ><A HREF="Snap-Types.html#t%3ASnap"
 >Snap</A
 ></TT
@@ -6763,8 +6765,8 @@ transformers (ReaderT, WriterT, <TT
 ><A HREF="Snap-Types.html#v%3AmodifyResponseBody"
 >modifyResponseBody</A
 ></TT
->), the file will
- be read using <TT
+>), the file
+ will be read using <TT
 >mmap()</TT
 >.
 </P
@@ -6807,16 +6809,16 @@ transformers (ReaderT, WriterT, <TT
 ><TR
 ><TD CLASS="doc"
 ><P
->Sets the output to be the contents of the specified file, within the given
- (start,end) range.
+>Sets the output to be the contents of the specified file, within the
+ given (start,end) range.
 </P
 ><P
 >Calling <TT
 ><A HREF="Snap-Types.html#v%3AsendFilePartial"
 >sendFilePartial</A
 ></TT
-> will overwrite any output queued to be sent in the
- <TT
+> will overwrite any output queued to be sent in
+ the <TT
 ><A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 ></TT
@@ -6835,8 +6837,8 @@ transformers (ReaderT, WriterT, <TT
 ><A HREF="Snap-Types.html#v%3AmodifyResponseBody"
 >modifyResponseBody</A
 ></TT
->), the file will
- be read using <TT
+>), the file
+ will be read using <TT
 >mmap()</TT
 >.
 </P
