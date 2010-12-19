@@ -3,8 +3,14 @@
 If you haven't already done so, first go to the [download](/download) page to
 find out how to install Snap.  The installation generates an executable called
 `snap` that you can use to get started with a basic snap project. By default,
-`cabal` will install executables to "`$HOME/.cabal/bin`"; the following
-instructions assume that this directory is on your `$PATH`.
+`cabal` will install executables to "`$HOME/.cabal/bin`".  To add `cabal` to your `$PATH`, add 
+
+~~~~~~ {.shell}
+PATH=$PATH:$HOME/.cabal/bin
+~~~~~~
+
+to your `~/.bashrc` and run `source ~/.bashrc`. The following
+instructions assume that `$HOME/.cabal/bin` is on your `$PATH`. 
 
 Note also that before you start, you should have a development version of the
 `expat` library on your system; for instance, on Debian you would run:

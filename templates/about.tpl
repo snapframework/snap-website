@@ -115,6 +115,13 @@
             <a href="http://dumpsterdivingdublin.tumblr.com/">freeganism</a>
             and Lojban.
           </p>
+          <p>
+            <strong><a href="http://github.com/ozataman">Ozgun Ataman</a>
+            </strong> is a management consultant living in NYC. He holds a long
+            running interest in web technologies, data mining, computational
+            science and modeling. He uses Haskell at work to help companies
+            make sound business decisions.
+          </p>
         </div><!--end developers-->
         <div>
           <h2>Contacting us</h2>
