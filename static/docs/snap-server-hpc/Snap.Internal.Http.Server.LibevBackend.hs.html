@@ -616,19 +616,19 @@ span.spaces    { background: white }
 <span class="lineno">  605 </span><span class="spaces">  </span><span class="istickedoff">where</span>
 <span class="lineno">  606 </span><span class="spaces">    </span><span class="istickedoff">dbg s    = debug $ &quot;Libev.recvData(&quot; ++ show (_rawSocket conn) ++ &quot;): &quot;</span>
 <span class="lineno">  607 </span><span class="spaces">                       </span><span class="istickedoff">++ s</span>
-<span class="lineno">  608 </span><span class="spaces">    </span><span class="istickedoff">io       = if <span class="tickonlytrue">readLock</span></span>
+<span class="lineno">  608 </span><span class="spaces">    </span><span class="istickedoff">io       = if readLock</span>
 <span class="lineno">  609 </span><span class="spaces">                 </span><span class="istickedoff">then (_connReadIOObj conn)</span>
-<span class="lineno">  610 </span><span class="spaces">                 </span><span class="istickedoff">else <span class="nottickedoff">(_connWriteIOObj conn)</span></span>
+<span class="lineno">  610 </span><span class="spaces">                 </span><span class="istickedoff">else (_connWriteIOObj conn)</span>
 <span class="lineno">  611 </span><span class="spaces">    </span><span class="istickedoff">bk       = _backend conn</span>
-<span class="lineno">  612 </span><span class="spaces">    </span><span class="istickedoff">active   = if <span class="tickonlytrue">readLock</span></span>
+<span class="lineno">  612 </span><span class="spaces">    </span><span class="istickedoff">active   = if readLock</span>
 <span class="lineno">  613 </span><span class="spaces">                 </span><span class="istickedoff">then (_readActive conn)</span>
-<span class="lineno">  614 </span><span class="spaces">                 </span><span class="istickedoff">else <span class="nottickedoff">(_writeActive conn)</span></span>
+<span class="lineno">  614 </span><span class="spaces">                 </span><span class="istickedoff">else (_writeActive conn)</span>
 <span class="lineno">  615 </span><span class="spaces">    </span><span class="istickedoff">lp       = _evLoop bk</span>
 <span class="lineno">  616 </span><span class="spaces">    </span><span class="istickedoff">looplock = _loopLock bk</span>
 <span class="lineno">  617 </span><span class="spaces">    </span><span class="istickedoff">async    = _asyncObj bk</span>
-<span class="lineno">  618 </span><span class="spaces">    </span><span class="istickedoff">lock     = if <span class="tickonlytrue">readLock</span></span>
+<span class="lineno">  618 </span><span class="spaces">    </span><span class="istickedoff">lock     = if readLock</span>
 <span class="lineno">  619 </span><span class="spaces">                 </span><span class="istickedoff">then (_readAvailable conn)</span>
-<span class="lineno">  620 </span><span class="spaces">                 </span><span class="istickedoff">else <span class="nottickedoff">(_writeAvailable conn)</span></span></span>
+<span class="lineno">  620 </span><span class="spaces">                 </span><span class="istickedoff">else (_writeAvailable conn)</span></span>
 <span class="lineno">  621 </span>
 <span class="lineno">  622 </span>
 <span class="lineno">  623 </span>------------------------------------------------------------------------------
@@ -732,7 +732,7 @@ span.spaces    { background: white }
 <span class="lineno">  721 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  722 </span><span class="spaces">    </span><span class="istickedoff">sendData = Listen.send (_listenSocket conn)</span>
 <span class="lineno">  723 </span><span class="spaces">                           </span><span class="istickedoff">(tickleTimeout conn)</span>
-<span class="lineno">  724 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">(waitForLock False conn)</span></span>
+<span class="lineno">  724 </span><span class="spaces">                           </span><span class="istickedoff">(waitForLock False conn)</span>
 <span class="lineno">  725 </span><span class="spaces">                           </span><span class="istickedoff">session</span></span></span>
 <span class="lineno">  726 </span>
 <span class="lineno">  727 </span>#endif
