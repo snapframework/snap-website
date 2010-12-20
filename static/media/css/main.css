@@ -208,25 +208,26 @@ table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode, table.sourceCode
    { margin: 0; padding: 0; border: 0; vertical-align: baseline; border: none; }
 td.lineNumbers { text-align: right; background-color: #ccc; color: black; padding-right: 5px; padding-left: 5px; } 
 td.sourceCode { padding-left: 5px; }
+
+li pre.sourceCode { font-size: 80%; padding: 16px 16px 16px 32px; margin-top: 29px;}
 pre.sourceCode { }
 pre.sourceCode span.Normal { }
-pre.sourceCode span.Keyword { font-weight: bold; } 
-pre.sourceCode span.DataType { color: #ff0; }
-pre.sourceCode span.DecVal { color: #4f4; }
+pre.sourceCode span.Keyword, pre.sourceCode span.kw { font-weight: bold; } 
+pre.sourceCode span.DataType, pre.sourceCode span.dt { color: #ff0; }
+pre.sourceCode span.DecVal, pre.sourceCode span.de { color: #4f4; }
 pre.sourceCode span.BaseN { color: #4f4; }
-pre.sourceCode span.Float { color: #4f4; }
-pre.sourceCode span.Char { color: #4f4; }
-pre.sourceCode span.String { color: #4f4; }
-pre.sourceCode span.Comment { color: #999; font-style: italic; }
+pre.sourceCode span.Float, pre.sourceCode span.fl { color: #4f4; }
+pre.sourceCode span.Char, pre.sourceCode span.ch { color: #4f4; }
+pre.sourceCode span.String, pre.sourceCode span.st { color: #4f4; }
+pre.sourceCode span.Comment, pre.sourceCode span.co { color: #999; font-style: italic; }
 pre.sourceCode span.Others { }
 pre.sourceCode span.Alert { color: #4f4; font-weight: bold; }
-pre.sourceCode span.Function { color: #C4E7FF; }
+pre.sourceCode span.Function, pre.sourceCode span.fu { color: #C4E7FF; }
 pre.sourceCode span.RegionMarker { }
-pre.sourceCode span.Error { color: #f44; font-weight: bold; }
+pre.sourceCode span.Error, pre.sourceCode span.er { color: #f44; font-weight: bold; }
 
-pre.sourceCode span.ModuleName { color: #f44; } 
-pre.sourceCode span.Keyword { color: #C4E7FF; }
-pre.sourceCode span.Function { }
+pre.sourceCode span.ModuleName, pre.sourceCode span.mo { color: #f44; } 
+pre.sourceCode span.Keyword, pre.sourceCode span.kw { color: #C4E7FF; }
 pre.sourceCode span.FunctionDefinition { color: #C4E7FF; }
 pre.sourceCode span.Class { color: #C4E7FF; font-weight: bold; }
 pre.sourceCode span.Constructor { font-weight: bold; }

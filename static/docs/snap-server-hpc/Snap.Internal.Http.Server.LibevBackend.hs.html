@@ -234,7 +234,7 @@ span.spaces    { background: white }
 <span class="lineno">  223 </span><span class="spaces">      </span><span class="istickedoff">-- this (EWOULDBLOCK) shouldn't happen (we just got told it was ready!),</span>
 <span class="lineno">  224 </span><span class="spaces">      </span><span class="istickedoff">-- if it does (maybe the request got picked up by another thread) we'll</span>
 <span class="lineno">  225 </span><span class="spaces">      </span><span class="istickedoff">-- just bail out</span>
-<span class="lineno">  226 </span><span class="spaces">      </span><span class="istickedoff">-2 -&gt; return ()</span>
+<span class="lineno">  226 </span><span class="spaces">      </span><span class="istickedoff">-2 -&gt; <span class="nottickedoff">return ()</span></span>
 <span class="lineno">  227 </span><span class="spaces">      </span><span class="istickedoff">-1 -&gt; <span class="nottickedoff">debugErrno &quot;Libev.acceptCallback:c_accept()&quot;</span></span>
 <span class="lineno">  228 </span><span class="spaces">      </span><span class="istickedoff">fd -&gt; do</span>
 <span class="lineno">  229 </span><span class="spaces">          </span><span class="istickedoff">debug $ &quot;acceptCallback: accept()ed fd, writing to chan &quot; ++ show fd</span>
@@ -487,7 +487,7 @@ span.spaces    { background: white }
 <span class="lineno">  476 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  477 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  478 </span><span class="spaces">    </span><span class="istickedoff">readActive  &lt;- newIORef True</span>
-<span class="lineno">  479 </span><span class="spaces">    </span><span class="istickedoff">writeActive &lt;- newIORef <span class="nottickedoff">True</span></span>
+<span class="lineno">  479 </span><span class="spaces">    </span><span class="istickedoff">writeActive &lt;- newIORef True</span>
 <span class="lineno">  480 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  481 </span><span class="spaces">    </span><span class="istickedoff">evioRead &lt;- mkEvIo</span>
 <span class="lineno">  482 </span><span class="spaces">    </span><span class="istickedoff">ioReadCb &lt;- mkIoCallback $ ioReadCallback fd readActive ra</span>
@@ -637,7 +637,7 @@ span.spaces    { background: white }
 <span class="lineno">  626 </span><span class="decl"><span class="istickedoff">sendFile c s fp start sz = do</span>
 <span class="lineno">  627 </span><span class="spaces">    </span><span class="istickedoff">withMVar lock $ \_ -&gt; do</span>
 <span class="lineno">  628 </span><span class="spaces">      </span><span class="istickedoff">act &lt;- readIORef $ _writeActive c</span>
-<span class="lineno">  629 </span><span class="spaces">      </span><span class="istickedoff">when act $ <span class="nottickedoff">evIoStop loop io</span></span>
+<span class="lineno">  629 </span><span class="spaces">      </span><span class="istickedoff">when act $ evIoStop loop io</span>
 <span class="lineno">  630 </span><span class="spaces">      </span><span class="istickedoff">writeIORef (_writeActive c) <span class="nottickedoff">False</span></span>
 <span class="lineno">  631 </span><span class="spaces">      </span><span class="istickedoff">evAsyncSend loop asy</span>
 <span class="lineno">  632 </span><span class="spaces"></span><span class="istickedoff"></span>
@@ -673,7 +673,7 @@ span.spaces    { background: white }
 <span class="lineno">  662 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  663 </span><span class="spaces">    </span><span class="istickedoff">sfd  = Fd $ _rawSocket c</span>
 <span class="lineno">  664 </span><span class="spaces"></span><span class="istickedoff">#endif</span>
-<span class="lineno">  665 </span><span class="spaces">    </span><span class="istickedoff"><span class="nottickedoff">io   = _connWriteIOObj c</span></span>
+<span class="lineno">  665 </span><span class="spaces">    </span><span class="istickedoff">io   = _connWriteIOObj c</span>
 <span class="lineno">  666 </span><span class="spaces">    </span><span class="istickedoff">b    = _backend c</span>
 <span class="lineno">  667 </span><span class="spaces">    </span><span class="istickedoff">loop = _evLoop b</span>
 <span class="lineno">  668 </span><span class="spaces">    </span><span class="istickedoff">lock = _loopLock b</span>
