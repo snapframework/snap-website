@@ -28,7 +28,7 @@
 
             <div class="content" style="display: none;">
               <pre class="code code-example">$ cabal update
-$ cabal install snap-server
+$ cabal install snap
 $ mkdir foo; cd foo; snap init</pre>
               <img width="960" height="282"
                    src="/media/img/splash-img-3.png" title="Snap Framework" />
