@@ -11,7 +11,7 @@ of the next major version of the Snap Framework: Snap 0.3.
 
   - Snap now has SSL support! To enable SSL support, install the
     [gnutls](http://www.gnu.org/software/gnutls/) library and pass the
-    "`gnutls`" in when you build `snap-server`:
+    "`gnutls`" flag when you build `snap-server`:
 
 ~~~~~~~~~ {.shell}
 $ cabal install snap-server -fgnutls
