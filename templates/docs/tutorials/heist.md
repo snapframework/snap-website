@@ -1,11 +1,9 @@
 ## Heist Templates
 
-Heist is an XML templating engine based loosely on ideas from the Lift
+Heist is a templating engine based loosely on ideas from the Lift
 Web Framework.  It functions as a bridge between your web application
-and its views.  Heist templates are XML fragments that are not
-required to have a single root element.  Heist uses hexpat, a haskell
-interface to the Expat XML library, for fast XML parsing and
-manipulation.  
+and its views.  Heist templates are HTML (or XML) fragments that are
+not required to have a single root element.
 
 Heist is being developed by the Snap Team in conjunction with Snap,
 but Heist is a completely standalone library with no dependencies on
@@ -25,16 +23,15 @@ DRY principle (Don't Repeat Yourself) in the development of your
 application views.
 
 Heist has two primary template abstraction constructs: bind and apply.
-They are implemented as specialized XML tags.
+They are implemented as specialized tags.
 
 ### The `<bind ...>` tag
 
-The `bind` tag allows you to bind XML content to a single tag.
-Whenever the bound tag is used, the template engine will substitute
-the 'bind' tag's child nodes in its place.  This allows you to
-essentially create your own higher-level markup language that Heist
-transforms into whatever XML-based markup language is native to your
-application.
+The `bind` tag allows you to bind content to a single tag.  Whenever
+the bound tag is used, the template engine will substitute the 'bind'
+tag's child nodes in its place.  This allows you to essentially create
+your own higher-level markup language that Heist transforms into whatever
+markup language is native to your application.
 
 #### Attributes
 
@@ -65,9 +62,9 @@ make changes.
 #### Attribute Substitution
 
 Heist also provides attribute string substitution using the same mechanism as
-tag substitution.  The syntax is different for attributes since the angle
-bracket tag syntax is not allowed.  Within the value of an attribute, use the
-delimiter `$(...)` for variable substitution.
+tag substitution.  The syntax is different for attributes since angle bracket
+tag syntax is not generally found there.  Within the value of an attribute, use
+the delimiter `$(...)` for variable substitution.
 
 ~~~~~~~~~~~~~~~ {.html}
   <bind tag="foo">dynamic_name</bind>
@@ -81,13 +78,13 @@ tag.  The output looks like this:
   <p name="dynamic_name">A paragraph</p>
 ~~~~~~~~~~~~~~~
 
-If there are non-text nodes in the bind tag's children, they are converted
-to text nodes and their concatenation will be substituted.
+If there are non-text nodes in the bind tag's children, the markup is removed,
+and just the concatenation of the text inside will be substituted.
 
 ### The `<apply ...>` tag
 
 The `apply` tag loads one of your application templates and inserts it
-into the current template's XML tree.  If the target template does not
+into the current template's node tree.  If the target template does not
 have any special tags, then the contents of the `apply` tag are
 ignored.
 
@@ -174,7 +171,7 @@ template:
 
 ### The `<content>` tag
 
-Sometimes it is useful to pass information (usually in the form of XML
+Sometimes it is useful to pass information (usually in the form of HTML
 data) into the template when it is applied so the template can insert
 it in useful places.  This allows you to build page templates that are
 not just static blocks of code.
@@ -333,13 +330,35 @@ the `<ignore>` tag for this purpose.  All `<ignore>` tags and their
 contents will be eliminated in a template's output.
 
 
+### XML Syntax
+
+By default, Heist templates have an extension of `.tpl`.  When used this way,
+Heist understands and makes use of HTML 5 syntax.  It is, however, also
+possible to name templates `.xtpl`, in which case Heist will process them as
+plain XML without any HTML-specific rules.
+
+The differences between these two modes are small, but can sometimes matter.
+Using Heist with HTML templates (with a `.tpl` extension) means Heist will
+accept markup that is not valid XML; for example, it understands special tags
+like `<br>`, `<textarea>`, `<script>`, and `<p>` that are empty, have optional
+end tags, or contain content in other languages.  Heist also won't mangle your
+JavaScript and stylesheets with escape sequences, or do other things that may
+confuse web browsers, in its output.
+
+On the other hand, some applications may need to produce well-formed XML
+output and may not be producing HTML at all.  In this case, templates should
+use Heist's XML mode by using the `.xtpl` extension on templates.  XML mode
+disables Heist's understanding of the HTML language, and treats the template
+as plain XML.
+
+
 ## Heist Programming
 
-Heist lets you bind XML tags to Haskell code with a splice.  A
-`Splice` takes the input node from the template and outputs a list of
-XML nodes that get "spliced" back into the template.  This lets you
-call haskell functions from your templates, while ensuring that
-business logic does not creep into the presentation layer.
+Heist lets you bind tags to Haskell code with a splice.  A `Splice` takes
+the input node from the template and outputs a list of nodes that get
+"spliced" back into the template.  This lets you call haskell functions
+from your templates, while ensuring that business logic does not creep into
+the presentation layer.
 
 Splices that you write must have the type `mySplice :: Splice m` where
 m is the monad of your choice (usually Snap).  `Splice m` is a type
@@ -347,7 +366,7 @@ synonym for `TemplateMonad m Template`.  The `getParamNode` function
 is a TemplateMonad computation that lets you get the contents of the
 splice node.  You can then do any processing you want using
 functionality provided by
-[hexpat](http://hackage.haskell.org/package/hexpat).
+[xmlhtml](http://hackage.haskell.org/package/xmlhtml).
 
 #### Example
 
@@ -356,26 +375,25 @@ number.
 
 ~~~~~~~~~~~~~~~ {.haskell}
 import            Text.Templating.Heist
-import qualified  Data.ByteString.Char8 as B
-import qualified  Text.XML.Expat.Tree as X
+import qualified  Data.Text as T
+import qualified  Text.XmlHtml as X
 
 factSplice :: Splice Snap
 factSplice = do
     input <- getParamNode
-    let text = B.unpack $ textContent input
+    let text = T.unpack $ nodeText input
         n = read text :: Int
-    return [X.Text $ B.pack $ show $ product [1..n]]
+    return [X.TextNode $ T.pack $ show $ product [1..n]]
 ~~~~~~~~~~~~~~~
 
-You must tell Heist to bind the splice to an XML tag using the
-`bindSplice` function: `bindSplice "fact" factSplice templateState`.
-This returns a new `TemplateState` with factSplice bound to the
-`<fact>` tag.  Now, in any of your templates the XML snippet
-`<fact>5</fact>` will render as `120`.
+You must tell Heist to bind the splice to a tag using the `bindSplice`
+function: `bindSplice "fact" factSplice templateState`.  This returns a
+new `TemplateState` with factSplice bound to the `<fact>` tag.  Now, in
+any of your templates the snippet `<fact>5</fact>` will render as `120`.
 
 The contents of splices can also be used in attributes using the `$()` syntax
-mentioned above.  As above, the first element of the returned list must be a
-text node.  This works because a `<bind>` tag is really just a splice that
+mentioned above.  As above, any markup is ignored, and just the text is
+included.  This works because a `<bind>` tag is really just a splice that
 returns a constant node list.
 
 ### Hooks
@@ -424,12 +442,18 @@ other hooks that have already been added.
 Once you have built a `TemplateState`, you are ready to generate pages
 with Heist.  The two functions you will use most frequently are
 `renderTemplate` and `callTemplate`.  `renderTemplate` renders a
-template by name and returns it as a Maybe ByteString.  `callTemplate`
-is similar but is designed for templates that require parameters to be
-bound by the caller.  When you're calling the template from another
-template with the apply tag, this is easily accomplished by using
-`<bind>` within the body of the `<apply>`.  But when you are "calling"
-the template from code, binding splices for each of the template's
+template by name and returns it as a `Maybe (Builder, MIMEType)`.  The
+`Builder` is from the `blaze-builder` package, and can be converted into
+a `ByteString` using `blaze-builder`'s `toByteString` function.  The
+`MIMEType` is also a `ByteString`, and contains the MIME content type of
+the result (either `text/html` or `text/xml`, with the same character
+encoding as the template).
+
+`callTemplate` is similar but is designed for templates that require
+parameters to be bound by the caller.  When you're calling the template
+from another template with the apply tag, this is easily accomplished by
+using `<bind>` within the body of the `<apply>`.  But when you are
+"calling" the template from code, binding splices for each of the template's
 parameters is cumbersome.  `callTemplate` does this for you.
 
 [This website](http://github.com/snapframework/snap-website) is a good

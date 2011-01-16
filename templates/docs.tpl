@@ -27,7 +27,7 @@
               <a class="book" href="docs/tutorials/heist">
                 <img src="/media/css/book.png" />
               </a>
-              A tutorial for the Heist xhtml templating library.</dd>
+              A tutorial for the Heist HTML and XML templating library.</dd>
           </dl>
         </div>
       </div>

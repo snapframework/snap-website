@@ -72,8 +72,8 @@ $ cabal install snap</pre>
 
 
             <dt>heist</dt>
-            <dd>An xhtml-based templating engine, allowing Haskell functions to be
-              bound to XML tags. <br/><span class="linklist">
+            <dd>An HTML/XML-based templating engine, allowing Haskell functions to be
+              bound to tags. <br/><span class="linklist">
                 [ <a href="/docs/latest/heist/index.html" >api docs</a> |
                 <a href="http://hackage.haskell.org/package/heist"
                    >hackage</a> |

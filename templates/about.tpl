@@ -36,8 +36,8 @@
                 the <a href="http://software.schmorp.de/pkg/libev.html">libev</a>
                 event loop library.</li>
             <li>A sensible and clean monad for web programming.</li>
-            <li>an XML-based templating system for generating HTML that allows
-                you to bind Haskell functionality to XML tags without getting
+            <li>an HTML-based templating system for generating pages that allows
+                you to bind Haskell functionality to tags without getting
                 PHP-style tag soup all over your pants</li>
           </ul>
         </p>
