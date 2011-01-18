@@ -330,26 +330,61 @@ the `<ignore>` tag for this purpose.  All `<ignore>` tags and their
 contents will be eliminated in a template's output.
 
 
-### XML Syntax
+### HTML and XML Syntax
 
-By default, Heist templates have an extension of `.tpl`.  When used this way,
-Heist understands and makes use of HTML 5 syntax.  It is, however, also
-possible to name templates `.xtpl`, in which case Heist will process them as
-plain XML without any HTML-specific rules.
+By default, and throughout this tutorial, Heist templates have an extension
+of `.tpl`.  When used this way, Heist understands and makes use of HTML 5
+syntax.  This is the easiest way to use Heist; your experience writing HTML
+will generally serve you well.  It is, however, also possible to name
+templates with the extension `.xtpl`.  In this case, Heist will process the
+template as an XML document, without any HTML-specific rules.
 
-The differences between these two modes are small, but can sometimes matter.
-Using Heist with HTML templates (with a `.tpl` extension) means Heist will
-accept markup that is not valid XML; for example, it understands special tags
-like `<br>`, `<textarea>`, `<script>`, and `<p>` that are empty, have optional
-end tags, or contain content in other languages.  Heist also won't mangle your
-JavaScript and stylesheets with escape sequences, or do other things that may
-confuse web browsers, in its output.
+When templates are written in HTML, Heist is a little less forgiving than
+your web browser.  That's because you may write splices that depend on a
+certain structure of your document, so when the structure is unclear, Heist
+will tell you.  For example, consider this piece of HTML code.
 
-On the other hand, some applications may need to produce well-formed XML
-output and may not be producing HTML at all.  In this case, templates should
-use Heist's XML mode by using the `.xtpl` extension on templates.  XML mode
+~~~~~~~~~~~~~~~ {.html}
+<p>
+    These are a few of my favorite things.
+    <ul>
+        <li>Raindrops on roses and whiskers on kittens
+        <li>Bright copper kettles and warm woolen mittens
+        <li>Brown paper packages tied up with strings.
+    </ul>
+</p>
+~~~~~~~~~~~~~~~
+
+First, notice that none of the `<li>` tags have end tags.  This is okay.  HTML
+allows you to omit the end tags for list items.  However, there is an error
+here.  A paragraph in HTML is not allowed to contain a list.  Since you are
+also allowed to omit the end tag for `<p>`, Heist ends the paragraph when the
+list starts.  But then the explicit closing `</p>` tag is mismatched.  A web
+browser will often ignore this, so many people don't even realize it is
+incorrect; but since it affects the structure of your document and therefore
+might affect a splice, Heist does not ignore it, and reports an error.  You can
+fix the error by not using closing tags on `<p>` elements, or by moving the
+closing tag to before the list.
+
+HTML mode also includes special rules for tags that are always empty (like
+`<br>` and `<input>`), and tags whose contents contain other languages besides
+HTML (like `<script>` and `<style>`), among other things.  Heist is also
+careful to write its output in a way that web browsers will understand.  For
+example, it will always write `<textarea></textarea>` rather than using an
+empty tag style, and it will normally avoid escaping characters in attributes
+unless it's absolutely needed.  In general, you can not worry about these
+things and trust that Heist is writing your output in the most compatible way
+it can.
+
+On the other hand, some applications may want to provide templates in
+well-formed XML, and need to produce well-formed XML output.  Perhaps you're
+using XHTML, or not using HTML at all!  In this case, templates should use
+Heist's XML mode by using the `.xtpl` extension on templates.  XML mode
 disables Heist's understanding of the HTML language, and treats the template
-as plain XML.
+as plain XML.  There are a few restrictions: for example, processing
+instructions are dropped from the document, and you may not define your own
+entities and use them in the document; but the output will always be
+well-formed XML.
 
 
 ## Heist Programming
