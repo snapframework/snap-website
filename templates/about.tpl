@@ -125,6 +125,14 @@
             science and modeling. He uses Haskell at work to help companies
             make sound business decisions.
           </p>
+          <p>
+            <strong><a href="http://github.com/cdsmith">Chris Smith</a>
+            </strong> is a software developer and owner of the eLearning
+            company <a href="http://www.brindlewaye.com">Brindle Waye</a>.
+            He has been developing web applications for about ten years, and
+            free software for about fifteen.  He is also an amateur algebraist,
+            doing research in ring theory.
+          </p>
         </div><!--end developers-->
         <div>
           <h2>Contacting us</h2>
