@@ -96,7 +96,7 @@
             Sanders</a></strong> is a self-taught software developer living
             and working in the great American South.  He works as the resident
             Star Trek expert at <a href="http://thisismedium.com/">Medium</a>.
-            His interest include music, mathmatics and classic european cars.
+            His interest include music, mathematics and classic european cars.
           </p>
           <p>
             <strong>Carl Howells</strong> is a veteran of web app
