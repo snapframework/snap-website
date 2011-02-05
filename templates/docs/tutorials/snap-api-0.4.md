@@ -21,18 +21,19 @@ four components:
   - `heist` is the HTML templating library. You do not need it to use Snap,
   but you are certainly welcome to.
 
-  - `snap` is a library which contains some useful routines for building Snap
-  sites and a `snap` executable which generates a skeleton project to get you
-  started.
-  
-To install Snap, simply use `cabal`. It's up to you whether or not you want to
-use the Heist templating library; that said, as of version 0.3 heist is a
-dependency for the snap project starter (although, again, you're not forced to
-use it), and our example below does use it.
+  - `snap` is a library which contains the extension framework for organizing
+  pieces of Snap sites.  It also contains a `snap` executable which generates
+  a skeleton project to get you started.
+
+To install Snap, simply use `cabal`.
 
 ~~~~~~ {.shell}
 $ cabal install snap
 ~~~~~~
+
+It's up to you whether or not you want to use the Heist templating library.
+However, heist is a dependency for the snap project starter, and our example
+below does use it.
 
 ## Hello, Snap!
 
@@ -40,8 +41,9 @@ To generate a skeleton Snap web application, the `snap` package installs an
 executable `snap` into `$HOME/.cabal/bin`. We can use that to create our "Hello
 Snap" application.
 
-(If you do not want to use `heist`, you should execute `snap init -b` instead
-of `snap init` for a bare-bones skeleton that does not depend on `heist`.)
+(Normally, snap builds an example using Heist and a custom extension to get your
+project started.  Use `snap init -b` instead of `snap init` for a bare-bones
+skeleton.)
 
 ~~~~~~ {.shell}
 $ mkdir hello-snap
@@ -50,13 +52,22 @@ $ snap init
 ~~~~~~
 
 We now have a skeleton Snap project with a `.cabal` file and a source
-directory. Install it, run it, and see what your browser thinks of it.
-
+directory. Install and run it:
 ~~~~~~ {.shell}
 $ cabal install
 $ hello-snap -p 8000
+Initializing Heist/Impl... done.
+Initializing Timer/Timer... done.
+Listening on http://0.0.0.0:8000/
+~~~~~~
+
+Then see what your browser thinks of it.
+
+~~~~~~ {.shell}
 $ curl 'http://localhost:8000/'; echo
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHT
+<html>
+  <head>
+    <title>Snap web server</title>
 ...
 ~~~~~~
 
@@ -71,8 +82,8 @@ simple demo page we start with.
 
 ~~~~~ {.shell}
 $ cd src
-$ ls 
-Application.hs  Main.hs  Site.hs
+$ ls
+Site.hs  Main.hs  Application.hs
 ~~~~~
 
 `Main.hs` contains the `main` entry point to the application. The default
