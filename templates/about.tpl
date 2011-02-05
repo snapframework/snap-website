@@ -93,11 +93,10 @@
           </p>
           <p>
             <strong><a href="http://james-sanders.com">James
-            Sanders</a></strong> has been in the web development game for over
-            six years.  He works
-            at <a href="http://thisismedium.com/">Medium</a>.  You can e-mail
-            him
-            at <a href="mailto:jimmyjazz14@gmail.com">jimmyjazz14@gmail.com</a>.
+            Sanders</a></strong> is a self-taught software developer living
+            and working in the great American South.  He works as the resident
+            Star Trek expert at <a href="http://thisismedium.com/">Medium</a>.
+            His interest include music, mathematics and classic european cars.
           </p>
           <p>
             <strong>Carl Howells</strong> is a veteran of web app
