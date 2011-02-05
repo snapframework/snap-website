@@ -91,12 +91,6 @@ $ cabal configure -p
 $ cabal build
 ~~~~~~~
 
-### How do I install Heist on Windows?
-
-Heist needs a C XML library called expat.  See [this article by Jacob
-Stanley](http://jystic.com/2010/10/07/installing-heist-and-hexpat-on-windows/)
-for more information.
-
 ### Why doesn't Heist display templates?
 
 The most common problem we've seen is that you have ".tpl" included as part of

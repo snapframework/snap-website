@@ -23,19 +23,19 @@ Executable snap-website
     filepath,
     haskell98,
     heist,
-    hexpat,
     MonadCatchIO-transformers >= 0.2 && < 0.3,
     monads-fd,
     process,
-    snap-core >= 0.3 && <0.4,
-    snap-server >= 0.3 && <0.4,
+    snap-core >= 0.3 && <0.5,
+    snap-server >= 0.3 && <0.5,
     snap-static-pages >= 0.1 && <1.0,
     text,
     time,
     transformers,
     unix,
     utf8-string,
-    xhtml-combinators >= 0.2.2 && < 0.3
+    xhtml-combinators >= 0.2.2 && < 0.3,
+    xmlhtml ==0.1.*
 
   ghc-prof-options: -prof -auto-all
   

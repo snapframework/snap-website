@@ -12,24 +12,6 @@ PATH=$PATH:$HOME/.cabal/bin
 to your `~/.bashrc` and run `source ~/.bashrc`. The following
 instructions assume that `$HOME/.cabal/bin` is on your `$PATH`. 
 
-Note also that before you start, you should have a development version of the
-`expat` library on your system; for instance, on Debian you would run:
-
-~~~~~~ {.shell}
-$ sudo apt-get install libexpat-dev
-~~~~~~
-
-and on Ubuntu you'd run:
-
-~~~~~~ {.shell}
-$ sudo apt-get install libexpat1-dev
-~~~~~~
-
-Mac OSX should already have the required C libraries installed. On Windows, see
-[this article by Jacob
-Stanley](http://jystic.com/2010/10/07/installing-heist-and-hexpat-on-windows/)
-for more information.
-
 To set up a new Snap project, run the following commands:
 
 ~~~~~~ {.shell}

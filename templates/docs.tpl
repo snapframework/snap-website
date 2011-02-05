@@ -27,7 +27,7 @@
               <a class="book" href="docs/tutorials/heist">
                 <img src="/media/css/book.png" />
               </a>
-              A tutorial for the Heist xhtml templating library.</dd>
+              A tutorial for the Heist HTML templating library.</dd>
           </dl>
         </div>
       </div>
@@ -87,8 +87,8 @@
               <a class="book" href="docs/latest/heist/index.html">
                 <img src="/media/css/book.png" />
               </a>
-              An xhtml-based templating engine, allowing Haskell functions to
-              be bound to XML tags.</dd>
+              An HTML-based templating engine, allowing Haskell functions to
+              be bound to tags.</dd>
           </dl>
         </div>
       </div>

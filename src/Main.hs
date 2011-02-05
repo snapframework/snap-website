@@ -9,7 +9,9 @@ import             Data.ByteString.Char8 (ByteString)
 import qualified   Data.ByteString.Char8 as B
 import qualified   Data.Map as Map
 import             Data.Maybe
+import             Data.Text (Text)
 import qualified   Data.Text as T
+import qualified   Data.Text.Encoding as T
 import             Data.Time.Clock.POSIX
 import             Data.Typeable
 import             Control.Applicative
@@ -31,7 +33,7 @@ import             System.Posix.Env
 import             Text.Templating.Heist
 import             Text.Templating.Heist.Splices.Static
 import qualified   Text.XHtmlCombinators.Escape as XH
-import             Text.XML.Expat.Tree hiding (Node)
+import             Text.XmlHtml hiding (Node)
 
 
 
@@ -103,7 +105,7 @@ renderTmpl :: MVar (TemplateState Snap)
            -> Snap ()
 renderTmpl tsMVar n = do
     ts <- liftIO $ readMVar tsMVar
-    maybe pass writeBS =<< renderTemplate ts n
+    maybe pass (writeBuilder . fst) =<< renderTemplate ts n
 
 
 templateServe :: MVar (TemplateState Snap)
@@ -132,13 +134,13 @@ site ss =
               , ("admin/reload", runReaderT reload ss)
               , ("blog/", serveStaticPages (_blogState ss)) ] <|>
         templateServe (_currentTs ss) <|>
-        (setCache $ fileServe "static")
+        (setCache $ serveDirectory "static")
 
   where
     setCache act = do
-        pi <- liftM rqPathInfo getRequest
+        pinfo <- liftM rqPathInfo getRequest
         act
-        when ("media" `B.isPrefixOf` pi) $ do
+        when ("media" `B.isPrefixOf` pinfo) $ do
            expTime <- liftM (+604800) $ liftIO epochTime
            s       <- liftIO $ formatHttpTime expTime
            modifyResponse $
@@ -181,25 +183,25 @@ apidoc = do
     lift $ do
         ts <- liftIO $ readMVar $ _currentTs ss
         -- remainder of pathInfo is the doc to lookup
-        whichDoc <- liftM rqPathInfo getRequest
+        whichDoc <- liftM (T.decodeUtf8 . rqPathInfo) getRequest
 
         title <- maybe pass return $ Map.lookup whichDoc titles
-        let href = B.concat ["/docs/latest/", whichDoc, "/index.html"]
+        let href = T.concat ["/docs/latest/", whichDoc, "/index.html"]
 
         let ts' = bindSplice "docframe" (docframe href) $
-                  bindSplice "subtitle" (return [mkText title]) ts
+                  bindSplice "subtitle" (return [TextNode title]) ts
 
         modifyResponse $ setContentType "text/html"
-        maybe pass writeBS =<< renderTemplate ts' "docs/api"
+        maybe pass (writeBuilder . fst) =<< renderTemplate ts' "docs/api"
 
   where
     titles = Map.fromList [ ("snap-core", ": snap-core APIs")
                           , ("snap-server", ": snap-server APIs")
                           , ("heist", ": heist APIs") ]
 
-    docframe :: ByteString -> Splice Snap
-    docframe src = return [ mkElement "frame" [ ("id" , "docframe")
-                                              , ("src", src       ) ] [] ]
+    docframe :: Text -> Splice Snap
+    docframe src = return [ Element "frame" [ ("id" , "docframe")
+                                            , ("src", src       ) ] [] ]
 
 
 
@@ -209,7 +211,7 @@ apidoc = do
 -- MISC UTILITIES
 ------------------------------------------------------------------------------
 serverVersion :: Splice Snap
-serverVersion = return $ [Text snapServerVersion]
+serverVersion = return [TextNode (T.decodeUtf8 snapServerVersion)]
 
 
 setLocaleToUTF8 :: IO ()
