@@ -5,7 +5,7 @@
  ------------------------------------------------------------------------*/
 body,html{
     font-size: 18px;
-    font-family: "Georgia", "Arial", "Helvetica", sans-serif;
+    font-family: "Georgia", serif;
     line-height: 29px;
     color:#0c1a30;
     padding:0;
@@ -198,7 +198,7 @@ td.title {
 td.summary {
     color: #222;
     font-size: 0.8em;
-    font-family: "Georgia", "Arial", "Helvetica", sans-serif;
+    font-family: "Georgia", serif;
     width:368px;
     padding-left: 12px;
     margin-bottom: 1em;
