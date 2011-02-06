@@ -89,6 +89,13 @@
               </a>
               An HTML-based templating engine, allowing Haskell functions to
               be bound to tags.</dd>
+            <dt><a href="docs/latest/xmlhtml/index.html">xmlhtml</a></dt>
+            <dd>
+              <a class="book" href="docs/latest/xmlhtml/index.html">
+                <img src="/media/css/book.png" />
+              </a>
+              A hybrid XML/HTML parsing and rendering library written
+              specifically for Heist.</dd>
           </dl>
         </div>
       </div>

@@ -71,6 +71,17 @@ $ cabal install snap</pre>
                    >test coverage report</a> ]</span></dd>
 
 
+            <dt>snap</dt>
+            <dd>Umbrella project pulling together Snap's component libraries
+                into a coherent framework.  <br/><span class="linklist">
+                [ <a href="/docs/latest/snap/index.html"
+                     >api docs</a> |
+                <a href="http://hackage.haskell.org/package/snap"
+                   >hackage</a> |
+                <a href="http://github.com/snapframework/snap"
+                   >github</a> ]</span></dd>
+
+
             <dt>heist</dt>
             <dd>An HTML-based templating engine, allowing Haskell functions to be
               bound to tags. <br/><span class="linklist">
@@ -83,12 +94,17 @@ $ cabal install snap</pre>
                    >test coverage report</a> ]</span></dd>
 
 
-            <dt>snap</dt>
-            <dd>Snap project starter plus hint-based web handler engine
-                (upcoming for 0.3, works with the 0.3 branch of
-                <a href="http://github.com/snapframework/snap-core">snap-core</a>)<br/><span class="linklist">
-                [ <a href="http://github.com/snapframework/snap" >github</a>
-                ]</span></dd>
+            <dt>xmlhtml</dt>
+            <dd>A hybrid XML/HTML5 parsing and rendering library written
+              specifically for Heist. <br/><span class="linklist">
+                [ <a href="/docs/latest/xmlhtml/index.html" >api docs</a> |
+                <a href="http://hackage.haskell.org/package/xmlhtml"
+                   >hackage</a> |
+                <a href="http://github.com/snapframework/xmlhtml"
+                   >github</a> |
+                <a href="/docs/xmlhtml-hpc/hpc_index.html"
+                   >test coverage report</a> ]</span></dd>
+
 
             <dt>snap-website </dt>
             <dd>The source code for this website is a good example of
