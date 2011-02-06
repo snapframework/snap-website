@@ -1,0 +1,423 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>------------------------------------------------------------------------------
+<span class="lineno">    2 </span>-- | A zipper for navigating and modifying XML trees.  This is nearly the
+<span class="lineno">    3 </span>-- same exposed interface as the @xml@ package in @Text.XML.Light.Cursor@,
+<span class="lineno">    4 </span>-- with modifications as needed to adapt to different types.
+<span class="lineno">    5 </span>module Text.XmlHtml.Cursor (
+<span class="lineno">    6 </span>    -- * Cursor type
+<span class="lineno">    7 </span>    Cursor,
+<span class="lineno">    8 </span>
+<span class="lineno">    9 </span>    -- * Conversion to and from cursors
+<span class="lineno">   10 </span>    fromNode,
+<span class="lineno">   11 </span>    fromNodes,
+<span class="lineno">   12 </span>    topNode,
+<span class="lineno">   13 </span>    topNodes,
+<span class="lineno">   14 </span>    current,
+<span class="lineno">   15 </span>    siblings,
+<span class="lineno">   16 </span>
+<span class="lineno">   17 </span>    -- * Cursor navigation
+<span class="lineno">   18 </span>    parent,
+<span class="lineno">   19 </span>    root,
+<span class="lineno">   20 </span>    getChild,
+<span class="lineno">   21 </span>    firstChild,
+<span class="lineno">   22 </span>    lastChild,
+<span class="lineno">   23 </span>    left,
+<span class="lineno">   24 </span>    right,
+<span class="lineno">   25 </span>    nextDF,
+<span class="lineno">   26 </span>
+<span class="lineno">   27 </span>    -- * Search
+<span class="lineno">   28 </span>    findChild,
+<span class="lineno">   29 </span>    findLeft,
+<span class="lineno">   30 </span>    findRight,
+<span class="lineno">   31 </span>    findRec,
+<span class="lineno">   32 </span>
+<span class="lineno">   33 </span>    -- * Node classification
+<span class="lineno">   34 </span>    isRoot,
+<span class="lineno">   35 </span>    isFirst,
+<span class="lineno">   36 </span>    isLast,
+<span class="lineno">   37 </span>    isLeaf,
+<span class="lineno">   38 </span>    isChild,
+<span class="lineno">   39 </span>    hasChildren,
+<span class="lineno">   40 </span>    getNodeIndex,
+<span class="lineno">   41 </span>
+<span class="lineno">   42 </span>    -- * Updates
+<span class="lineno">   43 </span>    setNode,
+<span class="lineno">   44 </span>    modifyNode,
+<span class="lineno">   45 </span>    modifyNodeM,
+<span class="lineno">   46 </span>
+<span class="lineno">   47 </span>    -- * Insertions
+<span class="lineno">   48 </span>    insertLeft,
+<span class="lineno">   49 </span>    insertRight,
+<span class="lineno">   50 </span>    insertManyLeft,
+<span class="lineno">   51 </span>    insertManyRight,
+<span class="lineno">   52 </span>    insertFirstChild,
+<span class="lineno">   53 </span>    insertLastChild,
+<span class="lineno">   54 </span>    insertManyFirstChild,
+<span class="lineno">   55 </span>    insertManyLastChild,
+<span class="lineno">   56 </span>    insertGoLeft,
+<span class="lineno">   57 </span>    insertGoRight,
+<span class="lineno">   58 </span>    
+<span class="lineno">   59 </span>    -- * Deletions
+<span class="lineno">   60 </span>    removeLeft,
+<span class="lineno">   61 </span>    removeRight,
+<span class="lineno">   62 </span>    removeGoLeft,
+<span class="lineno">   63 </span>    removeGoRight,
+<span class="lineno">   64 </span>    removeGoUp
+<span class="lineno">   65 </span>    ) where
+<span class="lineno">   66 </span>
+<span class="lineno">   67 </span>import           Control.Monad
+<span class="lineno">   68 </span>import           Data.Maybe
+<span class="lineno">   69 </span>import           Data.Text (Text)
+<span class="lineno">   70 </span>import           Text.XmlHtml
+<span class="lineno">   71 </span>
+<span class="lineno">   72 </span>------------------------------------------------------------------------------
+<span class="lineno">   73 </span>-- | Just the tag of an element
+<span class="lineno">   74 </span>type Tag = (Text, [(Text, Text)])
+<span class="lineno">   75 </span>
+<span class="lineno">   76 </span>
+<span class="lineno">   77 </span>------------------------------------------------------------------------------
+<span class="lineno">   78 </span>-- | Reconstructs an element from a tag and a list of its children.
+<span class="lineno">   79 </span>fromTag :: Tag -&gt; [Node] -&gt; Node
+<span class="lineno">   80 </span><span class="decl"><span class="istickedoff">fromTag (t,a) c = Element t a c</span></span>
+<span class="lineno">   81 </span>
+<span class="lineno">   82 </span>
+<span class="lineno">   83 </span>------------------------------------------------------------------------------
+<span class="lineno">   84 </span>-- | A zipper for XML document forests.
+<span class="lineno">   85 </span>data <span class="istickedoff">Cursor</span> = Cursor {
+<span class="lineno">   86 </span>    current :: !Node,   -- ^ Retrieves the current node of a 'Cursor'
+<span class="lineno">   87 </span>    lefts   :: ![Node],                 -- right to left
+<span class="lineno">   88 </span>    rights  :: ![Node],                 -- left to right
+<span class="lineno">   89 </span>    parents :: ![([Node], Tag, [Node])] -- parent's tag and siblings
+<span class="lineno">   90 </span>    }
+<span class="lineno">   91 </span>    deriving (<span class="decl"><span class="istickedoff"><span class="decl"><span class="istickedoff">Eq</span></span></span></span>)
+<span class="lineno">   92 </span>
+<span class="lineno">   93 </span>
+<span class="lineno">   94 </span>------------------------------------------------------------------------------
+<span class="lineno">   95 </span>-- | Builds a 'Cursor' for navigating a tree. That is, a forest with a single
+<span class="lineno">   96 </span>-- root 'Node'.
+<span class="lineno">   97 </span>fromNode :: Node -&gt; Cursor
+<span class="lineno">   98 </span><span class="decl"><span class="istickedoff">fromNode n = Cursor n [] [] []</span></span>
+<span class="lineno">   99 </span>
+<span class="lineno">  100 </span>
+<span class="lineno">  101 </span>------------------------------------------------------------------------------
+<span class="lineno">  102 </span>-- | Builds a 'Cursor' for navigating a forest with the given list of roots.
+<span class="lineno">  103 </span>-- The cursor is initially positioned at the left-most node.  Gives 'Nothing'
+<span class="lineno">  104 </span>-- if the list is empty.
+<span class="lineno">  105 </span>fromNodes :: [Node] -&gt; Maybe Cursor
+<span class="lineno">  106 </span><span class="decl"><span class="istickedoff">fromNodes (n:ns) = Just (Cursor n [] ns [])</span>
+<span class="lineno">  107 </span><span class="spaces"></span><span class="istickedoff">fromNodes []     = Nothing</span></span>
+<span class="lineno">  108 </span>
+<span class="lineno">  109 </span>
+<span class="lineno">  110 </span>------------------------------------------------------------------------------
+<span class="lineno">  111 </span>-- | Retrieves the root node containing the current cursor position.
+<span class="lineno">  112 </span>topNode :: Cursor -&gt; Node
+<span class="lineno">  113 </span><span class="decl"><span class="istickedoff">topNode cur  = current (root cur)</span></span>
+<span class="lineno">  114 </span>
+<span class="lineno">  115 </span>
+<span class="lineno">  116 </span>------------------------------------------------------------------------------
+<span class="lineno">  117 </span>-- | Retrieves the entire forest of 'Node's corresponding to a 'Cursor'.
+<span class="lineno">  118 </span>topNodes :: Cursor -&gt; [Node]
+<span class="lineno">  119 </span><span class="decl"><span class="istickedoff">topNodes cur = siblings (root cur)</span></span>
+<span class="lineno">  120 </span>
+<span class="lineno">  121 </span>
+<span class="lineno">  122 </span>------------------------------------------------------------------------------
+<span class="lineno">  123 </span>-- | Retrieves a list of the 'Node's at the same level as the current position
+<span class="lineno">  124 </span>-- of a cursor, including the current node.
+<span class="lineno">  125 </span>siblings :: Cursor -&gt; [Node]
+<span class="lineno">  126 </span><span class="decl"><span class="istickedoff">siblings (Cursor cur ls rs _) = foldl (flip (:)) (cur:rs) ls</span></span>
+<span class="lineno">  127 </span>
+<span class="lineno">  128 </span>
+<span class="lineno">  129 </span>------------------------------------------------------------------------------
+<span class="lineno">  130 </span>-- | Navigates a 'Cursor' to its parent in the document.
+<span class="lineno">  131 </span>parent :: Cursor -&gt; Maybe Cursor
+<span class="lineno">  132 </span><span class="decl"><span class="istickedoff">parent c@(Cursor _ _ _ ((ls,t,rs):ps))</span>
+<span class="lineno">  133 </span><span class="spaces">            </span><span class="istickedoff">= Just (Cursor (fromTag t (siblings c)) ls rs ps)</span>
+<span class="lineno">  134 </span><span class="spaces"></span><span class="istickedoff">parent _    = Nothing</span></span>
+<span class="lineno">  135 </span>
+<span class="lineno">  136 </span>
+<span class="lineno">  137 </span>------------------------------------------------------------------------------
+<span class="lineno">  138 </span>-- | Navigates a 'Cursor' up through parents to reach the root level.
+<span class="lineno">  139 </span>root :: Cursor -&gt; Cursor
+<span class="lineno">  140 </span><span class="decl"><span class="istickedoff">root = until isRoot (fromJust . parent)</span></span>
+<span class="lineno">  141 </span>
+<span class="lineno">  142 </span>
+<span class="lineno">  143 </span>------------------------------------------------------------------------------
+<span class="lineno">  144 </span>-- | Navigates a 'Cursor' down to the indicated child index.
+<span class="lineno">  145 </span>getChild :: Int -&gt; Cursor -&gt; Maybe Cursor
+<span class="lineno">  146 </span><span class="decl"><span class="istickedoff">getChild i (Cursor n ls rs ps) =</span>
+<span class="lineno">  147 </span><span class="spaces">    </span><span class="istickedoff">case n of</span>
+<span class="lineno">  148 </span><span class="spaces">      </span><span class="istickedoff">Element t a cs -&gt; let (lls, rest) = splitAt i cs in</span>
+<span class="lineno">  149 </span><span class="spaces">          </span><span class="istickedoff">if i &gt;= length cs</span>
+<span class="lineno">  150 </span><span class="spaces">            </span><span class="istickedoff">then Nothing</span>
+<span class="lineno">  151 </span><span class="spaces">            </span><span class="istickedoff">else Just $ Cursor (head rest)</span>
+<span class="lineno">  152 </span><span class="spaces">                               </span><span class="istickedoff">(reverse lls)</span>
+<span class="lineno">  153 </span><span class="spaces">                               </span><span class="istickedoff">(tail rest)</span>
+<span class="lineno">  154 </span><span class="spaces">                               </span><span class="istickedoff">((ls, (t,a), rs):ps)</span>
+<span class="lineno">  155 </span><span class="spaces">      </span><span class="istickedoff">_              -&gt; Nothing</span></span>
+<span class="lineno">  156 </span>
+<span class="lineno">  157 </span>
+<span class="lineno">  158 </span>------------------------------------------------------------------------------
+<span class="lineno">  159 </span>-- | Navigates a 'Cursor' down to its first child.
+<span class="lineno">  160 </span>firstChild :: Cursor -&gt; Maybe Cursor
+<span class="lineno">  161 </span><span class="decl"><span class="istickedoff">firstChild = getChild 0</span></span>
+<span class="lineno">  162 </span>
+<span class="lineno">  163 </span>
+<span class="lineno">  164 </span>------------------------------------------------------------------------------
+<span class="lineno">  165 </span>-- | Navigates a 'Cursor' down to its last child.
+<span class="lineno">  166 </span>lastChild :: Cursor -&gt; Maybe Cursor
+<span class="lineno">  167 </span><span class="decl"><span class="istickedoff">lastChild (Cursor (Element t a c) ls rs ps) | not (null c)</span>
+<span class="lineno">  168 </span><span class="spaces">    </span><span class="istickedoff">= let rc = reverse c</span>
+<span class="lineno">  169 </span><span class="spaces">      </span><span class="istickedoff">in  Just $ Cursor (head rc) (tail rc) [] ((ls, (t,a), rs):ps)</span>
+<span class="lineno">  170 </span><span class="spaces"></span><span class="istickedoff">lastChild _</span>
+<span class="lineno">  171 </span><span class="spaces">    </span><span class="istickedoff">= Nothing</span></span>
+<span class="lineno">  172 </span>
+<span class="lineno">  173 </span>
+<span class="lineno">  174 </span>------------------------------------------------------------------------------
+<span class="lineno">  175 </span>-- | Moves a 'Cursor' to its left sibling.
+<span class="lineno">  176 </span>left :: Cursor -&gt; Maybe Cursor
+<span class="lineno">  177 </span><span class="decl"><span class="istickedoff">left (Cursor c (l:ls) rs ps) = Just (Cursor l ls (c:rs) ps)</span>
+<span class="lineno">  178 </span><span class="spaces"></span><span class="istickedoff">left _                       = Nothing</span></span>
+<span class="lineno">  179 </span>
+<span class="lineno">  180 </span>
+<span class="lineno">  181 </span>------------------------------------------------------------------------------
+<span class="lineno">  182 </span>-- | Moves a 'Cursor' to its right sibling.
+<span class="lineno">  183 </span>right :: Cursor -&gt; Maybe Cursor
+<span class="lineno">  184 </span><span class="decl"><span class="istickedoff">right (Cursor c ls (r:rs) ps) = Just (Cursor r (c:ls) rs ps)</span>
+<span class="lineno">  185 </span><span class="spaces"></span><span class="istickedoff">right _                       = Nothing</span></span>
+<span class="lineno">  186 </span>
+<span class="lineno">  187 </span>
+<span class="lineno">  188 </span>------------------------------------------------------------------------------
+<span class="lineno">  189 </span>-- | Moves a 'Cursor' to the next node encountered in a depth-first search.
+<span class="lineno">  190 </span>-- If it has children, this is equivalent to 'firstChild'.  Otherwise, if it
+<span class="lineno">  191 </span>-- has a right sibling, then this is equivalent to 'right'.  Otherwise, the
+<span class="lineno">  192 </span>-- cursor moves to the first right sibling of one of its parents.
+<span class="lineno">  193 </span>nextDF :: Cursor -&gt; Maybe Cursor
+<span class="lineno">  194 </span><span class="decl"><span class="istickedoff">nextDF c = firstChild c `mplus` up c</span>
+<span class="lineno">  195 </span><span class="spaces">  </span><span class="istickedoff">where up x = right x `mplus` (up =&lt;&lt; parent x)</span></span>
+<span class="lineno">  196 </span>
+<span class="lineno">  197 </span>
+<span class="lineno">  198 </span>------------------------------------------------------------------------------
+<span class="lineno">  199 </span>-- | Repeats the given move until a 'Cursor' is obtained that matches the
+<span class="lineno">  200 </span>-- predicate.
+<span class="lineno">  201 </span>search :: (Cursor -&gt; Bool)         -- ^ predicate
+<span class="lineno">  202 </span>       -&gt; (Cursor -&gt; Maybe Cursor) -- ^ move
+<span class="lineno">  203 </span>       -&gt; Cursor                   -- ^ starting point
+<span class="lineno">  204 </span>       -&gt; Maybe Cursor
+<span class="lineno">  205 </span><span class="decl"><span class="istickedoff">search p move c | p c       = return c</span>
+<span class="lineno">  206 </span><span class="spaces">                </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = search p move =&lt;&lt; move c</span></span>
+<span class="lineno">  207 </span>
+<span class="lineno">  208 </span>
+<span class="lineno">  209 </span>------------------------------------------------------------------------------
+<span class="lineno">  210 </span>-- | Navigates a 'Cursor' to the first child that matches the predicate.
+<span class="lineno">  211 </span>findChild :: (Cursor -&gt; Bool) -&gt; Cursor -&gt; Maybe Cursor
+<span class="lineno">  212 </span><span class="decl"><span class="istickedoff">findChild p cur = search p right =&lt;&lt; firstChild cur</span></span>
+<span class="lineno">  213 </span>
+<span class="lineno">  214 </span>
+<span class="lineno">  215 </span>------------------------------------------------------------------------------
+<span class="lineno">  216 </span>-- | Navigates a 'Cursor' to the nearest left sibling that matches a
+<span class="lineno">  217 </span>-- predicate.
+<span class="lineno">  218 </span>findLeft :: (Cursor -&gt; Bool) -&gt; Cursor -&gt; Maybe Cursor
+<span class="lineno">  219 </span><span class="decl"><span class="istickedoff">findLeft p cur = search p left =&lt;&lt; left cur</span></span>
+<span class="lineno">  220 </span>
+<span class="lineno">  221 </span>
+<span class="lineno">  222 </span>------------------------------------------------------------------------------
+<span class="lineno">  223 </span>-- | Navigates a 'Cursor' to the nearest right sibling that matches a predicate.
+<span class="lineno">  224 </span>findRight :: (Cursor -&gt; Bool) -&gt; Cursor -&gt; Maybe Cursor
+<span class="lineno">  225 </span><span class="decl"><span class="istickedoff">findRight p cur = search p right =&lt;&lt; right cur</span></span>
+<span class="lineno">  226 </span>
+<span class="lineno">  227 </span>
+<span class="lineno">  228 </span>------------------------------------------------------------------------------
+<span class="lineno">  229 </span>-- | Does a depth-first search for a descendant matching the predicate.  This
+<span class="lineno">  230 </span>-- can match the current cursor position.
+<span class="lineno">  231 </span>findRec :: (Cursor -&gt; Bool) -&gt; Cursor -&gt; Maybe Cursor
+<span class="lineno">  232 </span><span class="decl"><span class="istickedoff">findRec p = search p nextDF</span></span>
+<span class="lineno">  233 </span>
+<span class="lineno">  234 </span>
+<span class="lineno">  235 </span>------------------------------------------------------------------------------
+<span class="lineno">  236 </span>-- | Determines if the 'Cursor' is at a root node.
+<span class="lineno">  237 </span>isRoot :: Cursor -&gt; Bool
+<span class="lineno">  238 </span><span class="decl"><span class="istickedoff">isRoot cur = null (parents cur)</span></span>
+<span class="lineno">  239 </span>
+<span class="lineno">  240 </span>
+<span class="lineno">  241 </span>------------------------------------------------------------------------------
+<span class="lineno">  242 </span>-- | Determines if the 'Cursor' is at a first child.
+<span class="lineno">  243 </span>isFirst :: Cursor -&gt; Bool
+<span class="lineno">  244 </span><span class="decl"><span class="istickedoff">isFirst cur = null (lefts cur)</span></span>
+<span class="lineno">  245 </span>
+<span class="lineno">  246 </span>
+<span class="lineno">  247 </span>------------------------------------------------------------------------------
+<span class="lineno">  248 </span>-- | Determines if the 'Cursor' is at a last child.
+<span class="lineno">  249 </span>isLast :: Cursor -&gt; Bool
+<span class="lineno">  250 </span><span class="decl"><span class="istickedoff">isLast cur = null (rights cur)</span></span>
+<span class="lineno">  251 </span>
+<span class="lineno">  252 </span>
+<span class="lineno">  253 </span>------------------------------------------------------------------------------
+<span class="lineno">  254 </span>-- | Determines if the 'Cursor' is at a leaf node.
+<span class="lineno">  255 </span>isLeaf :: Cursor -&gt; Bool
+<span class="lineno">  256 </span><span class="decl"><span class="istickedoff">isLeaf (Cursor (Element _ _ c) _ _ _) = null c</span>
+<span class="lineno">  257 </span><span class="spaces"></span><span class="istickedoff">isLeaf _                              = True</span></span>
+<span class="lineno">  258 </span>
+<span class="lineno">  259 </span>
+<span class="lineno">  260 </span>------------------------------------------------------------------------------
+<span class="lineno">  261 </span>-- | Determines if the 'Cursor' is at a child node (i.e., if it has a parent).
+<span class="lineno">  262 </span>isChild :: Cursor -&gt; Bool
+<span class="lineno">  263 </span><span class="decl"><span class="istickedoff">isChild = not . isRoot</span></span>
+<span class="lineno">  264 </span>
+<span class="lineno">  265 </span>
+<span class="lineno">  266 </span>------------------------------------------------------------------------------
+<span class="lineno">  267 </span>-- | Determines if the 'Cursor' is at a non-leaf node (i.e., if it has
+<span class="lineno">  268 </span>-- children).
+<span class="lineno">  269 </span>hasChildren :: Cursor -&gt; Bool
+<span class="lineno">  270 </span><span class="decl"><span class="istickedoff">hasChildren = not . isLeaf</span></span>
+<span class="lineno">  271 </span>
+<span class="lineno">  272 </span>
+<span class="lineno">  273 </span>------------------------------------------------------------------------------
+<span class="lineno">  274 </span>-- | Gets the index of the 'Cursor' among its siblings.
+<span class="lineno">  275 </span>getNodeIndex :: Cursor -&gt; Int
+<span class="lineno">  276 </span><span class="decl"><span class="istickedoff">getNodeIndex cur = length (lefts cur)</span></span>
+<span class="lineno">  277 </span>
+<span class="lineno">  278 </span>
+<span class="lineno">  279 </span>------------------------------------------------------------------------------
+<span class="lineno">  280 </span>-- | Replaces the current node.
+<span class="lineno">  281 </span>setNode :: Node -&gt; Cursor -&gt; Cursor
+<span class="lineno">  282 </span><span class="decl"><span class="istickedoff">setNode n cur = cur { current = n }</span></span>
+<span class="lineno">  283 </span>
+<span class="lineno">  284 </span>
+<span class="lineno">  285 </span>------------------------------------------------------------------------------
+<span class="lineno">  286 </span>-- | Modifies the current node by applying a function.
+<span class="lineno">  287 </span>modifyNode :: (Node -&gt; Node) -&gt; Cursor -&gt; Cursor
+<span class="lineno">  288 </span><span class="decl"><span class="istickedoff">modifyNode f cur = setNode (f (current cur)) cur</span></span>
+<span class="lineno">  289 </span>
+<span class="lineno">  290 </span>
+<span class="lineno">  291 </span>------------------------------------------------------------------------------
+<span class="lineno">  292 </span>-- | Modifies the current node by applying an action in some functor.
+<span class="lineno">  293 </span>modifyNodeM :: Functor m =&gt; (Node -&gt; m Node) -&gt; Cursor -&gt; m Cursor
+<span class="lineno">  294 </span><span class="decl"><span class="istickedoff">modifyNodeM f cur = flip setNode cur `fmap` f (current cur)</span></span>
+<span class="lineno">  295 </span>
+<span class="lineno">  296 </span>
+<span class="lineno">  297 </span>------------------------------------------------------------------------------
+<span class="lineno">  298 </span>-- | Inserts a new 'Node' to the left of the current position.
+<span class="lineno">  299 </span>insertLeft :: Node -&gt; Cursor -&gt; Cursor
+<span class="lineno">  300 </span><span class="decl"><span class="istickedoff">insertLeft n (Cursor nn ls rs ps) = Cursor nn (n:ls) rs ps</span></span>
+<span class="lineno">  301 </span>
+<span class="lineno">  302 </span>
+<span class="lineno">  303 </span>------------------------------------------------------------------------------
+<span class="lineno">  304 </span>-- | Inserts a new 'Node' to the right of the current position.
+<span class="lineno">  305 </span>insertRight :: Node -&gt; Cursor -&gt; Cursor
+<span class="lineno">  306 </span><span class="decl"><span class="istickedoff">insertRight n (Cursor nn ls rs ps) = Cursor nn ls (n:rs) ps</span></span>
+<span class="lineno">  307 </span>
+<span class="lineno">  308 </span>
+<span class="lineno">  309 </span>------------------------------------------------------------------------------
+<span class="lineno">  310 </span>-- | Inserts a list of new 'Node's to the left of the current position.
+<span class="lineno">  311 </span>insertManyLeft :: [Node] -&gt; Cursor -&gt; Cursor
+<span class="lineno">  312 </span><span class="decl"><span class="istickedoff">insertManyLeft ns (Cursor nn ls rs ps) = Cursor nn (reverse ns ++ ls) rs ps</span></span>
+<span class="lineno">  313 </span>
+<span class="lineno">  314 </span>
+<span class="lineno">  315 </span>------------------------------------------------------------------------------
+<span class="lineno">  316 </span>-- | Inserts a list of new 'Node's to the right of the current position.
+<span class="lineno">  317 </span>insertManyRight :: [Node] -&gt; Cursor -&gt; Cursor
+<span class="lineno">  318 </span><span class="decl"><span class="istickedoff">insertManyRight ns (Cursor nn ls rs ps) = Cursor nn ls (ns ++ rs) ps</span></span>
+<span class="lineno">  319 </span>
+<span class="lineno">  320 </span>
+<span class="lineno">  321 </span>------------------------------------------------------------------------------
+<span class="lineno">  322 </span>-- | Inserts a 'Node' as the first child of the current element.
+<span class="lineno">  323 </span>insertFirstChild :: Node -&gt; Cursor -&gt; Maybe Cursor
+<span class="lineno">  324 </span><span class="decl"><span class="istickedoff">insertFirstChild n (Cursor (Element t a c) ls rs ps)</span>
+<span class="lineno">  325 </span><span class="spaces">    </span><span class="istickedoff">= Just (Cursor (Element t a (n:c)) ls rs ps)</span>
+<span class="lineno">  326 </span><span class="spaces"></span><span class="istickedoff">insertFirstChild _ _</span>
+<span class="lineno">  327 </span><span class="spaces">    </span><span class="istickedoff">= Nothing</span></span>
+<span class="lineno">  328 </span>
+<span class="lineno">  329 </span>
+<span class="lineno">  330 </span>------------------------------------------------------------------------------
+<span class="lineno">  331 </span>-- | Inserts a 'Node' as the last child of the current element.
+<span class="lineno">  332 </span>insertLastChild :: Node -&gt; Cursor -&gt; Maybe Cursor
+<span class="lineno">  333 </span><span class="decl"><span class="istickedoff">insertLastChild n (Cursor (Element t a c) ls rs ps)</span>
+<span class="lineno">  334 </span><span class="spaces">    </span><span class="istickedoff">= Just (Cursor (Element t a (c ++ [n])) ls rs ps)</span>
+<span class="lineno">  335 </span><span class="spaces"></span><span class="istickedoff">insertLastChild _ _</span>
+<span class="lineno">  336 </span><span class="spaces">    </span><span class="istickedoff">= Nothing</span></span>
+<span class="lineno">  337 </span>
+<span class="lineno">  338 </span>
+<span class="lineno">  339 </span>------------------------------------------------------------------------------
+<span class="lineno">  340 </span>-- | Inserts a list of 'Node's as the first children of the current element.
+<span class="lineno">  341 </span>insertManyFirstChild :: [Node] -&gt; Cursor -&gt; Maybe Cursor
+<span class="lineno">  342 </span><span class="decl"><span class="istickedoff">insertManyFirstChild ns (Cursor (Element t a c) ls rs ps)</span>
+<span class="lineno">  343 </span><span class="spaces">    </span><span class="istickedoff">= Just (Cursor (Element t a (ns ++ c)) ls rs ps)</span>
+<span class="lineno">  344 </span><span class="spaces"></span><span class="istickedoff">insertManyFirstChild _ _</span>
+<span class="lineno">  345 </span><span class="spaces">    </span><span class="istickedoff">= Nothing</span></span>
+<span class="lineno">  346 </span>
+<span class="lineno">  347 </span>
+<span class="lineno">  348 </span>------------------------------------------------------------------------------
+<span class="lineno">  349 </span>-- | Inserts a list of 'Node's as the last children of the current element.
+<span class="lineno">  350 </span>insertManyLastChild :: [Node] -&gt; Cursor -&gt; Maybe Cursor
+<span class="lineno">  351 </span><span class="decl"><span class="istickedoff">insertManyLastChild ns (Cursor (Element t a c) ls rs ps)</span>
+<span class="lineno">  352 </span><span class="spaces">    </span><span class="istickedoff">= Just (Cursor (Element t a (c ++ ns)) ls rs ps)</span>
+<span class="lineno">  353 </span><span class="spaces"></span><span class="istickedoff">insertManyLastChild _ _</span>
+<span class="lineno">  354 </span><span class="spaces">    </span><span class="istickedoff">= Nothing</span></span>
+<span class="lineno">  355 </span>
+<span class="lineno">  356 </span>
+<span class="lineno">  357 </span>------------------------------------------------------------------------------
+<span class="lineno">  358 </span>-- | Inserts a new 'Node' to the left of the current position, and moves
+<span class="lineno">  359 </span>-- left to the new node.
+<span class="lineno">  360 </span>insertGoLeft :: Node -&gt; Cursor -&gt; Cursor
+<span class="lineno">  361 </span><span class="decl"><span class="istickedoff">insertGoLeft n (Cursor nn ls rs ps) = Cursor n ls (nn:rs) ps</span></span>
+<span class="lineno">  362 </span>
+<span class="lineno">  363 </span>
+<span class="lineno">  364 </span>------------------------------------------------------------------------------
+<span class="lineno">  365 </span>-- | Inserts a new 'Node' to the right of the current position, and moves
+<span class="lineno">  366 </span>-- right to the new node.
+<span class="lineno">  367 </span>insertGoRight :: Node -&gt; Cursor -&gt; Cursor
+<span class="lineno">  368 </span><span class="decl"><span class="istickedoff">insertGoRight n (Cursor nn ls rs ps) = Cursor n (nn:ls) rs ps</span></span>
+<span class="lineno">  369 </span>
+<span class="lineno">  370 </span>
+<span class="lineno">  371 </span>------------------------------------------------------------------------------
+<span class="lineno">  372 </span>-- | Removes the 'Node' to the left of the current position, if any.
+<span class="lineno">  373 </span>removeLeft :: Cursor -&gt; Maybe (Node, Cursor)
+<span class="lineno">  374 </span><span class="decl"><span class="istickedoff">removeLeft (Cursor n (l:ls) rs ps) = Just (l, Cursor n ls rs ps)</span>
+<span class="lineno">  375 </span><span class="spaces"></span><span class="istickedoff">removeLeft _                       = Nothing</span></span>
+<span class="lineno">  376 </span>
+<span class="lineno">  377 </span>
+<span class="lineno">  378 </span>------------------------------------------------------------------------------
+<span class="lineno">  379 </span>-- | Removes the 'Node' to the right of the current position, if any.
+<span class="lineno">  380 </span>removeRight :: Cursor -&gt; Maybe (Node, Cursor)
+<span class="lineno">  381 </span><span class="decl"><span class="istickedoff">removeRight (Cursor n ls (r:rs) ps) = Just (r, Cursor n ls rs ps)</span>
+<span class="lineno">  382 </span><span class="spaces"></span><span class="istickedoff">removeRight _                       = Nothing</span></span>
+<span class="lineno">  383 </span>
+<span class="lineno">  384 </span>
+<span class="lineno">  385 </span>------------------------------------------------------------------------------
+<span class="lineno">  386 </span>-- | Removes the current 'Node', and moves the Cursor to its left sibling,
+<span class="lineno">  387 </span>-- if any.
+<span class="lineno">  388 </span>removeGoLeft :: Cursor -&gt; Maybe Cursor
+<span class="lineno">  389 </span><span class="decl"><span class="istickedoff">removeGoLeft (Cursor _ (l:ls) rs ps) = Just (Cursor l ls rs ps)</span>
+<span class="lineno">  390 </span><span class="spaces"></span><span class="istickedoff">removeGoLeft _                       = Nothing</span></span>
+<span class="lineno">  391 </span>
+<span class="lineno">  392 </span>
+<span class="lineno">  393 </span>------------------------------------------------------------------------------
+<span class="lineno">  394 </span>-- | Removes the current 'Node', and moves the Cursor to its right sibling,
+<span class="lineno">  395 </span>-- if any.
+<span class="lineno">  396 </span>removeGoRight :: Cursor -&gt; Maybe Cursor
+<span class="lineno">  397 </span><span class="decl"><span class="istickedoff">removeGoRight (Cursor _ ls (r:rs) ps) = Just (Cursor r ls rs ps)</span>
+<span class="lineno">  398 </span><span class="spaces"></span><span class="istickedoff">removeGoRight _                       = Nothing</span></span>
+<span class="lineno">  399 </span>
+<span class="lineno">  400 </span>
+<span class="lineno">  401 </span>------------------------------------------------------------------------------
+<span class="lineno">  402 </span>-- | Removes the current 'Node', and moves the Cursor to its parent, if any.
+<span class="lineno">  403 </span>removeGoUp :: Cursor -&gt; Maybe Cursor
+<span class="lineno">  404 </span><span class="decl"><span class="istickedoff">removeGoUp (Cursor _ ls rs ((lls, (t,a), rrs):ps))</span>
+<span class="lineno">  405 </span><span class="spaces">    </span><span class="istickedoff">= Just (Cursor (Element t a children) lls rrs ps)</span>
+<span class="lineno">  406 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  407 </span><span class="spaces">    </span><span class="istickedoff">children = foldl (flip (:)) (rs) ls</span>
+<span class="lineno">  408 </span><span class="spaces"></span><span class="istickedoff">removeGoUp _                       = Nothing</span></span>
+<span class="lineno">  409 </span>
+
+</pre>
+</html>

@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.3.0: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.4.0: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Iteratee.html"
 >Source code</A
@@ -194,6 +194,24 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AenumBuilder"
+>enumBuilder</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+> -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
+>Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+> m a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AenumFile"
 >enumFile</A
 > ::  <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
@@ -239,6 +257,24 @@
 >  <A HREF="#t%3AInvalidRangeException"
 >InvalidRangeException</A
 > </TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AjoinI%27"
+>joinI'</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> a m (<A HREF="Snap-Iteratee.html#t%3AStep"
+>Step</A
+> a m b) -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> a m b</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -452,6 +488,64 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AmapEnum"
+>mapEnum</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; (aOut -&gt; aIn) -&gt; (aIn -&gt; aOut) -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
+>Enumerator</A
+> aIn m a -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
+>Enumerator</A
+> aOut m a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AmapIter"
+>mapIter</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; (aOut -&gt; aIn) -&gt; (aIn -&gt; aOut) -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> aIn m a -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> aOut m a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AkillIfTooSlow"
+>killIfTooSlow</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m =&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Prelude.html#t%3ADouble"
+>Double</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> m a -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> m a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><SPAN CLASS="keyword"
 >data</SPAN
 >  <A HREF="#t%3ATooManyBytesReadException"
@@ -468,6 +562,18 @@
 >data</SPAN
 >  <A HREF="#t%3AShortWriteException"
 >ShortWriteException</A
+> </TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A HREF="#t%3ARateTooSlowException"
+>RateTooSlowException</A
 > </TD
 ></TR
 ><TR
@@ -606,13 +712,13 @@
 >type</SPAN
 > <A HREF="#t%3AEnumeratee"
 >Enumeratee</A
-> aOut aIn m b = <A HREF="Snap-Iteratee.html#t%3AStep"
+> ao ai m b = <A HREF="Snap-Iteratee.html#t%3AStep"
 >Step</A
-> aIn m b -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+> ai m b -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
-> aOut m (<A HREF="Snap-Iteratee.html#t%3AStep"
+> ao m (<A HREF="Snap-Iteratee.html#t%3AStep"
 >Step</A
-> aIn m b)</TD
+> ai m b)</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -1215,6 +1321,43 @@
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
+><A NAME="v:enumBuilder"
+><A NAME="v%3AenumBuilder"
+></A
+></A
+><B
+>enumBuilder</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+> -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
+>Enumerator</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+> m a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Iteratee.html#enumBuilder"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Enumerates a Builder.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
 ><A NAME="v:enumFile"
 ><A NAME="v%3AenumFile"
 ></A
@@ -1354,6 +1497,38 @@
 >Iteratee utilities
 </A
 ></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:joinI'"
+><A NAME="v%3AjoinI%27"
+></A
+></A
+><B
+>joinI'</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> a m (<A HREF="Snap-Iteratee.html#t%3AStep"
+>Step</A
+> a m b) -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> a m b</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Iteratee.html#joinI%27"
+>Source</A
+></TD
+></TR
+></TABLE
 ></TD
 ></TR
 ><TR
@@ -1773,6 +1948,154 @@
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
+><A NAME="v:mapEnum"
+><A NAME="v%3AmapEnum"
+></A
+></A
+><B
+>mapEnum</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; (aOut -&gt; aIn) -&gt; (aIn -&gt; aOut) -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
+>Enumerator</A
+> aIn m a -&gt; <A HREF="Snap-Iteratee.html#t%3AEnumerator"
+>Enumerator</A
+> aOut m a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Iteratee.html#mapEnum"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:mapIter"
+><A NAME="v%3AmapIter"
+></A
+></A
+><B
+>mapIter</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; (aOut -&gt; aIn) -&gt; (aIn -&gt; aOut) -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> aIn m a -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> aOut m a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Iteratee.html#mapIter"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:killIfTooSlow"
+><A NAME="v%3AkillIfTooSlow"
+></A
+></A
+><B
+>killIfTooSlow</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Iteratee.html#killIfTooSlow"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+>action to bump timeout
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Prelude.html#t%3ADouble"
+>Double</A
+></TD
+><TD CLASS="rdoc"
+>minimum data rate, in bytes per
+ second
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+></TD
+><TD CLASS="rdoc"
+>minimum amount of time to let
+ the iteratee run for
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> m a</TD
+><TD CLASS="rdoc"
+>iteratee consumer to wrap
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> m a</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
 ><SPAN CLASS="keyword"
 >data</SPAN
 >  <A NAME="t:TooManyBytesReadException"
@@ -1907,6 +2230,75 @@
 ></TD
 ></TR
 ><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A NAME="t:RateTooSlowException"
+><A NAME="t%3ARateTooSlowException"
+></A
+></A
+><B
+>RateTooSlowException</B
+>  </TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Iteratee.html#RateTooSlowException"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'i:RateTooSlowException')" ALT="show/hide"
+> Instances</TD
+></TR
+><TR
+><TD CLASS="body"
+><DIV ID="i:RateTooSlowException" STYLE="display:block;"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Text-Show.html#t%3AShow"
+>Show</A
+> <A HREF="Snap-Iteratee.html#t%3ARateTooSlowException"
+>RateTooSlowException</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Typeable.html#t%3ATypeable"
+>Typeable</A
+> <A HREF="Snap-Iteratee.html#t%3ARateTooSlowException"
+>RateTooSlowException</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#t%3AException"
+>Exception</A
+> <A HREF="Snap-Iteratee.html#t%3ARateTooSlowException"
+>RateTooSlowException</A
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
 ><TD CLASS="section1"
 ><A NAME="3"
 ><A NAME="3"
@@ -1949,31 +2341,23 @@
 ><TR
 ><TD CLASS="ndoc"
 ><P
->Not to be confused with types from the <TT
->Stream</TT
-> or
- <TT
->stream-fusion</TT
-> packages, a <TT
+>A <TT
 ><A HREF="Snap-Iteratee.html#t%3AStream"
 >Stream</A
 ></TT
-> is a sequence of chunks
- generated by an <TT
+> is a sequence of chunks generated by an <TT
 ><A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
 ></TT
->. In contrast to Oleg&#x2019;s implementation,
- this stream does not support error handling -- errors encountered
- while generating a stream are reported in the <TT
-><A HREF="Snap-Iteratee.html#t%3AStep"
->Step</A
-></TT
-> type instead.
+>.
 </P
 ><P
 ><TT
->(Chunks [])</TT
+>(<TT
+><A HREF="Snap-Iteratee.html#v%3AChunks"
+>Chunks</A
+></TT
+> [])</TT
 > is used to indicate that a stream is still active, but
  currently has no available data. Iteratees should ignore empty chunks.
 </P
@@ -2034,6 +2418,14 @@
 ><TD CLASS="decl"
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AFunctor"
 >Functor</A
+> <A HREF="Snap-Iteratee.html#t%3AStream"
+>Stream</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AApplicative"
+>Applicative</A
 > <A HREF="Snap-Iteratee.html#t%3AStream"
 >Stream</A
 ></TD
@@ -2156,8 +2548,8 @@
 ><A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
 ></TT
-> has received enough input to generate a result.
- Included in this value is left-over input, which can be passed to
+> cannot receive any more input, and has generated a
+ result. Included in this value is left-over input, which can be passed to
  composed <TT
 ><A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
@@ -2487,13 +2879,13 @@
 ></A
 ><B
 >Enumeratee</B
-> aOut aIn m b = <A HREF="Snap-Iteratee.html#t%3AStep"
+> ao ai m b = <A HREF="Snap-Iteratee.html#t%3AStep"
 >Step</A
-> aIn m b -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+> ai m b -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
-> aOut m (<A HREF="Snap-Iteratee.html#t%3AStep"
+> ao m (<A HREF="Snap-Iteratee.html#t%3AStep"
 >Step</A
-> aIn m b)</TD
+> ai m b)</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Data-Enumerator.html#Enumeratee"
 >Source</A
@@ -2586,7 +2978,11 @@
 ><TR
 ><TD CLASS="doc"
 ><TT
->returnI x = Iteratee (return x)</TT
+>returnI step = <TT
+><A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+></TT
+> (return step)</TT
 ></TD
 ></TR
 ><TR
@@ -2622,7 +3018,15 @@
 ><TR
 ><TD CLASS="doc"
 ><TT
->yield x chunk = returnI (Yield x chunk)</TT
+>yield x extra = <TT
+><A HREF="Snap-Iteratee.html#v%3AreturnI"
+>returnI</A
+></TT
+> (<TT
+><A HREF="Snap-Iteratee.html#v%3AYield"
+>Yield</A
+></TT
+> x extra)</TT
 ></TD
 ></TR
 ><TR
@@ -2660,7 +3064,15 @@
 ><TR
 ><TD CLASS="doc"
 ><TT
->continue k = returnI (Continue k)</TT
+>continue k = <TT
+><A HREF="Snap-Iteratee.html#v%3AreturnI"
+>returnI</A
+></TT
+> (<TT
+><A HREF="Snap-Iteratee.html#v%3AContinue"
+>Continue</A
+></TT
+> k)</TT
 ></TD
 ></TR
 ><TR
@@ -2696,7 +3108,19 @@
 ><TR
 ><TD CLASS="doc"
 ><TT
->throwError err = returnI (Error err)</TT
+>throwError exc = <TT
+><A HREF="Snap-Iteratee.html#v%3AreturnI"
+>returnI</A
+></TT
+> (<TT
+><A HREF="Snap-Iteratee.html#v%3AError"
+>Error</A
+></TT
+> (<TT
+><A HREF="http://hackage.haskell.org/packages/archive/MonadCatchIO-transformers/latest/doc/html/Control-Monad-CatchIO.html#v%3AtoException"
+>toException</A
+></TT
+> exc))</TT
 ></TD
 ></TR
 ><TR
@@ -2734,6 +3158,27 @@
 ></TD
 ></TR
 ><TR
+><TD CLASS="doc"
+><P
+>Runs the iteratee, and calls an exception handler if an <TT
+><A HREF="Snap-Iteratee.html#v%3AError"
+>Error</A
+></TT
+> is
+ returned. By handling errors within the enumerator library, and requiring
+ all errors to be represented by <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Exception-Base.html#t%3ASomeException"
+>SomeException</A
+></TT
+>, libraries with
+ varying error types can be easily composed.
+</P
+><P
+>Since: 0.1.1
+</P
+></TD
+></TR
+><TR
 ><TD CLASS="s15"
 ></TD
 ></TR
@@ -2767,9 +3212,12 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
-><TT
->liftI f = continue (returnI . f)</TT
-></TD
+>Deprecated in 0.4.5: use <TT
+><A HREF="Snap-Iteratee.html#v%3Acontinue"
+>continue</A
+></TT
+> instead
+</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -2807,12 +3255,18 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Equivalent to (&gt;&gt;=), but allows <TT
+>Equivalent to '(&gt;&gt;=)' for <TT
+>m (<TT
+><A HREF="Snap-Iteratee.html#t%3AStep"
+>Step</A
+></TT
+> a m b)</TT
+>; allows <TT
 ><A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
 ></TT
->s with different input types
- to be composed.
+>s with
+ different input types to be composed.
 </TD
 ></TR
 ><TR
@@ -2897,6 +3351,9 @@
 >This might be easier to read when passing a chain of iteratees to an
  enumerator.
 </P
+><P
+>Since: 0.1.1
+</P
 ></TD
 ></TR
 ><TR
@@ -2939,6 +3396,9 @@
 ><TD CLASS="doc"
 ><TT
 >(&gt;==&gt;) e1 e2 s = e1 s &gt;&gt;== e2</TT
+><P
+>Since: 0.1.1
+</P
 ></TD
 ></TR
 ><TR
@@ -2981,6 +3441,9 @@
 ><TD CLASS="doc"
 ><TT
 >(&lt;==&lt;) = flip (&gt;==&gt;)</TT
+><P
+>Since: 0.1.1
+</P
 ></TD
 ></TR
 ><TR
@@ -3063,6 +3526,21 @@
 ></TD
 ></TR
 ><TR
+><TD CLASS="doc"
+><P
+>Like <TT
+><A HREF="Snap-Iteratee.html#v%3Arun"
+>run</A
+></TT
+>, except errors are converted to exceptions and thrown.
+ Primarily useful for small scripts or other simple cases.
+</P
+><P
+>Since: 0.4.1
+</P
+></TD
+></TR
+><TR
 ><TD CLASS="s15"
 ></TD
 ></TR
@@ -3083,7 +3561,7 @@
 >Iteratee</A
 > a m [a]</TD
 ><TD CLASS="declbut"
-><A HREF="src/Data-Enumerator.html#consume"
+><A HREF="src/Data-Enumerator-List.html#consume"
 >Source</A
 ></TD
 ></TR
@@ -3092,12 +3570,13 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Consume all input until <TT
-><A HREF="Snap-Iteratee.html#v%3AEOF"
->EOF</A
-></TT
->, then return consumed input as a list.
-</TD
+><P
+>Read all remaining input elements from the stream, and return as a list.
+</P
+><P
+>Since: 0.4.5
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -3131,19 +3610,7 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Return <TT
-><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#v%3ATrue"
->True</A
-></TT
-> if the next <TT
-><A HREF="Snap-Iteratee.html#t%3AStream"
->Stream</A
-></TT
-> is <TT
-><A HREF="Snap-Iteratee.html#v%3AEOF"
->EOF</A
-></TT
->.
+>docs TODO
 </TD
 ></TR
 ><TR
@@ -3182,6 +3649,7 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
+><P
 >Lift an <TT
 ><A HREF="Snap-Iteratee.html#t%3AIteratee"
 >Iteratee</A
@@ -3192,7 +3660,11 @@
 >Iteratee</A
 ></TT
 >&#x2019;s inner monadic values.
-</TD
+</P
+><P
+>Since: 0.1.1
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -3224,8 +3696,17 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Lifts a pure left fold into an iteratee.
-</TD
+><P
+>Deprecated in 0.4.5: use <TT
+><A HREF="http://hackage.haskell.org/packages/archive/enumerator/latest/doc/html/Data-Enumerator.html#v%3Afoldl"
+>foldl</A
+></TT
+> instead
+</P
+><P
+>Since: 0.1.1
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -3257,12 +3738,17 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->As <TT
-><A HREF="Snap-Iteratee.html#v%3AliftFoldL"
->liftFoldL</A
+><P
+>Deprecated in 0.4.5: use <TT
+><A HREF="http://hackage.haskell.org/packages/archive/enumerator/latest/doc/html/Data-Enumerator.html#v%3Afoldl%27"
+>foldl'</A
 ></TT
->, but strict in its accumulator.
-</TD
+> instead
+</P
+><P
+>Since: 0.1.1
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -3294,8 +3780,17 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Lifts a monadic left fold into an iteratee.
-</TD
+><P
+>Deprecated in 0.4.5: use <TT
+><A HREF="http://hackage.haskell.org/packages/archive/enumerator/latest/doc/html/Data-Enumerator.html#v%3AfoldM"
+>foldM</A
+></TT
+> instead
+</P
+><P
+>Since: 0.1.1
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -3312,15 +3807,7 @@
 ></A
 ><B
 >printChunks</B
-> :: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
->MonadIO</A
-> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Text-Show.html#t%3AShow"
->Show</A
-> a) =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
->Bool</A
-> -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
->Iteratee</A
-> a m ()</TD
+></TD
 ><TD CLASS="declbut"
 ><A HREF="src/Data-Enumerator.html#printChunks"
 >Source</A
@@ -3330,10 +3817,43 @@
 ></TD
 ></TR
 ><TR
-><TD CLASS="doc"
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: (<A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
+>MonadIO</A
+> m, <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Text-Show.html#t%3AShow"
+>Show</A
+> a)</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
+><TD CLASS="rdoc"
+>Print empty chunks
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
+>Iteratee</A
+> a m ()</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
 >Print chunks as they're received from the enumerator, optionally
  printing empty chunks.
 </TD
+></TR
+></TABLE
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -3358,11 +3878,26 @@
 >Maybe</A
 > a)</TD
 ><TD CLASS="declbut"
-><A HREF="src/Data-Enumerator.html#head"
+><A HREF="src/Data-Enumerator-List.html#head"
 >Source</A
 ></TD
 ></TR
 ></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Get the next element from the stream, or <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#v%3ANothing"
+>Nothing</A
+></TT
+> if the stream has
+ ended.
+</P
+><P
+>Since: 0.4.5
+</P
 ></TD
 ></TR
 ><TR
@@ -3394,6 +3929,16 @@
 ></TR
 ></TABLE
 ></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Peek at the next element in the stream, or <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#v%3ANothing"
+>Nothing</A
+></TT
+> if the stream
+ has ended.
+</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -3438,17 +3983,7 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->The most primitive enumerator; simply sends <TT
-><A HREF="Snap-Iteratee.html#v%3AEOF"
->EOF</A
-></TT
->. The iteratee must
- either yield a value or throw an error continuing receiving <TT
-><A HREF="Snap-Iteratee.html#v%3AEOF"
->EOF</A
-></TT
-> will
- not terminate with any useful value.
+>docs TODO
 </TD
 ></TR
 ><TR
@@ -3483,10 +4018,20 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Another small, useful enumerator separates an input list into chunks,
- and sends them to the iteratee. This is useful for testing iteratees in pure
- code.
-</TD
+><P
+><TT
+>enumList n xs</TT
+> enumerates <EM
+>xs</EM
+> as a stream, passing <EM
+>n</EM
+> inputs per
+ chunk.
+</P
+><P
+>Primarily useful for testing and debugging.
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -3524,7 +4069,9 @@
 ><A HREF="Snap-Iteratee.html#t%3AEnumerator"
 >Enumerator</A
 ></TT
->s using '(&gt;&gt;==)'
+>s using <TT
+>'(&gt;&gt;==)'</TT
+>
 </TD
 ></TR
 ><TR
@@ -3579,7 +4126,15 @@
 ><TR
 ><TD CLASS="doc"
 ><TT
->checkDone = checkDoneEx (Chunks [])</TT
+>checkDone = <TT
+><A HREF="http://hackage.haskell.org/packages/archive/enumerator/latest/doc/html/Data-Enumerator.html#v%3AcheckDoneEx"
+>checkDoneEx</A
+></TT
+> (<TT
+><A HREF="Snap-Iteratee.html#v%3AChunks"
+>Chunks</A
+></TT
+> [])</TT
 ><P
 >Use this for enumeratees which do not have an input buffer.
 </P
@@ -3614,6 +4169,20 @@
 ></TD
 ></TR
 ><TR
+><TD CLASS="doc"
+><TT
+>map f = <TT
+><A HREF="http://hackage.haskell.org/packages/archive/enumerator/latest/doc/html/Data-Enumerator.html#v%3AconcatMap"
+>concatMap</A
+></TT
+> (x -&gt; <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-List.html#v%3Amap"
+>map</A
+></TT
+> f [x])</TT
+></TD
+></TR
+><TR
 ><TD CLASS="s15"
 ></TD
 ></TR
@@ -3642,6 +4211,12 @@
 ></TR
 ></TABLE
 ></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Feeds outer input elements into the provided iteratee until it yields
+ an inner input, passes that to the inner iteratee, and then loops.
+</TD
 ></TR
 ><TR
 ><TD CLASS="s15"

@@ -1,0 +1,1205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Snap.Internal.Parsing</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+><SCRIPT TYPE="text/javascript"
+>window.onload = function () {setSynopsis("mini_Snap-Internal-Parsing.html")};</SCRIPT
+></HEAD
+><BODY
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topbar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
+></TD
+><TD CLASS="title"
+>snap-core-0.4.0: Snap: A Haskell Web Framework (Core)</TD
+><TD CLASS="topbut"
+><A HREF="src/Snap-Internal-Parsing.html"
+>Source code</A
+></TD
+><TD CLASS="topbut"
+><A HREF="index.html"
+>Contents</A
+></TD
+><TD CLASS="topbut"
+><A HREF="doc-index.html"
+>Index</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="modulebar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><FONT SIZE="6"
+>Snap.Internal.Parsing</FONT
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Synopsis</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AfullyParse"
+>fullyParse</A
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
+>Either</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AparseNum"
+>parseNum</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
+>Int64</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Adigit"
+>digit</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Aletter"
+>letter</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Asp"
+>sp</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AuntilEOL"
+>untilEOL</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Acrlf"
+>crlf</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Aspaces"
+>spaces</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ApSpaces"
+>pSpaces</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AfieldChars"
+>fieldChars</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AfieldCharTable"
+>fieldCharTable</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/vector/latest/doc/html/Data-Vector-Unboxed.html#t%3AVector"
+>Vector</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ApHeaders"
+>pHeaders</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ApWord"
+>pWord</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ApQuotedString"
+>pQuotedString</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AisRFCText"
+>isRFCText</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AmatchAll"
+>matchAll</A
+> :: [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+>] -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ApAvPairs"
+>pAvPairs</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ApAvPair"
+>pAvPair</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ApParameter"
+>pParameter</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Atrim"
+>trim</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ApValueWithParameters"
+>pValueWithParameters</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, [(<A HREF="Data-CIByteString.html#t%3ACIByteString"
+>CIByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)])</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ApContentTypeWithParameters"
+>pContentTypeWithParameters</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, [(<A HREF="Data-CIByteString.html#t%3ACIByteString"
+>CIByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)])</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3ApToken"
+>pToken</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AisToken"
+>isToken</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3Astrictize"
+>strictize</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Documentation</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:fullyParse"
+><A NAME="v%3AfullyParse"
+></A
+></A
+><B
+>fullyParse</B
+> ::  <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
+>Either</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+> a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#fullyParse"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:parseNum"
+><A NAME="v%3AparseNum"
+></A
+></A
+><B
+>parseNum</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt64"
+>Int64</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#parseNum"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:digit"
+><A NAME="v%3Adigit"
+></A
+></A
+><B
+>digit</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#digit"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Parsers for different tokens in an HTTP request.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:letter"
+><A NAME="v%3Aletter"
+></A
+></A
+><B
+>letter</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#letter"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:sp"
+><A NAME="v%3Asp"
+></A
+></A
+><B
+>sp</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#sp"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:untilEOL"
+><A NAME="v%3AuntilEOL"
+></A
+></A
+><B
+>untilEOL</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#untilEOL"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:crlf"
+><A NAME="v%3Acrlf"
+></A
+></A
+><B
+>crlf</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#crlf"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:spaces"
+><A NAME="v%3Aspaces"
+></A
+></A
+><B
+>spaces</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+>]</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#spaces"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Parser for zero or more spaces.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:pSpaces"
+><A NAME="v%3ApSpaces"
+></A
+></A
+><B
+>pSpaces</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#pSpaces"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:fieldChars"
+><A NAME="v%3AfieldChars"
+></A
+></A
+><B
+>fieldChars</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#fieldChars"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:fieldCharTable"
+><A NAME="v%3AfieldCharTable"
+></A
+></A
+><B
+>fieldCharTable</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/vector/latest/doc/html/Data-Vector-Unboxed.html#t%3AVector"
+>Vector</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#fieldCharTable"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:pHeaders"
+><A NAME="v%3ApHeaders"
+></A
+></A
+><B
+>pHeaders</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)]</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#pHeaders"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Parser for request headers.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:pWord"
+><A NAME="v%3ApWord"
+></A
+></A
+><B
+>pWord</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#pWord"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:pQuotedString"
+><A NAME="v%3ApQuotedString"
+></A
+></A
+><B
+>pQuotedString</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#pQuotedString"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:isRFCText"
+><A NAME="v%3AisRFCText"
+></A
+></A
+><B
+>isRFCText</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#isRFCText"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:matchAll"
+><A NAME="v%3AmatchAll"
+></A
+></A
+><B
+>matchAll</B
+> :: [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+>] -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#matchAll"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:pAvPairs"
+><A NAME="v%3ApAvPairs"
+></A
+></A
+><B
+>pAvPairs</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)]</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#pAvPairs"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:pAvPair"
+><A NAME="v%3ApAvPair"
+></A
+></A
+><B
+>pAvPair</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#pAvPair"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:pParameter"
+><A NAME="v%3ApParameter"
+></A
+></A
+><B
+>pParameter</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#pParameter"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:trim"
+><A NAME="v%3Atrim"
+></A
+></A
+><B
+>trim</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#trim"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:pValueWithParameters"
+><A NAME="v%3ApValueWithParameters"
+></A
+></A
+><B
+>pValueWithParameters</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, [(<A HREF="Data-CIByteString.html#t%3ACIByteString"
+>CIByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)])</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#pValueWithParameters"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:pContentTypeWithParameters"
+><A NAME="v%3ApContentTypeWithParameters"
+></A
+></A
+><B
+>pContentTypeWithParameters</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>, [(<A HREF="Data-CIByteString.html#t%3ACIByteString"
+>CIByteString</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+>)])</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#pContentTypeWithParameters"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:pToken"
+><A NAME="v%3ApToken"
+></A
+></A
+><B
+>pToken</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/attoparsec/latest/doc/html/Data-Attoparsec.html#t%3AParser"
+>Parser</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#pToken"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:isToken"
+><A NAME="v%3AisToken"
+></A
+></A
+><B
+>isToken</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AChar"
+>Char</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Bool.html#t%3ABool"
+>Bool</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#isToken"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:strictize"
+><A NAME="v%3Astrictize"
+></A
+></A
+><B
+>strictize</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString-Lazy.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Parsing.html#strictize"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="botbar"
+>Produced by <A HREF="http://www.haskell.org/haddock/"
+>Haddock</A
+> version 2.6.1</TD
+></TR
+></TABLE
+></BODY
+></HTML
+>

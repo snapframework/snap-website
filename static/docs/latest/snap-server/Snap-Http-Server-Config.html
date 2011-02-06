@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-server-0.3.0: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</TD
+>snap-server-0.4.0: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Http-Server-Config.html"
 >Source code</A
@@ -419,6 +419,24 @@ configurations of &quot;serve&quot; functions which run <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AgetDefaultTimeout"
+>getDefaultTimeout</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> m a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AgetOther"
 >getOther</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
@@ -603,6 +621,24 @@ configurations of &quot;serve&quot; functions which run <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AsetDefaultTimeout"
+>setDefaultTimeout</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> m a -&gt; <A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> m a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AsetOther"
 >setOther</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
@@ -671,7 +707,7 @@ configurations of &quot;serve&quot; functions which run <TT
 > instance by doing something like:
 </P
 ><PRE
-> setPort 9000 mempty
+> addListen (ListenHttp &quot;0.0.0.0&quot; 9000) mempty
 </PRE
 ><P
 >Any fields which are unspecified in the <TT
@@ -1444,6 +1480,38 @@ configurations of &quot;serve&quot; functions which run <TT
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
+><A NAME="v:getDefaultTimeout"
+><A NAME="v%3AgetDefaultTimeout"
+></A
+></A
+><B
+>getDefaultTimeout</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> m a -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Http-Server-Config.html#getDefaultTimeout"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
 ><A NAME="v:getOther"
 ><A NAME="v%3AgetOther"
 ></A
@@ -1753,6 +1821,38 @@ configurations of &quot;serve&quot; functions which run <TT
 > m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Http-Server-Config.html#setErrorHandler"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:setDefaultTimeout"
+><A NAME="v%3AsetDefaultTimeout"
+></A
+></A
+><B
+>setDefaultTimeout</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> m a -&gt; <A HREF="Snap-Http-Server-Config.html#t%3AConfig"
+>Config</A
+> m a</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Http-Server-Config.html#setDefaultTimeout"
 >Source</A
 ></TD
 ></TR

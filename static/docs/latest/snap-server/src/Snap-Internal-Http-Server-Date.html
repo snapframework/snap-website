@@ -111,7 +111,7 @@
 <a name="line-102"></a><span class='hs-definition'>ensureFreshDate</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
 <a name="line-103"></a><span class='hs-definition'>ensureFreshDate</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>block</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>do</span>
 <a name="line-104"></a>    <span class='hs-varid'>old</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>readIORef</span> <span class='hs-varop'>$</span> <span class='hs-sel'>_valueIsOld</span> <span class='hs-varid'>dateState</span>
-<a name="line-105"></a>    <span class='hs-varid'>tryPutMVar</span> <span class='hs-layout'>(</span><span class='hs-sel'>_morePlease</span> <span class='hs-varid'>dateState</span><span class='hs-layout'>)</span> <span class='hs-conid'>()</span>
+<a name="line-105"></a>    <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>tryPutMVar</span> <span class='hs-layout'>(</span><span class='hs-sel'>_morePlease</span> <span class='hs-varid'>dateState</span><span class='hs-layout'>)</span> <span class='hs-conid'>()</span>
 <a name="line-106"></a>
 <a name="line-107"></a>    <span class='hs-comment'>-- if the value is not fresh we will tickle the date thread but also fetch</span>
 <a name="line-108"></a>    <span class='hs-comment'>-- the new value immediately; we used to block but we'll do a little extra</span>

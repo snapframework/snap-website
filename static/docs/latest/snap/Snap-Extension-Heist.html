@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-0.3.0: Snap: A Haskell Web Framework (Core)</TD
+>snap-0.4: Snap: A Haskell Web Framework: project starter executable and glue code library</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Extension-Heist.html"
 >Source code</A
@@ -113,13 +113,13 @@ and can be used to turn your application's monad into a <TT
 >MonadHeist</A
 ></TT
 > is unusual among Snap extensions in that it's a multi-parameter
-typeclass. The last parameter is your application's monad, and the first is the
-monad you want the <TT
+typeclass. The last parameter is your application's monad, and the first is
+the monad you want the <TT
 ><A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 ></TT
-> to use. This is usually, but not always,
-also your application's monad.
+> to use. This is usually, but not
+always, also your application's monad.
 </P
 ><P
 >This module should not be used directly. Instead, import
@@ -173,6 +173,18 @@ also your application's monad.
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3ArenderAs"
+>renderAs</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AheistLocal"
 >heistLocal</A
 > ::  (<A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
@@ -212,13 +224,13 @@ also your application's monad.
 >renderWithSplices</A
 > :: <A HREF="Snap-Extension-Heist.html#t%3AMonadHeist"
 >MonadHeist</A
-> n m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+> n m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
+> -&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >, <A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ASplice"
 >Splice</A
-> n)] -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+> n)] -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -340,6 +352,46 @@ also your application's monad.
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
+><A NAME="v:renderAs"
+><A NAME="v%3ArenderAs"
+></A
+></A
+><B
+>renderAs</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist.html#renderAs"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Renders a template as the given content type.  If the given template
+ is not found, this returns <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3Aempty"
+>empty</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
 ><A NAME="v:heistLocal"
 ><A NAME="v%3AheistLocal"
 ></A
@@ -403,7 +455,11 @@ also your application's monad.
 ></TR
 ><TR
 ><TD CLASS="doc"
->Analogous to fileServe. If the template specified in the request
+>Analogous to <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Util-FileServe.html#v%3AfileServe"
+>fileServe</A
+></TT
+>. If the template specified in the request
  path is not found, it returns <TT
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3Aempty"
 >empty</A
@@ -441,7 +497,11 @@ also your application's monad.
 ></TR
 ><TR
 ><TD CLASS="doc"
->Analogous to fileServeSingle. If the given template is not found,
+>Analogous to <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Util-FileServe.html#v%3AfileServeSingle"
+>fileServeSingle</A
+></TT
+>. If the given template is not found,
  this throws an error.
 </TD
 ></TR
@@ -529,22 +589,22 @@ also your application's monad.
 ></TR
 ><TR
 ><TD CLASS="arg"
->=&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
+></TD
+><TD CLASS="rdoc"
+>Template to render
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >, <A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ASplice"
 >Splice</A
 > n)]</TD
 ><TD CLASS="rdoc"
 >Splice mapping
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-></TD
-><TD CLASS="rdoc"
->Template to render
 </TD
 ></TR
 ><TR
@@ -557,7 +617,7 @@ also your application's monad.
 ></TR
 ><TR
 ><TD CLASS="ndoc" COLSPAN="2"
->Helper function for common use case: 
+>Helper function for common use case:
  Render a template with a given set of splices.
 </TD
 ></TR

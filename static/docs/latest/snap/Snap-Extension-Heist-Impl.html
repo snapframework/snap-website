@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-0.3.0: Snap: A Haskell Web Framework (Core)</TD
+>snap-0.4: Snap: A Haskell Web Framework: project starter executable and glue code library</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Extension-Heist-Impl.html"
 >Source code</A
@@ -352,6 +352,18 @@ interfaces from any other Snap Extension.
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3ArenderAs"
+>renderAs</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AheistLocal"
 >heistLocal</A
 > ::  (<A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ATemplateState"
@@ -395,8 +407,8 @@ interfaces from any other Snap Extension.
 >MonadIO</A
 > n) =&gt; <A HREF="Snap-Extension-Heist-Impl.html#t%3AHeistState"
 >HeistState</A
-> m -&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> m -&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >, <A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ASplice"
 >Splice</A
 > m)] -&gt; n <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
@@ -466,7 +478,7 @@ interfaces from any other Snap Extension.
 ><A HREF="Snap-Extension-Heist-Impl.html#t%3AMonadHeist"
 >MonadHeist</A
 ></TT
->.  
+>.
 </P
 ><P
 >Unlike other <TT
@@ -879,6 +891,46 @@ interfaces from any other Snap Extension.
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
+><A NAME="v:renderAs"
+><A NAME="v%3ArenderAs"
+></A
+></A
+><B
+>renderAs</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Extension-Heist.html#renderAs"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Renders a template as the given content type.  If the given template
+ is not found, this returns <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3Aempty"
+>empty</A
+></TT
+>.
+</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
 ><A NAME="v:heistLocal"
 ><A NAME="v%3AheistLocal"
 ></A
@@ -942,7 +994,11 @@ interfaces from any other Snap Extension.
 ></TR
 ><TR
 ><TD CLASS="doc"
->Analogous to fileServe. If the template specified in the request
+>Analogous to <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Util-FileServe.html#v%3AfileServe"
+>fileServe</A
+></TT
+>. If the template specified in the request
  path is not found, it returns <TT
 ><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3Aempty"
 >empty</A
@@ -980,7 +1036,11 @@ interfaces from any other Snap Extension.
 ></TR
 ><TR
 ><TD CLASS="doc"
->Analogous to fileServeSingle. If the given template is not found,
+>Analogous to <TT
+><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Util-FileServe.html#v%3AfileServeSingle"
+>fileServeSingle</A
+></TT
+>. If the given template is not found,
  this throws an error.
 </TD
 ></TR
@@ -1092,8 +1152,8 @@ interfaces from any other Snap Extension.
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+>-&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >, <A HREF="http://hackage.haskell.org/packages/archive/heist/latest/doc/html/Text-Templating-Heist.html#t%3ASplice"
 >Splice</A
 > m)]</TD
@@ -1122,7 +1182,7 @@ interfaces from any other Snap Extension.
 </P
 ><P
 >Typical use cases are dynamically generated components that are present in
- many of your views. 
+ many of your views.
 </P
 ><P
 >Example Usage:
@@ -1132,9 +1192,9 @@ interfaces from any other Snap Extension.
  appInit :: Initializer AppState
  appInit = do
   hs &lt;- heistInitializer &quot;templates&quot;
-  registerSplices hs $ 
+  registerSplices hs $
    [ (&quot;tabs&quot;, tabsSplice)
-   , (&quot;loginLogout&quot;, loginLogoutSplice) ] 
+   , (&quot;loginLogout&quot;, loginLogoutSplice) ]
 </PRE
 ></TD
 ></TR

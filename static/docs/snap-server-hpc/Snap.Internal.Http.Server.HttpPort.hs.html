@@ -37,95 +37,97 @@ span.spaces    { background: white }
 <span class="lineno">   26 </span>import           Data.ByteString.Unsafe (unsafeUseAsCStringLen)
 <span class="lineno">   27 </span>#endif
 <span class="lineno">   28 </span>
-<span class="lineno">   29 </span>import           Snap.Internal.Http.Server.Backend
-<span class="lineno">   30 </span>
+<span class="lineno">   29 </span>import           Snap.Internal.Debug
+<span class="lineno">   30 </span>import           Snap.Internal.Http.Server.Backend
 <span class="lineno">   31 </span>
 <span class="lineno">   32 </span>------------------------------------------------------------------------------
 <span class="lineno">   33 </span>bindHttp :: ByteString -&gt; Int -&gt; IO ListenSocket
 <span class="lineno">   34 </span><span class="decl"><span class="istickedoff">bindHttp bindAddr bindPort = do</span>
 <span class="lineno">   35 </span><span class="spaces">    </span><span class="istickedoff">sock &lt;- socket AF_INET Stream 0</span>
 <span class="lineno">   36 </span><span class="spaces">    </span><span class="istickedoff">addr &lt;- getHostAddr bindPort bindAddr</span>
-<span class="lineno">   37 </span><span class="spaces">    </span><span class="istickedoff">setSocketOption sock ReuseAddr 1</span>
-<span class="lineno">   38 </span><span class="spaces">    </span><span class="istickedoff">bindSocket sock addr</span>
-<span class="lineno">   39 </span><span class="spaces">    </span><span class="istickedoff">listen sock 150</span>
-<span class="lineno">   40 </span><span class="spaces">    </span><span class="istickedoff">return $ ListenHttp sock</span></span>
-<span class="lineno">   41 </span>
-<span class="lineno">   42 </span>
-<span class="lineno">   43 </span>------------------------------------------------------------------------------
-<span class="lineno">   44 </span>getHostAddr :: Int
-<span class="lineno">   45 </span>            -&gt; ByteString
-<span class="lineno">   46 </span>            -&gt; IO SockAddr
-<span class="lineno">   47 </span><span class="decl"><span class="istickedoff">getHostAddr p s = do</span>
-<span class="lineno">   48 </span><span class="spaces">    </span><span class="istickedoff">h &lt;- if s == &quot;*&quot;</span>
-<span class="lineno">   49 </span><span class="spaces">          </span><span class="istickedoff">then return iNADDR_ANY</span>
-<span class="lineno">   50 </span><span class="spaces">          </span><span class="istickedoff">else inet_addr (map w2c . B.unpack $ s)</span>
-<span class="lineno">   51 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   52 </span><span class="spaces">    </span><span class="istickedoff">return $ SockAddrInet (fromIntegral p) h</span></span>
-<span class="lineno">   53 </span>
-<span class="lineno">   54 </span>
-<span class="lineno">   55 </span>------------------------------------------------------------------------------
-<span class="lineno">   56 </span>createSession :: Int -&gt; CInt -&gt; IO () -&gt; IO NetworkSession
-<span class="lineno">   57 </span><span class="decl"><span class="istickedoff">createSession buffSize s _ = do</span>
-<span class="lineno">   58 </span><span class="spaces">    </span><span class="istickedoff">buffer &lt;- mallocBytes $ fromIntegral buffSize</span>
-<span class="lineno">   59 </span><span class="spaces">    </span><span class="istickedoff">return $ NetworkSession s <span class="nottickedoff">nullPtr</span> buffer $ fromIntegral buffSize</span></span>
-<span class="lineno">   60 </span>
-<span class="lineno">   61 </span>
-<span class="lineno">   62 </span>------------------------------------------------------------------------------
-<span class="lineno">   63 </span>endSession :: NetworkSession -&gt; IO ()
-<span class="lineno">   64 </span><span class="decl"><span class="istickedoff">endSession (NetworkSession {_recvBuffer = buff}) = free buff</span></span>
-<span class="lineno">   65 </span>
-<span class="lineno">   66 </span>#ifdef PORTABLE
+<span class="lineno">   37 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;bindHttp: binding port &quot; ++ show addr</span>
+<span class="lineno">   38 </span><span class="spaces">    </span><span class="istickedoff">setSocketOption sock ReuseAddr 1</span>
+<span class="lineno">   39 </span><span class="spaces">    </span><span class="istickedoff">bindSocket sock addr</span>
+<span class="lineno">   40 </span><span class="spaces">    </span><span class="istickedoff">listen sock 150</span>
+<span class="lineno">   41 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;bindHttp: bound socket &quot; ++ show sock</span>
+<span class="lineno">   42 </span><span class="spaces">    </span><span class="istickedoff">return $ ListenHttp sock</span></span>
+<span class="lineno">   43 </span>
+<span class="lineno">   44 </span>
+<span class="lineno">   45 </span>------------------------------------------------------------------------------
+<span class="lineno">   46 </span>getHostAddr :: Int
+<span class="lineno">   47 </span>            -&gt; ByteString
+<span class="lineno">   48 </span>            -&gt; IO SockAddr
+<span class="lineno">   49 </span><span class="decl"><span class="istickedoff">getHostAddr p s = do</span>
+<span class="lineno">   50 </span><span class="spaces">    </span><span class="istickedoff">h &lt;- if s == &quot;*&quot;</span>
+<span class="lineno">   51 </span><span class="spaces">          </span><span class="istickedoff">then return iNADDR_ANY</span>
+<span class="lineno">   52 </span><span class="spaces">          </span><span class="istickedoff">else inet_addr (map w2c . B.unpack $ s)</span>
+<span class="lineno">   53 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   54 </span><span class="spaces">    </span><span class="istickedoff">return $ SockAddrInet (fromIntegral p) h</span></span>
+<span class="lineno">   55 </span>
+<span class="lineno">   56 </span>
+<span class="lineno">   57 </span>------------------------------------------------------------------------------
+<span class="lineno">   58 </span>createSession :: Int -&gt; CInt -&gt; IO () -&gt; IO NetworkSession
+<span class="lineno">   59 </span><span class="decl"><span class="istickedoff">createSession buffSize s _ = do</span>
+<span class="lineno">   60 </span><span class="spaces">    </span><span class="istickedoff">buffer &lt;- mallocBytes $ fromIntegral buffSize</span>
+<span class="lineno">   61 </span><span class="spaces">    </span><span class="istickedoff">return $ NetworkSession s <span class="nottickedoff">nullPtr</span> buffer $ fromIntegral buffSize</span></span>
+<span class="lineno">   62 </span>
+<span class="lineno">   63 </span>
+<span class="lineno">   64 </span>------------------------------------------------------------------------------
+<span class="lineno">   65 </span>endSession :: NetworkSession -&gt; IO ()
+<span class="lineno">   66 </span><span class="decl"><span class="istickedoff">endSession (NetworkSession {_recvBuffer = buff}) = free buff</span></span>
 <span class="lineno">   67 </span>
-<span class="lineno">   68 </span>------------------------------------------------------------------------------
-<span class="lineno">   69 </span>recv :: Socket -&gt; IO () -&gt; NetworkSession -&gt; IO (Maybe ByteString)
-<span class="lineno">   70 </span>recv sock _ (NetworkSession { _recvLen = s }) = do
-<span class="lineno">   71 </span>    bs &lt;- SB.recv sock (fromIntegral s)
-<span class="lineno">   72 </span>    if B.null bs
-<span class="lineno">   73 </span>        then return Nothing
-<span class="lineno">   74 </span>        else return $ Just bs
-<span class="lineno">   75 </span>
-<span class="lineno">   76 </span>
-<span class="lineno">   77 </span>------------------------------------------------------------------------------
-<span class="lineno">   78 </span>send :: Socket -&gt; IO () -&gt; IO () -&gt; NetworkSession -&gt; ByteString -&gt; IO ()
-<span class="lineno">   79 </span>send sock tickle _ _ bs = SB.sendAll sock bs &gt;&gt; tickle
-<span class="lineno">   80 </span>
-<span class="lineno">   81 </span>#else
+<span class="lineno">   68 </span>#ifdef PORTABLE
+<span class="lineno">   69 </span>
+<span class="lineno">   70 </span>------------------------------------------------------------------------------
+<span class="lineno">   71 </span>recv :: Socket -&gt; IO () -&gt; NetworkSession -&gt; IO (Maybe ByteString)
+<span class="lineno">   72 </span>recv sock _ (NetworkSession { _recvLen = s }) = do
+<span class="lineno">   73 </span>    bs &lt;- SB.recv sock (fromIntegral s)
+<span class="lineno">   74 </span>    if B.null bs
+<span class="lineno">   75 </span>        then return Nothing
+<span class="lineno">   76 </span>        else return $ Just bs
+<span class="lineno">   77 </span>
+<span class="lineno">   78 </span>
+<span class="lineno">   79 </span>------------------------------------------------------------------------------
+<span class="lineno">   80 </span>send :: Socket -&gt; IO () -&gt; IO () -&gt; NetworkSession -&gt; ByteString -&gt; IO ()
+<span class="lineno">   81 </span>send sock tickle _ _ bs = SB.sendAll sock bs &gt;&gt; tickle
 <span class="lineno">   82 </span>
-<span class="lineno">   83 </span>------------------------------------------------------------------------------
-<span class="lineno">   84 </span>recv :: IO () -&gt; NetworkSession -&gt; IO (Maybe ByteString)
-<span class="lineno">   85 </span><span class="decl"><span class="istickedoff">recv onBlock (NetworkSession s _ buff buffSize) = do</span>
-<span class="lineno">   86 </span><span class="spaces">    </span><span class="istickedoff">sz &lt;- throwErrnoIfMinus1RetryMayBlock</span>
-<span class="lineno">   87 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">&quot;recv&quot;</span></span>
-<span class="lineno">   88 </span><span class="spaces">              </span><span class="istickedoff">(c_read s buff buffSize)</span>
-<span class="lineno">   89 </span><span class="spaces">              </span><span class="istickedoff">onBlock</span>
-<span class="lineno">   90 </span><span class="spaces">    </span><span class="istickedoff">if sz == 0</span>
-<span class="lineno">   91 </span><span class="spaces">        </span><span class="istickedoff">then return Nothing</span>
-<span class="lineno">   92 </span><span class="spaces">        </span><span class="istickedoff">else liftM Just $ B.packCStringLen (buff, fromIntegral sz)</span></span>
-<span class="lineno">   93 </span>
-<span class="lineno">   94 </span>
-<span class="lineno">   95 </span>------------------------------------------------------------------------------
-<span class="lineno">   96 </span>send :: IO () -&gt; IO () -&gt; NetworkSession -&gt; ByteString -&gt; IO ()
-<span class="lineno">   97 </span><span class="decl"><span class="istickedoff">send tickleTimeout onBlock (NetworkSession s _ _ _) bs =</span>
-<span class="lineno">   98 </span><span class="spaces">    </span><span class="istickedoff">unsafeUseAsCStringLen bs $ uncurry loop</span>
-<span class="lineno">   99 </span><span class="spaces">  </span><span class="istickedoff">where loop ptr len = do</span>
-<span class="lineno">  100 </span><span class="spaces">          </span><span class="istickedoff">sent &lt;- throwErrnoIfMinus1RetryMayBlock</span>
-<span class="lineno">  101 </span><span class="spaces">                    </span><span class="istickedoff"><span class="nottickedoff">&quot;send&quot;</span></span>
-<span class="lineno">  102 </span><span class="spaces">                    </span><span class="istickedoff">(c_write s ptr $ fromIntegral len)</span>
-<span class="lineno">  103 </span><span class="spaces">                    </span><span class="istickedoff">onBlock</span>
-<span class="lineno">  104 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  105 </span><span class="spaces">          </span><span class="istickedoff">let sent' = fromIntegral sent</span>
-<span class="lineno">  106 </span><span class="spaces">          </span><span class="istickedoff">if sent' &lt; len</span>
-<span class="lineno">  107 </span><span class="spaces">             </span><span class="istickedoff">then tickleTimeout &gt;&gt; loop (plusPtr ptr sent') (len - sent')</span>
-<span class="lineno">  108 </span><span class="spaces">             </span><span class="istickedoff">else return <span class="nottickedoff">()</span></span></span>
-<span class="lineno">  109 </span>
-<span class="lineno">  110 </span>
-<span class="lineno">  111 </span>------------------------------------------------------------------------------
-<span class="lineno">  112 </span>foreign import ccall unsafe &quot;unistd.h read&quot; c_read
-<span class="lineno">  113 </span>    :: CInt -&gt; Ptr a -&gt; CSize -&gt; IO (CSize)
-<span class="lineno">  114 </span>foreign import ccall unsafe &quot;unistd.h write&quot; c_write
+<span class="lineno">   83 </span>#else
+<span class="lineno">   84 </span>
+<span class="lineno">   85 </span>------------------------------------------------------------------------------
+<span class="lineno">   86 </span>recv :: IO () -&gt; NetworkSession -&gt; IO (Maybe ByteString)
+<span class="lineno">   87 </span><span class="decl"><span class="istickedoff">recv onBlock (NetworkSession s _ buff buffSize) = do</span>
+<span class="lineno">   88 </span><span class="spaces">    </span><span class="istickedoff">sz &lt;- throwErrnoIfMinus1RetryMayBlock</span>
+<span class="lineno">   89 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">&quot;recv&quot;</span></span>
+<span class="lineno">   90 </span><span class="spaces">              </span><span class="istickedoff">(c_read s buff buffSize)</span>
+<span class="lineno">   91 </span><span class="spaces">              </span><span class="istickedoff">onBlock</span>
+<span class="lineno">   92 </span><span class="spaces">    </span><span class="istickedoff">if sz == 0</span>
+<span class="lineno">   93 </span><span class="spaces">        </span><span class="istickedoff">then return Nothing</span>
+<span class="lineno">   94 </span><span class="spaces">        </span><span class="istickedoff">else liftM Just $ B.packCStringLen (buff, fromIntegral sz)</span></span>
+<span class="lineno">   95 </span>
+<span class="lineno">   96 </span>
+<span class="lineno">   97 </span>------------------------------------------------------------------------------
+<span class="lineno">   98 </span>send :: IO () -&gt; IO () -&gt; NetworkSession -&gt; ByteString -&gt; IO ()
+<span class="lineno">   99 </span><span class="decl"><span class="istickedoff">send tickleTimeout onBlock (NetworkSession s _ _ _) bs =</span>
+<span class="lineno">  100 </span><span class="spaces">    </span><span class="istickedoff">unsafeUseAsCStringLen bs $ uncurry loop</span>
+<span class="lineno">  101 </span><span class="spaces">  </span><span class="istickedoff">where loop ptr len = do</span>
+<span class="lineno">  102 </span><span class="spaces">          </span><span class="istickedoff">sent &lt;- throwErrnoIfMinus1RetryMayBlock</span>
+<span class="lineno">  103 </span><span class="spaces">                    </span><span class="istickedoff"><span class="nottickedoff">&quot;send&quot;</span></span>
+<span class="lineno">  104 </span><span class="spaces">                    </span><span class="istickedoff">(c_write s ptr $ fromIntegral len)</span>
+<span class="lineno">  105 </span><span class="spaces">                    </span><span class="istickedoff">onBlock</span>
+<span class="lineno">  106 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  107 </span><span class="spaces">          </span><span class="istickedoff">let sent' = fromIntegral sent</span>
+<span class="lineno">  108 </span><span class="spaces">          </span><span class="istickedoff">if sent' &lt; len</span>
+<span class="lineno">  109 </span><span class="spaces">             </span><span class="istickedoff">then tickleTimeout &gt;&gt; loop (plusPtr ptr sent') (len - sent')</span>
+<span class="lineno">  110 </span><span class="spaces">             </span><span class="istickedoff">else return <span class="nottickedoff">()</span></span></span>
+<span class="lineno">  111 </span>
+<span class="lineno">  112 </span>
+<span class="lineno">  113 </span>------------------------------------------------------------------------------
+<span class="lineno">  114 </span>foreign import ccall unsafe &quot;unistd.h read&quot; c_read
 <span class="lineno">  115 </span>    :: CInt -&gt; Ptr a -&gt; CSize -&gt; IO (CSize)
-<span class="lineno">  116 </span>
-<span class="lineno">  117 </span>#endif
+<span class="lineno">  116 </span>foreign import ccall unsafe &quot;unistd.h write&quot; c_write
+<span class="lineno">  117 </span>    :: CInt -&gt; Ptr a -&gt; CSize -&gt; IO (CSize)
+<span class="lineno">  118 </span>
+<span class="lineno">  119 </span>#endif
 
 </pre>
 </html>

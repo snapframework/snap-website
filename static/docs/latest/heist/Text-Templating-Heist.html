@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->heist-0.4.0.1: An xhtml templating system</TD
+>heist-0.5.0.0: An xhtml templating system</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Text-Templating-Heist.html"
 >Source code</A
@@ -116,10 +116,10 @@
 >This module contains the core definitions for the Heist template system.
 </P
 ><P
->The Heist template system is based on XML/xhtml.  It allows you to build
-  custom XML-based markup languages.  With Heist you can define your own
-  domain-specific XML tags implemented with Haskell and use them in your
-  templates.  
+>The Heist template system is based on HTML and XML.  It allows you to build
+  custom HTML and XML based markup languages.  With Heist you can define your
+  own domain-specific HTML and XML tags implemented with Haskell and use them
+  in your templates.
 </P
 ><P
 >The most important concept in Heist is the <TT
@@ -152,7 +152,7 @@
   the text &quot;Logout username&quot; if the user is currently logged in or a link to
   the login page if no user is logged in.  Assume you have a function
   <TT
->getUser :: MyAppMonad (Maybe ByteString)</TT
+>getUser :: MyAppMonad (Maybe Text)</TT
 > that gets the current user.
   You can implement this functionality with a <TT
 ><A HREF="Text-Templating-Heist.html#t%3ASplice"
@@ -163,19 +163,21 @@
 ><PRE
 > import             Data.ByteString.Char8 (ByteString)
  import qualified   Data.ByteString.Char8 as B
- import qualified   Text.XML.Expat.Tree as X
- 
+ import             Data.Text (Text)
+ import qualified   Data.Text as T
+ import qualified   Text.XmlHtml as X
+
  import             Text.Templating.Heist
 
- link :: ByteString -&gt; ByteString -&gt; Node
- link target text = X.Element &quot;a&quot; [(&quot;href&quot;, target)] [X.Text text]
- 
+ link :: Text -&gt; Text -&gt; Node
+ link target text = X.Element &quot;a&quot; [(&quot;href&quot;, target)] [X.TextNode text]
+
  loginLink :: Node
  loginLink = link &quot;/login&quot; &quot;Login&quot;
- 
- logoutLink :: ByteString -&gt; Node
- logoutLink user = link &quot;/logout&quot; (B.append &quot;Logout &quot; user)
- 
+
+ logoutLink :: Text -&gt; Node
+ logoutLink user = link &quot;/logout&quot; (T.append &quot;Logout &quot; user)
+
  loginLogoutSplice :: Splice MyAppMonad
  loginLogoutSplice = do
      user &lt;- lift getUser
@@ -183,7 +185,7 @@
 
 </PRE
 ><P
->Next, you need to bind that splice to an XML tag.  Heist stores information
+>Next, you need to bind that splice to a tag.  Heist stores information
   about splices and templates in the <TT
 ><A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
@@ -193,7 +195,7 @@
 </P
 ><PRE
 > mySplices = [ (&quot;loginLogout&quot;, loginLogoutSplice) ]
- 
+
  main = do
      ets &lt;- loadTemplates &quot;templates&quot; $
             foldr (uncurry bindSplice) emptyTemplateState mySplices
@@ -240,15 +242,11 @@
 ><TD CLASS="decl"
 ><SPAN CLASS="keyword"
 >type</SPAN
-> <A HREF="#t%3ANode"
+> <A HREF="#t%3ATemplate"
+>Template</A
+> = [<A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ANode"
 >Node</A
-> = <A HREF="http://hackage.haskell.org/packages/archive/hexpat/latest/doc/html/Text-XML-Expat-Tree.html#t%3ANode"
->Node</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-></TD
+>]</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -258,11 +256,11 @@
 ><TD CLASS="decl"
 ><SPAN CLASS="keyword"
 >type</SPAN
-> <A HREF="#t%3ATemplate"
->Template</A
-> = [<A HREF="Text-Templating-Heist.html#t%3ANode"
->Node</A
->]</TD
+> <A HREF="#t%3AMIMEType"
+>MIMEType</A
+> = <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -330,6 +328,26 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AaddXMLTemplate"
+>addXMLTemplate</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplate"
+>Template</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AemptyTemplateState"
 >emptyTemplateState</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/transformers/latest/doc/html/Control-Monad-IO-Class.html#t%3AMonadIO"
@@ -350,8 +368,8 @@
 >bindSplice</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 > -&gt; <A HREF="Text-Templating-Heist.html#t%3ASplice"
 >Splice</A
 > m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
@@ -370,8 +388,8 @@
 >bindSplices</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >, <A HREF="Text-Templating-Heist.html#t%3ASplice"
 >Splice</A
 > m)] -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
@@ -390,8 +408,8 @@
 >lookupSplice</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 > -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
@@ -548,7 +566,7 @@
 >Monad</A
 > m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
-> m <A HREF="Text-Templating-Heist.html#t%3ANode"
+> m <A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ANode"
 >Node</A
 ></TD
 ></TR
@@ -562,7 +580,7 @@
 >runNodeList</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; [<A HREF="Text-Templating-Heist.html#t%3ANode"
+> m =&gt; [<A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ANode"
 >Node</A
 >] -&gt; <A HREF="Text-Templating-Heist.html#t%3ASplice"
 >Splice</A
@@ -592,9 +610,9 @@
 >localParamNode</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; (<A HREF="Text-Templating-Heist.html#t%3ANode"
+> m =&gt; (<A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ANode"
 >Node</A
-> -&gt; <A HREF="Text-Templating-Heist.html#t%3ANode"
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ANode"
 >Node</A
 >) -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
@@ -722,10 +740,10 @@
 >Monad</A
 > m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> -&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >)] -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
 > m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
@@ -750,9 +768,11 @@
 >ByteString</A
 > -&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->)</TD
+> (<A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+>, <A HREF="Text-Templating-Heist.html#t%3AMIMEType"
+>MIMEType</A
+>))</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -764,19 +784,21 @@
 >renderWithArgs</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >)] -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 > -&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->)</TD
+> (<A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+>, <A HREF="Text-Templating-Heist.html#t%3AMIMEType"
+>MIMEType</A
+>))</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -788,10 +810,10 @@
 >bindStrings</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >)] -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
@@ -808,10 +830,10 @@
 >bindString</A
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 > -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
@@ -834,7 +856,9 @@
 >Either</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
 >String</A
-> InternalTemplate)</TD
+> <A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ADocument"
+>Document</A
+>)</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -842,23 +866,19 @@
 ></TR
 ><TR
 ><TD CLASS="decl"
-><A HREF="#v%3AparseDoc"
->parseDoc</A
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+><A HREF="#v%3AgetXMLDoc"
+>getXMLDoc</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
 >Either</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
 >String</A
-> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
->Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->, [<A HREF="Text-Templating-Heist.html#t%3ANode"
->Node</A
->]))</TD
+> <A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ADocument"
+>Document</A
+>)</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -911,60 +931,13 @@
 ><TD CLASS="declname"
 ><SPAN CLASS="keyword"
 >type</SPAN
-> <A NAME="t:Node"
-><A NAME="t%3ANode"
-></A
-></A
-><B
->Node</B
-> = <A HREF="http://hackage.haskell.org/packages/archive/hexpat/latest/doc/html/Text-XML-Expat-Tree.html#t%3ANode"
->Node</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Text-Templating-Heist-Types.html#Node"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="doc"
->Heist templates are XML documents. The hexpat library is polymorphic over
- the type of strings, so here we define a <TT
-><A HREF="Text-Templating-Heist.html#t%3ANode"
->Node</A
-></TT
-> alias to fix the string
- types of the tag names and tag bodies to <TT
-><A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-></TT
->.
-</TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><SPAN CLASS="keyword"
->type</SPAN
 > <A NAME="t:Template"
 ><A NAME="t%3ATemplate"
 ></A
 ></A
 ><B
 >Template</B
-> = [<A HREF="Text-Templating-Heist.html#t%3ANode"
+> = [<A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ANode"
 >Node</A
 >]</TD
 ><TD CLASS="declbut"
@@ -987,6 +960,39 @@
  root node</A
 > constraint of well-formed XML because we want to allow templates
  to contain fragments of a document that may not have a single root.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>type</SPAN
+> <A NAME="t:MIMEType"
+><A NAME="t%3AMIMEType"
+></A
+></A
+><B
+>MIMEType</B
+> = <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Types.html#MIMEType"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>MIME Type.  The type alias is here to make the API clearer.
 </TD
 ></TR
 ><TR
@@ -1354,7 +1360,46 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Adds a template to the template state.
+>Adds an HTML format template to the template state.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:addXMLTemplate"
+><A NAME="v%3AaddXMLTemplate"
+></A
+></A
+><B
+>addXMLTemplate</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
+>Monad</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplate"
+>Template</A
+> -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
+>TemplateState</A
+> m</TD
+><TD CLASS="declbut"
+><A HREF="src/Text-Templating-Heist-Internal.html#addXMLTemplate"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Adds an XML format template to the template state.
 </TD
 ></TR
 ><TR
@@ -1439,8 +1484,8 @@
 ></TR
 ><TR
 ><TD CLASS="arg"
->=&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 ></TD
 ><TD CLASS="rdoc"
 >tag name
@@ -1521,8 +1566,8 @@
 ></TR
 ><TR
 ><TD CLASS="arg"
->=&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+>=&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >, <A HREF="Text-Templating-Heist.html#t%3ASplice"
 >Splice</A
 > m)]</TD
@@ -1576,8 +1621,8 @@
 >lookupSplice</B
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 > -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
@@ -1676,6 +1721,8 @@
 >Traverses the specified directory structure and builds a
  TemplateState by loading all the files with a <A HREF="-tpl.html"
 >.tpl</A
+> or <A HREF="-xtpl.html"
+>.xtpl</A
 > extension.
 </TD
 ></TR
@@ -1983,7 +2030,7 @@
 >Monad</A
 > m =&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
-> m <A HREF="Text-Templating-Heist.html#t%3ANode"
+> m <A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ANode"
 >Node</A
 ></TD
 ><TD CLASS="declbut"
@@ -2015,7 +2062,11 @@
 > tag and its children.  <TT
 >getParamNode &gt;&gt;=
  getChildren</TT
-> returns a list containing one Text node containing part of
+> returns a list containing one <TT
+><A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+></TT
+> node containing part of
  Hamlet's speech.  <TT
 >getParamNode &gt;&gt;= getAttribute &quot;author&quot;</TT
 > would return
@@ -2044,7 +2095,7 @@
 >runNodeList</B
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; [<A HREF="Text-Templating-Heist.html#t%3ANode"
+> m =&gt; [<A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ANode"
 >Node</A
 >] -&gt; <A HREF="Text-Templating-Heist.html#t%3ASplice"
 >Splice</A
@@ -2112,9 +2163,9 @@
 >localParamNode</B
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; (<A HREF="Text-Templating-Heist.html#t%3ANode"
+> m =&gt; (<A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ANode"
 >Node</A
-> -&gt; <A HREF="Text-Templating-Heist.html#t%3ANode"
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ANode"
 >Node</A
 >) -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateMonad"
 >TemplateMonad</A
@@ -2446,10 +2497,10 @@
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+>-&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >)]</TD
 ><TD CLASS="rdoc"
 >Association list of
@@ -2503,9 +2554,11 @@
 >ByteString</A
 > -&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->)</TD
+> (<A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+>, <A HREF="Text-Templating-Heist.html#t%3AMIMEType"
+>MIMEType</A
+>))</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Text-Templating-Heist-Internal.html#renderTemplate"
 >Source</A
@@ -2516,7 +2569,19 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Renders a template from the specified TemplateState.
+>Renders a template from the specified TemplateState to a <TT
+><A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+></TT
+>.  The
+ MIME type returned is based on the detected character encoding, and whether
+ the root template was an HTML or XML format template.  It will always be
+ <TT
+>text<EM
+>html@ or @text</EM
+>xml</TT
+>.  If a more specific MIME type is needed for a
+ particular XML application, it must be provided by the application.
 </TD
 ></TR
 ><TR
@@ -2536,19 +2601,21 @@
 >renderWithArgs</B
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >)] -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 > -&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
 >Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->)</TD
+> (<A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+>, <A HREF="Text-Templating-Heist.html#t%3AMIMEType"
+>MIMEType</A
+>))</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Text-Templating-Heist-Internal.html#renderWithArgs"
 >Source</A
@@ -2582,10 +2649,10 @@
 >bindStrings</B
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->, <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> m =&gt; [(<A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+>, <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 >)] -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
@@ -2621,10 +2688,10 @@
 >bindString</B
 > :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonad"
 >Monad</A
-> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/text/latest/doc/html/Data-Text.html#t%3AText"
+>Text</A
 > -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
 >TemplateState</A
 > m -&gt; <A HREF="Text-Templating-Heist.html#t%3ATemplateState"
@@ -2679,7 +2746,9 @@
 >Either</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
 >String</A
-> InternalTemplate)</TD
+> <A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ADocument"
+>Document</A
+>)</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Text-Templating-Heist-Internal.html#getDoc"
 >Source</A
@@ -2690,7 +2759,7 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Reads an XML document from disk.
+>Reads an HTML template from disk.
 </TD
 ></TR
 ><TR
@@ -2702,29 +2771,25 @@
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
-><A NAME="v:parseDoc"
-><A NAME="v%3AparseDoc"
+><A NAME="v:getXMLDoc"
+><A NAME="v%3AgetXMLDoc"
 ></A
 ></A
 ><B
->parseDoc</B
-> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+>getXMLDoc</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
 >Either</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
 >String</A
-> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
->Maybe</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
->, [<A HREF="Text-Templating-Heist.html#t%3ANode"
->Node</A
->]))</TD
+> <A HREF="http://hackage.haskell.org/packages/archive/xmlhtml/latest/doc/html/Text-XmlHtml.html#t%3ADocument"
+>Document</A
+>)</TD
 ><TD CLASS="declbut"
-><A HREF="src/Text-Templating-Heist-Internal.html#parseDoc"
+><A HREF="src/Text-Templating-Heist-Internal.html#getXMLDoc"
 >Source</A
 ></TD
 ></TR
@@ -2733,7 +2798,7 @@
 ></TR
 ><TR
 ><TD CLASS="doc"
->Turns an in-memory XML/XHTML bytestring into a (doctype,'[Node]') pair.
+>Reads an XML template from disk.
 </TD
 ></TR
 ><TR

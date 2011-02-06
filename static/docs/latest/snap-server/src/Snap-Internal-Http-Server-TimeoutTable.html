@@ -82,7 +82,7 @@
 <a name="line-73"></a>        <span class='hs-keyword'>let</span> <span class='hs-varop'>!</span><span class='hs-varid'>psq'</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>PSQ</span><span class='hs-varop'>.</span><span class='hs-varid'>insert</span> <span class='hs-varid'>tid</span> <span class='hs-varid'>time</span> <span class='hs-varid'>psq</span>
 <a name="line-74"></a>        <span class='hs-varid'>return</span> <span class='hs-varop'>$!</span> <span class='hs-varid'>psq'</span>
 <a name="line-75"></a>
-<a name="line-76"></a>    <span class='hs-varid'>tryPutMVar</span> <span class='hs-varid'>act</span> <span class='hs-conid'>()</span>
+<a name="line-76"></a>    <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>tryPutMVar</span> <span class='hs-varid'>act</span> <span class='hs-conid'>()</span>
 <a name="line-77"></a>    <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
 <a name="line-78"></a>
 <a name="line-79"></a>  <span class='hs-keyword'>where</span>
@@ -97,7 +97,7 @@
 <a name="line-88"></a>        <span class='hs-keyword'>let</span> <span class='hs-varop'>!</span><span class='hs-varid'>psq'</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>PSQ</span><span class='hs-varop'>.</span><span class='hs-varid'>delete</span> <span class='hs-varid'>tid</span> <span class='hs-varid'>psq</span>
 <a name="line-89"></a>        <span class='hs-varid'>return</span> <span class='hs-varop'>$!</span> <span class='hs-varid'>psq'</span>
 <a name="line-90"></a>
-<a name="line-91"></a>    <span class='hs-varid'>tryPutMVar</span> <span class='hs-varid'>act</span> <span class='hs-conid'>()</span>
+<a name="line-91"></a>    <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>tryPutMVar</span> <span class='hs-varid'>act</span> <span class='hs-conid'>()</span>
 <a name="line-92"></a>    <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
 <a name="line-93"></a>
 <a name="line-94"></a>  <span class='hs-keyword'>where</span>

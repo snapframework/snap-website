@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.3.0: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.4.0: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Types.html"
 >Source code</A
@@ -131,15 +131,20 @@
 ></DT
 ></DL
 ></DD
+><DT
+><A HREF="#12"
+>Timeouts
+</A
+></DT
 ></DL
 ></DD
 ><DT
-><A HREF="#12"
+><A HREF="#13"
 >Iteratee
 </A
 ></DT
 ><DT
-><A HREF="#13"
+><A HREF="#14"
 >HTTP utilities
 </A
 ></DT
@@ -202,6 +207,12 @@ for HTTP as well as the <TT
 >Snap</A
 > a -&gt; (<A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>) -&gt; (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
@@ -307,6 +318,24 @@ for HTTP as well as the <TT
 > m =&gt; <A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 > -&gt; m a</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AcatchFinishWith"
+>catchFinishWith</A
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
+>Either</A
+> <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> a)</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -602,8 +631,8 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > a) -&gt; <A HREF="Snap-Types.html#t%3ASnap"
@@ -1222,6 +1251,20 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AgetParams"
+>getParams</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="Snap-Types.html#t%3AParams"
+>Params</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3ArqModifyParams"
 >rqModifyParams</A
 > :: (<A HREF="Snap-Types.html#t%3AParams"
@@ -1364,6 +1407,90 @@ for HTTP as well as the <TT
 ></TR
 ><TR
 ><TD CLASS="decl"
+><A HREF="#v%3AaddResponseCookie"
+>addResponseCookie</A
+> :: <A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+> -&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetResponseCookie"
+>getResponseCookie</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetResponseCookies"
+>getResponseCookies</A
+> :: <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; [<A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+>]</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AdeleteResponseCookie"
+>deleteResponseCookie</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AmodifyResponseCookie"
+>modifyResponseCookie</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; (<A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+> -&gt; <A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+>) -&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> -&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
 ><A HREF="#v%3AgetCookie"
 >getCookie</A
 > :: <A HREF="Snap-Types.html#t%3AMonadSnap"
@@ -1418,9 +1545,7 @@ for HTTP as well as the <TT
 >MonadSnap</A
 > m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
+> -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -1436,9 +1561,7 @@ for HTTP as well as the <TT
 >ByteString</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
 >Int</A
-> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
+> -&gt; m a</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -1452,8 +1575,8 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > a) -&gt; <A HREF="Snap-Types.html#t%3AResponse"
@@ -1474,14 +1597,14 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > a -&gt; <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > a) -&gt; <A HREF="Snap-Types.html#t%3AResponse"
@@ -1504,11 +1627,27 @@ for HTTP as well as the <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > a) -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AwriteBuilder"
+>writeBuilder</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ></TR
@@ -1611,6 +1750,40 @@ for HTTP as well as the <TT
 >) -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AsetTimeout"
+>setTimeout</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AgetTimeoutAction"
+>getTimeoutAction</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
 ></TR
 ><TR
 ><TD CLASS="s8"
@@ -1872,6 +2045,12 @@ for HTTP as well as the <TT
 >IO</A
 > <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
+>) -&gt; (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
 >) -&gt; <A HREF="Snap-Types.html#t%3ARequest"
 >Request</A
 > -&gt; <A HREF="Snap-Iteratee.html#t%3AIteratee"
@@ -2093,6 +2272,16 @@ for HTTP as well as the <TT
 ><PRE
 > a :: Snap ()
  a = liftIO fireTheMissiles
+</PRE
+><P
+>7. the ability to set a timeout which will kill the handler thread after <TT
+>N</TT
+>
+   seconds of inactivity:
+</P
+><PRE
+> a :: Snap ()
+ a = setTimeout 30
 </PRE
 ><P
 >You may notice that most of the type signatures in this module contain a
@@ -2564,6 +2753,73 @@ transformers (ReaderT, WriterT, <TT
 ></TT
 > value in its state.
 </TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:catchFinishWith"
+><A NAME="v%3AcatchFinishWith"
+></A
+></A
+><B
+>catchFinishWith</B
+> ::  <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> a -&gt; <A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Either.html#t%3AEither"
+>Either</A
+> <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+> a)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#catchFinishWith"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>Capture the flow of control in case a handler calls <TT
+><A HREF="Snap-Types.html#v%3AfinishWith"
+>finishWith</A
+></TT
+>.
+</P
+><P
+><EM
+>WARNING</EM
+>: in the event of a call to <TT
+><A HREF="Snap-Types.html#v%3AtransformRequestBody"
+>transformRequestBody</A
+></TT
+> it is possible
+ to violate HTTP protocol safety when using this function. If you call
+ <TT
+><A HREF="Snap-Types.html#v%3AcatchFinishWith"
+>catchFinishWith</A
+></TT
+> it is suggested that you do not modify the body of the
+ <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> which was passed to the <TT
+><A HREF="Snap-Types.html#v%3AfinishWith"
+>finishWith</A
+></TT
+> call.
+</P
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -3630,8 +3886,8 @@ transformers (ReaderT, WriterT, <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > a</TD
@@ -5558,6 +5814,56 @@ transformers (ReaderT, WriterT, <TT
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
+><A NAME="v:getParams"
+><A NAME="v%3AgetParams"
+></A
+></A
+><B
+>getParams</B
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m <A HREF="Snap-Types.html#t%3AParams"
+>Params</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#getParams"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>See <TT
+><A HREF="Snap-Types.html#v%3ArqParams"
+>rqParams</A
+></TT
+>. Convenience function to return <TT
+><A HREF="Snap-Types.html#t%3AParams"
+>Params</A
+></TT
+> from the
+ <TT
+><A HREF="Snap-Types.html#t%3ARequest"
+>Request</A
+></TT
+> inside of a <TT
+><A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+></TT
+> instance.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
 ><A NAME="v:rqModifyParams"
 ><A NAME="v%3ArqModifyParams"
 ></A
@@ -6010,15 +6316,370 @@ transformers (ReaderT, WriterT, <TT
 ></TR
 ><TR
 ><TD CLASS="ndoc" COLSPAN="2"
+>addCookie has been deprecated and will be removed in 0.4. Please use
+ <TT
+><A HREF="Snap-Types.html#v%3AaddResponseCookie"
+>addResponseCookie</A
+></TT
+> instead.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:addResponseCookie"
+><A NAME="v%3AaddResponseCookie"
+></A
+></A
+><B
+>addResponseCookie</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#addResponseCookie"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+></TD
+><TD CLASS="rdoc"
+>cookie value
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+><TD CLASS="rdoc"
+>response to modify
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
 >Adds an HTTP <TT
 ><A HREF="Snap-Types.html#t%3ACookie"
 >Cookie</A
 ></TT
-> to the <TT
+> to <TT
 ><A HREF="Snap-Types.html#t%3AResponse"
 >Response</A
 ></TT
 > headers.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getResponseCookie"
+><A NAME="v%3AgetResponseCookie"
+></A
+></A
+><B
+>getResponseCookie</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#getResponseCookie"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="rdoc"
+>cookie name
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+><TD CLASS="rdoc"
+>response to query
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Maybe.html#t%3AMaybe"
+>Maybe</A
+> <A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Gets an HTTP <TT
+><A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+></TT
+> with the given name from <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> headers.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getResponseCookies"
+><A NAME="v%3AgetResponseCookies"
+></A
+></A
+><B
+>getResponseCookies</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#getResponseCookies"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+><TD CLASS="rdoc"
+>response to query
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; [<A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+>]</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Returns a list of <TT
+><A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+></TT
+>s present in <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+>
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:deleteResponseCookie"
+><A NAME="v%3AdeleteResponseCookie"
+></A
+></A
+><B
+>deleteResponseCookie</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#deleteResponseCookie"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="rdoc"
+>cookie name
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+><TD CLASS="rdoc"
+>response to modify
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Deletes an HTTP <TT
+><A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+></TT
+> from the <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> headers.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:modifyResponseCookie"
+><A NAME="v%3AmodifyResponseCookie"
+></A
+></A
+><B
+>modifyResponseCookie</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Http-Types.html#modifyResponseCookie"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="rdoc"
+>cookie name
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+> -&gt; <A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+></TD
+><TD CLASS="rdoc"
+>modifier function
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+><TD CLASS="rdoc"
+>response to modify
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Modifies an HTTP <TT
+><A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+></TT
+> with given name in <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> headers.
+ Nothing will happen if a matching <TT
+><A HREF="Snap-Types.html#t%3ACookie"
+>Cookie</A
+></TT
+> can not be found in <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+>.
 </TD
 ></TR
 ></TABLE
@@ -6183,9 +6844,7 @@ transformers (ReaderT, WriterT, <TT
 >MonadSnap</A
 > m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
-> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
+> -&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#redirect"
 >Source</A
@@ -6234,9 +6893,7 @@ transformers (ReaderT, WriterT, <TT
 >ByteString</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
 >Int</A
-> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
+> -&gt; m a</TD
 ><TD CLASS="declbut"
 ><A HREF="src/Snap-Internal-Types.html#redirect%27"
 >Source</A
@@ -6309,8 +6966,8 @@ transformers (ReaderT, WriterT, <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > a</TD
@@ -6366,14 +7023,14 @@ transformers (ReaderT, WriterT, <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > a -&gt; <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > a) -&gt; <A HREF="Snap-Types.html#t%3AResponse"
@@ -6435,8 +7092,8 @@ transformers (ReaderT, WriterT, <TT
 >forall</SPAN
 > a.  <A HREF="Snap-Types.html#t%3AEnumerator"
 >Enumerator</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+> <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
 > <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
 >IO</A
 > a</TD
@@ -6468,6 +7125,54 @@ transformers (ReaderT, WriterT, <TT
 ></TR
 ></TABLE
 ></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:writeBuilder"
+><A NAME="v%3AwriteBuilder"
+></A
+></A
+><B
+>writeBuilder</B
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#writeBuilder"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Adds the given <TT
+><A HREF="http://hackage.haskell.org/packages/archive/blaze-builder/latest/doc/html/Blaze-ByteString-Builder-Internal-Types.html#t%3ABuilder"
+>Builder</A
+></TT
+> to the body of the <TT
+><A HREF="Snap-Types.html#t%3AResponse"
+>Response</A
+></TT
+> stored in the
+ | <TT
+><A HREF="Snap-Types.html#t%3ASnap"
+>Snap</A
+></TT
+> monad state.
+</TD
 ></TR
 ><TR
 ><TD CLASS="s15"
@@ -6849,9 +7554,101 @@ transformers (ReaderT, WriterT, <TT
 ></TD
 ></TR
 ><TR
+><TD CLASS="section2"
+><A NAME="12"
+><A NAME="12"
+>Timeouts
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:setTimeout"
+><A NAME="v%3AsetTimeout"
+></A
+></A
+><B
+>setTimeout</B
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#setTimeout"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Causes the handler thread to be killed <TT
+>n</TT
+> seconds from now.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:getTimeoutAction"
+><A NAME="v%3AgetTimeoutAction"
+></A
+></A
+><B
+>getTimeoutAction</B
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; m (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Int.html#t%3AInt"
+>Int</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+> <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Internal-Types.html#getTimeoutAction"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>Returns an <TT
+><A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AIO"
+>IO</A
+></TT
+> action which you can use to reset the handling thread's
+ timeout value.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
 ><TD CLASS="section1"
-><A NAME="12"
-><A NAME="12"
+><A NAME="13"
+><A NAME="13"
 >Iteratee
 </A
 ></A
@@ -6980,11 +7777,7 @@ transformers (ReaderT, WriterT, <TT
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
 ><TD CLASS="ndoc"
->An existential wrapper for the <TT
-><A HREF="Snap-Types.html#t%3AEnumerator"
->Enumerator</A
-></TT
-> type
+>An existential wrapper for the 'Enumerator ByteString IO a' type
 </TD
 ></TR
 ><TR
@@ -7026,8 +7819,8 @@ transformers (ReaderT, WriterT, <TT
 ></TR
 ><TR
 ><TD CLASS="section1"
-><A NAME="13"
-><A NAME="13"
+><A NAME="14"
+><A NAME="14"
 >HTTP utilities
 </A
 ></A

@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-core-0.3.0: Snap: A Haskell Web Framework (Core)</TD
+>snap-core-0.4.0: Snap: A Haskell Web Framework (Core)</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Util-FileServe.html"
 >Source code</A
@@ -45,6 +45,43 @@
 ><TD
 ><FONT SIZE="6"
 >Snap.Util.FileServe</FONT
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="section4"
+><B
+>Contents</B
+></TD
+></TR
+><TR
+><TD
+><DL
+><DT
+><A HREF="#1"
+>Configuration for directory serving
+</A
+></DT
+><DT
+><A HREF="#2"
+>File servers
+</A
+></DT
+><DT
+><A HREF="#3"
+>Deprecated interface
+</A
+></DT
+></DL
 ></TD
 ></TR
 ></TABLE
@@ -86,6 +123,236 @@
 >MonadSnap</A
 > m =&gt; m <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+> <A HREF="#t%3AMimeMap"
+>MimeMap</A
+> = <A HREF="http://hackage.haskell.org/packages/archive/containers/latest/doc/html/Data-Map.html#t%3AMap"
+>Map</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+> <A HREF="#t%3AHandlerMap"
+>HandlerMap</A
+> m = <A HREF="http://hackage.haskell.org/packages/archive/containers/latest/doc/html/Data-Map.html#t%3AMap"
+>Map</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A HREF="#t%3ADirectoryConfig"
+>DirectoryConfig</A
+> m = <A HREF="#v%3ADirectoryConfig"
+>DirectoryConfig</A
+> {<TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AindexFiles"
+>indexFiles</A
+> :: [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+>]</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AindexGenerator"
+>indexGenerator</A
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AdynamicHandlers"
+>dynamicHandlers</A
+> :: <A HREF="Snap-Util-FileServe.html#t%3AHandlerMap"
+>HandlerMap</A
+> m</TD
+></TR
+><TR
+><TD CLASS="recfield"
+><A HREF="#v%3AmimeTypes"
+>mimeTypes</A
+> :: <A HREF="Snap-Util-FileServe.html#t%3AMimeMap"
+>MimeMap</A
+></TD
+></TR
+></TABLE
+>}</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AsimpleDirectoryConfig"
+>simpleDirectoryConfig</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Util-FileServe.html#t%3ADirectoryConfig"
+>DirectoryConfig</A
+> m</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AdefaultDirectoryConfig"
+>defaultDirectoryConfig</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Util-FileServe.html#t%3ADirectoryConfig"
+>DirectoryConfig</A
+> m</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AfancyDirectoryConfig"
+>fancyDirectoryConfig</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Util-FileServe.html#t%3ADirectoryConfig"
+>DirectoryConfig</A
+> m</TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AdefaultIndexGenerator"
+>defaultIndexGenerator</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Util-FileServe.html#t%3AMimeMap"
+>MimeMap</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AdefaultMimeTypes"
+>defaultMimeTypes</A
+> :: <A HREF="Snap-Util-FileServe.html#t%3AMimeMap"
+>MimeMap</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AserveDirectory"
+>serveDirectory</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AserveDirectoryWith"
+>serveDirectoryWith</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Util-FileServe.html#t%3ADirectoryConfig"
+>DirectoryConfig</A
+> m -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AserveFile"
+>serveFile</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+></TR
+><TR
+><TD CLASS="s8"
+></TD
+></TR
+><TR
+><TD CLASS="decl"
+><A HREF="#v%3AserveFileAs"
+>serveFileAs</A
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
 ></TD
 ></TR
 ><TR
@@ -156,36 +423,6 @@
 >()</A
 ></TD
 ></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><A HREF="#v%3AdefaultMimeTypes"
->defaultMimeTypes</A
-> :: <A HREF="Snap-Util-FileServe.html#t%3AMimeMap"
->MimeMap</A
-></TD
-></TR
-><TR
-><TD CLASS="s8"
-></TD
-></TR
-><TR
-><TD CLASS="decl"
-><SPAN CLASS="keyword"
->type</SPAN
-> <A HREF="#t%3AMimeMap"
->MimeMap</A
-> = <A HREF="http://hackage.haskell.org/packages/archive/containers/latest/doc/html/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
->FilePath</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
-></TD
-></TR
 ></TABLE
 ></TD
 ></TR
@@ -247,19 +484,110 @@
 ></TD
 ></TR
 ><TR
+><TD CLASS="section1"
+><A NAME="1"
+><A NAME="1"
+>Configuration for directory serving
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
 ><TD CLASS="topdecl"
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
-><A NAME="v:fileServe"
-><A NAME="v%3AfileServe"
+><SPAN CLASS="keyword"
+>type</SPAN
+> <A NAME="t:MimeMap"
+><A NAME="t%3AMimeMap"
 ></A
 ></A
 ><B
->fileServe</B
+>MimeMap</B
+> = <A HREF="http://hackage.haskell.org/packages/archive/containers/latest/doc/html/Data-Map.html#t%3AMap"
+>Map</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
 ></TD
 ><TD CLASS="declbut"
-><A HREF="src/Snap-Util-FileServe.html#fileServe"
+><A HREF="src/Snap-Util-FileServe.html#MimeMap"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>A type alias for MIME type
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>type</SPAN
+> <A NAME="t:HandlerMap"
+><A NAME="t%3AHandlerMap"
+></A
+></A
+><B
+>HandlerMap</B
+> m = <A HREF="http://hackage.haskell.org/packages/archive/containers/latest/doc/html/Data-Map.html#t%3AMap"
+>Map</A
+> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> (<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+>)</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#HandlerMap"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>A type alias for dynamic handlers
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><SPAN CLASS="keyword"
+>data</SPAN
+>  <A NAME="t:DirectoryConfig"
+><A NAME="t%3ADirectoryConfig"
+></A
+></A
+><B
+>DirectoryConfig</B
+> m </TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#DirectoryConfig"
 >Source</A
 ></TD
 ></TR
@@ -270,54 +598,100 @@
 ><TD CLASS="body"
 ><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
 ><TR
+><TD CLASS="ndoc"
+>A collection of options for serving static files out of a directory.
+</TD
+></TR
+><TR
+><TD CLASS="section4"
+>Constructors</TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="5" CELLPADDING="0"
+><TR
 ><TD CLASS="arg"
->:: <A HREF="Snap-Types.html#t%3AMonadSnap"
->MonadSnap</A
-> m</TD
+><A NAME="v:DirectoryConfig"
+><A NAME="v%3ADirectoryConfig"
+></A
+></A
+><B
+>DirectoryConfig</B
+></TD
 ><TD CLASS="rdoc"
 ></TD
 ></TR
 ><TR
+><TD CLASS="body" COLSPAN="2"
+><TABLE CLASS="vanilla" CELLSPACING="1" CELLPADDING="0"
+><TR
 ><TD CLASS="arg"
->=&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+><A NAME="v:indexFiles"
+><A NAME="v%3AindexFiles"
+></A
+></A
+><B
+>indexFiles</B
+> :: [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
 >FilePath</A
-></TD
+>]</TD
 ><TD CLASS="rdoc"
->root directory
+>Files to look for when a directory is requested (e.g., index.html)
 </TD
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+><A NAME="v:indexGenerator"
+><A NAME="v%3AindexGenerator"
+></A
+></A
+><B
+>indexGenerator</B
+> :: <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+> -&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
 >()</A
 ></TD
 ><TD CLASS="rdoc"
-></TD
+>Handler to generate a directory listing if there is no index.
+</TD
 ></TR
 ><TR
-><TD CLASS="ndoc" COLSPAN="2"
-><P
->Serves files out of the given directory. The relative path given in
- <TT
-><A HREF="Snap-Internal-Http-Types.html#v%3ArqPathInfo"
->rqPathInfo</A
-></TT
-> is searched for the given file, and the file is served with
- the appropriate mime type if it is found. Absolute paths and &quot;<TT
->..</TT
->&quot; are
- prohibited to prevent files from being served from outside the sandbox.
-</P
-><P
->Uses <TT
-><A HREF="Snap-Util-FileServe.html#v%3AdefaultMimeTypes"
->defaultMimeTypes</A
-></TT
-> to determine the <TT
->Content-Type</TT
-> based on the file's
- extension.
-</P
+><TD CLASS="arg"
+><A NAME="v:dynamicHandlers"
+><A NAME="v%3AdynamicHandlers"
+></A
+></A
+><B
+>dynamicHandlers</B
+> :: <A HREF="Snap-Util-FileServe.html#t%3AHandlerMap"
+>HandlerMap</A
+> m</TD
+><TD CLASS="rdoc"
+>Map of extensions to pass to dynamic file handlers.  This could be
+ used, for example, to implement CGI dispatch, pretty printing of source
+ code, etc.
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+><A NAME="v:mimeTypes"
+><A NAME="v%3AmimeTypes"
+></A
+></A
+><B
+>mimeTypes</B
+> :: <A HREF="Snap-Util-FileServe.html#t%3AMimeMap"
+>MimeMap</A
+></TD
+><TD CLASS="rdoc"
+>MIME type map to look up content types.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
 ></TD
 ></TR
 ></TABLE
@@ -332,15 +706,159 @@
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
-><A NAME="v:fileServe'"
-><A NAME="v%3AfileServe%27"
+><A NAME="v:simpleDirectoryConfig"
+><A NAME="v%3AsimpleDirectoryConfig"
 ></A
 ></A
 ><B
->fileServe'</B
+>simpleDirectoryConfig</B
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Util-FileServe.html#t%3ADirectoryConfig"
+>DirectoryConfig</A
+> m</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#simpleDirectoryConfig"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>A very simple configuration for directory serving.  This configuration
+ uses built-in MIME types from <TT
+><A HREF="Snap-Util-FileServe.html#v%3AdefaultMimeTypes"
+>defaultMimeTypes</A
+></TT
+>, and has no index files,
+ index generator, or dynamic file handlers.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:defaultDirectoryConfig"
+><A NAME="v%3AdefaultDirectoryConfig"
+></A
+></A
+><B
+>defaultDirectoryConfig</B
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Util-FileServe.html#t%3ADirectoryConfig"
+>DirectoryConfig</A
+> m</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#defaultDirectoryConfig"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+>A reasonable default configuration for directory serving.  This
+ configuration uses built-in MIME types from <TT
+><A HREF="Snap-Util-FileServe.html#v%3AdefaultMimeTypes"
+>defaultMimeTypes</A
+></TT
+>, serves
+ common index files <TT
+>index.html</TT
+> and <TT
+>index.htm</TT
+>, but does not autogenerate
+ directory indexes, nor have any dynamic file handlers.
+</TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:fancyDirectoryConfig"
+><A NAME="v%3AfancyDirectoryConfig"
+></A
+></A
+><B
+>fancyDirectoryConfig</B
+> :: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m =&gt; <A HREF="Snap-Util-FileServe.html#t%3ADirectoryConfig"
+>DirectoryConfig</A
+> m</TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#fancyDirectoryConfig"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>A more elaborate configuration for file serving.  This configuration
+ uses built-in MIME types from <TT
+><A HREF="Snap-Util-FileServe.html#v%3AdefaultMimeTypes"
+>defaultMimeTypes</A
+></TT
+>, serves common index files
+ <TT
+>index.html</TT
+> and <TT
+>index.htm</TT
+>, and autogenerates directory indexes with a
+ Snap-like feel.  It still has no dynamic file handlers, which should be
+ added as needed.
+</P
+><P
+>Files recognized as indexes include <TT
+>index.html</TT
+>, <TT
+>index.htm</TT
+>,
+ <TT
+>default.html</TT
+>, <TT
+>default.htm</TT
+>, <TT
+>home.html</TT
+>
+</P
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:defaultIndexGenerator"
+><A NAME="v%3AdefaultIndexGenerator"
+></A
+></A
+><B
+>defaultIndexGenerator</B
 ></TD
 ><TD CLASS="declbut"
-><A HREF="src/Snap-Util-FileServe.html#fileServe%27"
+><A HREF="src/Snap-Util-FileServe.html#defaultIndexGenerator"
 >Source</A
 ></TD
 ></TR
@@ -364,142 +882,16 @@
 >MimeMap</A
 ></TD
 ><TD CLASS="rdoc"
->MIME type mapping
+>MIME type mapping for reporting types
 </TD
 ></TR
 ><TR
 ><TD CLASS="arg"
->-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
->FilePath</A
-></TD
-><TD CLASS="rdoc"
->root directory
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-><TD CLASS="rdoc"
-></TD
-></TR
-><TR
-><TD CLASS="ndoc" COLSPAN="2"
->Same as <TT
-><A HREF="Snap-Util-FileServe.html#v%3AfileServe"
->fileServe</A
-></TT
->, with control over the MIME mapping used.
-</TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:fileServeSingle"
-><A NAME="v%3AfileServeSingle"
-></A
-></A
-><B
->fileServeSingle</B
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Util-FileServe.html#fileServeSingle"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="body"
-><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
-><TR
-><TD CLASS="arg"
->:: <A HREF="Snap-Types.html#t%3AMonadSnap"
->MonadSnap</A
-> m</TD
-><TD CLASS="rdoc"
-></TD
-></TR
-><TR
-><TD CLASS="arg"
->=&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
->FilePath</A
-></TD
-><TD CLASS="rdoc"
->path to file
-</TD
-></TR
-><TR
-><TD CLASS="arg"
->-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
->()</A
-></TD
-><TD CLASS="rdoc"
-></TD
-></TR
-><TR
-><TD CLASS="ndoc" COLSPAN="2"
->Serves a single file specified by a full or relative path.  The
- path restrictions on fileServe don't apply to this function since
- the path is not being supplied by the user.
-</TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="s15"
-></TD
-></TR
-><TR
-><TD CLASS="topdecl"
-><TABLE CLASS="declbar"
-><TR
-><TD CLASS="declname"
-><A NAME="v:fileServeSingle'"
-><A NAME="v%3AfileServeSingle%27"
-></A
-></A
-><B
->fileServeSingle'</B
-></TD
-><TD CLASS="declbut"
-><A HREF="src/Snap-Util-FileServe.html#fileServeSingle%27"
->Source</A
-></TD
-></TR
-></TABLE
-></TD
-></TR
-><TR
-><TD CLASS="body"
-><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
-><TR
-><TD CLASS="arg"
->:: <A HREF="Snap-Types.html#t%3AMonadSnap"
->MonadSnap</A
-> m</TD
-><TD CLASS="rdoc"
-></TD
-></TR
-><TR
-><TD CLASS="arg"
->=&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
 >ByteString</A
 ></TD
 ><TD CLASS="rdoc"
->MIME type mapping
+>Style info to insert in header
 </TD
 ></TR
 ><TR
@@ -508,7 +900,7 @@
 >FilePath</A
 ></TD
 ><TD CLASS="rdoc"
->path to file
+>Directory to generate index for
 </TD
 ></TR
 ><TR
@@ -521,12 +913,31 @@
 ></TR
 ><TR
 ><TD CLASS="ndoc" COLSPAN="2"
->Same as <TT
-><A HREF="Snap-Util-FileServe.html#v%3AfileServeSingle"
->fileServeSingle</A
+><P
+>An automatic index generator, which is fairly small and does not rely on
+ any external files (which may not be there depending on external request
+ routing).
+</P
+><P
+>A <TT
+><A HREF="Snap-Util-FileServe.html#t%3AMimeMap"
+>MimeMap</A
 ></TT
->, with control over the MIME mapping used.
-</TD
+> is passed in to display the types of files in the directory
+ listing based on their extension.  Preferably, this is the same as the map
+ in the <TT
+><A HREF="Snap-Util-FileServe.html#t%3ADirectoryConfig"
+>DirectoryConfig</A
+></TT
+>
+</P
+><P
+>The styles parameter allows you to apply styles to the directory listing.
+ The listing itself consists of a table, containing a header row using
+ th elements, and one row per file using td elements, so styles for those
+ pieces may be attached to the appropriate tags.
+</P
+></TD
 ></TR
 ></TABLE
 ></TD
@@ -627,27 +1038,32 @@
 ></TD
 ></TR
 ><TR
+><TD CLASS="section1"
+><A NAME="2"
+><A NAME="2"
+>File servers
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
 ><TD CLASS="topdecl"
 ><TABLE CLASS="declbar"
 ><TR
 ><TD CLASS="declname"
-><SPAN CLASS="keyword"
->type</SPAN
-> <A NAME="t:MimeMap"
-><A NAME="t%3AMimeMap"
+><A NAME="v:serveDirectory"
+><A NAME="v%3AserveDirectory"
 ></A
 ></A
 ><B
->MimeMap</B
-> = <A HREF="http://hackage.haskell.org/packages/archive/containers/latest/doc/html/Data-Map.html#t%3AMap"
->Map</A
-> <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
->FilePath</A
-> <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
->ByteString</A
+>serveDirectory</B
 ></TD
 ><TD CLASS="declbut"
-><A HREF="src/Snap-Util-FileServe.html#MimeMap"
+><A HREF="src/Snap-Util-FileServe.html#serveDirectory"
 >Source</A
 ></TD
 ></TR
@@ -655,9 +1071,594 @@
 ></TD
 ></TR
 ><TR
-><TD CLASS="doc"
->A type alias for MIME type
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+><TD CLASS="rdoc"
+>Directory to serve from
 </TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Serves static files from a directory using the default configuration
+ as given in <TT
+><A HREF="Snap-Util-FileServe.html#v%3AdefaultDirectoryConfig"
+>defaultDirectoryConfig</A
+></TT
+>.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:serveDirectoryWith"
+><A NAME="v%3AserveDirectoryWith"
+></A
+></A
+><B
+>serveDirectoryWith</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#serveDirectoryWith"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="Snap-Util-FileServe.html#t%3ADirectoryConfig"
+>DirectoryConfig</A
+> m</TD
+><TD CLASS="rdoc"
+>Configuration options
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+><TD CLASS="rdoc"
+>Directory to serve from
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Serves static files from a directory.  Configuration options are
+ passed in a <TT
+><A HREF="Snap-Util-FileServe.html#t%3ADirectoryConfig"
+>DirectoryConfig</A
+></TT
+> that captures various choices about desired
+ behavior.  The relative path given in <TT
+><A HREF="Snap-Internal-Http-Types.html#v%3ArqPathInfo"
+>rqPathInfo</A
+></TT
+> is searched for a
+ requested file, and the file is served with the appropriate mime type if it
+ is found. Absolute paths and &quot;<TT
+>..</TT
+>&quot; are prohibited to prevent files from
+ being served from outside the sandbox.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:serveFile"
+><A NAME="v%3AserveFile"
+></A
+></A
+><B
+>serveFile</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#serveFile"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+><TD CLASS="rdoc"
+>path to file
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Serves a single file specified by a full or relative path.  If the file
+ does not exist, throws an exception (not that it does <EM
+>not</EM
+> pass to the
+ next handler).   The path restrictions on <TT
+><A HREF="Snap-Util-FileServe.html#v%3AserveDirectory"
+>serveDirectory</A
+></TT
+> don't apply to
+ this function since the path is not being supplied by the user.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:serveFileAs"
+><A NAME="v%3AserveFileAs"
+></A
+></A
+><B
+>serveFileAs</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#serveFileAs"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="rdoc"
+>MIME type
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+><TD CLASS="rdoc"
+>path to file
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+>Same as <TT
+><A HREF="Snap-Util-FileServe.html#v%3AserveFile"
+>serveFile</A
+></TT
+>, with control over the MIME mapping used.
+</TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+><A NAME="3"
+><A NAME="3"
+>Deprecated interface
+</A
+></A
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:fileServe"
+><A NAME="v%3AfileServe"
+></A
+></A
+><B
+>fileServe</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#fileServe"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+><TD CLASS="rdoc"
+>root directory
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+><P
+>Serves files out of the given directory, using no index files and default
+ MIME types.
+</P
+><P
+>The function name is obsolete.  You should use <TT
+><A HREF="Snap-Util-FileServe.html#v%3AserveDirectory"
+>serveDirectory</A
+></TT
+> or
+ <TT
+><A HREF="Snap-Util-FileServe.html#v%3AserveDirectoryWith"
+>serveDirectoryWith</A
+></TT
+> instead, which do similar things but with more options
+ and clearer, more consistent names.
+</P
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:fileServe'"
+><A NAME="v%3AfileServe%27"
+></A
+></A
+><B
+>fileServe'</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#fileServe%27"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="Snap-Util-FileServe.html#t%3AMimeMap"
+>MimeMap</A
+></TD
+><TD CLASS="rdoc"
+>MIME type mapping
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+><TD CLASS="rdoc"
+>root directory
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+><P
+>Serves files out of the given directory, with a given MIME type mapping.
+</P
+><P
+>The function name is obsolete.  You should use <TT
+><A HREF="Snap-Util-FileServe.html#v%3AserveDirectoryWith"
+>serveDirectoryWith</A
+></TT
+>
+ instead, which offers more options and a clearer, more consistent name.
+</P
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:fileServeSingle"
+><A NAME="v%3AfileServeSingle"
+></A
+></A
+><B
+>fileServeSingle</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#fileServeSingle"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+><TD CLASS="rdoc"
+>path to file
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+><P
+>Serves a single file specified by a full or relative path.  The
+ path restrictions on fileServe don't apply to this function since
+ the path is not being supplied by the user.
+</P
+><P
+>The function name is obsolete.  You should use <TT
+><A HREF="Snap-Util-FileServe.html#v%3AserveFile"
+>serveFile</A
+></TT
+> instead, which
+ does the same thing but with a clearer, more consistent name.
+</P
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="topdecl"
+><TABLE CLASS="declbar"
+><TR
+><TD CLASS="declname"
+><A NAME="v:fileServeSingle'"
+><A NAME="v%3AfileServeSingle%27"
+></A
+></A
+><B
+>fileServeSingle'</B
+></TD
+><TD CLASS="declbut"
+><A HREF="src/Snap-Util-FileServe.html#fileServeSingle%27"
+>Source</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="body"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="arg"
+>:: <A HREF="Snap-Types.html#t%3AMonadSnap"
+>MonadSnap</A
+> m</TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="arg"
+>=&gt; <A HREF="http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString"
+>ByteString</A
+></TD
+><TD CLASS="rdoc"
+>MIME type mapping
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; <A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#t%3AFilePath"
+>FilePath</A
+></TD
+><TD CLASS="rdoc"
+>path to file
+</TD
+></TR
+><TR
+><TD CLASS="arg"
+>-&gt; m <A HREF="http://hackage.haskell.org/packages/archive/ghc-prim/latest/doc/html/GHC-Unit.html#t%3A%28%29"
+>()</A
+></TD
+><TD CLASS="rdoc"
+></TD
+></TR
+><TR
+><TD CLASS="ndoc" COLSPAN="2"
+><P
+>Same as <TT
+><A HREF="Snap-Util-FileServe.html#v%3AfileServeSingle"
+>fileServeSingle</A
+></TT
+>, with control over the MIME mapping used.
+</P
+><P
+>The function name is obsolete.  You should use <TT
+><A HREF="Snap-Util-FileServe.html#v%3AserveFileAs"
+>serveFileAs</A
+></TT
+> instead, which
+ does the same thing but with a clearer, more consistent name.
+</P
+></TD
+></TR
+></TABLE
+></TD
 ></TR
 ><TR
 ><TD CLASS="s15"

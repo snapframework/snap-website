@@ -1,0 +1,67 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>{-# LANGUAGE OverloadedStrings #-}
+<span class="lineno">    2 </span>
+<span class="lineno">    3 </span>module Text.Templating.Heist.Splices.Apply where
+<span class="lineno">    4 </span>
+<span class="lineno">    5 </span>------------------------------------------------------------------------------
+<span class="lineno">    6 </span>import           Data.Maybe
+<span class="lineno">    7 </span>import           Data.Text (Text)
+<span class="lineno">    8 </span>import qualified Data.Text as T
+<span class="lineno">    9 </span>import qualified Data.Text.Encoding as T
+<span class="lineno">   10 </span>import qualified Text.XmlHtml as X
+<span class="lineno">   11 </span>
+<span class="lineno">   12 </span>------------------------------------------------------------------------------
+<span class="lineno">   13 </span>import           Text.Templating.Heist.Internal
+<span class="lineno">   14 </span>import           Text.Templating.Heist.Types
+<span class="lineno">   15 </span>
+<span class="lineno">   16 </span>------------------------------------------------------------------------------
+<span class="lineno">   17 </span>-- | Default name for the apply splice.
+<span class="lineno">   18 </span>applyTag :: Text
+<span class="lineno">   19 </span><span class="decl"><span class="istickedoff">applyTag = &quot;apply&quot;</span></span>
+<span class="lineno">   20 </span>
+<span class="lineno">   21 </span>
+<span class="lineno">   22 </span>------------------------------------------------------------------------------
+<span class="lineno">   23 </span>-- | Default attribute name for the apply tag.
+<span class="lineno">   24 </span>applyAttr :: Text
+<span class="lineno">   25 </span><span class="decl"><span class="istickedoff">applyAttr = &quot;template&quot;</span></span>
+<span class="lineno">   26 </span>
+<span class="lineno">   27 </span>
+<span class="lineno">   28 </span>------------------------------------------------------------------------------
+<span class="lineno">   29 </span>-- | Implementation of the apply splice.
+<span class="lineno">   30 </span>applyImpl :: Monad m =&gt; Splice m
+<span class="lineno">   31 </span><span class="decl"><span class="istickedoff">applyImpl = do</span>
+<span class="lineno">   32 </span><span class="spaces">    </span><span class="istickedoff">node &lt;- getParamNode</span>
+<span class="lineno">   33 </span><span class="spaces">    </span><span class="istickedoff">case X.getAttribute applyAttr node of</span>
+<span class="lineno">   34 </span><span class="spaces">        </span><span class="istickedoff">Nothing   -&gt; return [] -- TODO: error handling</span>
+<span class="lineno">   35 </span><span class="spaces">        </span><span class="istickedoff">Just attr -&gt; do</span>
+<span class="lineno">   36 </span><span class="spaces">            </span><span class="istickedoff">st &lt;- getTS</span>
+<span class="lineno">   37 </span><span class="spaces">            </span><span class="istickedoff">maybe (return []) -- TODO: error handling</span>
+<span class="lineno">   38 </span><span class="spaces">                  </span><span class="istickedoff">(\(t,ctx) -&gt; do</span>
+<span class="lineno">   39 </span><span class="spaces">                      </span><span class="istickedoff">addDoctype $ maybeToList $ X.docType t</span>
+<span class="lineno">   40 </span><span class="spaces">                      </span><span class="istickedoff">processedChildren &lt;- runNodeList $ X.childNodes node</span>
+<span class="lineno">   41 </span><span class="spaces">                      </span><span class="istickedoff">modifyTS (bindSplice &quot;content&quot; $</span>
+<span class="lineno">   42 </span><span class="spaces">                                </span><span class="istickedoff">return processedChildren)</span>
+<span class="lineno">   43 </span><span class="spaces">                      </span><span class="istickedoff">setContext <span class="nottickedoff">ctx</span></span>
+<span class="lineno">   44 </span><span class="spaces">                      </span><span class="istickedoff">result &lt;- runNodeList $ X.docContent t</span>
+<span class="lineno">   45 </span><span class="spaces">                      </span><span class="istickedoff">restoreTS st</span>
+<span class="lineno">   46 </span><span class="spaces">                      </span><span class="istickedoff">return result)</span>
+<span class="lineno">   47 </span><span class="spaces">                  </span><span class="istickedoff">(lookupTemplate (T.encodeUtf8 attr)</span>
+<span class="lineno">   48 </span><span class="spaces">                                  </span><span class="istickedoff">(st {_curContext = nextCtx attr st}))</span>
+<span class="lineno">   49 </span><span class="spaces">  </span><span class="istickedoff">where nextCtx name st</span>
+<span class="lineno">   50 </span><span class="spaces">            </span><span class="istickedoff">| T.isPrefixOf &quot;/&quot; name = []</span>
+<span class="lineno">   51 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span>             = _curContext st</span></span>
+<span class="lineno">   52 </span>
+<span class="lineno">   53 </span>
+
+</pre>
+</html>

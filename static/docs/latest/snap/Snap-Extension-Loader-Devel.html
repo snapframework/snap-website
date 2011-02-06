@@ -21,7 +21,7 @@
 ><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
 ></TD
 ><TD CLASS="title"
->snap-0.3.0: Snap: A Haskell Web Framework (Core)</TD
+>snap-0.4: Snap: A Haskell Web Framework: project starter executable and glue code library</TD
 ><TD CLASS="topbut"
 ><A HREF="src/Snap-Extension-Loader-Devel.html"
 >Source code</A
@@ -90,7 +90,9 @@
 >Name</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
 >Name</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AQ"
+> -&gt; [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+>] -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AQ"
 >Q</A
 > <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AExp"
 >Exp</A
@@ -126,7 +128,9 @@
 >Name</A
 > -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AName"
 >Name</A
-> -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AQ"
+> -&gt; [<A HREF="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-Char.html#t%3AString"
+>String</A
+>] -&gt; <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AQ"
 >Q</A
 > <A HREF="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t%3AExp"
 >Exp</A
@@ -150,20 +154,10 @@
 >This could be considered a TH wrapper around a function
 </P
 ><PRE
-> loadSnap :: Initializer s -&gt; SnapExtend s () -&gt; IO (Snap ())
+> loadSnap :: Initializer s -&gt; SnapExtend s () -&gt; [String] -&gt; IO (Snap ())
 </PRE
 ><P
 >with a magical implementation.
-</P
-><P
->The returned Snap action runs the Initializer, runs the <TT
-><A HREF="http://hackage.haskell.org/packages/archive/snap-core/latest/doc/html/Snap-Types.html#t%3ASnap"
->Snap</A
-></TT
-> handler,
- and does the cleanup.  This means that the whole application state will be
- loaded and unloaded for each request.  To make this worthwhile, those steps
- should be made quite fast.
 </P
 ><P
 >The upshot is that you shouldn't need to recompile your server

@@ -33,7 +33,7 @@ span.spaces    { background: white }
 <span class="lineno">   22 </span>instance Exception LibevException
 <span class="lineno">   23 </span>
 <span class="lineno">   24 </span>libEvEventLoop :: EventLoop
-<span class="lineno">   25 </span>libEvEventLoop _ _ _ _ = throwIO $
+<span class="lineno">   25 </span>libEvEventLoop _ _ _ _ _ = throwIO $
 <span class="lineno">   26 </span>    LibevException &quot;libev event loop is not supported&quot;
 <span class="lineno">   27 </span>
 <span class="lineno">   28 </span>#else
@@ -118,624 +118,637 @@ span.spaces    { background: white }
 <span class="lineno">  107 </span>
 <span class="lineno">  108 </span>------------------------------------------------------------------------------
 <span class="lineno">  109 </span>libEvEventLoop :: EventLoop
-<span class="lineno">  110 </span><span class="decl"><span class="istickedoff">libEvEventLoop sockets cap elog handler = do</span>
-<span class="lineno">  111 </span><span class="spaces">    </span><span class="istickedoff">backends &lt;- Prelude.mapM (newLoop sockets handler elog) [0..(cap-1)]</span>
-<span class="lineno">  112 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  113 </span><span class="spaces">    </span><span class="istickedoff">debug &quot;libevEventLoop: waiting for loop exit&quot;</span>
-<span class="lineno">  114 </span><span class="spaces">    </span><span class="istickedoff">Prelude.mapM_ (takeMVar . _loopExit) backends `finally` do</span>
-<span class="lineno">  115 </span><span class="spaces">        </span><span class="istickedoff">debug &quot;libevEventLoop: stopping all backends&quot;</span>
-<span class="lineno">  116 </span><span class="spaces">        </span><span class="istickedoff">mapM stop backends</span>
-<span class="lineno">  117 </span><span class="spaces">        </span><span class="istickedoff">mapM Listen.closeSocket sockets</span></span>
-<span class="lineno">  118 </span>
+<span class="lineno">  110 </span><span class="decl"><span class="istickedoff">libEvEventLoop defaultTimeout sockets cap elog handler = do</span>
+<span class="lineno">  111 </span><span class="spaces">    </span><span class="istickedoff">backends &lt;- Prelude.mapM (newLoop <span class="nottickedoff">defaultTimeout</span> sockets handler elog)</span>
+<span class="lineno">  112 </span><span class="spaces">                             </span><span class="istickedoff">[0..(cap-1)]</span>
+<span class="lineno">  113 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  114 </span><span class="spaces">    </span><span class="istickedoff">debug &quot;libevEventLoop: waiting for loop exit&quot;</span>
+<span class="lineno">  115 </span><span class="spaces">    </span><span class="istickedoff">Prelude.mapM_ (takeMVar . _loopExit) backends `finally` do</span>
+<span class="lineno">  116 </span><span class="spaces">        </span><span class="istickedoff">debug &quot;libevEventLoop: stopping all backends&quot;</span>
+<span class="lineno">  117 </span><span class="spaces">        </span><span class="istickedoff">mapM stop backends</span>
+<span class="lineno">  118 </span><span class="spaces">        </span><span class="istickedoff">mapM Listen.closeSocket sockets</span></span>
 <span class="lineno">  119 </span>
-<span class="lineno">  120 </span>------------------------------------------------------------------------------
-<span class="lineno">  121 </span>newLoop :: [ListenSocket]        -- ^ value you got from bindIt
-<span class="lineno">  122 </span>        -&gt; SessionHandler        -- ^ handler
-<span class="lineno">  123 </span>        -&gt; (ByteString -&gt; IO ()) -- ^ error logger
-<span class="lineno">  124 </span>        -&gt; Int                   -- ^ cpu
-<span class="lineno">  125 </span>        -&gt; IO Backend
-<span class="lineno">  126 </span><span class="decl"><span class="istickedoff">newLoop sockets handler elog cpu = do</span>
-<span class="lineno">  127 </span><span class="spaces">    </span><span class="istickedoff">-- We'll try kqueue on OSX even though the libev docs complain that it's</span>
-<span class="lineno">  128 </span><span class="spaces">    </span><span class="istickedoff">-- &quot;broken&quot;, in the hope that it works as expected for sockets</span>
-<span class="lineno">  129 </span><span class="spaces">    </span><span class="istickedoff">f  &lt;- evRecommendedBackends</span>
-<span class="lineno">  130 </span><span class="spaces">    </span><span class="istickedoff">lp &lt;- evLoopNew $ toEnum . fromEnum $ f .|. evbackend_kqueue</span>
-<span class="lineno">  131 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  132 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  133 </span><span class="spaces">    </span><span class="istickedoff">-- we'll be working multithreaded so we need to set up locking for the C</span>
-<span class="lineno">  134 </span><span class="spaces">    </span><span class="istickedoff">-- event loop struct</span>
-<span class="lineno">  135 </span><span class="spaces">    </span><span class="istickedoff">(mc1,mc2,looplock) &lt;- setupLockingForLoop lp</span>
-<span class="lineno">  136 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  137 </span><span class="spaces">    </span><span class="istickedoff">-- setup async callbacks -- these allow us to wake up the main loop</span>
-<span class="lineno">  138 </span><span class="spaces">    </span><span class="istickedoff">-- (normally blocked in c-land) from other threads</span>
-<span class="lineno">  139 </span><span class="spaces">    </span><span class="istickedoff">asyncObj &lt;- mkEvAsync</span>
-<span class="lineno">  140 </span><span class="spaces">    </span><span class="istickedoff">asyncCB  &lt;- mkAsyncCallback $ \_ _ _ -&gt; do</span>
-<span class="lineno">  141 </span><span class="spaces">                            </span><span class="istickedoff">debug &quot;async wakeup&quot;</span>
-<span class="lineno">  142 </span><span class="spaces">                            </span><span class="istickedoff">return ()</span>
-<span class="lineno">  143 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  144 </span><span class="spaces">    </span><span class="istickedoff">killObj &lt;- mkEvAsync</span>
-<span class="lineno">  145 </span><span class="spaces">    </span><span class="istickedoff">killCB  &lt;- mkAsyncCallback $ \_ _ _ -&gt; do</span>
-<span class="lineno">  146 </span><span class="spaces">                            </span><span class="istickedoff">debug &quot;async kill wakeup&quot;</span>
-<span class="lineno">  147 </span><span class="spaces">                            </span><span class="istickedoff">evUnloop lp evunloop_all</span>
-<span class="lineno">  148 </span><span class="spaces">                            </span><span class="istickedoff">return ()</span>
-<span class="lineno">  149 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  150 </span><span class="spaces">    </span><span class="istickedoff">evAsyncInit asyncObj asyncCB</span>
-<span class="lineno">  151 </span><span class="spaces">    </span><span class="istickedoff">evAsyncStart lp asyncObj</span>
-<span class="lineno">  152 </span><span class="spaces">    </span><span class="istickedoff">evAsyncInit killObj killCB</span>
-<span class="lineno">  153 </span><span class="spaces">    </span><span class="istickedoff">evAsyncStart lp killObj</span>
-<span class="lineno">  154 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  155 </span><span class="spaces">    </span><span class="istickedoff">-- create the ios for the accept callbacks</span>
-<span class="lineno">  156 </span><span class="spaces">    </span><span class="istickedoff">accMVars &lt;- forM sockets $ \_ -&gt; newEmptyMVar</span>
-<span class="lineno">  157 </span><span class="spaces">    </span><span class="istickedoff">accIOs &lt;- forM sockets $ \_ -&gt; mkEvIo</span>
-<span class="lineno">  158 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  159 </span><span class="spaces">    </span><span class="istickedoff">-- thread set stuff</span>
-<span class="lineno">  160 </span><span class="spaces">    </span><span class="istickedoff">connSet &lt;- H.new (H.hashString . show)</span>
-<span class="lineno">  161 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  162 </span><span class="spaces">    </span><span class="istickedoff">-- freed gets stuffed with () when all resources are released.</span>
-<span class="lineno">  163 </span><span class="spaces">    </span><span class="istickedoff">freed &lt;- newEmptyMVar</span>
-<span class="lineno">  164 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  165 </span><span class="spaces">    </span><span class="istickedoff">let b = Backend <span class="nottickedoff">sockets</span></span>
-<span class="lineno">  166 </span><span class="spaces">                    </span><span class="istickedoff">lp</span>
-<span class="lineno">  167 </span><span class="spaces">                    </span><span class="istickedoff">accMVars</span>
-<span class="lineno">  168 </span><span class="spaces">                    </span><span class="istickedoff">accIOs</span>
-<span class="lineno">  169 </span><span class="spaces">                    </span><span class="istickedoff">(mc1,mc2)</span>
-<span class="lineno">  170 </span><span class="spaces">                    </span><span class="istickedoff">looplock</span>
-<span class="lineno">  171 </span><span class="spaces">                    </span><span class="istickedoff">asyncCB</span>
-<span class="lineno">  172 </span><span class="spaces">                    </span><span class="istickedoff">asyncObj</span>
-<span class="lineno">  173 </span><span class="spaces">                    </span><span class="istickedoff">killCB</span>
-<span class="lineno">  174 </span><span class="spaces">                    </span><span class="istickedoff">killObj</span>
-<span class="lineno">  175 </span><span class="spaces">                    </span><span class="istickedoff">connSet</span>
-<span class="lineno">  176 </span><span class="spaces">                    </span><span class="istickedoff">cpu</span>
-<span class="lineno">  177 </span><span class="spaces">                    </span><span class="istickedoff">freed</span>
-<span class="lineno">  178 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  179 </span><span class="spaces">    </span><span class="istickedoff">-- setup the accept callback; this watches for read readiness on the</span>
-<span class="lineno">  180 </span><span class="spaces">    </span><span class="istickedoff">-- listen port</span>
-<span class="lineno">  181 </span><span class="spaces">    </span><span class="istickedoff">forM_ (zip3 sockets accIOs accMVars) $ \(sock, accIO, x) -&gt; do</span>
-<span class="lineno">  182 </span><span class="spaces">        </span><span class="istickedoff">accCB &lt;- mkIoCallback $ acceptCallback b handler elog cpu sock</span>
-<span class="lineno">  183 </span><span class="spaces">        </span><span class="istickedoff">evIoInit accIO accCB (fdSocket $ Listen.listenSocket sock) ev_read</span>
-<span class="lineno">  184 </span><span class="spaces">        </span><span class="istickedoff">evIoStart lp accIO</span>
-<span class="lineno">  185 </span><span class="spaces">        </span><span class="istickedoff">putMVar x accCB</span>
-<span class="lineno">  186 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  187 </span><span class="spaces">    </span><span class="istickedoff">forkOnIO cpu $ loopThread b</span>
-<span class="lineno">  188 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  189 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;LibEv.newLoop: loop spawned&quot;</span>
-<span class="lineno">  190 </span><span class="spaces">    </span><span class="istickedoff">return b</span></span>
-<span class="lineno">  191 </span>
-<span class="lineno">  192 </span>
-<span class="lineno">  193 </span>------------------------------------------------------------------------------
-<span class="lineno">  194 </span>-- | Run evLoop in a thread
-<span class="lineno">  195 </span>loopThread :: Backend -&gt; IO ()
-<span class="lineno">  196 </span><span class="decl"><span class="istickedoff">loopThread backend = do</span>
-<span class="lineno">  197 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;starting loop&quot;</span>
-<span class="lineno">  198 </span><span class="spaces">    </span><span class="istickedoff">(ignoreException go) `finally` cleanup</span>
-<span class="lineno">  199 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;loop finished&quot;</span>
-<span class="lineno">  200 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  201 </span><span class="spaces">    </span><span class="istickedoff">cleanup = block $ do</span>
-<span class="lineno">  202 </span><span class="spaces">        </span><span class="istickedoff">debug $ &quot;loopThread: cleaning up&quot;</span>
-<span class="lineno">  203 </span><span class="spaces">        </span><span class="istickedoff">ignoreException $ freeBackend backend</span>
-<span class="lineno">  204 </span><span class="spaces">        </span><span class="istickedoff">putMVar (_loopExit backend) <span class="nottickedoff">()</span></span>
-<span class="lineno">  205 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  206 </span><span class="spaces">    </span><span class="istickedoff">lock    = _loopLock backend</span>
-<span class="lineno">  207 </span><span class="spaces">    </span><span class="istickedoff">loop    = _evLoop backend</span>
-<span class="lineno">  208 </span><span class="spaces">    </span><span class="istickedoff">go      = takeMVar lock &gt;&gt; block (evLoop loop 0)</span></span>
-<span class="lineno">  209 </span>
-<span class="lineno">  210 </span>
-<span class="lineno">  211 </span>------------------------------------------------------------------------------
-<span class="lineno">  212 </span>acceptCallback :: Backend
-<span class="lineno">  213 </span>               -&gt; SessionHandler
-<span class="lineno">  214 </span>               -&gt; (ByteString -&gt; IO ())
-<span class="lineno">  215 </span>               -&gt; Int
-<span class="lineno">  216 </span>               -&gt; ListenSocket
-<span class="lineno">  217 </span>               -&gt; IoCallback
-<span class="lineno">  218 </span><span class="decl"><span class="istickedoff">acceptCallback back handler elog cpu sock _loopPtr _ioPtr _ = do</span>
-<span class="lineno">  219 </span><span class="spaces">    </span><span class="istickedoff">debug &quot;inside acceptCallback&quot;</span>
-<span class="lineno">  220 </span><span class="spaces">    </span><span class="istickedoff">r &lt;- c_accept $ fdSocket $ Listen.listenSocket sock</span>
-<span class="lineno">  221 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  222 </span><span class="spaces">    </span><span class="istickedoff">case r of</span>
-<span class="lineno">  223 </span><span class="spaces">      </span><span class="istickedoff">-- this (EWOULDBLOCK) shouldn't happen (we just got told it was ready!),</span>
-<span class="lineno">  224 </span><span class="spaces">      </span><span class="istickedoff">-- if it does (maybe the request got picked up by another thread) we'll</span>
-<span class="lineno">  225 </span><span class="spaces">      </span><span class="istickedoff">-- just bail out</span>
-<span class="lineno">  226 </span><span class="spaces">      </span><span class="istickedoff">-2 -&gt; <span class="nottickedoff">return ()</span></span>
-<span class="lineno">  227 </span><span class="spaces">      </span><span class="istickedoff">-1 -&gt; <span class="nottickedoff">debugErrno &quot;Libev.acceptCallback:c_accept()&quot;</span></span>
-<span class="lineno">  228 </span><span class="spaces">      </span><span class="istickedoff">fd -&gt; do</span>
-<span class="lineno">  229 </span><span class="spaces">          </span><span class="istickedoff">debug $ &quot;acceptCallback: accept()ed fd, writing to chan &quot; ++ show fd</span>
-<span class="lineno">  230 </span><span class="spaces">          </span><span class="istickedoff">forkOnIO cpu $ (go r `catches` cleanup)</span>
-<span class="lineno">  231 </span><span class="spaces">          </span><span class="istickedoff">return ()</span>
-<span class="lineno">  232 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  233 </span><span class="spaces">    </span><span class="istickedoff">go = runSession back handler sock</span>
-<span class="lineno">  234 </span><span class="spaces">    </span><span class="istickedoff">cleanup = [ Handler $ <span class="nottickedoff">\(_ :: TimeoutException) -&gt; return ()</span></span>
-<span class="lineno">  235 </span><span class="spaces">              </span><span class="istickedoff">, Handler $ \(e :: SomeException) -&gt;</span>
-<span class="lineno">  236 </span><span class="spaces">                  </span><span class="istickedoff">elog $ S.concat [ &quot;libev.acceptCallback: &quot;</span>
-<span class="lineno">  237 </span><span class="spaces">                                  </span><span class="istickedoff">, S.pack . map c2w $ show e ]</span>
-<span class="lineno">  238 </span><span class="spaces">              </span><span class="istickedoff">]</span></span>
-<span class="lineno">  239 </span>
-<span class="lineno">  240 </span>
-<span class="lineno">  241 </span>------------------------------------------------------------------------------
-<span class="lineno">  242 </span>ioReadCallback :: CInt -&gt; IORef Bool -&gt; MVar () -&gt; IoCallback
-<span class="lineno">  243 </span><span class="decl"><span class="istickedoff">ioReadCallback fd active ra _loopPtr _ioPtr _ = do</span>
-<span class="lineno">  244 </span><span class="spaces">    </span><span class="istickedoff">-- send notifications to the worker thread</span>
-<span class="lineno">  245 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;ioReadCallback: notification (&quot; ++ show fd ++ &quot;)&quot;</span>
-<span class="lineno">  246 </span><span class="spaces">    </span><span class="istickedoff">tryPutMVar ra <span class="nottickedoff">()</span></span>
-<span class="lineno">  247 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;stopping ioReadCallback (&quot; ++ show fd ++ &quot;)&quot;</span>
-<span class="lineno">  248 </span><span class="spaces">    </span><span class="istickedoff">evIoStop _loopPtr _ioPtr</span>
-<span class="lineno">  249 </span><span class="spaces">    </span><span class="istickedoff">writeIORef active False</span></span>
-<span class="lineno">  250 </span>
-<span class="lineno">  251 </span>
-<span class="lineno">  252 </span>------------------------------------------------------------------------------
-<span class="lineno">  253 </span>ioWriteCallback :: CInt -&gt; IORef Bool -&gt; MVar () -&gt; IoCallback
-<span class="lineno">  254 </span><span class="decl"><span class="istickedoff">ioWriteCallback fd active wa _loopPtr _ioPtr _ = do</span>
-<span class="lineno">  255 </span><span class="spaces">    </span><span class="istickedoff">-- send notifications to the worker thread</span>
-<span class="lineno">  256 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;ioWriteCallback: notification (&quot; ++ show fd ++ &quot;)&quot;</span>
-<span class="lineno">  257 </span><span class="spaces">    </span><span class="istickedoff">tryPutMVar wa <span class="nottickedoff">()</span></span>
-<span class="lineno">  258 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;stopping ioWriteCallback (&quot; ++ show fd ++ &quot;)&quot;</span>
-<span class="lineno">  259 </span><span class="spaces">    </span><span class="istickedoff">evIoStop _loopPtr _ioPtr</span>
-<span class="lineno">  260 </span><span class="spaces">    </span><span class="istickedoff">writeIORef active False</span></span>
-<span class="lineno">  261 </span>
-<span class="lineno">  262 </span>
-<span class="lineno">  263 </span>------------------------------------------------------------------------------
-<span class="lineno">  264 </span>stop :: Backend -&gt; IO ()
-<span class="lineno">  265 </span><span class="decl"><span class="istickedoff">stop b = ignoreException $ do</span>
-<span class="lineno">  266 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;Libev.stop&quot;</span>
-<span class="lineno">  267 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  268 </span><span class="spaces">    </span><span class="istickedoff">-- 1. take the loop lock</span>
-<span class="lineno">  269 </span><span class="spaces">    </span><span class="istickedoff">-- 2. shut down the accept() callback</span>
-<span class="lineno">  270 </span><span class="spaces">    </span><span class="istickedoff">-- 3. call evUnloop and wake up the loop using evAsyncSend</span>
-<span class="lineno">  271 </span><span class="spaces">    </span><span class="istickedoff">-- 4. release the loop lock, the main loop thread should then free/clean</span>
-<span class="lineno">  272 </span><span class="spaces">    </span><span class="istickedoff">--    everything up (threads, connections, io objects, callbacks, etc)</span>
-<span class="lineno">  273 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  274 </span><span class="spaces">    </span><span class="istickedoff">withMVar lock $ \_ -&gt; do</span>
-<span class="lineno">  275 </span><span class="spaces">        </span><span class="istickedoff">forM acceptObjs $ evIoStop loop</span>
-<span class="lineno">  276 </span><span class="spaces">        </span><span class="istickedoff">evUnloop loop evunloop_all</span>
-<span class="lineno">  277 </span><span class="spaces">        </span><span class="istickedoff">evAsyncSend loop killObj</span>
+<span class="lineno">  120 </span>
+<span class="lineno">  121 </span>------------------------------------------------------------------------------
+<span class="lineno">  122 </span>newLoop :: Int                   -- ^ default timeout
+<span class="lineno">  123 </span>        -&gt; [ListenSocket]        -- ^ value you got from bindIt
+<span class="lineno">  124 </span>        -&gt; SessionHandler        -- ^ handler
+<span class="lineno">  125 </span>        -&gt; (ByteString -&gt; IO ()) -- ^ error logger
+<span class="lineno">  126 </span>        -&gt; Int                   -- ^ cpu
+<span class="lineno">  127 </span>        -&gt; IO Backend
+<span class="lineno">  128 </span><span class="decl"><span class="istickedoff">newLoop defaultTimeout sockets handler elog cpu = do</span>
+<span class="lineno">  129 </span><span class="spaces">    </span><span class="istickedoff">-- We'll try kqueue on OSX even though the libev docs complain that it's</span>
+<span class="lineno">  130 </span><span class="spaces">    </span><span class="istickedoff">-- &quot;broken&quot;, in the hope that it works as expected for sockets</span>
+<span class="lineno">  131 </span><span class="spaces">    </span><span class="istickedoff">f  &lt;- evRecommendedBackends</span>
+<span class="lineno">  132 </span><span class="spaces">    </span><span class="istickedoff">lp &lt;- evLoopNew $ toEnum . fromEnum $ f .|. evbackend_kqueue</span>
+<span class="lineno">  133 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  134 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  135 </span><span class="spaces">    </span><span class="istickedoff">-- we'll be working multithreaded so we need to set up locking for the C</span>
+<span class="lineno">  136 </span><span class="spaces">    </span><span class="istickedoff">-- event loop struct</span>
+<span class="lineno">  137 </span><span class="spaces">    </span><span class="istickedoff">(mc1,mc2,looplock) &lt;- setupLockingForLoop lp</span>
+<span class="lineno">  138 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  139 </span><span class="spaces">    </span><span class="istickedoff">-- setup async callbacks -- these allow us to wake up the main loop</span>
+<span class="lineno">  140 </span><span class="spaces">    </span><span class="istickedoff">-- (normally blocked in c-land) from other threads</span>
+<span class="lineno">  141 </span><span class="spaces">    </span><span class="istickedoff">asyncObj &lt;- mkEvAsync</span>
+<span class="lineno">  142 </span><span class="spaces">    </span><span class="istickedoff">asyncCB  &lt;- mkAsyncCallback $ \_ _ _ -&gt; do</span>
+<span class="lineno">  143 </span><span class="spaces">                            </span><span class="istickedoff">debug &quot;async wakeup&quot;</span>
+<span class="lineno">  144 </span><span class="spaces">                            </span><span class="istickedoff">return ()</span>
+<span class="lineno">  145 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  146 </span><span class="spaces">    </span><span class="istickedoff">killObj &lt;- mkEvAsync</span>
+<span class="lineno">  147 </span><span class="spaces">    </span><span class="istickedoff">killCB  &lt;- mkAsyncCallback $ \_ _ _ -&gt; do</span>
+<span class="lineno">  148 </span><span class="spaces">                            </span><span class="istickedoff">debug &quot;async kill wakeup&quot;</span>
+<span class="lineno">  149 </span><span class="spaces">                            </span><span class="istickedoff">evUnloop lp evunloop_all</span>
+<span class="lineno">  150 </span><span class="spaces">                            </span><span class="istickedoff">return ()</span>
+<span class="lineno">  151 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  152 </span><span class="spaces">    </span><span class="istickedoff">evAsyncInit asyncObj asyncCB</span>
+<span class="lineno">  153 </span><span class="spaces">    </span><span class="istickedoff">evAsyncStart lp asyncObj</span>
+<span class="lineno">  154 </span><span class="spaces">    </span><span class="istickedoff">evAsyncInit killObj killCB</span>
+<span class="lineno">  155 </span><span class="spaces">    </span><span class="istickedoff">evAsyncStart lp killObj</span>
+<span class="lineno">  156 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  157 </span><span class="spaces">    </span><span class="istickedoff">-- create the ios for the accept callbacks</span>
+<span class="lineno">  158 </span><span class="spaces">    </span><span class="istickedoff">accMVars &lt;- forM sockets $ \_ -&gt; newEmptyMVar</span>
+<span class="lineno">  159 </span><span class="spaces">    </span><span class="istickedoff">accIOs &lt;- forM sockets $ \_ -&gt; mkEvIo</span>
+<span class="lineno">  160 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  161 </span><span class="spaces">    </span><span class="istickedoff">-- thread set stuff</span>
+<span class="lineno">  162 </span><span class="spaces">    </span><span class="istickedoff">connSet &lt;- H.new (H.hashString . show)</span>
+<span class="lineno">  163 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  164 </span><span class="spaces">    </span><span class="istickedoff">-- freed gets stuffed with () when all resources are released.</span>
+<span class="lineno">  165 </span><span class="spaces">    </span><span class="istickedoff">freed &lt;- newEmptyMVar</span>
+<span class="lineno">  166 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  167 </span><span class="spaces">    </span><span class="istickedoff">let b = Backend <span class="nottickedoff">sockets</span></span>
+<span class="lineno">  168 </span><span class="spaces">                    </span><span class="istickedoff">lp</span>
+<span class="lineno">  169 </span><span class="spaces">                    </span><span class="istickedoff">accMVars</span>
+<span class="lineno">  170 </span><span class="spaces">                    </span><span class="istickedoff">accIOs</span>
+<span class="lineno">  171 </span><span class="spaces">                    </span><span class="istickedoff">(mc1,mc2)</span>
+<span class="lineno">  172 </span><span class="spaces">                    </span><span class="istickedoff">looplock</span>
+<span class="lineno">  173 </span><span class="spaces">                    </span><span class="istickedoff">asyncCB</span>
+<span class="lineno">  174 </span><span class="spaces">                    </span><span class="istickedoff">asyncObj</span>
+<span class="lineno">  175 </span><span class="spaces">                    </span><span class="istickedoff">killCB</span>
+<span class="lineno">  176 </span><span class="spaces">                    </span><span class="istickedoff">killObj</span>
+<span class="lineno">  177 </span><span class="spaces">                    </span><span class="istickedoff">connSet</span>
+<span class="lineno">  178 </span><span class="spaces">                    </span><span class="istickedoff">cpu</span>
+<span class="lineno">  179 </span><span class="spaces">                    </span><span class="istickedoff">freed</span>
+<span class="lineno">  180 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  181 </span><span class="spaces">    </span><span class="istickedoff">-- setup the accept callback; this watches for read readiness on the</span>
+<span class="lineno">  182 </span><span class="spaces">    </span><span class="istickedoff">-- listen port</span>
+<span class="lineno">  183 </span><span class="spaces">    </span><span class="istickedoff">forM_ (zip3 sockets accIOs accMVars) $ \(sock, accIO, x) -&gt; do</span>
+<span class="lineno">  184 </span><span class="spaces">        </span><span class="istickedoff">accCB &lt;- mkIoCallback $ acceptCallback <span class="nottickedoff">defaultTimeout</span> b handler elog</span>
+<span class="lineno">  185 </span><span class="spaces">                                               </span><span class="istickedoff">cpu sock</span>
+<span class="lineno">  186 </span><span class="spaces">        </span><span class="istickedoff">evIoInit accIO accCB (fdSocket $ Listen.listenSocket sock) ev_read</span>
+<span class="lineno">  187 </span><span class="spaces">        </span><span class="istickedoff">evIoStart lp accIO</span>
+<span class="lineno">  188 </span><span class="spaces">        </span><span class="istickedoff">putMVar x accCB</span>
+<span class="lineno">  189 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  190 </span><span class="spaces">    </span><span class="istickedoff">forkOnIO cpu $ loopThread b</span>
+<span class="lineno">  191 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  192 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;LibEv.newLoop: loop spawned&quot;</span>
+<span class="lineno">  193 </span><span class="spaces">    </span><span class="istickedoff">return b</span></span>
+<span class="lineno">  194 </span>
+<span class="lineno">  195 </span>
+<span class="lineno">  196 </span>------------------------------------------------------------------------------
+<span class="lineno">  197 </span>-- | Run evLoop in a thread
+<span class="lineno">  198 </span>loopThread :: Backend -&gt; IO ()
+<span class="lineno">  199 </span><span class="decl"><span class="istickedoff">loopThread backend = do</span>
+<span class="lineno">  200 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;starting loop&quot;</span>
+<span class="lineno">  201 </span><span class="spaces">    </span><span class="istickedoff">(ignoreException go) `finally` cleanup</span>
+<span class="lineno">  202 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;loop finished&quot;</span>
+<span class="lineno">  203 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  204 </span><span class="spaces">    </span><span class="istickedoff">cleanup = block $ do</span>
+<span class="lineno">  205 </span><span class="spaces">        </span><span class="istickedoff">debug $ &quot;loopThread: cleaning up&quot;</span>
+<span class="lineno">  206 </span><span class="spaces">        </span><span class="istickedoff">ignoreException $ freeBackend backend</span>
+<span class="lineno">  207 </span><span class="spaces">        </span><span class="istickedoff">putMVar (_loopExit backend) <span class="nottickedoff">()</span></span>
+<span class="lineno">  208 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  209 </span><span class="spaces">    </span><span class="istickedoff">lock    = _loopLock backend</span>
+<span class="lineno">  210 </span><span class="spaces">    </span><span class="istickedoff">loop    = _evLoop backend</span>
+<span class="lineno">  211 </span><span class="spaces">    </span><span class="istickedoff">go      = takeMVar lock &gt;&gt; block (evLoop loop 0)</span></span>
+<span class="lineno">  212 </span>
+<span class="lineno">  213 </span>
+<span class="lineno">  214 </span>------------------------------------------------------------------------------
+<span class="lineno">  215 </span>acceptCallback :: Int
+<span class="lineno">  216 </span>               -&gt; Backend
+<span class="lineno">  217 </span>               -&gt; SessionHandler
+<span class="lineno">  218 </span>               -&gt; (ByteString -&gt; IO ())
+<span class="lineno">  219 </span>               -&gt; Int
+<span class="lineno">  220 </span>               -&gt; ListenSocket
+<span class="lineno">  221 </span>               -&gt; IoCallback
+<span class="lineno">  222 </span><span class="decl"><span class="istickedoff">acceptCallback defaultTimeout back handler</span>
+<span class="lineno">  223 </span><span class="spaces">               </span><span class="istickedoff">elog cpu sock _loopPtr _ioPtr _ = do</span>
+<span class="lineno">  224 </span><span class="spaces">    </span><span class="istickedoff">debug &quot;inside acceptCallback&quot;</span>
+<span class="lineno">  225 </span><span class="spaces">    </span><span class="istickedoff">r &lt;- c_accept $ fdSocket $ Listen.listenSocket sock</span>
+<span class="lineno">  226 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  227 </span><span class="spaces">    </span><span class="istickedoff">case r of</span>
+<span class="lineno">  228 </span><span class="spaces">      </span><span class="istickedoff">-- this (EWOULDBLOCK) shouldn't happen (we just got told it was ready!),</span>
+<span class="lineno">  229 </span><span class="spaces">      </span><span class="istickedoff">-- if it does (maybe the request got picked up by another thread) we'll</span>
+<span class="lineno">  230 </span><span class="spaces">      </span><span class="istickedoff">-- just bail out</span>
+<span class="lineno">  231 </span><span class="spaces">      </span><span class="istickedoff">-2 -&gt; <span class="nottickedoff">return ()</span></span>
+<span class="lineno">  232 </span><span class="spaces">      </span><span class="istickedoff">-1 -&gt; <span class="nottickedoff">debugErrno &quot;Libev.acceptCallback:c_accept()&quot;</span></span>
+<span class="lineno">  233 </span><span class="spaces">      </span><span class="istickedoff">fd -&gt; do</span>
+<span class="lineno">  234 </span><span class="spaces">          </span><span class="istickedoff">debug $ &quot;acceptCallback: accept()ed fd, writing to chan &quot; ++ show fd</span>
+<span class="lineno">  235 </span><span class="spaces">          </span><span class="istickedoff">forkOnIO cpu $ (go r `catches` cleanup)</span>
+<span class="lineno">  236 </span><span class="spaces">          </span><span class="istickedoff">return ()</span>
+<span class="lineno">  237 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  238 </span><span class="spaces">    </span><span class="istickedoff">go = runSession <span class="nottickedoff">defaultTimeout</span> back handler sock</span>
+<span class="lineno">  239 </span><span class="spaces">    </span><span class="istickedoff">cleanup = [ Handler $ <span class="nottickedoff">\(_ :: TimeoutException) -&gt; return ()</span></span>
+<span class="lineno">  240 </span><span class="spaces">              </span><span class="istickedoff">, Handler $ \(e :: SomeException) -&gt;</span>
+<span class="lineno">  241 </span><span class="spaces">                  </span><span class="istickedoff">elog $ S.concat [ &quot;libev.acceptCallback: &quot;</span>
+<span class="lineno">  242 </span><span class="spaces">                                  </span><span class="istickedoff">, S.pack . map c2w $ show e ]</span>
+<span class="lineno">  243 </span><span class="spaces">              </span><span class="istickedoff">]</span></span>
+<span class="lineno">  244 </span>
+<span class="lineno">  245 </span>
+<span class="lineno">  246 </span>------------------------------------------------------------------------------
+<span class="lineno">  247 </span>ioReadCallback :: CInt -&gt; IORef Bool -&gt; MVar () -&gt; IoCallback
+<span class="lineno">  248 </span><span class="decl"><span class="istickedoff">ioReadCallback fd active ra _loopPtr _ioPtr _ = do</span>
+<span class="lineno">  249 </span><span class="spaces">    </span><span class="istickedoff">-- send notifications to the worker thread</span>
+<span class="lineno">  250 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;ioReadCallback: notification (&quot; ++ show fd ++ &quot;)&quot;</span>
+<span class="lineno">  251 </span><span class="spaces">    </span><span class="istickedoff">tryPutMVar ra <span class="nottickedoff">()</span></span>
+<span class="lineno">  252 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;stopping ioReadCallback (&quot; ++ show fd ++ &quot;)&quot;</span>
+<span class="lineno">  253 </span><span class="spaces">    </span><span class="istickedoff">evIoStop _loopPtr _ioPtr</span>
+<span class="lineno">  254 </span><span class="spaces">    </span><span class="istickedoff">writeIORef active False</span></span>
+<span class="lineno">  255 </span>
+<span class="lineno">  256 </span>
+<span class="lineno">  257 </span>------------------------------------------------------------------------------
+<span class="lineno">  258 </span>ioWriteCallback :: CInt -&gt; IORef Bool -&gt; MVar () -&gt; IoCallback
+<span class="lineno">  259 </span><span class="decl"><span class="istickedoff">ioWriteCallback fd active wa _loopPtr _ioPtr _ = do</span>
+<span class="lineno">  260 </span><span class="spaces">    </span><span class="istickedoff">-- send notifications to the worker thread</span>
+<span class="lineno">  261 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;ioWriteCallback: notification (&quot; ++ show fd ++ &quot;)&quot;</span>
+<span class="lineno">  262 </span><span class="spaces">    </span><span class="istickedoff">tryPutMVar wa <span class="nottickedoff">()</span></span>
+<span class="lineno">  263 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;stopping ioWriteCallback (&quot; ++ show fd ++ &quot;)&quot;</span>
+<span class="lineno">  264 </span><span class="spaces">    </span><span class="istickedoff">evIoStop _loopPtr _ioPtr</span>
+<span class="lineno">  265 </span><span class="spaces">    </span><span class="istickedoff">writeIORef active False</span></span>
+<span class="lineno">  266 </span>
+<span class="lineno">  267 </span>
+<span class="lineno">  268 </span>------------------------------------------------------------------------------
+<span class="lineno">  269 </span>stop :: Backend -&gt; IO ()
+<span class="lineno">  270 </span><span class="decl"><span class="istickedoff">stop b = ignoreException $ do</span>
+<span class="lineno">  271 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;Libev.stop&quot;</span>
+<span class="lineno">  272 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  273 </span><span class="spaces">    </span><span class="istickedoff">-- 1. take the loop lock</span>
+<span class="lineno">  274 </span><span class="spaces">    </span><span class="istickedoff">-- 2. shut down the accept() callback</span>
+<span class="lineno">  275 </span><span class="spaces">    </span><span class="istickedoff">-- 3. call evUnloop and wake up the loop using evAsyncSend</span>
+<span class="lineno">  276 </span><span class="spaces">    </span><span class="istickedoff">-- 4. release the loop lock, the main loop thread should then free/clean</span>
+<span class="lineno">  277 </span><span class="spaces">    </span><span class="istickedoff">--    everything up (threads, connections, io objects, callbacks, etc)</span>
 <span class="lineno">  278 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  279 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  280 </span><span class="spaces">    </span><span class="istickedoff">loop           = _evLoop b</span>
-<span class="lineno">  281 </span><span class="spaces">    </span><span class="istickedoff">acceptObjs     = _acceptIOObjs b</span>
-<span class="lineno">  282 </span><span class="spaces">    </span><span class="istickedoff">killObj        = _killObj b</span>
-<span class="lineno">  283 </span><span class="spaces">    </span><span class="istickedoff">lock           = _loopLock b</span></span>
-<span class="lineno">  284 </span>
-<span class="lineno">  285 </span>
-<span class="lineno">  286 </span>------------------------------------------------------------------------------
-<span class="lineno">  287 </span>getAddr :: SockAddr -&gt; IO (ByteString, Int)
-<span class="lineno">  288 </span><span class="decl"><span class="istickedoff">getAddr addr =</span>
-<span class="lineno">  289 </span><span class="spaces">    </span><span class="istickedoff">case addr of</span>
-<span class="lineno">  290 </span><span class="spaces">      </span><span class="istickedoff">SockAddrInet p ha -&gt; do</span>
-<span class="lineno">  291 </span><span class="spaces">          </span><span class="istickedoff">s &lt;- liftM (S.pack . map c2w) (inet_ntoa ha)</span>
-<span class="lineno">  292 </span><span class="spaces">          </span><span class="istickedoff">return (s, fromIntegral p)</span>
-<span class="lineno">  293 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  294 </span><span class="spaces">      </span><span class="istickedoff">a -&gt; <span class="nottickedoff">throwIO $ AddressNotSupportedException (show a)</span></span></span>
-<span class="lineno">  295 </span>
-<span class="lineno">  296 </span>
-<span class="lineno">  297 </span>------------------------------------------------------------------------------
-<span class="lineno">  298 </span>-- | Throws a timeout exception to the handling thread.  The thread will clean
-<span class="lineno">  299 </span>-- up everything.
-<span class="lineno">  300 </span>timerCallback :: EvLoopPtr         -- ^ loop obj
-<span class="lineno">  301 </span>              -&gt; EvTimerPtr        -- ^ timer obj
-<span class="lineno">  302 </span>              -&gt; IORef CTime       -- ^ when to timeout?
-<span class="lineno">  303 </span>              -&gt; ThreadId          -- ^ thread to kill
-<span class="lineno">  304 </span>              -&gt; TimerCallback
-<span class="lineno">  305 </span><span class="decl"><span class="istickedoff">timerCallback loop tmr ioref tid _ _ _ = do</span>
-<span class="lineno">  306 </span><span class="spaces">    </span><span class="istickedoff">debug &quot;Libev.timerCallback: entered&quot;</span>
-<span class="lineno">  307 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  308 </span><span class="spaces">    </span><span class="istickedoff">now       &lt;- getCurrentDateTime</span>
-<span class="lineno">  309 </span><span class="spaces">    </span><span class="istickedoff">whenToDie &lt;- readIORef ioref</span>
-<span class="lineno">  310 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  311 </span><span class="spaces">    </span><span class="istickedoff">if whenToDie &lt;= now</span>
-<span class="lineno">  312 </span><span class="spaces">      </span><span class="istickedoff">then do</span>
-<span class="lineno">  313 </span><span class="spaces">          </span><span class="istickedoff">debug &quot;Libev.timerCallback: killing thread&quot;</span>
-<span class="lineno">  314 </span><span class="spaces">          </span><span class="istickedoff">throwTo tid <span class="nottickedoff">TimeoutException</span></span>
+<span class="lineno">  279 </span><span class="spaces">    </span><span class="istickedoff">withMVar lock $ \_ -&gt; do</span>
+<span class="lineno">  280 </span><span class="spaces">        </span><span class="istickedoff">forM acceptObjs $ evIoStop loop</span>
+<span class="lineno">  281 </span><span class="spaces">        </span><span class="istickedoff">evUnloop loop evunloop_all</span>
+<span class="lineno">  282 </span><span class="spaces">        </span><span class="istickedoff">evAsyncSend loop killObj</span>
+<span class="lineno">  283 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  284 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  285 </span><span class="spaces">    </span><span class="istickedoff">loop           = _evLoop b</span>
+<span class="lineno">  286 </span><span class="spaces">    </span><span class="istickedoff">acceptObjs     = _acceptIOObjs b</span>
+<span class="lineno">  287 </span><span class="spaces">    </span><span class="istickedoff">killObj        = _killObj b</span>
+<span class="lineno">  288 </span><span class="spaces">    </span><span class="istickedoff">lock           = _loopLock b</span></span>
+<span class="lineno">  289 </span>
+<span class="lineno">  290 </span>
+<span class="lineno">  291 </span>------------------------------------------------------------------------------
+<span class="lineno">  292 </span>getAddr :: SockAddr -&gt; IO (ByteString, Int)
+<span class="lineno">  293 </span><span class="decl"><span class="istickedoff">getAddr addr =</span>
+<span class="lineno">  294 </span><span class="spaces">    </span><span class="istickedoff">case addr of</span>
+<span class="lineno">  295 </span><span class="spaces">      </span><span class="istickedoff">SockAddrInet p ha -&gt; do</span>
+<span class="lineno">  296 </span><span class="spaces">          </span><span class="istickedoff">s &lt;- liftM (S.pack . map c2w) (inet_ntoa ha)</span>
+<span class="lineno">  297 </span><span class="spaces">          </span><span class="istickedoff">return (s, fromIntegral p)</span>
+<span class="lineno">  298 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  299 </span><span class="spaces">      </span><span class="istickedoff">a -&gt; <span class="nottickedoff">throwIO $ AddressNotSupportedException (show a)</span></span></span>
+<span class="lineno">  300 </span>
+<span class="lineno">  301 </span>
+<span class="lineno">  302 </span>------------------------------------------------------------------------------
+<span class="lineno">  303 </span>-- | Throws a timeout exception to the handling thread.  The thread will clean
+<span class="lineno">  304 </span>-- up everything.
+<span class="lineno">  305 </span>timerCallback :: EvLoopPtr         -- ^ loop obj
+<span class="lineno">  306 </span>              -&gt; EvTimerPtr        -- ^ timer obj
+<span class="lineno">  307 </span>              -&gt; IORef CTime       -- ^ when to timeout?
+<span class="lineno">  308 </span>              -&gt; ThreadId          -- ^ thread to kill
+<span class="lineno">  309 </span>              -&gt; TimerCallback
+<span class="lineno">  310 </span><span class="decl"><span class="istickedoff">timerCallback loop tmr ioref tid _ _ _ = do</span>
+<span class="lineno">  311 </span><span class="spaces">    </span><span class="istickedoff">debug &quot;Libev.timerCallback: entered&quot;</span>
+<span class="lineno">  312 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  313 </span><span class="spaces">    </span><span class="istickedoff">now       &lt;- getCurrentDateTime</span>
+<span class="lineno">  314 </span><span class="spaces">    </span><span class="istickedoff">whenToDie &lt;- readIORef ioref</span>
 <span class="lineno">  315 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  316 </span><span class="spaces">      </span><span class="istickedoff">else do</span>
-<span class="lineno">  317 </span><span class="spaces">          </span><span class="istickedoff">debug $ &quot;Libev.timerCallback: now=&quot; ++ show now</span>
-<span class="lineno">  318 </span><span class="spaces">                  </span><span class="istickedoff">++ &quot;, whenToDie=&quot; ++ show whenToDie</span>
-<span class="lineno">  319 </span><span class="spaces">          </span><span class="istickedoff">evTimerSetRepeat tmr $ fromRational . toRational $ (whenToDie - now)</span>
-<span class="lineno">  320 </span><span class="spaces">          </span><span class="istickedoff">evTimerAgain loop tmr</span></span>
-<span class="lineno">  321 </span>
-<span class="lineno">  322 </span>
-<span class="lineno">  323 </span>------------------------------------------------------------------------------
-<span class="lineno">  324 </span>-- | If you already hold the loop lock, you are entitled to destroy a
-<span class="lineno">  325 </span>-- connection
-<span class="lineno">  326 </span>destroyConnection :: Connection -&gt; IO ()
-<span class="lineno">  327 </span><span class="decl"><span class="istickedoff">destroyConnection conn = do</span>
-<span class="lineno">  328 </span><span class="spaces">    </span><span class="istickedoff">debug &quot;Libev.destroyConnection: closing socket and killing connection&quot;</span>
-<span class="lineno">  329 </span><span class="spaces">    </span><span class="istickedoff">c_close fd</span>
-<span class="lineno">  330 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  331 </span><span class="spaces">    </span><span class="istickedoff">-- stop and free timer object</span>
-<span class="lineno">  332 </span><span class="spaces">    </span><span class="istickedoff">evTimerStop loop timerObj</span>
-<span class="lineno">  333 </span><span class="spaces">    </span><span class="istickedoff">freeEvTimer timerObj</span>
-<span class="lineno">  334 </span><span class="spaces">    </span><span class="istickedoff">freeTimerCallback timerCb</span>
+<span class="lineno">  316 </span><span class="spaces">    </span><span class="istickedoff">if <span class="tickonlytrue">whenToDie &lt;= now</span></span>
+<span class="lineno">  317 </span><span class="spaces">      </span><span class="istickedoff">then do</span>
+<span class="lineno">  318 </span><span class="spaces">          </span><span class="istickedoff">debug &quot;Libev.timerCallback: killing thread&quot;</span>
+<span class="lineno">  319 </span><span class="spaces">          </span><span class="istickedoff">throwTo tid <span class="nottickedoff">TimeoutException</span></span>
+<span class="lineno">  320 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  321 </span><span class="spaces">      </span><span class="istickedoff">else <span class="nottickedoff">do</span></span>
+<span class="lineno">  322 </span><span class="spaces">          </span><span class="istickedoff"><span class="nottickedoff">debug $ &quot;Libev.timerCallback: now=&quot; ++ show now</span></span>
+<span class="lineno">  323 </span><span class="spaces">                  </span><span class="istickedoff"><span class="nottickedoff">++ &quot;, whenToDie=&quot; ++ show whenToDie</span></span>
+<span class="lineno">  324 </span><span class="spaces">          </span><span class="istickedoff"><span class="nottickedoff">evTimerSetRepeat tmr $ fromRational . toRational $ (whenToDie - now)</span></span>
+<span class="lineno">  325 </span><span class="spaces">          </span><span class="istickedoff"><span class="nottickedoff">evTimerAgain loop tmr</span></span></span>
+<span class="lineno">  326 </span>
+<span class="lineno">  327 </span>
+<span class="lineno">  328 </span>------------------------------------------------------------------------------
+<span class="lineno">  329 </span>-- | If you already hold the loop lock, you are entitled to destroy a
+<span class="lineno">  330 </span>-- connection
+<span class="lineno">  331 </span>destroyConnection :: Connection -&gt; IO ()
+<span class="lineno">  332 </span><span class="decl"><span class="istickedoff">destroyConnection conn = do</span>
+<span class="lineno">  333 </span><span class="spaces">    </span><span class="istickedoff">debug &quot;Libev.destroyConnection: closing socket and killing connection&quot;</span>
+<span class="lineno">  334 </span><span class="spaces">    </span><span class="istickedoff">c_close fd</span>
 <span class="lineno">  335 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  336 </span><span class="spaces">    </span><span class="istickedoff">-- stop and free i/o objects</span>
-<span class="lineno">  337 </span><span class="spaces">    </span><span class="istickedoff">evIoStop loop ioWrObj</span>
-<span class="lineno">  338 </span><span class="spaces">    </span><span class="istickedoff">freeEvIo ioWrObj</span>
-<span class="lineno">  339 </span><span class="spaces">    </span><span class="istickedoff">freeIoCallback ioWrCb</span>
+<span class="lineno">  336 </span><span class="spaces">    </span><span class="istickedoff">-- stop and free timer object</span>
+<span class="lineno">  337 </span><span class="spaces">    </span><span class="istickedoff">evTimerStop loop timerObj</span>
+<span class="lineno">  338 </span><span class="spaces">    </span><span class="istickedoff">freeEvTimer timerObj</span>
+<span class="lineno">  339 </span><span class="spaces">    </span><span class="istickedoff">freeTimerCallback timerCb</span>
 <span class="lineno">  340 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  341 </span><span class="spaces">    </span><span class="istickedoff">evIoStop loop ioRdObj</span>
-<span class="lineno">  342 </span><span class="spaces">    </span><span class="istickedoff">freeEvIo ioRdObj</span>
-<span class="lineno">  343 </span><span class="spaces">    </span><span class="istickedoff">freeIoCallback ioRdCb</span>
-<span class="lineno">  344 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  345 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  346 </span><span class="spaces">    </span><span class="istickedoff">backend    = _backend conn</span>
-<span class="lineno">  347 </span><span class="spaces">    </span><span class="istickedoff">loop       = _evLoop backend</span>
-<span class="lineno">  348 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  349 </span><span class="spaces">    </span><span class="istickedoff">fd         = _rawSocket conn</span>
-<span class="lineno">  350 </span><span class="spaces">    </span><span class="istickedoff">ioWrObj    = _connWriteIOObj conn</span>
-<span class="lineno">  351 </span><span class="spaces">    </span><span class="istickedoff">ioWrCb     = _connWriteIOCallback conn</span>
-<span class="lineno">  352 </span><span class="spaces">    </span><span class="istickedoff">ioRdObj    = _connReadIOObj conn</span>
-<span class="lineno">  353 </span><span class="spaces">    </span><span class="istickedoff">ioRdCb     = _connReadIOCallback conn</span>
-<span class="lineno">  354 </span><span class="spaces">    </span><span class="istickedoff">timerObj   = _timerObj conn</span>
-<span class="lineno">  355 </span><span class="spaces">    </span><span class="istickedoff">timerCb    = _timerCallback conn</span></span>
-<span class="lineno">  356 </span>
-<span class="lineno">  357 </span>
-<span class="lineno">  358 </span>------------------------------------------------------------------------------
-<span class="lineno">  359 </span>freeConnection :: Connection -&gt; IO ()
-<span class="lineno">  360 </span><span class="decl"><span class="istickedoff">freeConnection conn = ignoreException $ do</span>
-<span class="lineno">  361 </span><span class="spaces">    </span><span class="istickedoff">withMVar loopLock $ \_ -&gt; block $ do</span>
-<span class="lineno">  362 </span><span class="spaces">        </span><span class="istickedoff">debug $ &quot;freeConnection (&quot; ++ show (_rawSocket conn) ++ &quot;)&quot;</span>
-<span class="lineno">  363 </span><span class="spaces">        </span><span class="istickedoff">destroyConnection conn</span>
-<span class="lineno">  364 </span><span class="spaces">        </span><span class="istickedoff">let tid = _connThread conn</span>
-<span class="lineno">  365 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  366 </span><span class="spaces">        </span><span class="istickedoff">-- remove the thread id from the backend set</span>
-<span class="lineno">  367 </span><span class="spaces">        </span><span class="istickedoff">H.delete tid $ _connectionThreads backend</span>
-<span class="lineno">  368 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  369 </span><span class="spaces">        </span><span class="istickedoff">-- wake up the event loop so it can be apprised of the changes</span>
-<span class="lineno">  370 </span><span class="spaces">        </span><span class="istickedoff">evAsyncSend loop asyncObj</span>
-<span class="lineno">  371 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  372 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  373 </span><span class="spaces">    </span><span class="istickedoff">backend    = _backend conn</span>
-<span class="lineno">  374 </span><span class="spaces">    </span><span class="istickedoff">loop       = _evLoop backend</span>
-<span class="lineno">  375 </span><span class="spaces">    </span><span class="istickedoff">loopLock   = _loopLock backend</span>
-<span class="lineno">  376 </span><span class="spaces">    </span><span class="istickedoff">asyncObj   = _asyncObj backend</span></span>
-<span class="lineno">  377 </span>
-<span class="lineno">  378 </span>
-<span class="lineno">  379 </span>------------------------------------------------------------------------------
-<span class="lineno">  380 </span>ignoreException :: IO () -&gt; IO ()
-<span class="lineno">  381 </span><span class="decl"><span class="istickedoff">ignoreException = handle (\(_::SomeException) -&gt; return <span class="nottickedoff">()</span>)</span></span>
+<span class="lineno">  341 </span><span class="spaces">    </span><span class="istickedoff">-- stop and free i/o objects</span>
+<span class="lineno">  342 </span><span class="spaces">    </span><span class="istickedoff">evIoStop loop ioWrObj</span>
+<span class="lineno">  343 </span><span class="spaces">    </span><span class="istickedoff">freeEvIo ioWrObj</span>
+<span class="lineno">  344 </span><span class="spaces">    </span><span class="istickedoff">freeIoCallback ioWrCb</span>
+<span class="lineno">  345 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  346 </span><span class="spaces">    </span><span class="istickedoff">evIoStop loop ioRdObj</span>
+<span class="lineno">  347 </span><span class="spaces">    </span><span class="istickedoff">freeEvIo ioRdObj</span>
+<span class="lineno">  348 </span><span class="spaces">    </span><span class="istickedoff">freeIoCallback ioRdCb</span>
+<span class="lineno">  349 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  350 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  351 </span><span class="spaces">    </span><span class="istickedoff">backend    = _backend conn</span>
+<span class="lineno">  352 </span><span class="spaces">    </span><span class="istickedoff">loop       = _evLoop backend</span>
+<span class="lineno">  353 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  354 </span><span class="spaces">    </span><span class="istickedoff">fd         = _rawSocket conn</span>
+<span class="lineno">  355 </span><span class="spaces">    </span><span class="istickedoff">ioWrObj    = _connWriteIOObj conn</span>
+<span class="lineno">  356 </span><span class="spaces">    </span><span class="istickedoff">ioWrCb     = _connWriteIOCallback conn</span>
+<span class="lineno">  357 </span><span class="spaces">    </span><span class="istickedoff">ioRdObj    = _connReadIOObj conn</span>
+<span class="lineno">  358 </span><span class="spaces">    </span><span class="istickedoff">ioRdCb     = _connReadIOCallback conn</span>
+<span class="lineno">  359 </span><span class="spaces">    </span><span class="istickedoff">timerObj   = _timerObj conn</span>
+<span class="lineno">  360 </span><span class="spaces">    </span><span class="istickedoff">timerCb    = _timerCallback conn</span></span>
+<span class="lineno">  361 </span>
+<span class="lineno">  362 </span>
+<span class="lineno">  363 </span>------------------------------------------------------------------------------
+<span class="lineno">  364 </span>freeConnection :: Connection -&gt; IO ()
+<span class="lineno">  365 </span><span class="decl"><span class="istickedoff">freeConnection conn = ignoreException $ do</span>
+<span class="lineno">  366 </span><span class="spaces">    </span><span class="istickedoff">withMVar loopLock $ \_ -&gt; block $ do</span>
+<span class="lineno">  367 </span><span class="spaces">        </span><span class="istickedoff">debug $ &quot;freeConnection (&quot; ++ show (_rawSocket conn) ++ &quot;)&quot;</span>
+<span class="lineno">  368 </span><span class="spaces">        </span><span class="istickedoff">destroyConnection conn</span>
+<span class="lineno">  369 </span><span class="spaces">        </span><span class="istickedoff">let tid = _connThread conn</span>
+<span class="lineno">  370 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  371 </span><span class="spaces">        </span><span class="istickedoff">-- remove the thread id from the backend set</span>
+<span class="lineno">  372 </span><span class="spaces">        </span><span class="istickedoff">H.delete tid $ _connectionThreads backend</span>
+<span class="lineno">  373 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  374 </span><span class="spaces">        </span><span class="istickedoff">-- wake up the event loop so it can be apprised of the changes</span>
+<span class="lineno">  375 </span><span class="spaces">        </span><span class="istickedoff">evAsyncSend loop asyncObj</span>
+<span class="lineno">  376 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  377 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  378 </span><span class="spaces">    </span><span class="istickedoff">backend    = _backend conn</span>
+<span class="lineno">  379 </span><span class="spaces">    </span><span class="istickedoff">loop       = _evLoop backend</span>
+<span class="lineno">  380 </span><span class="spaces">    </span><span class="istickedoff">loopLock   = _loopLock backend</span>
+<span class="lineno">  381 </span><span class="spaces">    </span><span class="istickedoff">asyncObj   = _asyncObj backend</span></span>
 <span class="lineno">  382 </span>
 <span class="lineno">  383 </span>
 <span class="lineno">  384 </span>------------------------------------------------------------------------------
-<span class="lineno">  385 </span>freeBackend :: Backend -&gt; IO ()
-<span class="lineno">  386 </span><span class="decl"><span class="istickedoff">freeBackend backend = ignoreException $ block $ do</span>
-<span class="lineno">  387 </span><span class="spaces">    </span><span class="istickedoff">-- note: we only get here after an unloop, so we have the loop lock</span>
-<span class="lineno">  388 </span><span class="spaces">    </span><span class="istickedoff">-- here. (?)</span>
-<span class="lineno">  389 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  390 </span><span class="spaces">    </span><span class="istickedoff">-- kill everything in thread table</span>
-<span class="lineno">  391 </span><span class="spaces">    </span><span class="istickedoff">tset &lt;- H.toList $ _connectionThreads backend</span>
-<span class="lineno">  392 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  393 </span><span class="spaces">    </span><span class="istickedoff">let nthreads = Prelude.length tset</span>
+<span class="lineno">  385 </span>ignoreException :: IO () -&gt; IO ()
+<span class="lineno">  386 </span><span class="decl"><span class="istickedoff">ignoreException = handle (\(_::SomeException) -&gt; return <span class="nottickedoff">()</span>)</span></span>
+<span class="lineno">  387 </span>
+<span class="lineno">  388 </span>
+<span class="lineno">  389 </span>------------------------------------------------------------------------------
+<span class="lineno">  390 </span>freeBackend :: Backend -&gt; IO ()
+<span class="lineno">  391 </span><span class="decl"><span class="istickedoff">freeBackend backend = ignoreException $ block $ do</span>
+<span class="lineno">  392 </span><span class="spaces">    </span><span class="istickedoff">-- note: we only get here after an unloop, so we have the loop lock</span>
+<span class="lineno">  393 </span><span class="spaces">    </span><span class="istickedoff">-- here. (?)</span>
 <span class="lineno">  394 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  395 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;Libev.freeBackend: killing active connection threads&quot;</span>
-<span class="lineno">  396 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  397 </span><span class="spaces">    </span><span class="istickedoff">Prelude.mapM_ (destroyConnection . snd) tset</span>
-<span class="lineno">  398 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  399 </span><span class="spaces">    </span><span class="istickedoff">-- kill the threads twice, they're probably getting stuck in the</span>
-<span class="lineno">  400 </span><span class="spaces">    </span><span class="istickedoff">-- freeConnection 'finally' handler</span>
-<span class="lineno">  401 </span><span class="spaces">    </span><span class="istickedoff">Prelude.mapM_ (killThread . fst) tset</span>
-<span class="lineno">  402 </span><span class="spaces">    </span><span class="istickedoff">Prelude.mapM_ (killThread . fst) tset</span>
+<span class="lineno">  395 </span><span class="spaces">    </span><span class="istickedoff">-- kill everything in thread table</span>
+<span class="lineno">  396 </span><span class="spaces">    </span><span class="istickedoff">tset &lt;- H.toList $ _connectionThreads backend</span>
+<span class="lineno">  397 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  398 </span><span class="spaces">    </span><span class="istickedoff">let nthreads = Prelude.length tset</span>
+<span class="lineno">  399 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  400 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;Libev.freeBackend: killing active connection threads&quot;</span>
+<span class="lineno">  401 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  402 </span><span class="spaces">    </span><span class="istickedoff">Prelude.mapM_ (destroyConnection . snd) tset</span>
 <span class="lineno">  403 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  404 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;Libev.freeBackend: &quot; ++ show nthreads ++ &quot; thread(s) killed&quot;</span>
-<span class="lineno">  405 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;Libev.freeBackend: destroying libev resources&quot;</span>
-<span class="lineno">  406 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  407 </span><span class="spaces">    </span><span class="istickedoff">mapM freeEvIo acceptObjs</span>
-<span class="lineno">  408 </span><span class="spaces">    </span><span class="istickedoff">forM acceptCbs $ \x -&gt; do</span>
-<span class="lineno">  409 </span><span class="spaces">        </span><span class="istickedoff">acceptCb &lt;- readMVar x</span>
-<span class="lineno">  410 </span><span class="spaces">        </span><span class="istickedoff">freeIoCallback acceptCb</span>
+<span class="lineno">  404 </span><span class="spaces">    </span><span class="istickedoff">-- kill the threads twice, they're probably getting stuck in the</span>
+<span class="lineno">  405 </span><span class="spaces">    </span><span class="istickedoff">-- freeConnection 'finally' handler</span>
+<span class="lineno">  406 </span><span class="spaces">    </span><span class="istickedoff">Prelude.mapM_ (killThread . fst) tset</span>
+<span class="lineno">  407 </span><span class="spaces">    </span><span class="istickedoff">Prelude.mapM_ (killThread . fst) tset</span>
+<span class="lineno">  408 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  409 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;Libev.freeBackend: &quot; ++ show nthreads ++ &quot; thread(s) killed&quot;</span>
+<span class="lineno">  410 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;Libev.freeBackend: destroying libev resources&quot;</span>
 <span class="lineno">  411 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  412 </span><span class="spaces">    </span><span class="istickedoff">evAsyncStop loop asyncObj</span>
-<span class="lineno">  413 </span><span class="spaces">    </span><span class="istickedoff">freeEvAsync asyncObj</span>
-<span class="lineno">  414 </span><span class="spaces">    </span><span class="istickedoff">freeAsyncCallback asyncCb</span>
-<span class="lineno">  415 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  416 </span><span class="spaces">    </span><span class="istickedoff">evAsyncStop loop killObj</span>
-<span class="lineno">  417 </span><span class="spaces">    </span><span class="istickedoff">freeEvAsync killObj</span>
-<span class="lineno">  418 </span><span class="spaces">    </span><span class="istickedoff">freeAsyncCallback killCb</span>
-<span class="lineno">  419 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  420 </span><span class="spaces">    </span><span class="istickedoff">freeMutexCallback mcb1</span>
-<span class="lineno">  421 </span><span class="spaces">    </span><span class="istickedoff">freeMutexCallback mcb2</span>
-<span class="lineno">  422 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  423 </span><span class="spaces">    </span><span class="istickedoff">evLoopDestroy loop</span>
-<span class="lineno">  424 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;Libev.freeBackend: resources destroyed&quot;</span>
-<span class="lineno">  425 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  426 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  427 </span><span class="spaces">    </span><span class="istickedoff">acceptObjs  = _acceptIOObjs backend</span>
-<span class="lineno">  428 </span><span class="spaces">    </span><span class="istickedoff">acceptCbs   = _acceptIOCallbacks backend</span>
-<span class="lineno">  429 </span><span class="spaces">    </span><span class="istickedoff">asyncObj    = _asyncObj backend</span>
-<span class="lineno">  430 </span><span class="spaces">    </span><span class="istickedoff">asyncCb     = _asyncCb backend</span>
-<span class="lineno">  431 </span><span class="spaces">    </span><span class="istickedoff">killObj     = _killObj backend</span>
-<span class="lineno">  432 </span><span class="spaces">    </span><span class="istickedoff">killCb      = _killCb backend</span>
-<span class="lineno">  433 </span><span class="spaces">    </span><span class="istickedoff">(mcb1,mcb2) = _mutexCallbacks backend</span>
-<span class="lineno">  434 </span><span class="spaces">    </span><span class="istickedoff">loop        = _evLoop backend</span></span>
-<span class="lineno">  435 </span>
-<span class="lineno">  436 </span>
-<span class="lineno">  437 </span>------------------------------------------------------------------------------
-<span class="lineno">  438 </span>-- | Note: proc gets run in the background
-<span class="lineno">  439 </span>runSession :: Backend
-<span class="lineno">  440 </span>           -&gt; SessionHandler
-<span class="lineno">  441 </span>           -&gt; ListenSocket
-<span class="lineno">  442 </span>           -&gt; CInt
-<span class="lineno">  443 </span>           -&gt; IO ()
-<span class="lineno">  444 </span><span class="decl"><span class="istickedoff">runSession backend handler lsock fd = do</span>
-<span class="lineno">  445 </span><span class="spaces">    </span><span class="istickedoff">sock &lt;- mkSocket fd AF_INET <span class="nottickedoff">Stream</span> <span class="nottickedoff">0</span> <span class="nottickedoff">Connected</span></span>
-<span class="lineno">  446 </span><span class="spaces">    </span><span class="istickedoff">peerName &lt;- getPeerName sock</span>
-<span class="lineno">  447 </span><span class="spaces">    </span><span class="istickedoff">sockName &lt;- getSocketName sock</span>
-<span class="lineno">  448 </span><span class="spaces">    </span><span class="istickedoff">tid &lt;- myThreadId</span>
-<span class="lineno">  449 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  450 </span><span class="spaces">    </span><span class="istickedoff">-- set_linger fd</span>
-<span class="lineno">  451 </span><span class="spaces">    </span><span class="istickedoff">c_setnonblocking fd</span>
-<span class="lineno">  452 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  453 </span><span class="spaces">    </span><span class="istickedoff">(raddr, rport) &lt;- getAddr peerName</span>
-<span class="lineno">  454 </span><span class="spaces">    </span><span class="istickedoff">(laddr, lport) &lt;- getAddr sockName</span>
+<span class="lineno">  412 </span><span class="spaces">    </span><span class="istickedoff">mapM freeEvIo acceptObjs</span>
+<span class="lineno">  413 </span><span class="spaces">    </span><span class="istickedoff">forM acceptCbs $ \x -&gt; do</span>
+<span class="lineno">  414 </span><span class="spaces">        </span><span class="istickedoff">acceptCb &lt;- readMVar x</span>
+<span class="lineno">  415 </span><span class="spaces">        </span><span class="istickedoff">freeIoCallback acceptCb</span>
+<span class="lineno">  416 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  417 </span><span class="spaces">    </span><span class="istickedoff">evAsyncStop loop asyncObj</span>
+<span class="lineno">  418 </span><span class="spaces">    </span><span class="istickedoff">freeEvAsync asyncObj</span>
+<span class="lineno">  419 </span><span class="spaces">    </span><span class="istickedoff">freeAsyncCallback asyncCb</span>
+<span class="lineno">  420 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  421 </span><span class="spaces">    </span><span class="istickedoff">evAsyncStop loop killObj</span>
+<span class="lineno">  422 </span><span class="spaces">    </span><span class="istickedoff">freeEvAsync killObj</span>
+<span class="lineno">  423 </span><span class="spaces">    </span><span class="istickedoff">freeAsyncCallback killCb</span>
+<span class="lineno">  424 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  425 </span><span class="spaces">    </span><span class="istickedoff">freeMutexCallback mcb1</span>
+<span class="lineno">  426 </span><span class="spaces">    </span><span class="istickedoff">freeMutexCallback mcb2</span>
+<span class="lineno">  427 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  428 </span><span class="spaces">    </span><span class="istickedoff">evLoopDestroy loop</span>
+<span class="lineno">  429 </span><span class="spaces">    </span><span class="istickedoff">debug $ &quot;Libev.freeBackend: resources destroyed&quot;</span>
+<span class="lineno">  430 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  431 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  432 </span><span class="spaces">    </span><span class="istickedoff">acceptObjs  = _acceptIOObjs backend</span>
+<span class="lineno">  433 </span><span class="spaces">    </span><span class="istickedoff">acceptCbs   = _acceptIOCallbacks backend</span>
+<span class="lineno">  434 </span><span class="spaces">    </span><span class="istickedoff">asyncObj    = _asyncObj backend</span>
+<span class="lineno">  435 </span><span class="spaces">    </span><span class="istickedoff">asyncCb     = _asyncCb backend</span>
+<span class="lineno">  436 </span><span class="spaces">    </span><span class="istickedoff">killObj     = _killObj backend</span>
+<span class="lineno">  437 </span><span class="spaces">    </span><span class="istickedoff">killCb      = _killCb backend</span>
+<span class="lineno">  438 </span><span class="spaces">    </span><span class="istickedoff">(mcb1,mcb2) = _mutexCallbacks backend</span>
+<span class="lineno">  439 </span><span class="spaces">    </span><span class="istickedoff">loop        = _evLoop backend</span></span>
+<span class="lineno">  440 </span>
+<span class="lineno">  441 </span>
+<span class="lineno">  442 </span>------------------------------------------------------------------------------
+<span class="lineno">  443 </span>-- | Note: proc gets run in the background
+<span class="lineno">  444 </span>runSession :: Int
+<span class="lineno">  445 </span>           -&gt; Backend
+<span class="lineno">  446 </span>           -&gt; SessionHandler
+<span class="lineno">  447 </span>           -&gt; ListenSocket
+<span class="lineno">  448 </span>           -&gt; CInt
+<span class="lineno">  449 </span>           -&gt; IO ()
+<span class="lineno">  450 </span><span class="decl"><span class="istickedoff">runSession defaultTimeout backend handler lsock fd = do</span>
+<span class="lineno">  451 </span><span class="spaces">    </span><span class="istickedoff">sock &lt;- mkSocket fd AF_INET <span class="nottickedoff">Stream</span> <span class="nottickedoff">0</span> <span class="nottickedoff">Connected</span></span>
+<span class="lineno">  452 </span><span class="spaces">    </span><span class="istickedoff">peerName &lt;- getPeerName sock</span>
+<span class="lineno">  453 </span><span class="spaces">    </span><span class="istickedoff">sockName &lt;- getSocketName sock</span>
+<span class="lineno">  454 </span><span class="spaces">    </span><span class="istickedoff">tid &lt;- myThreadId</span>
 <span class="lineno">  455 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  456 </span><span class="spaces">    </span><span class="istickedoff">let lp = _evLoop backend</span>
-<span class="lineno">  457 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  458 </span><span class="spaces">    </span><span class="istickedoff">-- makes sense to assume the socket is read/write available when</span>
-<span class="lineno">  459 </span><span class="spaces">    </span><span class="istickedoff">-- opened; worst-case is we get EWOULDBLOCK</span>
-<span class="lineno">  460 </span><span class="spaces">    </span><span class="istickedoff">ra    &lt;- newMVar <span class="nottickedoff">()</span></span>
-<span class="lineno">  461 </span><span class="spaces">    </span><span class="istickedoff">wa    &lt;- newMVar <span class="nottickedoff">()</span></span>
-<span class="lineno">  462 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  456 </span><span class="spaces">    </span><span class="istickedoff">-- set_linger fd</span>
+<span class="lineno">  457 </span><span class="spaces">    </span><span class="istickedoff">c_setnonblocking fd</span>
+<span class="lineno">  458 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  459 </span><span class="spaces">    </span><span class="istickedoff">(raddr, rport) &lt;- getAddr peerName</span>
+<span class="lineno">  460 </span><span class="spaces">    </span><span class="istickedoff">(laddr, lport) &lt;- getAddr sockName</span>
+<span class="lineno">  461 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  462 </span><span class="spaces">    </span><span class="istickedoff">let lp = _evLoop backend</span>
 <span class="lineno">  463 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  464 </span><span class="spaces">    </span><span class="istickedoff">-----------------</span>
-<span class="lineno">  465 </span><span class="spaces">    </span><span class="istickedoff">-- setup timer --</span>
-<span class="lineno">  466 </span><span class="spaces">    </span><span class="istickedoff">-----------------</span>
-<span class="lineno">  467 </span><span class="spaces">    </span><span class="istickedoff">tmr         &lt;- mkEvTimer</span>
-<span class="lineno">  468 </span><span class="spaces">    </span><span class="istickedoff">now         &lt;- getCurrentDateTime</span>
-<span class="lineno">  469 </span><span class="spaces">    </span><span class="istickedoff">timeoutTime &lt;- newIORef $ <span class="nottickedoff">now + 20</span></span>
-<span class="lineno">  470 </span><span class="spaces">    </span><span class="istickedoff">tcb         &lt;- mkTimerCallback $ timerCallback lp</span>
-<span class="lineno">  471 </span><span class="spaces">                                                  </span><span class="istickedoff">tmr</span>
-<span class="lineno">  472 </span><span class="spaces">                                                  </span><span class="istickedoff">timeoutTime</span>
-<span class="lineno">  473 </span><span class="spaces">                                                  </span><span class="istickedoff">tid</span>
-<span class="lineno">  474 </span><span class="spaces">    </span><span class="istickedoff">-- 20 second timeout</span>
-<span class="lineno">  475 </span><span class="spaces">    </span><span class="istickedoff">evTimerInit tmr tcb 0 20.0</span>
-<span class="lineno">  476 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  477 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  478 </span><span class="spaces">    </span><span class="istickedoff">readActive  &lt;- newIORef True</span>
-<span class="lineno">  479 </span><span class="spaces">    </span><span class="istickedoff">writeActive &lt;- newIORef True</span>
-<span class="lineno">  480 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  481 </span><span class="spaces">    </span><span class="istickedoff">evioRead &lt;- mkEvIo</span>
-<span class="lineno">  482 </span><span class="spaces">    </span><span class="istickedoff">ioReadCb &lt;- mkIoCallback $ ioReadCallback fd readActive ra</span>
+<span class="lineno">  464 </span><span class="spaces">    </span><span class="istickedoff">-- makes sense to assume the socket is read/write available when</span>
+<span class="lineno">  465 </span><span class="spaces">    </span><span class="istickedoff">-- opened; worst-case is we get EWOULDBLOCK</span>
+<span class="lineno">  466 </span><span class="spaces">    </span><span class="istickedoff">ra    &lt;- newMVar <span class="nottickedoff">()</span></span>
+<span class="lineno">  467 </span><span class="spaces">    </span><span class="istickedoff">wa    &lt;- newMVar <span class="nottickedoff">()</span></span>
+<span class="lineno">  468 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  469 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  470 </span><span class="spaces">    </span><span class="istickedoff">-----------------</span>
+<span class="lineno">  471 </span><span class="spaces">    </span><span class="istickedoff">-- setup timer --</span>
+<span class="lineno">  472 </span><span class="spaces">    </span><span class="istickedoff">-----------------</span>
+<span class="lineno">  473 </span><span class="spaces">    </span><span class="istickedoff">tmr         &lt;- mkEvTimer</span>
+<span class="lineno">  474 </span><span class="spaces">    </span><span class="istickedoff">now         &lt;- getCurrentDateTime</span>
+<span class="lineno">  475 </span><span class="spaces">    </span><span class="istickedoff">timeoutTime &lt;- newIORef $ <span class="nottickedoff">now + 20</span></span>
+<span class="lineno">  476 </span><span class="spaces">    </span><span class="istickedoff">tcb         &lt;- mkTimerCallback $ timerCallback <span class="nottickedoff">lp</span></span>
+<span class="lineno">  477 </span><span class="spaces">                                                  </span><span class="istickedoff"><span class="nottickedoff">tmr</span></span>
+<span class="lineno">  478 </span><span class="spaces">                                                  </span><span class="istickedoff">timeoutTime</span>
+<span class="lineno">  479 </span><span class="spaces">                                                  </span><span class="istickedoff">tid</span>
+<span class="lineno">  480 </span><span class="spaces">    </span><span class="istickedoff">-- 20 second timeout</span>
+<span class="lineno">  481 </span><span class="spaces">    </span><span class="istickedoff">evTimerInit tmr tcb 0 20.0</span>
+<span class="lineno">  482 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  483 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  484 </span><span class="spaces">    </span><span class="istickedoff">evioWrite &lt;- mkEvIo</span>
-<span class="lineno">  485 </span><span class="spaces">    </span><span class="istickedoff">ioWriteCb &lt;- mkIoCallback $ ioWriteCallback fd writeActive wa</span>
+<span class="lineno">  484 </span><span class="spaces">    </span><span class="istickedoff">readActive  &lt;- newIORef True</span>
+<span class="lineno">  485 </span><span class="spaces">    </span><span class="istickedoff">writeActive &lt;- newIORef True</span>
 <span class="lineno">  486 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  487 </span><span class="spaces">    </span><span class="istickedoff">evIoInit evioRead ioReadCb fd ev_read</span>
-<span class="lineno">  488 </span><span class="spaces">    </span><span class="istickedoff">evIoInit evioWrite ioWriteCb fd ev_write</span>
+<span class="lineno">  487 </span><span class="spaces">    </span><span class="istickedoff">evioRead &lt;- mkEvIo</span>
+<span class="lineno">  488 </span><span class="spaces">    </span><span class="istickedoff">ioReadCb &lt;- mkIoCallback $ ioReadCallback fd readActive ra</span>
 <span class="lineno">  489 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  490 </span><span class="spaces">    </span><span class="istickedoff">-- take ev_loop lock, start timer and io watchers</span>
-<span class="lineno">  491 </span><span class="spaces">    </span><span class="istickedoff">withMVar (_loopLock backend) $ \_ -&gt; do</span>
-<span class="lineno">  492 </span><span class="spaces">         </span><span class="istickedoff">evTimerAgain lp tmr</span>
-<span class="lineno">  493 </span><span class="spaces">         </span><span class="istickedoff">evIoStart lp evioRead</span>
-<span class="lineno">  494 </span><span class="spaces">         </span><span class="istickedoff">evIoStart lp evioWrite</span>
+<span class="lineno">  490 </span><span class="spaces">    </span><span class="istickedoff">evioWrite &lt;- mkEvIo</span>
+<span class="lineno">  491 </span><span class="spaces">    </span><span class="istickedoff">ioWriteCb &lt;- mkIoCallback $ ioWriteCallback fd writeActive wa</span>
+<span class="lineno">  492 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  493 </span><span class="spaces">    </span><span class="istickedoff">evIoInit evioRead ioReadCb fd ev_read</span>
+<span class="lineno">  494 </span><span class="spaces">    </span><span class="istickedoff">evIoInit evioWrite ioWriteCb fd ev_write</span>
 <span class="lineno">  495 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  496 </span><span class="spaces">         </span><span class="istickedoff">-- wakeup the loop thread so that these new watchers get</span>
-<span class="lineno">  497 </span><span class="spaces">         </span><span class="istickedoff">-- registered next time through the loop</span>
-<span class="lineno">  498 </span><span class="spaces">         </span><span class="istickedoff">evAsyncSend lp $ _asyncObj backend</span>
-<span class="lineno">  499 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  500 </span><span class="spaces">    </span><span class="istickedoff">let sinfo = SessionInfo laddr lport raddr rport $</span>
-<span class="lineno">  501 </span><span class="spaces">                    </span><span class="istickedoff">Listen.isSecure lsock</span>
-<span class="lineno">  502 </span><span class="spaces">    </span><span class="istickedoff">let conn = Connection backend</span>
-<span class="lineno">  503 </span><span class="spaces">                          </span><span class="istickedoff">lsock</span>
-<span class="lineno">  504 </span><span class="spaces">                          </span><span class="istickedoff">fd</span>
-<span class="lineno">  505 </span><span class="spaces">                          </span><span class="istickedoff">sinfo</span>
-<span class="lineno">  506 </span><span class="spaces">                          </span><span class="istickedoff">ra</span>
-<span class="lineno">  507 </span><span class="spaces">                          </span><span class="istickedoff">wa</span>
-<span class="lineno">  508 </span><span class="spaces">                          </span><span class="istickedoff">tmr</span>
-<span class="lineno">  509 </span><span class="spaces">                          </span><span class="istickedoff">tcb</span>
-<span class="lineno">  510 </span><span class="spaces">                          </span><span class="istickedoff">timeoutTime</span>
-<span class="lineno">  511 </span><span class="spaces">                          </span><span class="istickedoff">readActive</span>
-<span class="lineno">  512 </span><span class="spaces">                          </span><span class="istickedoff">writeActive</span>
-<span class="lineno">  513 </span><span class="spaces">                          </span><span class="istickedoff">evioRead</span>
-<span class="lineno">  514 </span><span class="spaces">                          </span><span class="istickedoff">ioReadCb</span>
-<span class="lineno">  515 </span><span class="spaces">                          </span><span class="istickedoff">evioWrite</span>
-<span class="lineno">  516 </span><span class="spaces">                          </span><span class="istickedoff">ioWriteCb</span>
-<span class="lineno">  517 </span><span class="spaces">                          </span><span class="istickedoff">tid</span>
-<span class="lineno">  518 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  519 </span><span class="spaces">    </span><span class="istickedoff">bracket (Listen.createSession lsock bLOCKSIZE fd $</span>
-<span class="lineno">  520 </span><span class="spaces">                   </span><span class="istickedoff">waitForLock True conn)</span>
-<span class="lineno">  521 </span><span class="spaces">            </span><span class="istickedoff">(\session -&gt; block $ do</span>
-<span class="lineno">  522 </span><span class="spaces">                </span><span class="istickedoff">debug &quot;runSession: thread killed, closing socket&quot;</span>
-<span class="lineno">  523 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  524 </span><span class="spaces">                </span><span class="istickedoff">eatException $ Listen.endSession lsock session</span>
-<span class="lineno">  525 </span><span class="spaces">                </span><span class="istickedoff">eatException $ freeConnection conn</span>
-<span class="lineno">  526 </span><span class="spaces">            </span><span class="istickedoff">)</span>
-<span class="lineno">  527 </span><span class="spaces">            </span><span class="istickedoff">(\session -&gt; do H.update tid conn (_connectionThreads backend)</span>
-<span class="lineno">  528 </span><span class="spaces">                            </span><span class="istickedoff">handler sinfo</span>
-<span class="lineno">  529 </span><span class="spaces">                                    </span><span class="istickedoff">(enumerate conn session)</span>
-<span class="lineno">  530 </span><span class="spaces">                                    </span><span class="istickedoff">(writeOut conn session)</span>
-<span class="lineno">  531 </span><span class="spaces">                                    </span><span class="istickedoff">(sendFile conn session)</span>
-<span class="lineno">  532 </span><span class="spaces">                                    </span><span class="istickedoff">(tickleTimeout conn)</span>
-<span class="lineno">  533 </span><span class="spaces">            </span><span class="istickedoff">)</span></span>
-<span class="lineno">  534 </span>
-<span class="lineno">  535 </span>
-<span class="lineno">  536 </span>------------------------------------------------------------------------------
-<span class="lineno">  537 </span>eatException :: IO a -&gt; IO ()
-<span class="lineno">  538 </span><span class="decl"><span class="istickedoff">eatException act = (act &gt;&gt; return <span class="nottickedoff">()</span>) `catch` <span class="nottickedoff">\(_::SomeException) -&gt; return ()</span></span></span>
-<span class="lineno">  539 </span>
+<span class="lineno">  496 </span><span class="spaces">    </span><span class="istickedoff">-- take ev_loop lock, start timer and io watchers</span>
+<span class="lineno">  497 </span><span class="spaces">    </span><span class="istickedoff">withMVar (_loopLock backend) $ \_ -&gt; do</span>
+<span class="lineno">  498 </span><span class="spaces">         </span><span class="istickedoff">evTimerAgain lp tmr</span>
+<span class="lineno">  499 </span><span class="spaces">         </span><span class="istickedoff">evIoStart lp evioRead</span>
+<span class="lineno">  500 </span><span class="spaces">         </span><span class="istickedoff">evIoStart lp evioWrite</span>
+<span class="lineno">  501 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  502 </span><span class="spaces">         </span><span class="istickedoff">-- wakeup the loop thread so that these new watchers get</span>
+<span class="lineno">  503 </span><span class="spaces">         </span><span class="istickedoff">-- registered next time through the loop</span>
+<span class="lineno">  504 </span><span class="spaces">         </span><span class="istickedoff">evAsyncSend lp $ _asyncObj backend</span>
+<span class="lineno">  505 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  506 </span><span class="spaces">    </span><span class="istickedoff">let sinfo = SessionInfo laddr lport raddr rport $</span>
+<span class="lineno">  507 </span><span class="spaces">                    </span><span class="istickedoff">Listen.isSecure lsock</span>
+<span class="lineno">  508 </span><span class="spaces">    </span><span class="istickedoff">let conn = Connection backend</span>
+<span class="lineno">  509 </span><span class="spaces">                          </span><span class="istickedoff">lsock</span>
+<span class="lineno">  510 </span><span class="spaces">                          </span><span class="istickedoff">fd</span>
+<span class="lineno">  511 </span><span class="spaces">                          </span><span class="istickedoff">sinfo</span>
+<span class="lineno">  512 </span><span class="spaces">                          </span><span class="istickedoff">ra</span>
+<span class="lineno">  513 </span><span class="spaces">                          </span><span class="istickedoff">wa</span>
+<span class="lineno">  514 </span><span class="spaces">                          </span><span class="istickedoff">tmr</span>
+<span class="lineno">  515 </span><span class="spaces">                          </span><span class="istickedoff">tcb</span>
+<span class="lineno">  516 </span><span class="spaces">                          </span><span class="istickedoff">timeoutTime</span>
+<span class="lineno">  517 </span><span class="spaces">                          </span><span class="istickedoff">readActive</span>
+<span class="lineno">  518 </span><span class="spaces">                          </span><span class="istickedoff">writeActive</span>
+<span class="lineno">  519 </span><span class="spaces">                          </span><span class="istickedoff">evioRead</span>
+<span class="lineno">  520 </span><span class="spaces">                          </span><span class="istickedoff">ioReadCb</span>
+<span class="lineno">  521 </span><span class="spaces">                          </span><span class="istickedoff">evioWrite</span>
+<span class="lineno">  522 </span><span class="spaces">                          </span><span class="istickedoff">ioWriteCb</span>
+<span class="lineno">  523 </span><span class="spaces">                          </span><span class="istickedoff">tid</span>
+<span class="lineno">  524 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  525 </span><span class="spaces">    </span><span class="istickedoff">bracket (Listen.createSession lsock bLOCKSIZE fd $</span>
+<span class="lineno">  526 </span><span class="spaces">                   </span><span class="istickedoff"><span class="nottickedoff">waitForLock True conn</span>)</span>
+<span class="lineno">  527 </span><span class="spaces">            </span><span class="istickedoff">(\session -&gt; block $ do</span>
+<span class="lineno">  528 </span><span class="spaces">                </span><span class="istickedoff">debug &quot;runSession: thread killed, closing socket&quot;</span>
+<span class="lineno">  529 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  530 </span><span class="spaces">                </span><span class="istickedoff">eatException $ Listen.endSession lsock session</span>
+<span class="lineno">  531 </span><span class="spaces">                </span><span class="istickedoff">eatException $ freeConnection conn</span>
+<span class="lineno">  532 </span><span class="spaces">            </span><span class="istickedoff">)</span>
+<span class="lineno">  533 </span><span class="spaces">            </span><span class="istickedoff">(\session -&gt; do H.update tid conn (_connectionThreads backend)</span>
+<span class="lineno">  534 </span><span class="spaces">                            </span><span class="istickedoff">handler sinfo</span>
+<span class="lineno">  535 </span><span class="spaces">                                    </span><span class="istickedoff">(enumerate conn session)</span>
+<span class="lineno">  536 </span><span class="spaces">                                    </span><span class="istickedoff">(writeOut <span class="nottickedoff">defaultTimeout</span> conn session)</span>
+<span class="lineno">  537 </span><span class="spaces">                                    </span><span class="istickedoff">(sendFile <span class="nottickedoff">defaultTimeout</span> conn session)</span>
+<span class="lineno">  538 </span><span class="spaces">                                    </span><span class="istickedoff">(tickleTimeout conn)</span>
+<span class="lineno">  539 </span><span class="spaces">            </span><span class="istickedoff">)</span></span>
 <span class="lineno">  540 </span>
-<span class="lineno">  541 </span>------------------------------------------------------------------------------
-<span class="lineno">  542 </span>data AddressNotSupportedException = AddressNotSupportedException String
-<span class="lineno">  543 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
-<span class="lineno">  544 </span>
-<span class="lineno">  545 </span>instance Show AddressNotSupportedException where
-<span class="lineno">  546 </span>    <span class="decl"><span class="nottickedoff">show (AddressNotSupportedException x) = &quot;Address not supported: &quot; ++ x</span></span>
-<span class="lineno">  547 </span>
-<span class="lineno">  548 </span>instance Exception AddressNotSupportedException
-<span class="lineno">  549 </span>
+<span class="lineno">  541 </span>
+<span class="lineno">  542 </span>------------------------------------------------------------------------------
+<span class="lineno">  543 </span>eatException :: IO a -&gt; IO ()
+<span class="lineno">  544 </span><span class="decl"><span class="istickedoff">eatException act = (act &gt;&gt; return <span class="nottickedoff">()</span>) `catch` <span class="nottickedoff">\(_::SomeException) -&gt; return ()</span></span></span>
+<span class="lineno">  545 </span>
+<span class="lineno">  546 </span>
+<span class="lineno">  547 </span>------------------------------------------------------------------------------
+<span class="lineno">  548 </span>data AddressNotSupportedException = AddressNotSupportedException String
+<span class="lineno">  549 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
 <span class="lineno">  550 </span>
-<span class="lineno">  551 </span>------------------------------------------------------------------------------
-<span class="lineno">  552 </span>
-<span class="lineno">  553 </span>bLOCKSIZE :: Int
-<span class="lineno">  554 </span><span class="decl"><span class="istickedoff">bLOCKSIZE = 8192</span></span>
+<span class="lineno">  551 </span>instance Show AddressNotSupportedException where
+<span class="lineno">  552 </span>    <span class="decl"><span class="nottickedoff">show (AddressNotSupportedException x) = &quot;Address not supported: &quot; ++ x</span></span>
+<span class="lineno">  553 </span>
+<span class="lineno">  554 </span>instance Exception AddressNotSupportedException
 <span class="lineno">  555 </span>
-<span class="lineno">  556 </span>--
-<span class="lineno">  557 </span>-- About timeouts
-<span class="lineno">  558 </span>--
-<span class="lineno">  559 </span>-- It's not good enough to restart the timer from io(Read|Write)Callback,
-<span class="lineno">  560 </span>-- because those seem to be edge-triggered. I've definitely had where after 20
-<span class="lineno">  561 </span>-- seconds they still weren't being re-awakened.
+<span class="lineno">  556 </span>
+<span class="lineno">  557 </span>------------------------------------------------------------------------------
+<span class="lineno">  558 </span>
+<span class="lineno">  559 </span>bLOCKSIZE :: Int
+<span class="lineno">  560 </span><span class="decl"><span class="istickedoff">bLOCKSIZE = 8192</span></span>
+<span class="lineno">  561 </span>
 <span class="lineno">  562 </span>--
-<span class="lineno">  563 </span>
-<span class="lineno">  564 </span>
-<span class="lineno">  565 </span>------------------------------------------------------------------------------
-<span class="lineno">  566 </span>data TimeoutException = TimeoutException
-<span class="lineno">  567 </span>   deriving (<span class="decl"><span class="istickedoff">Typeable</span></span>)
-<span class="lineno">  568 </span>
-<span class="lineno">  569 </span>instance Show TimeoutException where
-<span class="lineno">  570 </span>    <span class="decl"><span class="istickedoff">show _ = &quot;timeout&quot;</span></span>
-<span class="lineno">  571 </span>
-<span class="lineno">  572 </span>instance Exception TimeoutException
-<span class="lineno">  573 </span>
+<span class="lineno">  563 </span>-- About timeouts
+<span class="lineno">  564 </span>--
+<span class="lineno">  565 </span>-- It's not good enough to restart the timer from io(Read|Write)Callback,
+<span class="lineno">  566 </span>-- because those seem to be edge-triggered. I've definitely had where after 20
+<span class="lineno">  567 </span>-- seconds they still weren't being re-awakened.
+<span class="lineno">  568 </span>--
+<span class="lineno">  569 </span>
+<span class="lineno">  570 </span>
+<span class="lineno">  571 </span>------------------------------------------------------------------------------
+<span class="lineno">  572 </span>data TimeoutException = TimeoutException
+<span class="lineno">  573 </span>   deriving (<span class="decl"><span class="istickedoff">Typeable</span></span>)
 <span class="lineno">  574 </span>
-<span class="lineno">  575 </span>------------------------------------------------------------------------------
-<span class="lineno">  576 </span>tickleTimeout :: Connection -&gt; IO ()
-<span class="lineno">  577 </span><span class="decl"><span class="istickedoff">tickleTimeout conn = do</span>
-<span class="lineno">  578 </span><span class="spaces">    </span><span class="istickedoff">debug &quot;Libev.tickleTimeout&quot;</span>
-<span class="lineno">  579 </span><span class="spaces">    </span><span class="istickedoff">now       &lt;- getCurrentDateTime</span>
-<span class="lineno">  580 </span><span class="spaces">    </span><span class="istickedoff">writeIORef (_timerTimeoutTime conn) (now + 30)</span></span>
-<span class="lineno">  581 </span>
-<span class="lineno">  582 </span>
-<span class="lineno">  583 </span>------------------------------------------------------------------------------
-<span class="lineno">  584 </span>waitForLock :: Bool        -- ^ True = wait for read, False = wait for write
-<span class="lineno">  585 </span>            -&gt; Connection
-<span class="lineno">  586 </span>            -&gt; IO ()
-<span class="lineno">  587 </span><span class="decl"><span class="istickedoff">waitForLock readLock conn = do</span>
-<span class="lineno">  588 </span><span class="spaces">    </span><span class="istickedoff">dbg &quot;start waitForLock&quot;</span>
-<span class="lineno">  589 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  590 </span><span class="spaces">    </span><span class="istickedoff">withMVar looplock $ \_ -&gt; do</span>
-<span class="lineno">  591 </span><span class="spaces">        </span><span class="istickedoff">act &lt;- readIORef active</span>
-<span class="lineno">  592 </span><span class="spaces">        </span><span class="istickedoff">if act</span>
-<span class="lineno">  593 </span><span class="spaces">          </span><span class="istickedoff">then dbg &quot;read watcher already active, skipping&quot;</span>
-<span class="lineno">  594 </span><span class="spaces">          </span><span class="istickedoff">else do</span>
-<span class="lineno">  595 </span><span class="spaces">            </span><span class="istickedoff">dbg &quot;starting watcher, sending async&quot;</span>
-<span class="lineno">  596 </span><span class="spaces">            </span><span class="istickedoff">tryTakeMVar lock</span>
-<span class="lineno">  597 </span><span class="spaces">            </span><span class="istickedoff">evIoStart lp io</span>
-<span class="lineno">  598 </span><span class="spaces">            </span><span class="istickedoff">writeIORef active <span class="nottickedoff">True</span></span>
-<span class="lineno">  599 </span><span class="spaces">            </span><span class="istickedoff">evAsyncSend lp async</span>
-<span class="lineno">  600 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  601 </span><span class="spaces">    </span><span class="istickedoff">dbg &quot;waitForLock: waiting for mvar&quot;</span>
-<span class="lineno">  602 </span><span class="spaces">    </span><span class="istickedoff">takeMVar lock</span>
-<span class="lineno">  603 </span><span class="spaces">    </span><span class="istickedoff">dbg &quot;waitForLock: took mvar&quot;</span>
-<span class="lineno">  604 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  605 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  606 </span><span class="spaces">    </span><span class="istickedoff">dbg s    = debug $ &quot;Libev.recvData(&quot; ++ show (_rawSocket conn) ++ &quot;): &quot;</span>
-<span class="lineno">  607 </span><span class="spaces">                       </span><span class="istickedoff">++ s</span>
-<span class="lineno">  608 </span><span class="spaces">    </span><span class="istickedoff">io       = if readLock</span>
-<span class="lineno">  609 </span><span class="spaces">                 </span><span class="istickedoff">then (_connReadIOObj conn)</span>
-<span class="lineno">  610 </span><span class="spaces">                 </span><span class="istickedoff">else (_connWriteIOObj conn)</span>
-<span class="lineno">  611 </span><span class="spaces">    </span><span class="istickedoff">bk       = _backend conn</span>
-<span class="lineno">  612 </span><span class="spaces">    </span><span class="istickedoff">active   = if readLock</span>
-<span class="lineno">  613 </span><span class="spaces">                 </span><span class="istickedoff">then (_readActive conn)</span>
-<span class="lineno">  614 </span><span class="spaces">                 </span><span class="istickedoff">else (_writeActive conn)</span>
-<span class="lineno">  615 </span><span class="spaces">    </span><span class="istickedoff">lp       = _evLoop bk</span>
-<span class="lineno">  616 </span><span class="spaces">    </span><span class="istickedoff">looplock = _loopLock bk</span>
-<span class="lineno">  617 </span><span class="spaces">    </span><span class="istickedoff">async    = _asyncObj bk</span>
-<span class="lineno">  618 </span><span class="spaces">    </span><span class="istickedoff">lock     = if readLock</span>
-<span class="lineno">  619 </span><span class="spaces">                 </span><span class="istickedoff">then (_readAvailable conn)</span>
-<span class="lineno">  620 </span><span class="spaces">                 </span><span class="istickedoff">else (_writeAvailable conn)</span></span>
-<span class="lineno">  621 </span>
-<span class="lineno">  622 </span>
-<span class="lineno">  623 </span>------------------------------------------------------------------------------
-<span class="lineno">  624 </span>sendFile :: Connection -&gt; NetworkSession -&gt; FilePath -&gt; Int64 -&gt; Int64
-<span class="lineno">  625 </span>         -&gt; IO ()
-<span class="lineno">  626 </span><span class="decl"><span class="istickedoff">sendFile c s fp start sz = do</span>
-<span class="lineno">  627 </span><span class="spaces">    </span><span class="istickedoff">withMVar lock $ \_ -&gt; do</span>
-<span class="lineno">  628 </span><span class="spaces">      </span><span class="istickedoff">act &lt;- readIORef $ _writeActive c</span>
-<span class="lineno">  629 </span><span class="spaces">      </span><span class="istickedoff">when act $ evIoStop loop io</span>
-<span class="lineno">  630 </span><span class="spaces">      </span><span class="istickedoff">writeIORef (_writeActive c) <span class="nottickedoff">False</span></span>
-<span class="lineno">  631 </span><span class="spaces">      </span><span class="istickedoff">evAsyncSend loop asy</span>
-<span class="lineno">  632 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  633 </span><span class="spaces"></span><span class="istickedoff">#if defined(HAS_SENDFILE)</span>
-<span class="lineno">  634 </span><span class="spaces">    </span><span class="istickedoff">case (_listenSocket c) of</span>
-<span class="lineno">  635 </span><span class="spaces">        </span><span class="istickedoff">ListenHttp _ -&gt; bracket (openFd fp ReadOnly Nothing defaultFileFlags)</span>
-<span class="lineno">  636 </span><span class="spaces">                                </span><span class="istickedoff">(closeFd)</span>
-<span class="lineno">  637 </span><span class="spaces">                                </span><span class="istickedoff">(go start sz)</span>
-<span class="lineno">  638 </span><span class="spaces">        </span><span class="istickedoff">_            -&gt; do</span>
-<span class="lineno">  639 </span><span class="spaces">            </span><span class="istickedoff">step &lt;- runIteratee $ writeOut c s</span>
-<span class="lineno">  640 </span><span class="spaces">            </span><span class="istickedoff">run_ $ enumFilePartial fp (start,start+sz) step</span>
-<span class="lineno">  641 </span><span class="spaces"></span><span class="istickedoff">#else</span>
-<span class="lineno">  642 </span><span class="spaces">    </span><span class="istickedoff">step &lt;- runIteratee $ writeOut c s</span>
+<span class="lineno">  575 </span>instance Show TimeoutException where
+<span class="lineno">  576 </span>    <span class="decl"><span class="istickedoff">show _ = &quot;timeout&quot;</span></span>
+<span class="lineno">  577 </span>
+<span class="lineno">  578 </span>instance Exception TimeoutException
+<span class="lineno">  579 </span>
+<span class="lineno">  580 </span>
+<span class="lineno">  581 </span>------------------------------------------------------------------------------
+<span class="lineno">  582 </span>tickleTimeout :: Connection -&gt; Int -&gt; IO ()
+<span class="lineno">  583 </span><span class="decl"><span class="istickedoff">tickleTimeout conn tm = do</span>
+<span class="lineno">  584 </span><span class="spaces">    </span><span class="istickedoff">debug &quot;Libev.tickleTimeout&quot;</span>
+<span class="lineno">  585 </span><span class="spaces">    </span><span class="istickedoff">now       &lt;- getCurrentDateTime</span>
+<span class="lineno">  586 </span><span class="spaces">    </span><span class="istickedoff">writeIORef (_timerTimeoutTime conn) (now + toEnum tm)</span></span>
+<span class="lineno">  587 </span>
+<span class="lineno">  588 </span>
+<span class="lineno">  589 </span>------------------------------------------------------------------------------
+<span class="lineno">  590 </span>waitForLock :: Bool        -- ^ True = wait for read, False = wait for write
+<span class="lineno">  591 </span>            -&gt; Connection
+<span class="lineno">  592 </span>            -&gt; IO ()
+<span class="lineno">  593 </span><span class="decl"><span class="istickedoff">waitForLock readLock conn = do</span>
+<span class="lineno">  594 </span><span class="spaces">    </span><span class="istickedoff">dbg &quot;start waitForLock&quot;</span>
+<span class="lineno">  595 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  596 </span><span class="spaces">    </span><span class="istickedoff">withMVar looplock $ \_ -&gt; do</span>
+<span class="lineno">  597 </span><span class="spaces">        </span><span class="istickedoff">act &lt;- readIORef active</span>
+<span class="lineno">  598 </span><span class="spaces">        </span><span class="istickedoff">if act</span>
+<span class="lineno">  599 </span><span class="spaces">          </span><span class="istickedoff">then dbg &quot;read watcher already active, skipping&quot;</span>
+<span class="lineno">  600 </span><span class="spaces">          </span><span class="istickedoff">else do</span>
+<span class="lineno">  601 </span><span class="spaces">            </span><span class="istickedoff">dbg &quot;starting watcher, sending async&quot;</span>
+<span class="lineno">  602 </span><span class="spaces">            </span><span class="istickedoff">tryTakeMVar lock</span>
+<span class="lineno">  603 </span><span class="spaces">            </span><span class="istickedoff">evIoStart lp io</span>
+<span class="lineno">  604 </span><span class="spaces">            </span><span class="istickedoff">writeIORef active <span class="nottickedoff">True</span></span>
+<span class="lineno">  605 </span><span class="spaces">            </span><span class="istickedoff">evAsyncSend lp async</span>
+<span class="lineno">  606 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  607 </span><span class="spaces">    </span><span class="istickedoff">dbg &quot;waitForLock: waiting for mvar&quot;</span>
+<span class="lineno">  608 </span><span class="spaces">    </span><span class="istickedoff">takeMVar lock</span>
+<span class="lineno">  609 </span><span class="spaces">    </span><span class="istickedoff">dbg &quot;waitForLock: took mvar&quot;</span>
+<span class="lineno">  610 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  611 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  612 </span><span class="spaces">    </span><span class="istickedoff">dbg s    = debug $ &quot;Libev.recvData(&quot; ++ show (_rawSocket conn) ++ &quot;): &quot;</span>
+<span class="lineno">  613 </span><span class="spaces">                       </span><span class="istickedoff">++ s</span>
+<span class="lineno">  614 </span><span class="spaces">    </span><span class="istickedoff">io       = if readLock</span>
+<span class="lineno">  615 </span><span class="spaces">                 </span><span class="istickedoff">then (_connReadIOObj conn)</span>
+<span class="lineno">  616 </span><span class="spaces">                 </span><span class="istickedoff">else (_connWriteIOObj conn)</span>
+<span class="lineno">  617 </span><span class="spaces">    </span><span class="istickedoff">bk       = _backend conn</span>
+<span class="lineno">  618 </span><span class="spaces">    </span><span class="istickedoff">active   = if readLock</span>
+<span class="lineno">  619 </span><span class="spaces">                 </span><span class="istickedoff">then (_readActive conn)</span>
+<span class="lineno">  620 </span><span class="spaces">                 </span><span class="istickedoff">else (_writeActive conn)</span>
+<span class="lineno">  621 </span><span class="spaces">    </span><span class="istickedoff">lp       = _evLoop bk</span>
+<span class="lineno">  622 </span><span class="spaces">    </span><span class="istickedoff">looplock = _loopLock bk</span>
+<span class="lineno">  623 </span><span class="spaces">    </span><span class="istickedoff">async    = _asyncObj bk</span>
+<span class="lineno">  624 </span><span class="spaces">    </span><span class="istickedoff">lock     = if readLock</span>
+<span class="lineno">  625 </span><span class="spaces">                 </span><span class="istickedoff">then (_readAvailable conn)</span>
+<span class="lineno">  626 </span><span class="spaces">                 </span><span class="istickedoff">else (_writeAvailable conn)</span></span>
+<span class="lineno">  627 </span>
+<span class="lineno">  628 </span>
+<span class="lineno">  629 </span>------------------------------------------------------------------------------
+<span class="lineno">  630 </span>sendFile :: Int
+<span class="lineno">  631 </span>         -&gt; Connection
+<span class="lineno">  632 </span>         -&gt; NetworkSession
+<span class="lineno">  633 </span>         -&gt; FilePath
+<span class="lineno">  634 </span>         -&gt; Int64
+<span class="lineno">  635 </span>         -&gt; Int64
+<span class="lineno">  636 </span>         -&gt; IO ()
+<span class="lineno">  637 </span><span class="decl"><span class="istickedoff">sendFile defaultTimeout c s fp start sz = do</span>
+<span class="lineno">  638 </span><span class="spaces">    </span><span class="istickedoff">withMVar lock $ \_ -&gt; do</span>
+<span class="lineno">  639 </span><span class="spaces">      </span><span class="istickedoff">act &lt;- readIORef $ _writeActive c</span>
+<span class="lineno">  640 </span><span class="spaces">      </span><span class="istickedoff">when act $ evIoStop loop io</span>
+<span class="lineno">  641 </span><span class="spaces">      </span><span class="istickedoff">writeIORef (_writeActive c) <span class="nottickedoff">False</span></span>
+<span class="lineno">  642 </span><span class="spaces">      </span><span class="istickedoff">evAsyncSend loop asy</span>
 <span class="lineno">  643 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  644 </span><span class="spaces">    </span><span class="istickedoff">run_ $ enumFilePartial fp (start,start+sz) step</span>
-<span class="lineno">  645 </span><span class="spaces">    </span><span class="istickedoff">return <span class="nottickedoff">()</span></span>
-<span class="lineno">  646 </span><span class="spaces"></span><span class="istickedoff">#endif</span>
-<span class="lineno">  647 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  648 </span><span class="spaces">    </span><span class="istickedoff">withMVar lock $ \_ -&gt; do</span>
-<span class="lineno">  649 </span><span class="spaces">      </span><span class="istickedoff">tryTakeMVar $ _readAvailable c</span>
-<span class="lineno">  650 </span><span class="spaces">      </span><span class="istickedoff">tryTakeMVar $ _writeAvailable c</span>
-<span class="lineno">  651 </span><span class="spaces">      </span><span class="istickedoff">evAsyncSend loop asy</span>
-<span class="lineno">  652 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  653 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  654 </span><span class="spaces"></span><span class="istickedoff">#if defined(HAS_SENDFILE)</span>
-<span class="lineno">  655 </span><span class="spaces">    </span><span class="istickedoff">go off bytes fd</span>
-<span class="lineno">  656 </span><span class="spaces">      </span><span class="istickedoff">| bytes == 0 = return ()</span>
-<span class="lineno">  657 </span><span class="spaces">      </span><span class="istickedoff">| otherwise  = do</span>
-<span class="lineno">  658 </span><span class="spaces">            </span><span class="istickedoff">sent &lt;- SF.sendFile sfd fd off bytes</span>
-<span class="lineno">  659 </span><span class="spaces">            </span><span class="istickedoff">if sent &lt; bytes</span>
-<span class="lineno">  660 </span><span class="spaces">              </span><span class="istickedoff">then tickleTimeout c &gt;&gt; go (off+sent) (bytes-sent) fd</span>
-<span class="lineno">  661 </span><span class="spaces">              </span><span class="istickedoff">else return ()</span>
-<span class="lineno">  662 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  663 </span><span class="spaces">    </span><span class="istickedoff">sfd  = Fd $ _rawSocket c</span>
-<span class="lineno">  664 </span><span class="spaces"></span><span class="istickedoff">#endif</span>
-<span class="lineno">  665 </span><span class="spaces">    </span><span class="istickedoff">io   = _connWriteIOObj c</span>
-<span class="lineno">  666 </span><span class="spaces">    </span><span class="istickedoff">b    = _backend c</span>
-<span class="lineno">  667 </span><span class="spaces">    </span><span class="istickedoff">loop = _evLoop b</span>
-<span class="lineno">  668 </span><span class="spaces">    </span><span class="istickedoff">lock = _loopLock b</span>
-<span class="lineno">  669 </span><span class="spaces">    </span><span class="istickedoff">asy  = _asyncObj b</span></span>
-<span class="lineno">  670 </span>
-<span class="lineno">  671 </span>
-<span class="lineno">  672 </span>------------------------------------------------------------------------------
-<span class="lineno">  673 </span>enumerate :: (MonadIO m)
-<span class="lineno">  674 </span>          =&gt; Connection
-<span class="lineno">  675 </span>          -&gt; NetworkSession
-<span class="lineno">  676 </span>          -&gt; Enumerator ByteString m a
-<span class="lineno">  677 </span><span class="decl"><span class="istickedoff">enumerate conn session = loop</span>
-<span class="lineno">  678 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  679 </span><span class="spaces">    </span><span class="istickedoff">dbg s = debug $ &quot;Libev.enumerate(&quot; ++ show (_socket session)</span>
-<span class="lineno">  680 </span><span class="spaces">                    </span><span class="istickedoff">++ &quot;): &quot; ++ s</span>
-<span class="lineno">  681 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  682 </span><span class="spaces">    </span><span class="istickedoff">loop (Continue k) = do</span>
-<span class="lineno">  683 </span><span class="spaces">        </span><span class="istickedoff">m &lt;- liftIO $ recvData</span>
-<span class="lineno">  684 </span><span class="spaces">        </span><span class="istickedoff">let s = fromMaybe &quot;&quot; m</span>
-<span class="lineno">  685 </span><span class="spaces">        </span><span class="istickedoff">sendOne k s</span>
-<span class="lineno">  686 </span><span class="spaces">    </span><span class="istickedoff">loop x = <span class="nottickedoff">returnI x</span></span>
-<span class="lineno">  687 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  688 </span><span class="spaces">    </span><span class="istickedoff">sendOne k s | S.null s  = do</span>
-<span class="lineno">  689 </span><span class="spaces">        </span><span class="istickedoff">dbg &quot;sending EOF to continuation&quot;</span>
-<span class="lineno">  690 </span><span class="spaces">        </span><span class="istickedoff">enumEOF $ Continue k</span>
-<span class="lineno">  691 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  692 </span><span class="spaces">                </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
-<span class="lineno">  693 </span><span class="spaces">        </span><span class="istickedoff">dbg $ &quot;sending &quot; ++ show s ++ &quot; to continuation&quot;</span>
-<span class="lineno">  694 </span><span class="spaces">        </span><span class="istickedoff">step &lt;- lift $ runIteratee $ k $ Chunks [s]</span>
-<span class="lineno">  695 </span><span class="spaces">        </span><span class="istickedoff">case step of</span>
-<span class="lineno">  696 </span><span class="spaces">          </span><span class="istickedoff">(Yield x st)   -&gt; do</span>
-<span class="lineno">  697 </span><span class="spaces">                      </span><span class="istickedoff">dbg $ &quot;got yield, remainder is &quot; ++ show st</span>
-<span class="lineno">  698 </span><span class="spaces">                      </span><span class="istickedoff">yield <span class="nottickedoff">x</span> <span class="nottickedoff">st</span></span>
-<span class="lineno">  699 </span><span class="spaces">          </span><span class="istickedoff">r@(Continue _) -&gt; do</span>
-<span class="lineno">  700 </span><span class="spaces">                      </span><span class="istickedoff">dbg $ &quot;got continue&quot;</span>
-<span class="lineno">  701 </span><span class="spaces">                      </span><span class="istickedoff">loop r</span>
-<span class="lineno">  702 </span><span class="spaces">          </span><span class="istickedoff">(Error e)      -&gt; <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  644 </span><span class="spaces"></span><span class="istickedoff">#if defined(HAS_SENDFILE)</span>
+<span class="lineno">  645 </span><span class="spaces">    </span><span class="istickedoff">case (_listenSocket c) of</span>
+<span class="lineno">  646 </span><span class="spaces">        </span><span class="istickedoff">ListenHttp _ -&gt; bracket (openFd fp ReadOnly Nothing defaultFileFlags)</span>
+<span class="lineno">  647 </span><span class="spaces">                                </span><span class="istickedoff">(closeFd)</span>
+<span class="lineno">  648 </span><span class="spaces">                                </span><span class="istickedoff">(go start sz)</span>
+<span class="lineno">  649 </span><span class="spaces">        </span><span class="istickedoff">_            -&gt; do</span>
+<span class="lineno">  650 </span><span class="spaces">            </span><span class="istickedoff">step &lt;- runIteratee $ writeOut defaultTimeout c s</span>
+<span class="lineno">  651 </span><span class="spaces">            </span><span class="istickedoff">run_ $ enumFilePartial fp (start,start+sz) step</span>
+<span class="lineno">  652 </span><span class="spaces"></span><span class="istickedoff">#else</span>
+<span class="lineno">  653 </span><span class="spaces">    </span><span class="istickedoff">step &lt;- runIteratee $ writeOut <span class="nottickedoff">defaultTimeout</span> c s</span>
+<span class="lineno">  654 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  655 </span><span class="spaces">    </span><span class="istickedoff">run_ $ enumFilePartial fp (start,start+sz) step</span>
+<span class="lineno">  656 </span><span class="spaces">    </span><span class="istickedoff">return <span class="nottickedoff">()</span></span>
+<span class="lineno">  657 </span><span class="spaces"></span><span class="istickedoff">#endif</span>
+<span class="lineno">  658 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  659 </span><span class="spaces">    </span><span class="istickedoff">withMVar lock $ \_ -&gt; do</span>
+<span class="lineno">  660 </span><span class="spaces">      </span><span class="istickedoff">tryTakeMVar $ _readAvailable c</span>
+<span class="lineno">  661 </span><span class="spaces">      </span><span class="istickedoff">tryTakeMVar $ _writeAvailable c</span>
+<span class="lineno">  662 </span><span class="spaces">      </span><span class="istickedoff">evAsyncSend loop asy</span>
+<span class="lineno">  663 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  664 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  665 </span><span class="spaces"></span><span class="istickedoff">#if defined(HAS_SENDFILE)</span>
+<span class="lineno">  666 </span><span class="spaces">    </span><span class="istickedoff">go off bytes fd</span>
+<span class="lineno">  667 </span><span class="spaces">      </span><span class="istickedoff">| bytes == 0 = return ()</span>
+<span class="lineno">  668 </span><span class="spaces">      </span><span class="istickedoff">| otherwise  = do</span>
+<span class="lineno">  669 </span><span class="spaces">            </span><span class="istickedoff">sent &lt;- SF.sendFile sfd fd off bytes</span>
+<span class="lineno">  670 </span><span class="spaces">            </span><span class="istickedoff">if sent &lt; bytes</span>
+<span class="lineno">  671 </span><span class="spaces">              </span><span class="istickedoff">then tickleTimeout c defaultTimeout &gt;&gt;</span>
+<span class="lineno">  672 </span><span class="spaces">                   </span><span class="istickedoff">go (off+sent) (bytes-sent) fd</span>
+<span class="lineno">  673 </span><span class="spaces">              </span><span class="istickedoff">else return ()</span>
+<span class="lineno">  674 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  675 </span><span class="spaces">    </span><span class="istickedoff">sfd  = Fd $ _rawSocket c</span>
+<span class="lineno">  676 </span><span class="spaces"></span><span class="istickedoff">#endif</span>
+<span class="lineno">  677 </span><span class="spaces">    </span><span class="istickedoff">io   = _connWriteIOObj c</span>
+<span class="lineno">  678 </span><span class="spaces">    </span><span class="istickedoff">b    = _backend c</span>
+<span class="lineno">  679 </span><span class="spaces">    </span><span class="istickedoff">loop = _evLoop b</span>
+<span class="lineno">  680 </span><span class="spaces">    </span><span class="istickedoff">lock = _loopLock b</span>
+<span class="lineno">  681 </span><span class="spaces">    </span><span class="istickedoff">asy  = _asyncObj b</span></span>
+<span class="lineno">  682 </span>
+<span class="lineno">  683 </span>
+<span class="lineno">  684 </span>------------------------------------------------------------------------------
+<span class="lineno">  685 </span>enumerate :: (MonadIO m)
+<span class="lineno">  686 </span>          =&gt; Connection
+<span class="lineno">  687 </span>          -&gt; NetworkSession
+<span class="lineno">  688 </span>          -&gt; Enumerator ByteString m a
+<span class="lineno">  689 </span><span class="decl"><span class="istickedoff">enumerate conn session = loop</span>
+<span class="lineno">  690 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  691 </span><span class="spaces">    </span><span class="istickedoff">dbg s = debug $ &quot;Libev.enumerate(&quot; ++ show (_socket session)</span>
+<span class="lineno">  692 </span><span class="spaces">                    </span><span class="istickedoff">++ &quot;): &quot; ++ s</span>
+<span class="lineno">  693 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  694 </span><span class="spaces">    </span><span class="istickedoff">loop (Continue k) = do</span>
+<span class="lineno">  695 </span><span class="spaces">        </span><span class="istickedoff">m &lt;- liftIO $ recvData</span>
+<span class="lineno">  696 </span><span class="spaces">        </span><span class="istickedoff">let s = fromMaybe &quot;&quot; m</span>
+<span class="lineno">  697 </span><span class="spaces">        </span><span class="istickedoff">sendOne k s</span>
+<span class="lineno">  698 </span><span class="spaces">    </span><span class="istickedoff">loop x = <span class="nottickedoff">returnI x</span></span>
+<span class="lineno">  699 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  700 </span><span class="spaces">    </span><span class="istickedoff">sendOne k s | S.null s  = do</span>
+<span class="lineno">  701 </span><span class="spaces">        </span><span class="istickedoff">dbg &quot;sending EOF to continuation&quot;</span>
+<span class="lineno">  702 </span><span class="spaces">        </span><span class="istickedoff">enumEOF $ Continue k</span>
 <span class="lineno">  703 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  704 </span><span class="spaces">    </span><span class="istickedoff">recvData = Listen.recv (_listenSocket conn)</span>
-<span class="lineno">  705 </span><span class="spaces">                           </span><span class="istickedoff">(waitForLock True conn) session</span></span>
-<span class="lineno">  706 </span>
-<span class="lineno">  707 </span>
-<span class="lineno">  708 </span>------------------------------------------------------------------------------
-<span class="lineno">  709 </span>writeOut :: (MonadIO m)
-<span class="lineno">  710 </span>         =&gt; Connection
-<span class="lineno">  711 </span>         -&gt; NetworkSession
-<span class="lineno">  712 </span>         -&gt; Iteratee ByteString m ()
-<span class="lineno">  713 </span><span class="istickedoff"><span class="decl"><span class="istickedoff">writeOut conn session = loop</span>
-<span class="lineno">  714 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  715 </span><span class="spaces">    </span><span class="istickedoff">loop = continue k</span>
-<span class="lineno">  716 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  717 </span><span class="spaces">    </span><span class="istickedoff">k EOF = yield () EOF</span>
-<span class="lineno">  718 </span><span class="spaces">    </span><span class="istickedoff">k (Chunks xs) = do</span>
-<span class="lineno">  719 </span><span class="spaces">        </span><span class="istickedoff">liftIO $ sendData $ S.concat xs</span>
-<span class="lineno">  720 </span><span class="spaces">        </span><span class="istickedoff">loop</span>
-<span class="lineno">  721 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  722 </span><span class="spaces">    </span><span class="istickedoff">sendData = Listen.send (_listenSocket conn)</span>
-<span class="lineno">  723 </span><span class="spaces">                           </span><span class="istickedoff">(tickleTimeout conn)</span>
-<span class="lineno">  724 </span><span class="spaces">                           </span><span class="istickedoff">(waitForLock False conn)</span>
-<span class="lineno">  725 </span><span class="spaces">                           </span><span class="istickedoff">session</span></span></span>
-<span class="lineno">  726 </span>
-<span class="lineno">  727 </span>#endif
+<span class="lineno">  704 </span><span class="spaces">                </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
+<span class="lineno">  705 </span><span class="spaces">        </span><span class="istickedoff">dbg $ &quot;sending &quot; ++ show s ++ &quot; to continuation&quot;</span>
+<span class="lineno">  706 </span><span class="spaces">        </span><span class="istickedoff">step &lt;- lift $ runIteratee $ k $ Chunks [s]</span>
+<span class="lineno">  707 </span><span class="spaces">        </span><span class="istickedoff">case step of</span>
+<span class="lineno">  708 </span><span class="spaces">          </span><span class="istickedoff">(Yield x st)   -&gt; do</span>
+<span class="lineno">  709 </span><span class="spaces">                      </span><span class="istickedoff">dbg $ &quot;got yield, remainder is &quot; ++ show st</span>
+<span class="lineno">  710 </span><span class="spaces">                      </span><span class="istickedoff">yield <span class="nottickedoff">x</span> <span class="nottickedoff">st</span></span>
+<span class="lineno">  711 </span><span class="spaces">          </span><span class="istickedoff">r@(Continue _) -&gt; do</span>
+<span class="lineno">  712 </span><span class="spaces">                      </span><span class="istickedoff">dbg $ &quot;got continue&quot;</span>
+<span class="lineno">  713 </span><span class="spaces">                      </span><span class="istickedoff">loop r</span>
+<span class="lineno">  714 </span><span class="spaces">          </span><span class="istickedoff">(Error e)      -&gt; <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  715 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  716 </span><span class="spaces">    </span><span class="istickedoff">recvData = Listen.recv (_listenSocket conn)</span>
+<span class="lineno">  717 </span><span class="spaces">                           </span><span class="istickedoff">(waitForLock True conn) session</span></span>
+<span class="lineno">  718 </span>
+<span class="lineno">  719 </span>
+<span class="lineno">  720 </span>------------------------------------------------------------------------------
+<span class="lineno">  721 </span>writeOut :: (MonadIO m)
+<span class="lineno">  722 </span>         =&gt; Int
+<span class="lineno">  723 </span>         -&gt; Connection
+<span class="lineno">  724 </span>         -&gt; NetworkSession
+<span class="lineno">  725 </span>         -&gt; Iteratee ByteString m ()
+<span class="lineno">  726 </span><span class="istickedoff"><span class="decl"><span class="istickedoff">writeOut defaultTimeout conn session = loop</span>
+<span class="lineno">  727 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  728 </span><span class="spaces">    </span><span class="istickedoff">loop = continue k</span>
+<span class="lineno">  729 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  730 </span><span class="spaces">    </span><span class="istickedoff">k EOF = yield () EOF</span>
+<span class="lineno">  731 </span><span class="spaces">    </span><span class="istickedoff">k (Chunks xs) = do</span>
+<span class="lineno">  732 </span><span class="spaces">        </span><span class="istickedoff">liftIO $ sendData $ S.concat xs</span>
+<span class="lineno">  733 </span><span class="spaces">        </span><span class="istickedoff">loop</span>
+<span class="lineno">  734 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  735 </span><span class="spaces">    </span><span class="istickedoff">sendData = Listen.send (_listenSocket conn)</span>
+<span class="lineno">  736 </span><span class="spaces">                           </span><span class="istickedoff">(tickleTimeout conn <span class="nottickedoff">defaultTimeout</span>)</span>
+<span class="lineno">  737 </span><span class="spaces">                           </span><span class="istickedoff">(waitForLock False conn)</span>
+<span class="lineno">  738 </span><span class="spaces">                           </span><span class="istickedoff">session</span></span></span>
+<span class="lineno">  739 </span>
+<span class="lineno">  740 </span>#endif
 
 </pre>
 </html>
