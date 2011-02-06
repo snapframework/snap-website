@@ -1,39 +1,38 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE PackageImports #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Main where
 
-import             Data.ByteString.Char8 (ByteString)
-import qualified   Data.ByteString.Char8 as B
-import qualified   Data.Map as Map
-import             Data.Maybe
-import             Data.Text (Text)
-import qualified   Data.Text as T
-import qualified   Data.Text.Encoding as T
-import             Data.Time.Clock.POSIX
-import             Data.Typeable
-import             Control.Applicative
-import             Control.Concurrent
-import             Control.Exception (SomeException)
-import             Control.Monad
-import             Control.Monad.CatchIO
-import "monads-fd" Control.Monad.Trans
-import "monads-fd" Control.Monad.Reader
-import             Foreign.C.Types
-import             Prelude hiding (catch)
-import             Snap.Http.Server
-import             Snap.StaticPages
-import             Snap.Types
-import             Snap.Util.FileServe
-import             Snap.Util.GZip
-import             System
-import             System.Posix.Env
-import             Text.Templating.Heist
-import             Text.Templating.Heist.Splices.Static
-import qualified   Text.XHtmlCombinators.Escape as XH
-import             Text.XmlHtml hiding (Node)
+import           Data.ByteString.Char8 (ByteString)
+import qualified Data.ByteString.Char8 as B
+import qualified Data.Map as Map
+import           Data.Maybe
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.Encoding as T
+import           Data.Time.Clock.POSIX
+import           Data.Typeable
+import           Control.Applicative
+import           Control.Concurrent
+import           Control.Exception (SomeException)
+import           Control.Monad
+import           Control.Monad.CatchIO
+import           Control.Monad.Trans
+import           Control.Monad.Reader
+import           Foreign.C.Types
+import           Prelude hiding (catch)
+import           Snap.Http.Server
+import           Snap.StaticPages
+import           Snap.Types
+import           Snap.Util.FileServe
+import           Snap.Util.GZip
+import           System
+import           System.Posix.Env
+import           Text.Templating.Heist
+import           Text.Templating.Heist.Splices.Static
+import qualified Text.XHtmlCombinators.Escape as XH
+import           Text.XmlHtml hiding (Node)
 
 
 
