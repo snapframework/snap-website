@@ -55,9 +55,9 @@ bunch of nifty new features. Here is what we've been up to:
   - Our file serving code has been substantially improved/rewritten. The new
     code can automatically generate stylable/themable directory indexes,
     provides configurable lists of index files, and allows the user to plug in
-    dynamic handlers. These handlers can be used to modify trailing slashes or
-    perform arbitrary transformations based on file type or file content on the
-    fly.
+    dynamic handlers.  These handlers can be used to perform arbitrary
+    transformations based on file type or file content on the fly.  The new
+    code also correctly handles trailing slashes for relative path resolution.
 
   - It is now possible for user handlers to modify socket timeouts, using the
    `setTimeout` function. This (finally) makes it possible to have long-running
