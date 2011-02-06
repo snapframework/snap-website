@@ -1,6 +1,6 @@
 | title: Announcing: Snap Framework v0.4
 | author: Gregory Collins <greg@gregorycollins.net>
-| published: 2011-02-06T11:59-0500
+| published: 2011-02-06T11:59:00-0500
 | updated: 2011-02-06T11:59:00-0500
 | summary: Release notes for Snap 0.4, a new major version of the Snap Framework.
 
