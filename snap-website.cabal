@@ -22,7 +22,7 @@ Executable snap-website
     directory,
     filepath,
     haskell98,
-    heist,
+    heist >= 0.5 && <0.6,
     MonadCatchIO-transformers >= 0.2 && < 0.3,
     monads-fd,
     process,
