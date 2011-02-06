@@ -14,7 +14,11 @@ we've been up to:
     This makes it possible to include inline javascript/css in templates.
     Check out Chris Smith's [blog
 post](http://cdsmith.wordpress.com/2011/02/05/html-5-in-haskell/) for more
-information.
+    information.
+
+  - Along with the change to xmlhtml, we decided to convert Heist to use Text
+    instead of ByteString.  This breaks old code, but is the right thing to do
+    rather than just assume UTF8 encoding.
 
   - Snap now has support for file uploads and the multipart/form-data content
     type.  We put significant effort into preventing denial of service attacks
