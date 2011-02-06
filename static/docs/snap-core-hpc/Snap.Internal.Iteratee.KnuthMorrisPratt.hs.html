@@ -62,10 +62,10 @@ span.spaces    { background: white }
 <span class="lineno">   51 </span><span class="spaces">           </span><span class="istickedoff">-&gt; (Stream MatchInfo -&gt; Iteratee MatchInfo m a)</span>
 <span class="lineno">   52 </span><span class="spaces">           </span><span class="istickedoff">-&gt; Iteratee ByteString m (Step MatchInfo m a)</span>
 <span class="lineno">   53 </span><span class="spaces">    </span><span class="istickedoff">finish !leftOver !k</span>
-<span class="lineno">   54 </span><span class="spaces">        </span><span class="istickedoff">| S.null leftOver = lift $ runIteratee $ k EOF</span>
-<span class="lineno">   55 </span><span class="spaces">        </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
-<span class="lineno">   56 </span><span class="spaces">            </span><span class="istickedoff">step &lt;- lift $ runIteratee $ k $ Chunks [NoMatch leftOver]</span>
-<span class="lineno">   57 </span><span class="spaces">            </span><span class="istickedoff">checkDone (\k' -&gt; lift $ runIteratee $ k' EOF) step</span>
+<span class="lineno">   54 </span><span class="spaces">        </span><span class="istickedoff">| <span class="tickonlytrue">S.null leftOver</span> = lift $ runIteratee $ k EOF</span>
+<span class="lineno">   55 </span><span class="spaces">        </span><span class="istickedoff">| <span class="nottickedoff">otherwise</span> = <span class="nottickedoff">do</span></span>
+<span class="lineno">   56 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">step &lt;- lift $ runIteratee $ k $ Chunks [NoMatch leftOver]</span></span>
+<span class="lineno">   57 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">checkDone (\k' -&gt; lift $ runIteratee $ k' EOF) step</span></span>
 <span class="lineno">   58 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">   59 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
 <span class="lineno">   60 </span><span class="spaces">    </span><span class="istickedoff">processChunk :: (MonadIO m) =&gt;</span>
@@ -148,9 +148,9 @@ span.spaces    { background: white }
 <span class="lineno">  137 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  138 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
 <span class="lineno">  139 </span><span class="spaces">                 </span><span class="istickedoff">let (garbage,rest) =</span>
-<span class="lineno">  140 </span><span class="spaces">                         </span><span class="istickedoff">if m &lt; leftOverLen</span>
-<span class="lineno">  141 </span><span class="spaces">                           </span><span class="istickedoff">then let (a,b) = S.splitAt m leftOver</span>
-<span class="lineno">  142 </span><span class="spaces">                                </span><span class="istickedoff">in (a, S.drop needleLen $ S.append b input)</span>
+<span class="lineno">  140 </span><span class="spaces">                         </span><span class="istickedoff">if <span class="tickonlyfalse">m &lt; leftOverLen</span></span>
+<span class="lineno">  141 </span><span class="spaces">                           </span><span class="istickedoff">then <span class="nottickedoff">let (a,b) = S.splitAt m leftOver</span></span>
+<span class="lineno">  142 </span><span class="spaces">                                </span><span class="istickedoff"><span class="nottickedoff">in (a, S.drop needleLen $ S.append b input)</span></span>
 <span class="lineno">  143 </span><span class="spaces">                           </span><span class="istickedoff">else let m'    = m - leftOverLen</span>
 <span class="lineno">  144 </span><span class="spaces">                                    </span><span class="istickedoff">(a,b) = S.splitAt m' input</span>
 <span class="lineno">  145 </span><span class="spaces">                                </span><span class="istickedoff">in (S.append leftOver a, S.drop needleLen b)</span>
