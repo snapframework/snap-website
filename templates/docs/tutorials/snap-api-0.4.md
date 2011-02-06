@@ -53,6 +53,7 @@ $ snap init
 
 We now have a skeleton Snap project with a `.cabal` file and a source
 directory. Install and run it:
+
 ~~~~~~ {.shell}
 $ cabal install
 $ hello-snap -p 8000
