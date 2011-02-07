@@ -32,10 +32,10 @@ bunch of nifty new features. Here is what we've been up to:
     allowable file size, upload timeouts, minimum upload speed, etc.
 
   - The web server now uses
-    [blaze-builder](http://hackage.haskell.org/package/text) in the output
-    response body `Enumerator`.  Besides being significantly faster for most
-    workloads than `ByteString` enumeration, this allowed us to save several
-    copies within the server code, giving us a moderate performance
+    [blaze-builder](http://hackage.haskell.org/package/blaze-builder) in the
+    output response body `Enumerator`.  Besides being significantly faster for
+    most workloads than `ByteString` enumeration, this allowed us to save
+    several copies within the server code, giving us a moderate performance
     improvement. However, this will break any existing code making direct use
     of the output enumerator rather than using convenience functions like
     `writeBS`. We encourage users who are building up large responses out of
