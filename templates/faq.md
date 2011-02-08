@@ -8,7 +8,6 @@
 1. [Where's the high-level functionality?   ](#wheres-the-high-level-functionality)
 1. [Why can't I install Snap?               ](#why-cant-i-install-snap)
 1. [I am getting a "cannot find normal object file" error when trying to build Snap. Why?](#i-am-getting-a-cannot-find-normal-object-file-error-when-trying-to-build-snap.-why)
-1. [How do I install Heist on Windows?      ](#how-do-i-install-heist-on-windows)
 1. [Why doesn't Heist display templates?    ](#why-doesnt-heist-display-templates)
 1. [How do I get the libev backend working? ](#how-do-i-get-the-libev-backend-working)
 1. [How can I get debugging output?         ](#how-can-i-get-debugging-output)
