@@ -34,6 +34,10 @@ $ myproject -p 8000
 Now point your web browser to [http://localhost:8000/](http://localhost:8000/);
 you should see a simple response string.
 
+The default project also supports dynamic recompilation so you don't have to
+shut down your server and restart every time you make a code change.  To
+activate this, build with "cabal install -fdevelopment" instead.
+
 For more information, continue on to the [Snap API
 tutorial](tutorials/snap-api) or take a look at the [Snap
 reference documentation](/docs).
