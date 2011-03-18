@@ -7,6 +7,7 @@
 1. [Is anyone using Snap in production?     ](#is-anyone-using-snap-in-production)
 1. [Where's the high-level functionality?   ](#wheres-the-high-level-functionality)
 1. [Why can't I install Snap?               ](#why-cant-i-install-snap)
+1. [How do I run my app in development mode?](#how-do-i-run-my-app-in-development-mode)
 1. [I am getting a "cannot find normal object file" error when trying to build Snap. Why?](#i-am-getting-a-cannot-find-normal-object-file-error-when-trying-to-build-snap.-why)
 1. [Why doesn't Heist display templates?    ](#why-doesnt-heist-display-templates)
 1. [How do I get the libev backend working? ](#how-do-i-get-the-libev-backend-working)
@@ -67,6 +68,14 @@ If you're still having trouble, please email our [mailing
 list](http://mailman-mail5.webfaction.com/listinfo/snap) or contact us on our
 [IRC channel](http://webchat.freenode.net/?channels=snapframework&uio=d4)
 (`#snapframework` on [freenode](http://freenode.net/)).
+
+
+### How do I run my app in development mode?
+
+`cabal clean; cabal install -fdevelopment`
+
+If you've already built your application without development mode, it's
+important to do a clean first.
 
 
 ### I am getting a "cannot find normal object file" error when trying to build Snap. Why?
