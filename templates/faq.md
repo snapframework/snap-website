@@ -33,6 +33,9 @@ you know of others:
   -  [Darcsden](http://darcsden.com) is a nifty github-like source
      code hosting site for darcs.
 
+  -  [snap-pastie](https://github.com/Palmik/snap-pastie) is a simple pastebin
+     website that uses some of the most recent, bleeding-edge Snap development.
+
   -  [http://snapframework.com](http://snapframework.com) (this site)
 
   -  [http://ego.fm           ](http://ego.fm) (not always up)
