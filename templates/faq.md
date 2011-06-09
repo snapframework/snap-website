@@ -30,6 +30,12 @@ Found a bug in Snap? Please create a ticket on our
 Yes!  Here is a list of sites that we know of that use Snap.  Let us know if
 you know of others:
 
+  -  [JCU](https://github.com/norm2782/JCU) a web-based Prolog environment.
+
+  -  [hpaste](http://hpaste.org/), a simple Haskell pastebin.  A blog post
+     about it is [here](http://chrisdone.com/posts/2011-06-05-postgres-hpaste-edsls.html)
+     and the source code is hosted [here](https://github.com/chrisdone/amelie).
+
   -  [Darcsden](http://darcsden.com) is a nifty github-like source
      code hosting site for darcs.
 
