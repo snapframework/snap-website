@@ -1,12 +1,6 @@
-[default]
-siteurl = http://snapframework.com
-
-# posts are mapped to this URL
-baseurl = /blog
-
-
-[feed]
-title    = Snap Framework Blog
-authors  = Snap Framework <snap@snapframework.com>
-#icon     = /static/icon.png
-skipurls = 
+{ "feedTitle": "Snap Framework Blog",
+  "feedAuthors": "Snap Framework <snap@snapframework.com>",
+  "baseURL": "/blog",
+  "siteURL": "http://snapframework.com",
+  "icon": "/static/icon.png"
+}
