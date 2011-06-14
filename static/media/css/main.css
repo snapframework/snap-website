@@ -397,8 +397,7 @@ p.foundabug {
     font-size: 1.7em;
     width: 50%;
     line-height: 1.2em;
-    font-family: "PT Sans Italic";
-    letter-spacing: 0.05em;
+    font-family: "PT Sans Italic", "Gill Sans", "Arial", sans-serif;
     text-shadow: 1px 1px #DAE6F5;
     color: #1f4986;
 }
