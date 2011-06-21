@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
   <apply template="page-head"/>
   <body>
