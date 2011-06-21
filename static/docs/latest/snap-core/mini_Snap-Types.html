@@ -1,18 +1,477 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Snap.Types</title><link href="haddock.css" rel="stylesheet" type="text/css" title="haddock" /><script src="haddock-util.js" type="text/javascript"></script><script type="text/javascript">//<![CDATA[
-window.onload = function () {pageLoad();};
-//]]>
-</script></head><body id="mini"><div id="module-header"><p class="caption">Snap.Types</p></div><div id="interface"><h1>The Snap Monad
-</h1><div class="top"><p class="src"><span class="keyword">data</span> <a href="Snap-Types.html#t:Snap" target="main">Snap</a> a</p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:runSnap" target="main">runSnap</a></p></div><div class="top"><p class="src"><span class="keyword">class</span> <a href="Snap-Types.html#t:MonadSnap" target="main">MonadSnap</a> m</p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Snap-Types.html#t:NoHandlerException" target="main">NoHandlerException</a> </p></div><h2>Functions for control flow and early termination
-</h2><div class="top"><p class="src"><a href="Snap-Types.html#v:bracketSnap" target="main">bracketSnap</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:finishWith" target="main">finishWith</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:catchFinishWith" target="main">catchFinishWith</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:pass" target="main">pass</a></p></div><h2>Routing
-</h2><div class="top"><p class="src"><a href="Snap-Types.html#v:method" target="main">method</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:methods" target="main">methods</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:path" target="main">path</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:pathArg" target="main">pathArg</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:dir" target="main">dir</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:ifTop" target="main">ifTop</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:route" target="main">route</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:routeLocal" target="main">routeLocal</a></p></div><h2>Access to state
-</h2><div class="top"><p class="src"><a href="Snap-Types.html#v:getRequest" target="main">getRequest</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:getResponse" target="main">getResponse</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:putRequest" target="main">putRequest</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:putResponse" target="main">putResponse</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:modifyRequest" target="main">modifyRequest</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:modifyResponse" target="main">modifyResponse</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:localRequest" target="main">localRequest</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:withRequest" target="main">withRequest</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:withResponse" target="main">withResponse</a></p></div><h2>Logging
-</h2><div class="top"><p class="src"><a href="Snap-Types.html#v:logError" target="main">logError</a></p></div><h2>Grabbing/transforming request bodies
-</h2><div class="top"><p class="src"><a href="Snap-Types.html#v:runRequestBody" target="main">runRequestBody</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:getRequestBody" target="main">getRequestBody</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:transformRequestBody" target="main">transformRequestBody</a></p></div><h1>HTTP Datatypes and Functions
-</h1><div class="top"><p class="src"><span class="keyword">data</span> <a href="Snap-Types.html#t:Request" target="main">Request</a> </p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Snap-Types.html#t:Response" target="main">Response</a> </p></div><div class="top"><p class="src"><span class="keyword">type</span> <a href="Snap-Types.html#t:Headers" target="main">Headers</a> </p></div><div class="top"><p class="src"><span class="keyword">class</span> <a href="Snap-Types.html#t:HasHeaders" target="main">HasHeaders</a> a</p></div><div class="top"><p class="src"><span class="keyword">type</span> <a href="Snap-Types.html#t:Params" target="main">Params</a> </p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Snap-Types.html#t:Method" target="main">Method</a> </p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Snap-Types.html#t:Cookie" target="main">Cookie</a> </p></div><div class="top"><p class="src"><span class="keyword">type</span> <a href="Snap-Types.html#t:HttpVersion" target="main">HttpVersion</a> </p></div><h2>Headers
-</h2><div class="top"><p class="src"><a href="Snap-Types.html#v:addHeader" target="main">addHeader</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:setHeader" target="main">setHeader</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:getHeader" target="main">getHeader</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:deleteHeader" target="main">deleteHeader</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:ipHeaderFilter" target="main">ipHeaderFilter</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:ipHeaderFilter-39-" target="main">ipHeaderFilter'</a></p></div><h2>Requests
-</h2><div class="top"><p class="src"><a href="Snap-Types.html#v:rqServerName" target="main">rqServerName</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqServerPort" target="main">rqServerPort</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqRemoteAddr" target="main">rqRemoteAddr</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqRemotePort" target="main">rqRemotePort</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqLocalAddr" target="main">rqLocalAddr</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqLocalHostname" target="main">rqLocalHostname</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqIsSecure" target="main">rqIsSecure</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqContentLength" target="main">rqContentLength</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqMethod" target="main">rqMethod</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqVersion" target="main">rqVersion</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqCookies" target="main">rqCookies</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqPathInfo" target="main">rqPathInfo</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqContextPath" target="main">rqContextPath</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqURI" target="main">rqURI</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqQueryString" target="main">rqQueryString</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqParams" target="main">rqParams</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqParam" target="main">rqParam</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:getParam" target="main">getParam</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:getParams" target="main">getParams</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqModifyParams" target="main">rqModifyParams</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rqSetParam" target="main">rqSetParam</a></p></div><h2>Responses
-</h2><div class="top"><p class="src"><a href="Snap-Types.html#v:emptyResponse" target="main">emptyResponse</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:setResponseCode" target="main">setResponseCode</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:setResponseStatus" target="main">setResponseStatus</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rspStatus" target="main">rspStatus</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:rspStatusReason" target="main">rspStatusReason</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:setContentType" target="main">setContentType</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:addCookie" target="main">addCookie</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:addResponseCookie" target="main">addResponseCookie</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:getResponseCookie" target="main">getResponseCookie</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:getResponseCookies" target="main">getResponseCookies</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:deleteResponseCookie" target="main">deleteResponseCookie</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:modifyResponseCookie" target="main">modifyResponseCookie</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:getCookie" target="main">getCookie</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:readCookie" target="main">readCookie</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:setContentLength" target="main">setContentLength</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:clearContentLength" target="main">clearContentLength</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:redirect" target="main">redirect</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:redirect-39-" target="main">redirect'</a></p></div><h3>Response I/O
-</h3><div class="top"><p class="src"><a href="Snap-Types.html#v:setResponseBody" target="main">setResponseBody</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:modifyResponseBody" target="main">modifyResponseBody</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:addToOutput" target="main">addToOutput</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:writeBuilder" target="main">writeBuilder</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:writeBS" target="main">writeBS</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:writeLazyText" target="main">writeLazyText</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:writeText" target="main">writeText</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:writeLBS" target="main">writeLBS</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:sendFile" target="main">sendFile</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:sendFilePartial" target="main">sendFilePartial</a></p></div><h2>Timeouts
-</h2><div class="top"><p class="src"><a href="Snap-Types.html#v:setTimeout" target="main">setTimeout</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:getTimeoutAction" target="main">getTimeoutAction</a></p></div><h1>Iteratee
-</h1><div class="top"><p class="src"><span class="keyword">type</span> <a href="Snap-Types.html#t:Enumerator" target="main">Enumerator</a> a m b</p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Snap-Types.html#t:SomeEnumerator" target="main">SomeEnumerator</a> </p></div><h1>HTTP utilities
-</h1><div class="top"><p class="src"><a href="Snap-Types.html#v:formatHttpTime" target="main">formatHttpTime</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:parseHttpTime" target="main">parseHttpTime</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:urlEncode" target="main">urlEncode</a></p></div><div class="top"><p class="src"><a href="Snap-Types.html#v:urlDecode" target="main">urlDecode</a></p></div></div></body></html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Snap.Types</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+></HEAD
+><BODY
+><DIV CLASS="outer"
+><DIV CLASS="mini-topbar"
+>Snap.Types</DIV
+><DIV CLASS="mini-synopsis"
+><H1
+>The Snap Monad
+</H1
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3ASnap" TARGET="main"
+>Snap</A
+> a</DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArunSnap" TARGET="main"
+>runSnap</A
+></DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3AMonadSnap" TARGET="main"
+>MonadSnap</A
+> m</DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3ANoHandlerException" TARGET="main"
+>NoHandlerException</A
+> </DIV
+> <H2
+>Functions for control flow and early termination
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AbracketSnap" TARGET="main"
+>bracketSnap</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AfinishWith" TARGET="main"
+>finishWith</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AcatchFinishWith" TARGET="main"
+>catchFinishWith</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Apass" TARGET="main"
+>pass</A
+></DIV
+> <H2
+>Routing
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Amethod" TARGET="main"
+>method</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Apath" TARGET="main"
+>path</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Adir" TARGET="main"
+>dir</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AifTop" TARGET="main"
+>ifTop</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Aroute" TARGET="main"
+>route</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArouteLocal" TARGET="main"
+>routeLocal</A
+></DIV
+> <H2
+>Access to state
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetRequest" TARGET="main"
+>getRequest</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetResponse" TARGET="main"
+>getResponse</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AputRequest" TARGET="main"
+>putRequest</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AputResponse" TARGET="main"
+>putResponse</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AmodifyRequest" TARGET="main"
+>modifyRequest</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AmodifyResponse" TARGET="main"
+>modifyResponse</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AlocalRequest" TARGET="main"
+>localRequest</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AwithRequest" TARGET="main"
+>withRequest</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AwithResponse" TARGET="main"
+>withResponse</A
+></DIV
+> <H2
+>Logging
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AlogError" TARGET="main"
+>logError</A
+></DIV
+> <H2
+>Grabbing/transforming request bodies
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArunRequestBody" TARGET="main"
+>runRequestBody</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetRequestBody" TARGET="main"
+>getRequestBody</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AtransformRequestBody" TARGET="main"
+>transformRequestBody</A
+></DIV
+> <H1
+>HTTP Datatypes and Functions
+</H1
+>  <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3ARequest" TARGET="main"
+>Request</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3AResponse" TARGET="main"
+>Response</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3AHeaders" TARGET="main"
+>Headers</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>class</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3AHasHeaders" TARGET="main"
+>HasHeaders</A
+> a</DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3AParams" TARGET="main"
+>Params</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3AMethod" TARGET="main"
+>Method</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3ACookie" TARGET="main"
+>Cookie</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3AHttpVersion" TARGET="main"
+>HttpVersion</A
+> </DIV
+> <H2
+>Headers
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AaddHeader" TARGET="main"
+>addHeader</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AsetHeader" TARGET="main"
+>setHeader</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetHeader" TARGET="main"
+>getHeader</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AdeleteHeader" TARGET="main"
+>deleteHeader</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AipHeaderFilter" TARGET="main"
+>ipHeaderFilter</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AipHeaderFilter%27" TARGET="main"
+>ipHeaderFilter'</A
+></DIV
+> <H2
+>Requests
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqServerName" TARGET="main"
+>rqServerName</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqServerPort" TARGET="main"
+>rqServerPort</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqRemoteAddr" TARGET="main"
+>rqRemoteAddr</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqRemotePort" TARGET="main"
+>rqRemotePort</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqLocalAddr" TARGET="main"
+>rqLocalAddr</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqLocalHostname" TARGET="main"
+>rqLocalHostname</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqIsSecure" TARGET="main"
+>rqIsSecure</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqContentLength" TARGET="main"
+>rqContentLength</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqMethod" TARGET="main"
+>rqMethod</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqVersion" TARGET="main"
+>rqVersion</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqCookies" TARGET="main"
+>rqCookies</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqPathInfo" TARGET="main"
+>rqPathInfo</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqContextPath" TARGET="main"
+>rqContextPath</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqURI" TARGET="main"
+>rqURI</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqQueryString" TARGET="main"
+>rqQueryString</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqParams" TARGET="main"
+>rqParams</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqParam" TARGET="main"
+>rqParam</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetParam" TARGET="main"
+>getParam</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetParams" TARGET="main"
+>getParams</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqModifyParams" TARGET="main"
+>rqModifyParams</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArqSetParam" TARGET="main"
+>rqSetParam</A
+></DIV
+> <H2
+>Responses
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AemptyResponse" TARGET="main"
+>emptyResponse</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AsetResponseCode" TARGET="main"
+>setResponseCode</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AsetResponseStatus" TARGET="main"
+>setResponseStatus</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArspStatus" TARGET="main"
+>rspStatus</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3ArspStatusReason" TARGET="main"
+>rspStatusReason</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AsetContentType" TARGET="main"
+>setContentType</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AaddCookie" TARGET="main"
+>addCookie</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AaddResponseCookie" TARGET="main"
+>addResponseCookie</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetResponseCookie" TARGET="main"
+>getResponseCookie</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetResponseCookies" TARGET="main"
+>getResponseCookies</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AdeleteResponseCookie" TARGET="main"
+>deleteResponseCookie</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AmodifyResponseCookie" TARGET="main"
+>modifyResponseCookie</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetCookie" TARGET="main"
+>getCookie</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AsetContentLength" TARGET="main"
+>setContentLength</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AclearContentLength" TARGET="main"
+>clearContentLength</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Aredirect" TARGET="main"
+>redirect</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3Aredirect%27" TARGET="main"
+>redirect'</A
+></DIV
+> <H3
+>Response I/O
+</H3
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AsetResponseBody" TARGET="main"
+>setResponseBody</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AmodifyResponseBody" TARGET="main"
+>modifyResponseBody</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AaddToOutput" TARGET="main"
+>addToOutput</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AwriteBuilder" TARGET="main"
+>writeBuilder</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AwriteBS" TARGET="main"
+>writeBS</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AwriteLazyText" TARGET="main"
+>writeLazyText</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AwriteText" TARGET="main"
+>writeText</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AwriteLBS" TARGET="main"
+>writeLBS</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AsendFile" TARGET="main"
+>sendFile</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AsendFilePartial" TARGET="main"
+>sendFilePartial</A
+></DIV
+> <H2
+>Timeouts
+</H2
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AsetTimeout" TARGET="main"
+>setTimeout</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AgetTimeoutAction" TARGET="main"
+>getTimeoutAction</A
+></DIV
+> <H1
+>Iteratee
+</H1
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3AEnumerator" TARGET="main"
+>Enumerator</A
+> a m b</DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Types.html#t%3ASomeEnumerator" TARGET="main"
+>SomeEnumerator</A
+> </DIV
+> <H1
+>HTTP utilities
+</H1
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AformatHttpTime" TARGET="main"
+>formatHttpTime</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AparseHttpTime" TARGET="main"
+>parseHttpTime</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AurlEncode" TARGET="main"
+>urlEncode</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Types.html#v%3AurlDecode" TARGET="main"
+>urlDecode</A
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

@@ -12,28 +12,28 @@ span.spaces    { background: white }
 <span class="lineno">    1 </span>{-# LANGUAGE FlexibleInstances #-}
 <span class="lineno">    2 </span>{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 <span class="lineno">    3 </span>{-# LANGUAGE MultiParamTypeClasses #-}
-<span class="lineno">    4 </span>{-# LANGUAGE PackageImports #-}
-<span class="lineno">    5 </span>{-# LANGUAGE ScopedTypeVariables #-}
-<span class="lineno">    6 </span>{-# LANGUAGE UndecidableInstances #-}
-<span class="lineno">    7 </span>
-<span class="lineno">    8 </span>{-|
-<span class="lineno">    9 </span>
-<span class="lineno">   10 </span>This module contains the core Heist data types.  TemplateMonad intentionally
-<span class="lineno">   11 </span>does not expose any of its functionality via MonadState or MonadReader
-<span class="lineno">   12 </span>functions.  We define passthrough instances for the most common types of
-<span class="lineno">   13 </span>monads.  These instances allow the user to use TemplateMonad in a monad stack
-<span class="lineno">   14 </span>without needing calls to `lift`.
-<span class="lineno">   15 </span>
-<span class="lineno">   16 </span>Edward Kmett wrote most of the TemplateMonad code and associated instances,
-<span class="lineno">   17 </span>liberating us from the unused writer portion of RWST.
-<span class="lineno">   18 </span>
-<span class="lineno">   19 </span>-}
-<span class="lineno">   20 </span>
-<span class="lineno">   21 </span>module Text.Templating.Heist.Types where
-<span class="lineno">   22 </span>
-<span class="lineno">   23 </span>------------------------------------------------------------------------------
-<span class="lineno">   24 </span>import             Control.Applicative
-<span class="lineno">   25 </span>import             Control.Arrow
+<span class="lineno">    4 </span>{-# LANGUAGE OverloadedStrings #-}
+<span class="lineno">    5 </span>{-# LANGUAGE PackageImports #-}
+<span class="lineno">    6 </span>{-# LANGUAGE ScopedTypeVariables #-}
+<span class="lineno">    7 </span>{-# LANGUAGE UndecidableInstances #-}
+<span class="lineno">    8 </span>
+<span class="lineno">    9 </span>{-|
+<span class="lineno">   10 </span>
+<span class="lineno">   11 </span>This module contains the core Heist data types.  TemplateMonad intentionally
+<span class="lineno">   12 </span>does not expose any of its functionality via MonadState or MonadReader
+<span class="lineno">   13 </span>functions.  We define passthrough instances for the most common types of
+<span class="lineno">   14 </span>monads.  These instances allow the user to use TemplateMonad in a monad stack
+<span class="lineno">   15 </span>without needing calls to `lift`.
+<span class="lineno">   16 </span>
+<span class="lineno">   17 </span>Edward Kmett wrote most of the TemplateMonad code and associated instances,
+<span class="lineno">   18 </span>liberating us from the unused writer portion of RWST.
+<span class="lineno">   19 </span>
+<span class="lineno">   20 </span>-}
+<span class="lineno">   21 </span>
+<span class="lineno">   22 </span>module Text.Templating.Heist.Types where
+<span class="lineno">   23 </span>
+<span class="lineno">   24 </span>------------------------------------------------------------------------------
+<span class="lineno">   25 </span>import             Control.Applicative
 <span class="lineno">   26 </span>import             Control.Monad.Cont
 <span class="lineno">   27 </span>import             Control.Monad.Error
 <span class="lineno">   28 </span>import             Control.Monad.Reader
@@ -66,321 +66,305 @@ span.spaces    { background: white }
 <span class="lineno">   55 </span>type TPath = [ByteString]
 <span class="lineno">   56 </span>
 <span class="lineno">   57 </span>
-<span class="lineno">   58 </span>data <span class="istickedoff">DocumentFile</span> = DocumentFile
-<span class="lineno">   59 </span>    { dfDoc  :: X.Document
-<span class="lineno">   60 </span>    , dfFile :: Maybe FilePath
-<span class="lineno">   61 </span>    } deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Eq</span></span></span></span>)
+<span class="lineno">   58 </span>------------------------------------------------------------------------------
+<span class="lineno">   59 </span>-- | All documents representing templates are stored in a map.
+<span class="lineno">   60 </span>type TemplateMap = Map TPath X.Document
+<span class="lineno">   61 </span>
 <span class="lineno">   62 </span>
 <span class="lineno">   63 </span>------------------------------------------------------------------------------
-<span class="lineno">   64 </span>-- | All documents representing templates are stored in a map.
-<span class="lineno">   65 </span>type TemplateMap = Map TPath DocumentFile
+<span class="lineno">   64 </span>-- | A Splice is a TemplateMonad computation that returns a 'Template'.
+<span class="lineno">   65 </span>type Splice m = TemplateMonad m Template
 <span class="lineno">   66 </span>
 <span class="lineno">   67 </span>
 <span class="lineno">   68 </span>------------------------------------------------------------------------------
-<span class="lineno">   69 </span>-- | A Splice is a TemplateMonad computation that returns a 'Template'.
-<span class="lineno">   70 </span>type Splice m = TemplateMonad m Template
+<span class="lineno">   69 </span>-- | SpliceMap associates a name and a Splice.
+<span class="lineno">   70 </span>type SpliceMap m = Map Text (Splice m)
 <span class="lineno">   71 </span>
 <span class="lineno">   72 </span>
 <span class="lineno">   73 </span>------------------------------------------------------------------------------
-<span class="lineno">   74 </span>-- | SpliceMap associates a name and a Splice.
-<span class="lineno">   75 </span>type SpliceMap m = Map Text (Splice m)
-<span class="lineno">   76 </span>
-<span class="lineno">   77 </span>
-<span class="lineno">   78 </span>------------------------------------------------------------------------------
-<span class="lineno">   79 </span>-- | Holds all the state information needed for template processing.  You will
-<span class="lineno">   80 </span>-- build a @TemplateState@ using any of Heist's @TemplateState m -&gt;
-<span class="lineno">   81 </span>-- TemplateState m@ \&quot;filter\&quot; functions.  Then you use the resulting
-<span class="lineno">   82 </span>-- @TemplateState@ in calls to @renderTemplate@.
-<span class="lineno">   83 </span>data <span class="istickedoff">TemplateState</span> m = TemplateState {
-<span class="lineno">   84 </span>    -- | A mapping of splice names to splice actions
-<span class="lineno">   85 </span>      _spliceMap       :: SpliceMap m
-<span class="lineno">   86 </span>    -- | A mapping of template names to templates
-<span class="lineno">   87 </span>    , _templateMap     :: TemplateMap
-<span class="lineno">   88 </span>    -- | A flag to control splice recursion
-<span class="lineno">   89 </span>    , _recurse         :: Bool
-<span class="lineno">   90 </span>    -- | The path to the template currently being processed.
-<span class="lineno">   91 </span>    , _curContext      :: TPath
-<span class="lineno">   92 </span>    -- | A counter keeping track of the current recursion depth to prevent
-<span class="lineno">   93 </span>    -- infinite loops.
-<span class="lineno">   94 </span>    , _recursionDepth  :: Int
-<span class="lineno">   95 </span>    -- | A hook run on all templates at load time.
-<span class="lineno">   96 </span>    , _onLoadHook      :: Template -&gt; IO Template
-<span class="lineno">   97 </span>    -- | A hook run on all templates just before they are rendered.
-<span class="lineno">   98 </span>    , _preRunHook      :: Template -&gt; m Template
-<span class="lineno">   99 </span>    -- | A hook run on all templates just after they are rendered.
-<span class="lineno">  100 </span>    , _postRunHook     :: Template -&gt; m Template
-<span class="lineno">  101 </span>    -- | The doctypes encountered during template processing.
-<span class="lineno">  102 </span>    , _doctypes        :: [X.DocType]
-<span class="lineno">  103 </span>    -- | The full path to the current template's file on disk.
-<span class="lineno">  104 </span>    , _curTemplateFile :: Maybe FilePath
-<span class="lineno">  105 </span>}
-<span class="lineno">  106 </span>
-<span class="lineno">  107 </span>
-<span class="lineno">  108 </span>------------------------------------------------------------------------------
-<span class="lineno">  109 </span>instance (Monad m) =&gt; Monoid (TemplateState m) where
-<span class="lineno">  110 </span>    <span class="decl"><span class="istickedoff">mempty = TemplateState Map.empty Map.empty True [] <span class="nottickedoff">0</span></span>
-<span class="lineno">  111 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">return</span> <span class="nottickedoff">return</span> <span class="nottickedoff">return</span> <span class="nottickedoff">[]</span> <span class="nottickedoff">Nothing</span></span></span>
-<span class="lineno">  112 </span>
-<span class="lineno">  113 </span>    <span class="decl"><span class="istickedoff">(TemplateState s1 t1 r1 _ d1 o1 b1 a1 dt1 ctf1) `mappend`</span>
-<span class="lineno">  114 </span><span class="spaces">        </span><span class="istickedoff">(TemplateState s2 t2 r2 c2 d2 o2 b2 a2 dt2 ctf2) =</span>
-<span class="lineno">  115 </span><span class="spaces">        </span><span class="istickedoff">TemplateState <span class="nottickedoff">s</span> t r c2 <span class="nottickedoff">d</span> <span class="nottickedoff">(o1 &gt;=&gt; o2)</span> <span class="nottickedoff">(b1 &gt;=&gt; b2)</span> <span class="nottickedoff">(a1 &gt;=&gt; a2)</span></span>
-<span class="lineno">  116 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">(dt1 `mappend` dt2)</span> <span class="nottickedoff">ctf</span></span>
-<span class="lineno">  117 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  118 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">s = s1 `mappend` s2</span></span>
-<span class="lineno">  119 </span><span class="spaces">        </span><span class="istickedoff">t = t1 `mappend` t2</span>
-<span class="lineno">  120 </span><span class="spaces">        </span><span class="istickedoff">r = r1 &amp;&amp; r2</span>
-<span class="lineno">  121 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">d = max d1 d2</span></span>
-<span class="lineno">  122 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">ctf = getLast $ Last ctf1 `mappend` Last ctf2</span></span></span>
+<span class="lineno">   74 </span>-- | Holds all the state information needed for template processing.  You will
+<span class="lineno">   75 </span>-- build a @TemplateState@ using any of Heist's @TemplateState m -&gt;
+<span class="lineno">   76 </span>-- TemplateState m@ \&quot;filter\&quot; functions.  Then you use the resulting
+<span class="lineno">   77 </span>-- @TemplateState@ in calls to @renderTemplate@.
+<span class="lineno">   78 </span>data <span class="istickedoff">TemplateState</span> m = TemplateState {
+<span class="lineno">   79 </span>    -- | A mapping of splice names to splice actions
+<span class="lineno">   80 </span>      _spliceMap      :: SpliceMap m
+<span class="lineno">   81 </span>    -- | A mapping of template names to templates
+<span class="lineno">   82 </span>    , _templateMap    :: TemplateMap
+<span class="lineno">   83 </span>    -- | A flag to control splice recursion
+<span class="lineno">   84 </span>    , _recurse        :: Bool
+<span class="lineno">   85 </span>    -- | The path to the template currently being processed.
+<span class="lineno">   86 </span>    , _curContext     :: TPath
+<span class="lineno">   87 </span>    -- | A counter keeping track of the current recursion depth to prevent
+<span class="lineno">   88 </span>    -- infinite loops.
+<span class="lineno">   89 </span>    , _recursionDepth :: Int
+<span class="lineno">   90 </span>    -- | A hook run on all templates at load time.
+<span class="lineno">   91 </span>    , _onLoadHook     :: Template -&gt; IO Template
+<span class="lineno">   92 </span>    -- | A hook run on all templates just before they are rendered.
+<span class="lineno">   93 </span>    , _preRunHook     :: Template -&gt; m Template
+<span class="lineno">   94 </span>    -- | A hook run on all templates just after they are rendered.
+<span class="lineno">   95 </span>    , _postRunHook    :: Template -&gt; m Template
+<span class="lineno">   96 </span>    -- | The doctypes encountered during template processing.
+<span class="lineno">   97 </span>    , _doctypes       :: [X.DocType]
+<span class="lineno">   98 </span>}
+<span class="lineno">   99 </span>
+<span class="lineno">  100 </span>
+<span class="lineno">  101 </span>------------------------------------------------------------------------------
+<span class="lineno">  102 </span>instance <span class="istickedoff">(Monad m) =&gt; Monoid (TemplateState m)</span> where
+<span class="lineno">  103 </span>    <span class="decl"><span class="istickedoff">mempty = TemplateState Map.empty Map.empty True [] <span class="nottickedoff">0</span></span>
+<span class="lineno">  104 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">return</span> <span class="nottickedoff">return</span> <span class="nottickedoff">return</span> <span class="nottickedoff">[]</span></span></span>
+<span class="lineno">  105 </span>
+<span class="lineno">  106 </span>    <span class="decl"><span class="istickedoff">(TemplateState s1 t1 r1 _ d1 o1 b1 a1 dt1) `mappend`</span>
+<span class="lineno">  107 </span><span class="spaces">        </span><span class="istickedoff">(TemplateState s2 t2 r2 c2 d2 o2 b2 a2 dt2) =</span>
+<span class="lineno">  108 </span><span class="spaces">        </span><span class="istickedoff">TemplateState <span class="nottickedoff">s</span> t r c2 <span class="nottickedoff">d</span> <span class="nottickedoff">(o1 &gt;=&gt; o2)</span> <span class="nottickedoff">(b1 &gt;=&gt; b2)</span> <span class="nottickedoff">(a1 &gt;=&gt; a2)</span></span>
+<span class="lineno">  109 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">(dt1 `mappend` dt2)</span></span>
+<span class="lineno">  110 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  111 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">s = s1 `mappend` s2</span></span>
+<span class="lineno">  112 </span><span class="spaces">        </span><span class="istickedoff">t = t1 `mappend` t2</span>
+<span class="lineno">  113 </span><span class="spaces">        </span><span class="istickedoff">r = r1 &amp;&amp; r2</span>
+<span class="lineno">  114 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">d = max d1 d2</span></span></span>
+<span class="lineno">  115 </span>
+<span class="lineno">  116 </span>
+<span class="lineno">  117 </span>------------------------------------------------------------------------------
+<span class="lineno">  118 </span>instance <span class="istickedoff">Eq (TemplateState m)</span> where
+<span class="lineno">  119 </span>    <span class="decl"><span class="istickedoff">a == b = (_recurse a == _recurse b) &amp;&amp;</span>
+<span class="lineno">  120 </span><span class="spaces">             </span><span class="istickedoff">(_templateMap a == _templateMap b) &amp;&amp;</span>
+<span class="lineno">  121 </span><span class="spaces">             </span><span class="istickedoff">(_curContext a == _curContext b)</span></span>
+<span class="lineno">  122 </span>
 <span class="lineno">  123 </span>
-<span class="lineno">  124 </span>
-<span class="lineno">  125 </span>------------------------------------------------------------------------------
-<span class="lineno">  126 </span>instance Eq (TemplateState m) where
-<span class="lineno">  127 </span>    <span class="decl"><span class="istickedoff">a == b = (_recurse a == _recurse b) &amp;&amp;</span>
-<span class="lineno">  128 </span><span class="spaces">             </span><span class="istickedoff">(_templateMap a == _templateMap b) &amp;&amp;</span>
-<span class="lineno">  129 </span><span class="spaces">             </span><span class="istickedoff">(_curContext a == _curContext b)</span></span>
+<span class="lineno">  124 </span>------------------------------------------------------------------------------
+<span class="lineno">  125 </span>-- | The Typeable instance is here so Heist can be dynamically executed with
+<span class="lineno">  126 </span>-- Hint.
+<span class="lineno">  127 </span>templateStateTyCon :: TyCon
+<span class="lineno">  128 </span><span class="decl"><span class="nottickedoff">templateStateTyCon = mkTyCon &quot;Text.Templating.Heist.TemplateState&quot;</span></span>
+<span class="lineno">  129 </span>{-# NOINLINE templateStateTyCon #-}
 <span class="lineno">  130 </span>
-<span class="lineno">  131 </span>
-<span class="lineno">  132 </span>------------------------------------------------------------------------------
-<span class="lineno">  133 </span>-- | The Typeable instance is here so Heist can be dynamically executed with
-<span class="lineno">  134 </span>-- Hint.
-<span class="lineno">  135 </span>templateStateTyCon :: TyCon
-<span class="lineno">  136 </span><span class="decl"><span class="nottickedoff">templateStateTyCon = mkTyCon &quot;Text.Templating.Heist.TemplateState&quot;</span></span>
-<span class="lineno">  137 </span>{-# NOINLINE templateStateTyCon #-}
-<span class="lineno">  138 </span>
-<span class="lineno">  139 </span>instance (Typeable1 m) =&gt; Typeable (TemplateState m) where
-<span class="lineno">  140 </span>    <span class="decl"><span class="nottickedoff">typeOf _ = mkTyConApp templateStateTyCon [typeOf1 (undefined :: m ())]</span></span>
-<span class="lineno">  141 </span>
-<span class="lineno">  142 </span>
-<span class="lineno">  143 </span>{-# DEPRECATED TemplateMonad &quot;NOTICE: The name TemplateMonad is being phased out in favor of the more appropriate HeistT.  Change your code now to prevent breakage in the future!&quot; #-}
-<span class="lineno">  144 </span>------------------------------------------------------------------------------
-<span class="lineno">  145 </span>-- | TemplateMonad is the monad used for 'Splice' processing.  TemplateMonad
-<span class="lineno">  146 </span>-- provides \&quot;passthrough\&quot; instances for many of the monads you might use in
-<span class="lineno">  147 </span>-- the inner monad.
-<span class="lineno">  148 </span>newtype <span class="istickedoff">TemplateMonad</span> m a = TemplateMonad {
-<span class="lineno">  149 </span>    runTemplateMonad :: X.Node
-<span class="lineno">  150 </span>                     -&gt; TemplateState m
-<span class="lineno">  151 </span>                     -&gt; m (a, TemplateState m)
-<span class="lineno">  152 </span>}
-<span class="lineno">  153 </span>type HeistT = TemplateMonad
-<span class="lineno">  154 </span>
-<span class="lineno">  155 </span>
-<span class="lineno">  156 </span>------------------------------------------------------------------------------
-<span class="lineno">  157 </span>-- | Evaluates a template monad as a computation in the underlying monad.
-<span class="lineno">  158 </span>evalTemplateMonad :: Monad m
-<span class="lineno">  159 </span>                  =&gt; TemplateMonad m a
-<span class="lineno">  160 </span>                  -&gt; X.Node
-<span class="lineno">  161 </span>                  -&gt; TemplateState m
-<span class="lineno">  162 </span>                  -&gt; m a
-<span class="lineno">  163 </span><span class="decl"><span class="istickedoff">evalTemplateMonad m r s = do</span>
-<span class="lineno">  164 </span><span class="spaces">    </span><span class="istickedoff">(a, _) &lt;- runTemplateMonad m r s</span>
-<span class="lineno">  165 </span><span class="spaces">    </span><span class="istickedoff">return a</span></span>
-<span class="lineno">  166 </span>
+<span class="lineno">  131 </span>instance (Typeable1 m) =&gt; Typeable (TemplateState m) where
+<span class="lineno">  132 </span>    <span class="decl"><span class="nottickedoff">typeOf _ = mkTyConApp templateStateTyCon [typeOf1 (undefined :: m ())]</span></span>
+<span class="lineno">  133 </span>
+<span class="lineno">  134 </span>
+<span class="lineno">  135 </span>------------------------------------------------------------------------------
+<span class="lineno">  136 </span>-- | TemplateMonad is the monad used for 'Splice' processing.  TemplateMonad
+<span class="lineno">  137 </span>-- provides \&quot;passthrough\&quot; instances for many of the monads you might use in
+<span class="lineno">  138 </span>-- the inner monad.
+<span class="lineno">  139 </span>newtype <span class="istickedoff">TemplateMonad</span> m a = TemplateMonad {
+<span class="lineno">  140 </span>    runTemplateMonad :: X.Node
+<span class="lineno">  141 </span>                     -&gt; TemplateState m
+<span class="lineno">  142 </span>                     -&gt; m (a, TemplateState m)
+<span class="lineno">  143 </span>}
+<span class="lineno">  144 </span>
+<span class="lineno">  145 </span>
+<span class="lineno">  146 </span>------------------------------------------------------------------------------
+<span class="lineno">  147 </span>-- | Evaluates a template monad as a computation in the underlying monad.
+<span class="lineno">  148 </span>evalTemplateMonad :: Monad m
+<span class="lineno">  149 </span>                  =&gt; TemplateMonad m a
+<span class="lineno">  150 </span>                  -&gt; X.Node
+<span class="lineno">  151 </span>                  -&gt; TemplateState m
+<span class="lineno">  152 </span>                  -&gt; m a
+<span class="lineno">  153 </span><span class="decl"><span class="istickedoff">evalTemplateMonad m r s = do</span>
+<span class="lineno">  154 </span><span class="spaces">    </span><span class="istickedoff">(a, _) &lt;- runTemplateMonad m r s</span>
+<span class="lineno">  155 </span><span class="spaces">    </span><span class="istickedoff">return a</span></span>
+<span class="lineno">  156 </span>
+<span class="lineno">  157 </span>------------------------------------------------------------------------------
+<span class="lineno">  158 </span>-- | Helper function for the functor instance
+<span class="lineno">  159 </span>first :: (a -&gt; b) -&gt; (a, c) -&gt; (b, c)
+<span class="lineno">  160 </span><span class="decl"><span class="nottickedoff">first f (a,b) = (f a, b)</span></span>
+<span class="lineno">  161 </span>
+<span class="lineno">  162 </span>
+<span class="lineno">  163 </span>------------------------------------------------------------------------------
+<span class="lineno">  164 </span>-- | Functor instance
+<span class="lineno">  165 </span>instance Functor m =&gt; Functor (TemplateMonad m) where
+<span class="lineno">  166 </span>    <span class="decl"><span class="nottickedoff">fmap f (TemplateMonad m) = TemplateMonad $ \r s -&gt; first f &lt;$&gt; m r s</span></span>
 <span class="lineno">  167 </span>
-<span class="lineno">  168 </span>------------------------------------------------------------------------------
-<span class="lineno">  169 </span>-- | Functor instance
-<span class="lineno">  170 </span>instance Functor m =&gt; Functor (TemplateMonad m) where
-<span class="lineno">  171 </span>    <span class="decl"><span class="nottickedoff">fmap f (TemplateMonad m) = TemplateMonad $ \r s -&gt; first f &lt;$&gt; m r s</span></span>
-<span class="lineno">  172 </span>
-<span class="lineno">  173 </span>
-<span class="lineno">  174 </span>------------------------------------------------------------------------------
-<span class="lineno">  175 </span>-- | Applicative instance
-<span class="lineno">  176 </span>instance (Monad m, Functor m) =&gt; Applicative (TemplateMonad m) where
-<span class="lineno">  177 </span>    <span class="decl"><span class="nottickedoff">pure = return</span></span>
-<span class="lineno">  178 </span>    <span class="decl"><span class="nottickedoff">(&lt;*&gt;) = ap</span></span>
-<span class="lineno">  179 </span>
-<span class="lineno">  180 </span>
-<span class="lineno">  181 </span>------------------------------------------------------------------------------
-<span class="lineno">  182 </span>-- | Monad instance
-<span class="lineno">  183 </span>instance Monad m =&gt; Monad (TemplateMonad m) where
-<span class="lineno">  184 </span>    <span class="decl"><span class="istickedoff">return a = TemplateMonad (\_ s -&gt; return (a, s))</span></span>
-<span class="lineno">  185 </span>    <span class="decl"><span class="istickedoff">TemplateMonad m &gt;&gt;= k = TemplateMonad $ \r s -&gt; do</span>
-<span class="lineno">  186 </span><span class="spaces">        </span><span class="istickedoff">(a, s') &lt;- m r s</span>
-<span class="lineno">  187 </span><span class="spaces">        </span><span class="istickedoff">runTemplateMonad (k a) r s'</span></span>
-<span class="lineno">  188 </span>
+<span class="lineno">  168 </span>
+<span class="lineno">  169 </span>------------------------------------------------------------------------------
+<span class="lineno">  170 </span>-- | Applicative instance
+<span class="lineno">  171 </span>instance (Monad m, Functor m) =&gt; Applicative (TemplateMonad m) where
+<span class="lineno">  172 </span>    <span class="decl"><span class="nottickedoff">pure = return</span></span>
+<span class="lineno">  173 </span>    <span class="decl"><span class="nottickedoff">(&lt;*&gt;) = ap</span></span>
+<span class="lineno">  174 </span>
+<span class="lineno">  175 </span>
+<span class="lineno">  176 </span>------------------------------------------------------------------------------
+<span class="lineno">  177 </span>-- | Monad instance
+<span class="lineno">  178 </span>instance Monad m =&gt; Monad (TemplateMonad m) where
+<span class="lineno">  179 </span>    <span class="decl"><span class="istickedoff">return a = TemplateMonad (\_ s -&gt; return (a, s))</span></span>
+<span class="lineno">  180 </span>    <span class="decl"><span class="istickedoff">TemplateMonad m &gt;&gt;= k = TemplateMonad $ \r s -&gt; do</span>
+<span class="lineno">  181 </span><span class="spaces">        </span><span class="istickedoff">(a, s') &lt;- m r s</span>
+<span class="lineno">  182 </span><span class="spaces">        </span><span class="istickedoff">runTemplateMonad (k a) r s'</span></span>
+<span class="lineno">  183 </span>
+<span class="lineno">  184 </span>
+<span class="lineno">  185 </span>------------------------------------------------------------------------------
+<span class="lineno">  186 </span>-- | MonadIO instance
+<span class="lineno">  187 </span>instance MonadIO m =&gt; MonadIO (TemplateMonad m) where
+<span class="lineno">  188 </span>    <span class="decl"><span class="istickedoff">liftIO = lift . liftIO</span></span>
 <span class="lineno">  189 </span>
-<span class="lineno">  190 </span>------------------------------------------------------------------------------
-<span class="lineno">  191 </span>-- | MonadIO instance
-<span class="lineno">  192 </span>instance MonadIO m =&gt; MonadIO (TemplateMonad m) where
-<span class="lineno">  193 </span>    <span class="decl"><span class="istickedoff">liftIO = lift . liftIO</span></span>
-<span class="lineno">  194 </span>
-<span class="lineno">  195 </span>
-<span class="lineno">  196 </span>------------------------------------------------------------------------------
-<span class="lineno">  197 </span>-- | MonadTrans instance
-<span class="lineno">  198 </span>instance MonadTrans TemplateMonad where
-<span class="lineno">  199 </span>    <span class="decl"><span class="istickedoff">lift m = TemplateMonad $ \_ s -&gt; do</span>
-<span class="lineno">  200 </span><span class="spaces">        </span><span class="istickedoff">a &lt;- m</span>
-<span class="lineno">  201 </span><span class="spaces">        </span><span class="istickedoff">return (a, s)</span></span>
-<span class="lineno">  202 </span>
-<span class="lineno">  203 </span>
-<span class="lineno">  204 </span>------------------------------------------------------------------------------
-<span class="lineno">  205 </span>-- | MonadFix passthrough instance
-<span class="lineno">  206 </span>instance MonadFix m =&gt; MonadFix (TemplateMonad m) where
-<span class="lineno">  207 </span>    <span class="decl"><span class="nottickedoff">mfix f = TemplateMonad $ \r s -&gt;</span>
-<span class="lineno">  208 </span><span class="spaces">        </span><span class="nottickedoff">mfix $ \ (a, _) -&gt; runTemplateMonad (f a) r s</span></span>
-<span class="lineno">  209 </span>
-<span class="lineno">  210 </span>
-<span class="lineno">  211 </span>------------------------------------------------------------------------------
-<span class="lineno">  212 </span>-- | Alternative passthrough instance
-<span class="lineno">  213 </span>instance (Functor m, MonadPlus m) =&gt; Alternative (TemplateMonad m) where
-<span class="lineno">  214 </span>    <span class="decl"><span class="nottickedoff">empty = mzero</span></span>
-<span class="lineno">  215 </span>    <span class="decl"><span class="nottickedoff">(&lt;|&gt;) = mplus</span></span>
-<span class="lineno">  216 </span>
-<span class="lineno">  217 </span>
-<span class="lineno">  218 </span>------------------------------------------------------------------------------
-<span class="lineno">  219 </span>-- | MonadPlus passthrough instance
-<span class="lineno">  220 </span>instance MonadPlus m =&gt; MonadPlus (TemplateMonad m) where
-<span class="lineno">  221 </span>    <span class="decl"><span class="nottickedoff">mzero = lift mzero</span></span>
-<span class="lineno">  222 </span>    <span class="decl"><span class="nottickedoff">m `mplus` n = TemplateMonad $ \r s -&gt;</span>
-<span class="lineno">  223 </span><span class="spaces">        </span><span class="nottickedoff">runTemplateMonad m r s `mplus` runTemplateMonad n r s</span></span>
-<span class="lineno">  224 </span>
-<span class="lineno">  225 </span>
-<span class="lineno">  226 </span>------------------------------------------------------------------------------
-<span class="lineno">  227 </span>-- | MonadState passthrough instance
-<span class="lineno">  228 </span>instance MonadState s m =&gt; MonadState s (TemplateMonad m) where
-<span class="lineno">  229 </span>    <span class="decl"><span class="nottickedoff">get = lift get</span></span>
-<span class="lineno">  230 </span>    <span class="decl"><span class="nottickedoff">put = lift . put</span></span>
-<span class="lineno">  231 </span>
-<span class="lineno">  232 </span>
-<span class="lineno">  233 </span>------------------------------------------------------------------------------
-<span class="lineno">  234 </span>-- | MonadReader passthrough instance
-<span class="lineno">  235 </span>instance MonadReader r m =&gt; MonadReader r (TemplateMonad m) where
-<span class="lineno">  236 </span>    <span class="decl"><span class="nottickedoff">ask = TemplateMonad $ \_ s -&gt; do</span>
-<span class="lineno">  237 </span><span class="spaces">            </span><span class="nottickedoff">r &lt;- ask</span>
-<span class="lineno">  238 </span><span class="spaces">            </span><span class="nottickedoff">return (r,s)</span></span>
-<span class="lineno">  239 </span>    <span class="decl"><span class="nottickedoff">local f (TemplateMonad m) =</span>
-<span class="lineno">  240 </span><span class="spaces">        </span><span class="nottickedoff">TemplateMonad $ \r s -&gt; local f (m r s)</span></span>
-<span class="lineno">  241 </span>
-<span class="lineno">  242 </span>
-<span class="lineno">  243 </span>------------------------------------------------------------------------------
-<span class="lineno">  244 </span>-- | Helper for MonadError instance.
-<span class="lineno">  245 </span>liftCatch :: (m (a,TemplateState m)
-<span class="lineno">  246 </span>              -&gt; (e -&gt; m (a,TemplateState m))
-<span class="lineno">  247 </span>              -&gt; m (a,TemplateState m))
-<span class="lineno">  248 </span>          -&gt; TemplateMonad m a
-<span class="lineno">  249 </span>          -&gt; (e -&gt; TemplateMonad m a)
-<span class="lineno">  250 </span>          -&gt; TemplateMonad m a
-<span class="lineno">  251 </span><span class="decl"><span class="nottickedoff">liftCatch ce m h =</span>
-<span class="lineno">  252 </span><span class="spaces">    </span><span class="nottickedoff">TemplateMonad $ \r s -&gt;</span>
-<span class="lineno">  253 </span><span class="spaces">        </span><span class="nottickedoff">(runTemplateMonad m r s `ce`</span>
-<span class="lineno">  254 </span><span class="spaces">        </span><span class="nottickedoff">(\e -&gt; runTemplateMonad (h e) r s))</span></span>
-<span class="lineno">  255 </span>
-<span class="lineno">  256 </span>
-<span class="lineno">  257 </span>------------------------------------------------------------------------------
-<span class="lineno">  258 </span>-- | MonadError passthrough instance
-<span class="lineno">  259 </span>instance (MonadError e m) =&gt; MonadError e (TemplateMonad m) where
-<span class="lineno">  260 </span>    <span class="decl"><span class="nottickedoff">throwError = lift . throwError</span></span>
-<span class="lineno">  261 </span>    <span class="decl"><span class="nottickedoff">catchError = liftCatch catchError</span></span>
-<span class="lineno">  262 </span>
-<span class="lineno">  263 </span>
-<span class="lineno">  264 </span>------------------------------------------------------------------------------
-<span class="lineno">  265 </span>-- | Helper for MonadCont instance.
-<span class="lineno">  266 </span>liftCallCC :: ((((a,TemplateState m) -&gt; m (b, TemplateState m))
-<span class="lineno">  267 </span>                  -&gt; m (a, TemplateState m))
-<span class="lineno">  268 </span>                -&gt; m (a, TemplateState m))
-<span class="lineno">  269 </span>           -&gt; ((a -&gt; TemplateMonad m b) -&gt; TemplateMonad m a)
-<span class="lineno">  270 </span>           -&gt; TemplateMonad m a
-<span class="lineno">  271 </span><span class="decl"><span class="nottickedoff">liftCallCC ccc f = TemplateMonad $ \r s -&gt;</span>
-<span class="lineno">  272 </span><span class="spaces">    </span><span class="nottickedoff">ccc $ \c -&gt;</span>
-<span class="lineno">  273 </span><span class="spaces">    </span><span class="nottickedoff">runTemplateMonad (f (\a -&gt; TemplateMonad $ \_ _ -&gt; c (a, s))) r s</span></span>
-<span class="lineno">  274 </span>
+<span class="lineno">  190 </span>
+<span class="lineno">  191 </span>------------------------------------------------------------------------------
+<span class="lineno">  192 </span>-- | MonadTrans instance
+<span class="lineno">  193 </span>instance MonadTrans TemplateMonad where
+<span class="lineno">  194 </span>    <span class="decl"><span class="istickedoff">lift m = TemplateMonad $ \_ s -&gt; do</span>
+<span class="lineno">  195 </span><span class="spaces">        </span><span class="istickedoff">a &lt;- m</span>
+<span class="lineno">  196 </span><span class="spaces">        </span><span class="istickedoff">return (a, s)</span></span>
+<span class="lineno">  197 </span>
+<span class="lineno">  198 </span>
+<span class="lineno">  199 </span>------------------------------------------------------------------------------
+<span class="lineno">  200 </span>-- | MonadFix passthrough instance
+<span class="lineno">  201 </span>instance MonadFix m =&gt; MonadFix (TemplateMonad m) where
+<span class="lineno">  202 </span>    <span class="decl"><span class="nottickedoff">mfix f = TemplateMonad $ \r s -&gt;</span>
+<span class="lineno">  203 </span><span class="spaces">        </span><span class="nottickedoff">mfix $ \ (a, _) -&gt; runTemplateMonad (f a) r s</span></span>
+<span class="lineno">  204 </span>
+<span class="lineno">  205 </span>
+<span class="lineno">  206 </span>------------------------------------------------------------------------------
+<span class="lineno">  207 </span>-- | Alternative passthrough instance
+<span class="lineno">  208 </span>instance (Functor m, MonadPlus m) =&gt; Alternative (TemplateMonad m) where
+<span class="lineno">  209 </span>    <span class="decl"><span class="nottickedoff">empty = mzero</span></span>
+<span class="lineno">  210 </span>    <span class="decl"><span class="nottickedoff">(&lt;|&gt;) = mplus</span></span>
+<span class="lineno">  211 </span>
+<span class="lineno">  212 </span>
+<span class="lineno">  213 </span>------------------------------------------------------------------------------
+<span class="lineno">  214 </span>-- | MonadPlus passthrough instance
+<span class="lineno">  215 </span>instance MonadPlus m =&gt; MonadPlus (TemplateMonad m) where
+<span class="lineno">  216 </span>    <span class="decl"><span class="nottickedoff">mzero = lift mzero</span></span>
+<span class="lineno">  217 </span>    <span class="decl"><span class="nottickedoff">m `mplus` n = TemplateMonad $ \r s -&gt;</span>
+<span class="lineno">  218 </span><span class="spaces">        </span><span class="nottickedoff">runTemplateMonad m r s `mplus` runTemplateMonad n r s</span></span>
+<span class="lineno">  219 </span>
+<span class="lineno">  220 </span>
+<span class="lineno">  221 </span>------------------------------------------------------------------------------
+<span class="lineno">  222 </span>-- | MonadState passthrough instance
+<span class="lineno">  223 </span>instance MonadState s m =&gt; MonadState s (TemplateMonad m) where
+<span class="lineno">  224 </span>    <span class="decl"><span class="nottickedoff">get = lift get</span></span>
+<span class="lineno">  225 </span>    <span class="decl"><span class="nottickedoff">put = lift . put</span></span>
+<span class="lineno">  226 </span>
+<span class="lineno">  227 </span>
+<span class="lineno">  228 </span>------------------------------------------------------------------------------
+<span class="lineno">  229 </span>-- | MonadReader passthrough instance
+<span class="lineno">  230 </span>instance MonadReader r m =&gt; MonadReader r (TemplateMonad m) where
+<span class="lineno">  231 </span>    <span class="decl"><span class="nottickedoff">ask = TemplateMonad $ \_ s -&gt; do</span>
+<span class="lineno">  232 </span><span class="spaces">            </span><span class="nottickedoff">r &lt;- ask</span>
+<span class="lineno">  233 </span><span class="spaces">            </span><span class="nottickedoff">return (r,s)</span></span>
+<span class="lineno">  234 </span>    <span class="decl"><span class="nottickedoff">local f (TemplateMonad m) =</span>
+<span class="lineno">  235 </span><span class="spaces">        </span><span class="nottickedoff">TemplateMonad $ \r s -&gt; local f (m r s)</span></span>
+<span class="lineno">  236 </span>
+<span class="lineno">  237 </span>
+<span class="lineno">  238 </span>------------------------------------------------------------------------------
+<span class="lineno">  239 </span>-- | Helper for MonadError instance.
+<span class="lineno">  240 </span>liftCatch :: (m (a,TemplateState m)
+<span class="lineno">  241 </span>              -&gt; (e -&gt; m (a,TemplateState m))
+<span class="lineno">  242 </span>              -&gt; m (a,TemplateState m))
+<span class="lineno">  243 </span>          -&gt; TemplateMonad m a
+<span class="lineno">  244 </span>          -&gt; (e -&gt; TemplateMonad m a)
+<span class="lineno">  245 </span>          -&gt; TemplateMonad m a
+<span class="lineno">  246 </span><span class="decl"><span class="nottickedoff">liftCatch ce m h =</span>
+<span class="lineno">  247 </span><span class="spaces">    </span><span class="nottickedoff">TemplateMonad $ \r s -&gt;</span>
+<span class="lineno">  248 </span><span class="spaces">        </span><span class="nottickedoff">(runTemplateMonad m r s `ce`</span>
+<span class="lineno">  249 </span><span class="spaces">        </span><span class="nottickedoff">(\e -&gt; runTemplateMonad (h e) r s))</span></span>
+<span class="lineno">  250 </span>
+<span class="lineno">  251 </span>
+<span class="lineno">  252 </span>------------------------------------------------------------------------------
+<span class="lineno">  253 </span>-- | MonadError passthrough instance
+<span class="lineno">  254 </span>instance (MonadError e m) =&gt; MonadError e (TemplateMonad m) where
+<span class="lineno">  255 </span>    <span class="decl"><span class="nottickedoff">throwError = lift . throwError</span></span>
+<span class="lineno">  256 </span>    <span class="decl"><span class="nottickedoff">catchError = liftCatch catchError</span></span>
+<span class="lineno">  257 </span>
+<span class="lineno">  258 </span>
+<span class="lineno">  259 </span>------------------------------------------------------------------------------
+<span class="lineno">  260 </span>-- | Helper for MonadCont instance.
+<span class="lineno">  261 </span>liftCallCC :: ((((a,TemplateState m) -&gt; m (b, TemplateState m))
+<span class="lineno">  262 </span>                  -&gt; m (a, TemplateState m))
+<span class="lineno">  263 </span>                -&gt; m (a, TemplateState m))
+<span class="lineno">  264 </span>           -&gt; ((a -&gt; TemplateMonad m b) -&gt; TemplateMonad m a)
+<span class="lineno">  265 </span>           -&gt; TemplateMonad m a
+<span class="lineno">  266 </span><span class="decl"><span class="nottickedoff">liftCallCC ccc f = TemplateMonad $ \r s -&gt;</span>
+<span class="lineno">  267 </span><span class="spaces">    </span><span class="nottickedoff">ccc $ \c -&gt;</span>
+<span class="lineno">  268 </span><span class="spaces">    </span><span class="nottickedoff">runTemplateMonad (f (\a -&gt; TemplateMonad $ \_ _ -&gt; c (a, s))) r s</span></span>
+<span class="lineno">  269 </span>
+<span class="lineno">  270 </span>
+<span class="lineno">  271 </span>------------------------------------------------------------------------------
+<span class="lineno">  272 </span>-- | MonadCont passthrough instance
+<span class="lineno">  273 </span>instance (MonadCont m) =&gt; MonadCont (TemplateMonad m) where
+<span class="lineno">  274 </span>    <span class="decl"><span class="nottickedoff">callCC = liftCallCC callCC</span></span>
 <span class="lineno">  275 </span>
-<span class="lineno">  276 </span>------------------------------------------------------------------------------
-<span class="lineno">  277 </span>-- | MonadCont passthrough instance
-<span class="lineno">  278 </span>instance (MonadCont m) =&gt; MonadCont (TemplateMonad m) where
-<span class="lineno">  279 </span>    <span class="decl"><span class="nottickedoff">callCC = liftCallCC callCC</span></span>
-<span class="lineno">  280 </span>
-<span class="lineno">  281 </span>
-<span class="lineno">  282 </span>------------------------------------------------------------------------------
-<span class="lineno">  283 </span>-- | The Typeable instance is here so Heist can be dynamically executed with
-<span class="lineno">  284 </span>-- Hint.
-<span class="lineno">  285 </span>templateMonadTyCon :: TyCon
-<span class="lineno">  286 </span><span class="decl"><span class="nottickedoff">templateMonadTyCon = mkTyCon &quot;Text.Templating.Heist.TemplateMonad&quot;</span></span>
-<span class="lineno">  287 </span>{-# NOINLINE templateMonadTyCon #-}
-<span class="lineno">  288 </span>
-<span class="lineno">  289 </span>instance (Typeable1 m) =&gt; Typeable1 (TemplateMonad m) where
-<span class="lineno">  290 </span>    <span class="decl"><span class="nottickedoff">typeOf1 _ = mkTyConApp templateMonadTyCon [typeOf1 (undefined :: m ())]</span></span>
+<span class="lineno">  276 </span>
+<span class="lineno">  277 </span>------------------------------------------------------------------------------
+<span class="lineno">  278 </span>-- | The Typeable instance is here so Heist can be dynamically executed with
+<span class="lineno">  279 </span>-- Hint.
+<span class="lineno">  280 </span>templateMonadTyCon :: TyCon
+<span class="lineno">  281 </span><span class="decl"><span class="nottickedoff">templateMonadTyCon = mkTyCon &quot;Text.Templating.Heist.TemplateMonad&quot;</span></span>
+<span class="lineno">  282 </span>{-# NOINLINE templateMonadTyCon #-}
+<span class="lineno">  283 </span>
+<span class="lineno">  284 </span>instance (Typeable1 m) =&gt; Typeable1 (TemplateMonad m) where
+<span class="lineno">  285 </span>    <span class="decl"><span class="nottickedoff">typeOf1 _ = mkTyConApp templateMonadTyCon [typeOf1 (undefined :: m ())]</span></span>
+<span class="lineno">  286 </span>
+<span class="lineno">  287 </span>
+<span class="lineno">  288 </span>------------------------------------------------------------------------------
+<span class="lineno">  289 </span>-- Functions for our monad.
+<span class="lineno">  290 </span>------------------------------------------------------------------------------
 <span class="lineno">  291 </span>
 <span class="lineno">  292 </span>
 <span class="lineno">  293 </span>------------------------------------------------------------------------------
-<span class="lineno">  294 </span>-- Functions for our monad.
-<span class="lineno">  295 </span>------------------------------------------------------------------------------
-<span class="lineno">  296 </span>
-<span class="lineno">  297 </span>
-<span class="lineno">  298 </span>------------------------------------------------------------------------------
-<span class="lineno">  299 </span>-- | Gets the node currently being processed.
-<span class="lineno">  300 </span>--
-<span class="lineno">  301 </span>--   &gt; &lt;speech author=&quot;Shakespeare&quot;&gt;
-<span class="lineno">  302 </span>--   &gt;   To sleep, perchance to dream.
-<span class="lineno">  303 </span>--   &gt; &lt;/speech&gt;
-<span class="lineno">  304 </span>--
-<span class="lineno">  305 </span>-- When you call @getParamNode@ inside the code for the @speech@ splice, it
-<span class="lineno">  306 </span>-- returns the Node for the @speech@ tag and its children.  @getParamNode &gt;&gt;=
-<span class="lineno">  307 </span>-- childNodes@ returns a list containing one 'TextNode' containing part of
-<span class="lineno">  308 </span>-- Hamlet's speech.  @liftM (getAttribute \&quot;author\&quot;) getParamNode@ would
-<span class="lineno">  309 </span>-- return @Just &quot;Shakespeare&quot;@.
-<span class="lineno">  310 </span>getParamNode :: Monad m =&gt; TemplateMonad m X.Node
-<span class="lineno">  311 </span><span class="decl"><span class="istickedoff">getParamNode = TemplateMonad $ \r s -&gt; return (r,s)</span></span>
-<span class="lineno">  312 </span>
-<span class="lineno">  313 </span>
-<span class="lineno">  314 </span>------------------------------------------------------------------------------
-<span class="lineno">  315 </span>-- | TemplateMonad's 'local'.
-<span class="lineno">  316 </span>localParamNode :: Monad m
-<span class="lineno">  317 </span>               =&gt; (X.Node -&gt; X.Node)
-<span class="lineno">  318 </span>               -&gt; TemplateMonad m a
-<span class="lineno">  319 </span>               -&gt; TemplateMonad m a
-<span class="lineno">  320 </span><span class="decl"><span class="istickedoff">localParamNode f m = TemplateMonad $ \r s -&gt; runTemplateMonad m (f <span class="nottickedoff">r</span>) s</span></span>
-<span class="lineno">  321 </span>
+<span class="lineno">  294 </span>-- | Gets the node currently being processed.
+<span class="lineno">  295 </span>--
+<span class="lineno">  296 </span>--   &gt; &lt;speech author=&quot;Shakespeare&quot;&gt;
+<span class="lineno">  297 </span>--   &gt;   To sleep, perchance to dream.
+<span class="lineno">  298 </span>--   &gt; &lt;/speech&gt;
+<span class="lineno">  299 </span>--
+<span class="lineno">  300 </span>-- When you call @getParamNode@ inside the code for the @speech@ splice, it
+<span class="lineno">  301 </span>-- returns the Node for the @speech@ tag and its children.  @getParamNode &gt;&gt;=
+<span class="lineno">  302 </span>-- getChildren@ returns a list containing one 'Text' node containing part of
+<span class="lineno">  303 </span>-- Hamlet's speech.  @getParamNode &gt;&gt;= getAttribute \&quot;author\&quot;@ would return
+<span class="lineno">  304 </span>-- @Just &quot;Shakespeare&quot;@.
+<span class="lineno">  305 </span>getParamNode :: Monad m =&gt; TemplateMonad m X.Node
+<span class="lineno">  306 </span><span class="decl"><span class="istickedoff">getParamNode = TemplateMonad $ \r s -&gt; return (r,s)</span></span>
+<span class="lineno">  307 </span>
+<span class="lineno">  308 </span>
+<span class="lineno">  309 </span>------------------------------------------------------------------------------
+<span class="lineno">  310 </span>-- | TemplateMonad's 'local'.
+<span class="lineno">  311 </span>localParamNode :: Monad m
+<span class="lineno">  312 </span>               =&gt; (X.Node -&gt; X.Node)
+<span class="lineno">  313 </span>               -&gt; TemplateMonad m a
+<span class="lineno">  314 </span>               -&gt; TemplateMonad m a
+<span class="lineno">  315 </span><span class="decl"><span class="istickedoff">localParamNode f m = TemplateMonad $ \r s -&gt; runTemplateMonad m (f <span class="nottickedoff">r</span>) s</span></span>
+<span class="lineno">  316 </span>
+<span class="lineno">  317 </span>
+<span class="lineno">  318 </span>------------------------------------------------------------------------------
+<span class="lineno">  319 </span>-- | TemplateMonad's 'gets'.
+<span class="lineno">  320 </span>getsTS :: Monad m =&gt; (TemplateState m -&gt; r) -&gt; TemplateMonad m r
+<span class="lineno">  321 </span><span class="decl"><span class="istickedoff">getsTS f = TemplateMonad $ \_ s -&gt; return (f s, <span class="nottickedoff">s</span>)</span></span>
 <span class="lineno">  322 </span>
-<span class="lineno">  323 </span>------------------------------------------------------------------------------
-<span class="lineno">  324 </span>-- | TemplateMonad's 'gets'.
-<span class="lineno">  325 </span>getsTS :: Monad m =&gt; (TemplateState m -&gt; r) -&gt; TemplateMonad m r
-<span class="lineno">  326 </span><span class="decl"><span class="istickedoff">getsTS f = TemplateMonad $ \_ s -&gt; return (f s, s)</span></span>
-<span class="lineno">  327 </span>
+<span class="lineno">  323 </span>
+<span class="lineno">  324 </span>------------------------------------------------------------------------------
+<span class="lineno">  325 </span>-- | TemplateMonad's 'get'.
+<span class="lineno">  326 </span>getTS :: Monad m =&gt; TemplateMonad m (TemplateState m)
+<span class="lineno">  327 </span><span class="decl"><span class="istickedoff">getTS = TemplateMonad $ \_ s -&gt; return (s, s)</span></span>
 <span class="lineno">  328 </span>
-<span class="lineno">  329 </span>------------------------------------------------------------------------------
-<span class="lineno">  330 </span>-- | TemplateMonad's 'get'.
-<span class="lineno">  331 </span>getTS :: Monad m =&gt; TemplateMonad m (TemplateState m)
-<span class="lineno">  332 </span><span class="decl"><span class="istickedoff">getTS = TemplateMonad $ \_ s -&gt; return (s, s)</span></span>
-<span class="lineno">  333 </span>
+<span class="lineno">  329 </span>
+<span class="lineno">  330 </span>------------------------------------------------------------------------------
+<span class="lineno">  331 </span>-- | TemplateMonad's 'put'.
+<span class="lineno">  332 </span>putTS :: Monad m =&gt; TemplateState m -&gt; TemplateMonad m ()
+<span class="lineno">  333 </span><span class="decl"><span class="istickedoff">putTS s = TemplateMonad $ \_ _ -&gt; return (<span class="nottickedoff">()</span>, s)</span></span>
 <span class="lineno">  334 </span>
-<span class="lineno">  335 </span>------------------------------------------------------------------------------
-<span class="lineno">  336 </span>-- | TemplateMonad's 'put'.
-<span class="lineno">  337 </span>putTS :: Monad m =&gt; TemplateState m -&gt; TemplateMonad m ()
-<span class="lineno">  338 </span><span class="decl"><span class="istickedoff">putTS s = TemplateMonad $ \_ _ -&gt; return (<span class="nottickedoff">()</span>, s)</span></span>
-<span class="lineno">  339 </span>
-<span class="lineno">  340 </span>
-<span class="lineno">  341 </span>------------------------------------------------------------------------------
-<span class="lineno">  342 </span>-- | TemplateMonad's 'modify'.
-<span class="lineno">  343 </span>modifyTS :: Monad m
-<span class="lineno">  344 </span>                    =&gt; (TemplateState m -&gt; TemplateState m)
-<span class="lineno">  345 </span>                    -&gt; TemplateMonad m ()
-<span class="lineno">  346 </span><span class="decl"><span class="istickedoff">modifyTS f = TemplateMonad $ \_ s -&gt; return (<span class="nottickedoff">()</span>, f s)</span></span>
-<span class="lineno">  347 </span>
-<span class="lineno">  348 </span>
-<span class="lineno">  349 </span>------------------------------------------------------------------------------
-<span class="lineno">  350 </span>-- | Restores the TemplateState.  This function is almost like putTS except it
-<span class="lineno">  351 </span>-- preserves the current doctypes.  You should use this function instead of
-<span class="lineno">  352 </span>-- @putTS@ to restore an old state.  This was needed because doctypes needs to
-<span class="lineno">  353 </span>-- be in a &quot;global scope&quot; as opposed to the template call &quot;local scope&quot; of
-<span class="lineno">  354 </span>-- state items such as recursionDepth, curContext, and spliceMap.
-<span class="lineno">  355 </span>restoreTS :: Monad m =&gt; TemplateState m -&gt; TemplateMonad m ()
-<span class="lineno">  356 </span><span class="decl"><span class="istickedoff">restoreTS old = modifyTS (\cur -&gt; old { _doctypes = _doctypes cur })</span></span>
-<span class="lineno">  357 </span>
-<span class="lineno">  358 </span>
-<span class="lineno">  359 </span>------------------------------------------------------------------------------
-<span class="lineno">  360 </span>-- | Abstracts the common pattern of running a TemplateMonad computation with
-<span class="lineno">  361 </span>-- a modified template state.
-<span class="lineno">  362 </span>localTS :: Monad m
-<span class="lineno">  363 </span>        =&gt; (TemplateState m -&gt; TemplateState m)
-<span class="lineno">  364 </span>        -&gt; TemplateMonad m a
-<span class="lineno">  365 </span>        -&gt; TemplateMonad m a
-<span class="lineno">  366 </span><span class="decl"><span class="nottickedoff">localTS f k = do</span>
-<span class="lineno">  367 </span><span class="spaces">    </span><span class="nottickedoff">ts &lt;- getTS</span>
-<span class="lineno">  368 </span><span class="spaces">    </span><span class="nottickedoff">putTS $ f ts</span>
-<span class="lineno">  369 </span><span class="spaces">    </span><span class="nottickedoff">res &lt;- k</span>
-<span class="lineno">  370 </span><span class="spaces">    </span><span class="nottickedoff">restoreTS ts</span>
-<span class="lineno">  371 </span><span class="spaces">    </span><span class="nottickedoff">return res</span></span>
-<span class="lineno">  372 </span>
+<span class="lineno">  335 </span>
+<span class="lineno">  336 </span>------------------------------------------------------------------------------
+<span class="lineno">  337 </span>-- | TemplateMonad's 'modify'.
+<span class="lineno">  338 </span>modifyTS :: Monad m
+<span class="lineno">  339 </span>                    =&gt; (TemplateState m -&gt; TemplateState m)
+<span class="lineno">  340 </span>                    -&gt; TemplateMonad m ()
+<span class="lineno">  341 </span><span class="decl"><span class="istickedoff">modifyTS f = TemplateMonad $ \_ s -&gt; return (<span class="nottickedoff">()</span>, f s)</span></span>
+<span class="lineno">  342 </span>
+<span class="lineno">  343 </span>
+<span class="lineno">  344 </span>------------------------------------------------------------------------------
+<span class="lineno">  345 </span>-- | Restores the components of TemplateState that can get modified in
+<span class="lineno">  346 </span>-- template calls.  You should use this function instead of @putTS@ to restore
+<span class="lineno">  347 </span>-- an old state.  Thas was needed because doctypes needs to be in a &quot;global
+<span class="lineno">  348 </span>-- scope&quot; as opposed to the template call &quot;local scope&quot; of state items such
+<span class="lineno">  349 </span>-- as recursionDepth, curContext, and spliceMap.
+<span class="lineno">  350 </span>restoreTS :: Monad m =&gt; TemplateState m -&gt; TemplateMonad m ()
+<span class="lineno">  351 </span><span class="decl"><span class="istickedoff">restoreTS ts1 =</span>
+<span class="lineno">  352 </span><span class="spaces">    </span><span class="istickedoff">modifyTS (\ts2 -&gt; ts2</span>
+<span class="lineno">  353 </span><span class="spaces">        </span><span class="istickedoff">{ _recursionDepth = _recursionDepth ts1</span>
+<span class="lineno">  354 </span><span class="spaces">        </span><span class="istickedoff">, _curContext = <span class="nottickedoff">_curContext ts1</span></span>
+<span class="lineno">  355 </span><span class="spaces">        </span><span class="istickedoff">, _spliceMap = _spliceMap ts1</span>
+<span class="lineno">  356 </span><span class="spaces">        </span><span class="istickedoff">})</span></span>
 
 </pre>
 </html>

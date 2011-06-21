@@ -1,17 +1,178 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>snap-server-0.5.1: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</title><link href="haddock.css" rel="stylesheet" type="text/css" title="haddock" /><script src="haddock-util.js" type="text/javascript"></script><script type="text/javascript">//<![CDATA[
-window.onload = function () {pageLoad();};
-//]]>
-</script></head><body><div id="package-header"><ul class="links" id="page-menu"><li><a href="index.html">Contents</a></li><li><a href="doc-index.html">Index</a></li></ul><p class="caption">snap-server-0.5.1: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</p></div><div id="content"><div id="description" class="doc"><h1>snap-server-0.5.1: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</h1><p>Snap is a simple and fast web development framework and server written in
-Haskell. For more information or to download the latest version, you can
-visit the Snap project website at <a href="http://snapframework.com/">http://snapframework.com/</a>.
-</p><p>The Snap HTTP server is a high performance, epoll-enabled, iteratee-based web
-server library written in Haskell. Together with the <code>snap-core</code> library upon
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>snap-server-0.4.0: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+></HEAD
+><BODY
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD CLASS="topbar"
+><TABLE CLASS="vanilla" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD
+><IMG SRC="haskell_icon.gif" WIDTH="16" HEIGHT="16" ALT=" "
+></TD
+><TD CLASS="title"
+>snap-server-0.4.0: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</TD
+><TD CLASS="topbut"
+><A HREF="index.html"
+>Contents</A
+></TD
+><TD CLASS="topbut"
+><A HREF="doc-index.html"
+>Index</A
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>snap-server-0.4.0: A fast, iteratee-based, epoll-enabled web server for the Snap Framework</TD
+></TR
+><TR
+><TD CLASS="doc"
+><P
+>This is the first developer prerelease of the Snap framework.  Snap is a
+simple and fast web development framework and server written in Haskell. For
+more information or to download the latest version, you can visit the Snap
+project website at <A HREF="http://snapframework.com/"
+>http://snapframework.com/</A
+>.
+</P
+><P
+>The Snap HTTP server is a high performance, epoll-enabled, iteratee-based web
+server library written in Haskell. Together with the <TT
+>snap-core</TT
+> library upon
 which it depends, it provides a clean and efficient Haskell programming
 interface to the HTTP protocol.
-</p><p>Higher-level facilities for building web applications (like user/session
+</P
+><P
+>Higher-level facilities for building web applications (like user/session
 management, component interfaces, data modeling, etc.) are planned but not
 yet implemented, so this release will mostly be of interest for those who:
-</p><ul><li> need a fast and minimal HTTP API at roughly the same level of abstraction
+</P
+><UL
+><LI
+> need a fast and minimal HTTP API at roughly the same level of abstraction
 as Java servlets, or
-</li><li> are interested in contributing to the Snap Framework project.
-</li></ul></div><div id="module-list"><p class="caption">Modules</p><ul><li><span id="control.n.1" class="module collapser" onclick="toggleSection('n.1')">Snap</span><ul id="section.n.1" class="show"><li><span id="control.n.1.1" class="module collapser" onclick="toggleSection('n.1.1')">Http</span><ul id="section.n.1.1" class="show"><li><span class="module"><span id="control.n.1.1.1" class="collapser" onclick="toggleSection('n.1.1.1')">&nbsp;</span><a href="Snap-Http-Server.html">Snap.Http.Server</a></span><ul id="section.n.1.1.1" class="show"><li><span class="module"><a href="Snap-Http-Server-Config.html">Snap.Http.Server.Config</a></span></li></ul></li></ul></li></ul></li><li><span id="control.n.2" class="module collapser" onclick="toggleSection('n.2')">System</span><ul id="section.n.2" class="show"><li><span class="module"><a href="System-FastLogger.html">System.FastLogger</a></span></li></ul></li></ul></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.9.2</p></div></body></html>
+</LI
+><LI
+> are interested in contributing to the Snap Framework project.
+</LI
+></UL
+></TD
+></TR
+><TR
+><TD CLASS="section1"
+>Modules</TD
+></TR
+><TR
+><TD
+><TABLE CLASS="vanilla2" CELLSPACING="0" CELLPADDING="0"
+><TR
+><TD STYLE="width: 50em"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'n:0')" ALT="show/hide"
+>Snap</TD
+><TD
+></TD
+><TD
+></TD
+></TR
+><TR
+><TD STYLE="padding: 0; padding-left: 2em" COLSPAN="3"
+><TABLE CLASS="vanilla2" CELLSPACING="0" CELLPADDING="0" ID="n:0" STYLE="display:block;"
+><TR
+><TD STYLE="width: 48em"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'n:1')" ALT="show/hide"
+>Http</TD
+><TD
+></TD
+><TD
+></TD
+></TR
+><TR
+><TD STYLE="padding: 0; padding-left: 2em" COLSPAN="3"
+><TABLE CLASS="vanilla2" CELLSPACING="0" CELLPADDING="0" ID="n:1" STYLE="display:block;"
+><TR
+><TD STYLE="width: 46em"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'n:2')" ALT="show/hide"
+><A HREF="Snap-Http-Server.html"
+>Snap.Http.Server</A
+></TD
+><TD
+></TD
+><TD
+></TD
+></TR
+><TR
+><TD STYLE="padding: 0; padding-left: 2em" COLSPAN="3"
+><TABLE CLASS="vanilla2" CELLSPACING="0" CELLPADDING="0" ID="n:2" STYLE="display:block;"
+><TR
+><TD STYLE="padding-left: 1.25em;width: 44em"
+><A HREF="Snap-Http-Server-Config.html"
+>Snap.Http.Server.Config</A
+></TD
+><TD
+></TD
+><TD
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD STYLE="width: 50em"
+><IMG SRC="minus.gif" CLASS="coll" ONCLICK="toggle(this,'n:3')" ALT="show/hide"
+>System</TD
+><TD
+></TD
+><TD
+></TD
+></TR
+><TR
+><TD STYLE="padding: 0; padding-left: 2em" COLSPAN="3"
+><TABLE CLASS="vanilla2" CELLSPACING="0" CELLPADDING="0" ID="n:3" STYLE="display:block;"
+><TR
+><TD STYLE="padding-left: 1.25em;width: 48em"
+><A HREF="System-FastLogger.html"
+>System.FastLogger</A
+></TD
+><TD
+></TD
+><TD
+></TD
+></TR
+></TABLE
+></TD
+></TR
+></TABLE
+></TD
+></TR
+><TR
+><TD CLASS="s15"
+></TD
+></TR
+><TR
+><TD CLASS="botbar"
+>Produced by <A HREF="http://www.haskell.org/haddock/"
+>Haddock</A
+> version 2.6.1</TD
+></TR
+></TABLE
+></BODY
+></HTML
+>

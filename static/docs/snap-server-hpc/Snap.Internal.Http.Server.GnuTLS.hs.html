@@ -35,132 +35,132 @@ span.spaces    { background: white }
 <span class="lineno">   24 </span>import           Data.Dynamic
 <span class="lineno">   25 </span>import           Foreign.C
 <span class="lineno">   26 </span>
-<span class="lineno">   27 </span>import           Snap.Internal.Debug
-<span class="lineno">   28 </span>import           Snap.Internal.Http.Server.Backend
-<span class="lineno">   29 </span>
-<span class="lineno">   30 </span>#ifdef GNUTLS
+<span class="lineno">   27 </span>import           Snap.Internal.Http.Server.Backend
+<span class="lineno">   28 </span>
+<span class="lineno">   29 </span>#ifdef GNUTLS
+<span class="lineno">   30 </span>import           Control.Monad (liftM)
 <span class="lineno">   31 </span>import qualified Data.ByteString as B
-<span class="lineno">   32 </span>import           Data.ByteString.Internal (w2c)
-<span class="lineno">   33 </span>import qualified Data.ByteString.Internal as BI
-<span class="lineno">   34 </span>import qualified Data.ByteString.Unsafe as BI
-<span class="lineno">   35 </span>import           Foreign
-<span class="lineno">   36 </span>import qualified Network.Socket as Socket
-<span class="lineno">   37 </span>#endif
+<span class="lineno">   32 </span>import           Data.ByteString.Unsafe (unsafeUseAsCStringLen)
+<span class="lineno">   33 </span>import           Data.ByteString.Internal (w2c)
+<span class="lineno">   34 </span>import           Foreign
+<span class="lineno">   35 </span>import qualified Network.Socket as Socket
+<span class="lineno">   36 </span>#endif
+<span class="lineno">   37 </span>
 <span class="lineno">   38 </span>
-<span class="lineno">   39 </span>
-<span class="lineno">   40 </span>------------------------------------------------------------------------------
-<span class="lineno">   41 </span>data GnuTLSException = GnuTLSException String
-<span class="lineno">   42 </span>    deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>, <span class="decl"><span class="nottickedoff">Typeable</span></span>)
-<span class="lineno">   43 </span>instance Exception GnuTLSException
-<span class="lineno">   44 </span>
-<span class="lineno">   45 </span>#ifndef GNUTLS
-<span class="lineno">   46 </span>
-<span class="lineno">   47 </span>initTLS :: IO ()
-<span class="lineno">   48 </span><span class="decl"><span class="nottickedoff">initTLS = throwIO $ GnuTLSException &quot;TLS is not supported&quot;</span></span>
-<span class="lineno">   49 </span>
-<span class="lineno">   50 </span>stopTLS :: IO ()
-<span class="lineno">   51 </span><span class="decl"><span class="nottickedoff">stopTLS = return ()</span></span>
-<span class="lineno">   52 </span>
-<span class="lineno">   53 </span>bindHttps :: ByteString -&gt; Int -&gt; FilePath -&gt; FilePath -&gt; IO ListenSocket
-<span class="lineno">   54 </span><span class="decl"><span class="nottickedoff">bindHttps _ _ _ _ = throwIO $ GnuTLSException &quot;TLS is not supported&quot;</span></span>
-<span class="lineno">   55 </span>
-<span class="lineno">   56 </span>freePort :: ListenSocket -&gt; IO ()
-<span class="lineno">   57 </span><span class="decl"><span class="nottickedoff">freePort _ = return ()</span></span>
-<span class="lineno">   58 </span>
-<span class="lineno">   59 </span>createSession :: ListenSocket -&gt; Int -&gt; CInt -&gt; IO () -&gt; IO NetworkSession
-<span class="lineno">   60 </span><span class="decl"><span class="nottickedoff">createSession _ _ _ _ = throwIO $ GnuTLSException &quot;TLS is not supported&quot;</span></span>
-<span class="lineno">   61 </span>
-<span class="lineno">   62 </span>endSession :: NetworkSession -&gt; IO ()
-<span class="lineno">   63 </span><span class="decl"><span class="nottickedoff">endSession _ = return ()</span></span>
-<span class="lineno">   64 </span>
-<span class="lineno">   65 </span>send :: IO () -&gt; IO () -&gt; NetworkSession -&gt; ByteString -&gt; IO ()
-<span class="lineno">   66 </span><span class="decl"><span class="nottickedoff">send _ _ _ _ = return ()</span></span>
-<span class="lineno">   67 </span>
-<span class="lineno">   68 </span>recv :: IO b -&gt; NetworkSession -&gt; IO (Maybe ByteString)
-<span class="lineno">   69 </span><span class="decl"><span class="nottickedoff">recv _ _ = throwIO $ GnuTLSException &quot;TLS is not supported&quot;</span></span>
-<span class="lineno">   70 </span>
-<span class="lineno">   71 </span>#else
+<span class="lineno">   39 </span>------------------------------------------------------------------------------
+<span class="lineno">   40 </span>data GnuTLSException = GnuTLSException String
+<span class="lineno">   41 </span>    deriving (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>, <span class="decl"><span class="nottickedoff">Typeable</span></span>)
+<span class="lineno">   42 </span>instance Exception GnuTLSException
+<span class="lineno">   43 </span>
+<span class="lineno">   44 </span>#ifndef GNUTLS
+<span class="lineno">   45 </span>
+<span class="lineno">   46 </span>initTLS :: IO ()
+<span class="lineno">   47 </span><span class="decl"><span class="nottickedoff">initTLS = throwIO $ GnuTLSException &quot;TLS is not supported&quot;</span></span>
+<span class="lineno">   48 </span>
+<span class="lineno">   49 </span>stopTLS :: IO ()
+<span class="lineno">   50 </span><span class="decl"><span class="nottickedoff">stopTLS = return ()</span></span>
+<span class="lineno">   51 </span>
+<span class="lineno">   52 </span>bindHttps :: ByteString -&gt; Int -&gt; FilePath -&gt; FilePath -&gt; IO ListenSocket
+<span class="lineno">   53 </span><span class="decl"><span class="nottickedoff">bindHttps _ _ _ _ = throwIO $ GnuTLSException &quot;TLS is not supported&quot;</span></span>
+<span class="lineno">   54 </span>
+<span class="lineno">   55 </span>freePort :: ListenSocket -&gt; IO ()
+<span class="lineno">   56 </span><span class="decl"><span class="nottickedoff">freePort _ = return ()</span></span>
+<span class="lineno">   57 </span>
+<span class="lineno">   58 </span>createSession :: ListenSocket -&gt; Int -&gt; CInt -&gt; IO () -&gt; IO NetworkSession
+<span class="lineno">   59 </span><span class="decl"><span class="nottickedoff">createSession _ _ _ _ = throwIO $ GnuTLSException &quot;TLS is not supported&quot;</span></span>
+<span class="lineno">   60 </span>
+<span class="lineno">   61 </span>endSession :: NetworkSession -&gt; IO ()
+<span class="lineno">   62 </span><span class="decl"><span class="nottickedoff">endSession _ = return ()</span></span>
+<span class="lineno">   63 </span>
+<span class="lineno">   64 </span>send :: IO () -&gt; IO () -&gt; NetworkSession -&gt; ByteString -&gt; IO ()
+<span class="lineno">   65 </span><span class="decl"><span class="nottickedoff">send _ _ _ _ = return ()</span></span>
+<span class="lineno">   66 </span>
+<span class="lineno">   67 </span>recv :: IO b -&gt; NetworkSession -&gt; IO (Maybe ByteString)
+<span class="lineno">   68 </span><span class="decl"><span class="nottickedoff">recv _ _ = throwIO $ GnuTLSException &quot;TLS is not supported&quot;</span></span>
+<span class="lineno">   69 </span>
+<span class="lineno">   70 </span>#else
+<span class="lineno">   71 </span>
 <span class="lineno">   72 </span>
-<span class="lineno">   73 </span>
-<span class="lineno">   74 </span>------------------------------------------------------------------------------
-<span class="lineno">   75 </span>-- | Init
-<span class="lineno">   76 </span>initTLS :: IO ()
-<span class="lineno">   77 </span>initTLS = gnutls_set_threading_helper &gt;&gt;
-<span class="lineno">   78 </span>          throwErrorIf &quot;TLS init&quot; gnutls_global_init
+<span class="lineno">   73 </span>------------------------------------------------------------------------------
+<span class="lineno">   74 </span>-- | Init
+<span class="lineno">   75 </span>initTLS :: IO ()
+<span class="lineno">   76 </span>initTLS = gnutls_set_threading_helper &gt;&gt;
+<span class="lineno">   77 </span>          throwErrorIf &quot;TLS init&quot; gnutls_global_init
+<span class="lineno">   78 </span>
 <span class="lineno">   79 </span>
-<span class="lineno">   80 </span>
-<span class="lineno">   81 </span>------------------------------------------------------------------------------
-<span class="lineno">   82 </span>stopTLS :: IO ()
-<span class="lineno">   83 </span>stopTLS = gnutls_global_deinit
+<span class="lineno">   80 </span>------------------------------------------------------------------------------
+<span class="lineno">   81 </span>stopTLS :: IO ()
+<span class="lineno">   82 </span>stopTLS = gnutls_global_deinit
+<span class="lineno">   83 </span>
 <span class="lineno">   84 </span>
-<span class="lineno">   85 </span>
-<span class="lineno">   86 </span>------------------------------------------------------------------------------
-<span class="lineno">   87 </span>-- | Binds ssl port
-<span class="lineno">   88 </span>bindHttps :: ByteString
-<span class="lineno">   89 </span>          -&gt; Int
+<span class="lineno">   85 </span>------------------------------------------------------------------------------
+<span class="lineno">   86 </span>-- | Binds ssl port
+<span class="lineno">   87 </span>bindHttps :: ByteString
+<span class="lineno">   88 </span>          -&gt; Int
+<span class="lineno">   89 </span>          -&gt; FilePath
 <span class="lineno">   90 </span>          -&gt; FilePath
-<span class="lineno">   91 </span>          -&gt; FilePath
-<span class="lineno">   92 </span>          -&gt; IO ListenSocket
-<span class="lineno">   93 </span>bindHttps bindAddress bindPort cert key = do
-<span class="lineno">   94 </span>    sock &lt;- Socket.socket Socket.AF_INET Socket.Stream 0
-<span class="lineno">   95 </span>    addr &lt;- getHostAddr bindPort bindAddress
-<span class="lineno">   96 </span>    Socket.setSocketOption sock Socket.ReuseAddr 1
-<span class="lineno">   97 </span>    Socket.bindSocket sock addr
-<span class="lineno">   98 </span>    Socket.listen sock 150
-<span class="lineno">   99 </span>
-<span class="lineno">  100 </span>    creds &lt;- loadCredentials cert key
-<span class="lineno">  101 </span>    dh &lt;- regenerateDHParam creds
-<span class="lineno">  102 </span>
-<span class="lineno">  103 </span>    return $ ListenHttps sock (castPtr creds) (castPtr dh)
+<span class="lineno">   91 </span>          -&gt; IO ListenSocket
+<span class="lineno">   92 </span>bindHttps bindAddress bindPort cert key = do
+<span class="lineno">   93 </span>    sock &lt;- Socket.socket Socket.AF_INET Socket.Stream 0
+<span class="lineno">   94 </span>    addr &lt;- getHostAddr bindPort bindAddress
+<span class="lineno">   95 </span>    Socket.setSocketOption sock Socket.ReuseAddr 1
+<span class="lineno">   96 </span>    Socket.bindSocket sock addr
+<span class="lineno">   97 </span>    Socket.listen sock 150
+<span class="lineno">   98 </span>
+<span class="lineno">   99 </span>    creds &lt;- loadCredentials cert key
+<span class="lineno">  100 </span>    dh &lt;- regenerateDHParam creds
+<span class="lineno">  101 </span>
+<span class="lineno">  102 </span>    return $ ListenHttps sock (castPtr creds) (castPtr dh)
+<span class="lineno">  103 </span>
 <span class="lineno">  104 </span>
-<span class="lineno">  105 </span>
-<span class="lineno">  106 </span>------------------------------------------------------------------------------
-<span class="lineno">  107 </span>loadCredentials :: FilePath       --- ^ Path to certificate
-<span class="lineno">  108 </span>                -&gt; FilePath       --- ^ Path to key
-<span class="lineno">  109 </span>                -&gt; IO (Ptr GnuTLSCredentials)
-<span class="lineno">  110 </span>loadCredentials cert key = alloca $ \cPtr -&gt; do
-<span class="lineno">  111 </span>    throwErrorIf &quot;TLS allocate&quot; $ gnutls_certificate_allocate_credentials cPtr
-<span class="lineno">  112 </span>    creds &lt;- peek cPtr
-<span class="lineno">  113 </span>
-<span class="lineno">  114 </span>    withCString cert $ \certstr -&gt; withCString key $ \keystr -&gt;
-<span class="lineno">  115 </span>        throwErrorIf &quot;TLS set Certificate&quot; $
-<span class="lineno">  116 </span>        gnutls_certificate_set_x509_key_file
-<span class="lineno">  117 </span>            creds certstr keystr gnutls_x509_fmt_pem
-<span class="lineno">  118 </span>
-<span class="lineno">  119 </span>    return creds
+<span class="lineno">  105 </span>------------------------------------------------------------------------------
+<span class="lineno">  106 </span>loadCredentials :: FilePath       --- ^ Path to certificate
+<span class="lineno">  107 </span>                -&gt; FilePath       --- ^ Path to key
+<span class="lineno">  108 </span>                -&gt; IO (Ptr GnuTLSCredentials)
+<span class="lineno">  109 </span>loadCredentials cert key = alloca $ \cPtr -&gt; do
+<span class="lineno">  110 </span>    throwErrorIf &quot;TLS allocate&quot; $ gnutls_certificate_allocate_credentials cPtr
+<span class="lineno">  111 </span>    creds &lt;- peek cPtr
+<span class="lineno">  112 </span>
+<span class="lineno">  113 </span>    withCString cert $ \certstr -&gt; withCString key $ \keystr -&gt;
+<span class="lineno">  114 </span>        throwErrorIf &quot;TLS set Certificate&quot; $
+<span class="lineno">  115 </span>        gnutls_certificate_set_x509_key_file
+<span class="lineno">  116 </span>            creds certstr keystr gnutls_x509_fmt_pem
+<span class="lineno">  117 </span>
+<span class="lineno">  118 </span>    return creds
+<span class="lineno">  119 </span>
 <span class="lineno">  120 </span>
-<span class="lineno">  121 </span>
-<span class="lineno">  122 </span>------------------------------------------------------------------------------
-<span class="lineno">  123 </span>regenerateDHParam :: Ptr GnuTLSCredentials -&gt; IO (Ptr GnuTLSDHParam)
-<span class="lineno">  124 </span>regenerateDHParam creds = alloca $ \dhptr -&gt; do
-<span class="lineno">  125 </span>    throwErrorIf &quot;TLS allocate&quot; $ gnutls_dh_params_init dhptr
-<span class="lineno">  126 </span>    dh &lt;- peek dhptr
-<span class="lineno">  127 </span>    throwErrorIf &quot;TLS DHParm&quot; $ gnutls_dh_params_generate2 dh 1024
-<span class="lineno">  128 </span>    gnutls_certificate_set_dh_params creds dh
-<span class="lineno">  129 </span>    return dh
+<span class="lineno">  121 </span>------------------------------------------------------------------------------
+<span class="lineno">  122 </span>regenerateDHParam :: Ptr GnuTLSCredentials -&gt; IO (Ptr GnuTLSDHParam)
+<span class="lineno">  123 </span>regenerateDHParam creds = alloca $ \dhptr -&gt; do
+<span class="lineno">  124 </span>    throwErrorIf &quot;TLS allocate&quot; $ gnutls_dh_params_init dhptr
+<span class="lineno">  125 </span>    dh &lt;- peek dhptr
+<span class="lineno">  126 </span>    throwErrorIf &quot;TLS DHParm&quot; $ gnutls_dh_params_generate2 dh 1024
+<span class="lineno">  127 </span>    gnutls_certificate_set_dh_params creds dh
+<span class="lineno">  128 </span>    return dh
+<span class="lineno">  129 </span>
 <span class="lineno">  130 </span>
-<span class="lineno">  131 </span>
-<span class="lineno">  132 </span>------------------------------------------------------------------------------
-<span class="lineno">  133 </span>freePort :: ListenSocket -&gt; IO ()
-<span class="lineno">  134 </span>freePort (ListenHttps _ creds dh) = do
-<span class="lineno">  135 </span>    gnutls_certificate_free_credentials $ castPtr creds
-<span class="lineno">  136 </span>    gnutls_dh_params_deinit $ castPtr dh
-<span class="lineno">  137 </span>freePort _ = return ()
+<span class="lineno">  131 </span>------------------------------------------------------------------------------
+<span class="lineno">  132 </span>freePort :: ListenSocket -&gt; IO ()
+<span class="lineno">  133 </span>freePort (ListenHttps _ creds dh) = do
+<span class="lineno">  134 </span>    gnutls_certificate_free_credentials $ castPtr creds
+<span class="lineno">  135 </span>    gnutls_dh_params_deinit $ castPtr dh
+<span class="lineno">  136 </span>freePort _ = return ()
+<span class="lineno">  137 </span>
 <span class="lineno">  138 </span>
-<span class="lineno">  139 </span>
-<span class="lineno">  140 </span>------------------------------------------------------------------------------
-<span class="lineno">  141 </span>createSession :: ListenSocket -&gt; Int -&gt; CInt -&gt; IO () -&gt; IO NetworkSession
-<span class="lineno">  142 </span>createSession (ListenHttps _ creds _) recvSize socket on_block =
-<span class="lineno">  143 </span>    alloca $ \sPtr -&gt; do
-<span class="lineno">  144 </span>        throwErrorIf &quot;TLS alloacte&quot; $ gnutls_init sPtr 1
-<span class="lineno">  145 </span>        session &lt;- peek sPtr
-<span class="lineno">  146 </span>        throwErrorIf &quot;TLS session&quot; $
-<span class="lineno">  147 </span>            gnutls_credentials_set session 1 $ castPtr creds
-<span class="lineno">  148 </span>        throwErrorIf &quot;TLS session&quot; $ gnutls_set_default_priority session
-<span class="lineno">  149 </span>        gnutls_certificate_send_x509_rdn_sequence session 1
-<span class="lineno">  150 </span>        gnutls_session_enable_compatibility_mode session
-<span class="lineno">  151 </span>
-<span class="lineno">  152 </span>        let s = NetworkSession socket (castPtr session) $
+<span class="lineno">  139 </span>------------------------------------------------------------------------------
+<span class="lineno">  140 </span>createSession :: ListenSocket -&gt; Int -&gt; CInt -&gt; IO () -&gt; IO NetworkSession
+<span class="lineno">  141 </span>createSession (ListenHttps _ creds _) recvSize socket on_block =
+<span class="lineno">  142 </span>    alloca $ \sPtr -&gt; do
+<span class="lineno">  143 </span>        throwErrorIf &quot;TLS alloacte&quot; $ gnutls_init sPtr 1
+<span class="lineno">  144 </span>        session &lt;- peek sPtr
+<span class="lineno">  145 </span>        throwErrorIf &quot;TLS session&quot; $
+<span class="lineno">  146 </span>            gnutls_credentials_set session 1 $ castPtr creds
+<span class="lineno">  147 </span>        throwErrorIf &quot;TLS session&quot; $ gnutls_set_default_priority session
+<span class="lineno">  148 </span>        gnutls_certificate_send_x509_rdn_sequence session 1
+<span class="lineno">  149 </span>        gnutls_session_enable_compatibility_mode session
+<span class="lineno">  150 </span>
+<span class="lineno">  151 </span>        buffer &lt;- mallocBytes $ fromIntegral recvSize
+<span class="lineno">  152 </span>        let s = NetworkSession socket (castPtr session) buffer $
 <span class="lineno">  153 </span>                    fromIntegral recvSize
 <span class="lineno">  154 </span>
 <span class="lineno">  155 </span>        gnutls_transport_set_ptr session $ intPtrToPtr $ fromIntegral $ socket
@@ -173,234 +173,236 @@ span.spaces    { background: white }
 <span class="lineno">  162 </span>
 <span class="lineno">  163 </span>------------------------------------------------------------------------------
 <span class="lineno">  164 </span>endSession :: NetworkSession -&gt; IO ()
-<span class="lineno">  165 </span>endSession (NetworkSession _ session _) = do
+<span class="lineno">  165 </span>endSession (NetworkSession _ session buffer _) = do
 <span class="lineno">  166 </span>    throwErrorIf &quot;TLS bye&quot; $ gnutls_bye (castPtr session) 1 `finally` do
 <span class="lineno">  167 </span>        gnutls_deinit $ castPtr session
-<span class="lineno">  168 </span>
+<span class="lineno">  168 </span>        free buffer
 <span class="lineno">  169 </span>
-<span class="lineno">  170 </span>------------------------------------------------------------------------------
-<span class="lineno">  171 </span>handshake :: NetworkSession -&gt; IO () -&gt; IO ()
-<span class="lineno">  172 </span>handshake s@(NetworkSession { _session = session}) on_block = do
-<span class="lineno">  173 </span>    rc &lt;- gnutls_handshake $ castPtr session
-<span class="lineno">  174 </span>    case rc of
-<span class="lineno">  175 </span>        x | x &gt;= 0         -&gt; return ()
-<span class="lineno">  176 </span>          | isIntrCode x   -&gt; handshake s on_block
-<span class="lineno">  177 </span>          | isAgainCode x  -&gt; on_block &gt;&gt; handshake s on_block
-<span class="lineno">  178 </span>          | otherwise      -&gt; throwError &quot;TLS handshake&quot; rc
-<span class="lineno">  179 </span>
+<span class="lineno">  170 </span>
+<span class="lineno">  171 </span>------------------------------------------------------------------------------
+<span class="lineno">  172 </span>handshake :: NetworkSession -&gt; IO () -&gt; IO ()
+<span class="lineno">  173 </span>handshake s@(NetworkSession { _session = session}) on_block = do
+<span class="lineno">  174 </span>    rc &lt;- gnutls_handshake $ castPtr session
+<span class="lineno">  175 </span>    case rc of
+<span class="lineno">  176 </span>        x | x &gt;= 0         -&gt; return ()
+<span class="lineno">  177 </span>          | isIntrCode x   -&gt; handshake s on_block
+<span class="lineno">  178 </span>          | isAgainCode x  -&gt; on_block &gt;&gt; handshake s on_block
+<span class="lineno">  179 </span>          | otherwise      -&gt; throwError &quot;TLS handshake&quot; rc
 <span class="lineno">  180 </span>
-<span class="lineno">  181 </span>------------------------------------------------------------------------------
-<span class="lineno">  182 </span>send :: IO () -&gt; IO () -&gt; NetworkSession -&gt; ByteString -&gt; IO ()
-<span class="lineno">  183 </span>send tickleTimeout onBlock (NetworkSession { _session = session}) bs =
-<span class="lineno">  184 </span>     BI.unsafeUseAsCStringLen bs $ uncurry loop
-<span class="lineno">  185 </span>  where
-<span class="lineno">  186 </span>    loop ptr len = do
-<span class="lineno">  187 </span>        sent &lt;- gnutls_record_send (castPtr session) ptr $ fromIntegral len
-<span class="lineno">  188 </span>        let sent' = fromIntegral sent
-<span class="lineno">  189 </span>        case sent' of
-<span class="lineno">  190 </span>            x | x == 0 || x == len -&gt; return ()
-<span class="lineno">  191 </span>              | x &gt; 0 &amp;&amp; x &lt; len   -&gt; tickleTimeout &gt;&gt;
-<span class="lineno">  192 </span>                                      loop (plusPtr ptr sent') (len - sent')
-<span class="lineno">  193 </span>              | isIntrCode x       -&gt; loop ptr len
-<span class="lineno">  194 </span>              | isAgainCode x      -&gt; onBlock &gt;&gt; loop ptr len
-<span class="lineno">  195 </span>              | otherwise          -&gt; throwError &quot;TLS send&quot; $
-<span class="lineno">  196 </span>                                          fromIntegral sent'
-<span class="lineno">  197 </span>
+<span class="lineno">  181 </span>
+<span class="lineno">  182 </span>------------------------------------------------------------------------------
+<span class="lineno">  183 </span>send :: IO () -&gt; IO () -&gt; NetworkSession -&gt; ByteString -&gt; IO ()
+<span class="lineno">  184 </span>send tickleTimeout onBlock (NetworkSession { _session = session}) bs =
+<span class="lineno">  185 </span>     unsafeUseAsCStringLen bs $ uncurry loop
+<span class="lineno">  186 </span>  where
+<span class="lineno">  187 </span>    loop ptr len = do
+<span class="lineno">  188 </span>        sent &lt;- gnutls_record_send (castPtr session) ptr $ fromIntegral len
+<span class="lineno">  189 </span>        let sent' = fromIntegral sent
+<span class="lineno">  190 </span>        case sent' of
+<span class="lineno">  191 </span>            x | x == 0 || x == len -&gt; return ()
+<span class="lineno">  192 </span>              | x &gt; 0 &amp;&amp; x &lt; len   -&gt; tickleTimeout &gt;&gt;
+<span class="lineno">  193 </span>                                      loop (plusPtr ptr sent') (len - sent')
+<span class="lineno">  194 </span>              | isIntrCode x       -&gt; loop ptr len
+<span class="lineno">  195 </span>              | isAgainCode x      -&gt; onBlock &gt;&gt; loop ptr len
+<span class="lineno">  196 </span>              | otherwise          -&gt; throwError &quot;TLS send&quot; $
+<span class="lineno">  197 </span>                                          fromIntegral sent'
 <span class="lineno">  198 </span>
-<span class="lineno">  199 </span>------------------------------------------------------------------------------
-<span class="lineno">  200 </span>recv :: IO b -&gt; NetworkSession -&gt; IO (Maybe ByteString)
-<span class="lineno">  201 </span>recv onBlock (NetworkSession _ session recvLen) = do
-<span class="lineno">  202 </span>    fp &lt;- BI.mallocByteString recvLen
-<span class="lineno">  203 </span>    sz &lt;- withForeignPtr fp loop
-<span class="lineno">  204 </span>    if (sz :: Int) &lt;= 0
-<span class="lineno">  205 </span>       then return Nothing
-<span class="lineno">  206 </span>       else return $ Just $ BI.fromForeignPtr fp 0 $ fromEnum sz
-<span class="lineno">  207 </span>
-<span class="lineno">  208 </span>  where
-<span class="lineno">  209 </span>    loop recvBuf = do
-<span class="lineno">  210 </span>        debug $ &quot;TLS: calling record_recv with recvLen=&quot; ++ show recvLen
-<span class="lineno">  211 </span>        size &lt;- gnutls_record_recv (castPtr session) recvBuf $ toEnum recvLen
-<span class="lineno">  212 </span>        debug $ &quot;TLS: record_recv returned with size=&quot; ++ show size
+<span class="lineno">  199 </span>
+<span class="lineno">  200 </span>------------------------------------------------------------------------------
+<span class="lineno">  201 </span>-- | I originally wrote recv to use mallocBytes and unsafePackCStringFinalizer
+<span class="lineno">  202 </span>-- to achieve zero-copy.  The downside to that method is we might waste memory
+<span class="lineno">  203 </span>-- if a malicious adversary only sends us a few bytes, since the entire buffer
+<span class="lineno">  204 </span>-- won't be freed until the ByteString is collected.  Thus I use
+<span class="lineno">  205 </span>-- packCStringLen which makes a copy.  Perhaps in the future the recv function
+<span class="lineno">  206 </span>-- could be changed to use unsafePackCStringFinalizer if the buffer is at
+<span class="lineno">  207 </span>-- least 3/4 full and packCStringLen otherwise or something like that
+<span class="lineno">  208 </span>recv :: IO b -&gt; NetworkSession -&gt; IO (Maybe ByteString)
+<span class="lineno">  209 </span>recv onBlock (NetworkSession _ session recvBuf recvLen) = loop
+<span class="lineno">  210 </span>  where
+<span class="lineno">  211 </span>    loop = do
+<span class="lineno">  212 </span>        size &lt;- gnutls_record_recv (castPtr session) recvBuf recvLen
 <span class="lineno">  213 </span>        let size' = fromIntegral size
 <span class="lineno">  214 </span>        case size' of
-<span class="lineno">  215 </span>            x | x &gt;= 0        -&gt; return x
-<span class="lineno">  216 </span>              | isIntrCode x  -&gt; loop recvBuf
-<span class="lineno">  217 </span>              | isAgainCode x -&gt; onBlock &gt;&gt; loop recvBuf
-<span class="lineno">  218 </span>              | otherwise     -&gt; (throwError &quot;TLS recv&quot; $ fromIntegral size')
-<span class="lineno">  219 </span>
-<span class="lineno">  220 </span>
-<span class="lineno">  221 </span>------------------------------------------------------------------------------
-<span class="lineno">  222 </span>throwError :: String -&gt; ReturnCode -&gt; IO a
-<span class="lineno">  223 </span>throwError prefix rc = gnutls_strerror rc &gt;&gt;=
-<span class="lineno">  224 </span>                       peekCString &gt;&gt;=
-<span class="lineno">  225 </span>                       throwIO . GnuTLSException . (prefix'++)
-<span class="lineno">  226 </span>  where
-<span class="lineno">  227 </span>    prefix' = prefix ++ &quot;&lt;&quot; ++ show rc ++ &quot;&gt;: &quot;
-<span class="lineno">  228 </span>
-<span class="lineno">  229 </span>
-<span class="lineno">  230 </span>------------------------------------------------------------------------------
-<span class="lineno">  231 </span>throwErrorIf :: String -&gt; IO ReturnCode -&gt; IO ()
-<span class="lineno">  232 </span>throwErrorIf prefix action = do
-<span class="lineno">  233 </span>    rc &lt;- action
-<span class="lineno">  234 </span>    if (rc &lt; 0)
-<span class="lineno">  235 </span>        then throwError prefix rc
-<span class="lineno">  236 </span>        else return ()
-<span class="lineno">  237 </span>
-<span class="lineno">  238 </span>
-<span class="lineno">  239 </span>------------------------------------------------------------------------------
-<span class="lineno">  240 </span>isAgainCode :: (Integral a) =&gt; a -&gt; Bool
-<span class="lineno">  241 </span>isAgainCode x = (fromIntegral x) == (-28 :: Int)
-<span class="lineno">  242 </span>
-<span class="lineno">  243 </span>
-<span class="lineno">  244 </span>------------------------------------------------------------------------------
-<span class="lineno">  245 </span>isIntrCode :: (Integral a) =&gt; a -&gt; Bool
-<span class="lineno">  246 </span>isIntrCode x = (fromIntegral x) == (-52 :: Int)
-<span class="lineno">  247 </span>
-<span class="lineno">  248 </span>
-<span class="lineno">  249 </span>------------------------------------------------------------------------------
-<span class="lineno">  250 </span>getHostAddr :: Int
-<span class="lineno">  251 </span>            -&gt; ByteString
-<span class="lineno">  252 </span>            -&gt; IO Socket.SockAddr
-<span class="lineno">  253 </span>getHostAddr p s = do
-<span class="lineno">  254 </span>    h &lt;- if s == &quot;*&quot;
-<span class="lineno">  255 </span>          then return Socket.iNADDR_ANY
-<span class="lineno">  256 </span>          else Socket.inet_addr (map w2c . B.unpack $ s)
-<span class="lineno">  257 </span>
-<span class="lineno">  258 </span>    return $ Socket.SockAddrInet (fromIntegral p) h
+<span class="lineno">  215 </span>            x | x == 0        -&gt; return Nothing
+<span class="lineno">  216 </span>              | x &gt; 0         -&gt; liftM Just $ B.packCStringLen (recvBuf, x)
+<span class="lineno">  217 </span>              | isIntrCode x  -&gt; loop
+<span class="lineno">  218 </span>              | isAgainCode x -&gt; onBlock &gt;&gt; loop
+<span class="lineno">  219 </span>              | otherwise     -&gt; (throwError &quot;TLS recv&quot; $ fromIntegral size')
+<span class="lineno">  220 </span>                                 &gt;&gt; return Nothing
+<span class="lineno">  221 </span>
+<span class="lineno">  222 </span>
+<span class="lineno">  223 </span>------------------------------------------------------------------------------
+<span class="lineno">  224 </span>throwError :: String -&gt; ReturnCode -&gt; IO ()
+<span class="lineno">  225 </span>throwError prefix rc = gnutls_strerror rc &gt;&gt;=
+<span class="lineno">  226 </span>                       peekCString &gt;&gt;=
+<span class="lineno">  227 </span>                       throwIO . GnuTLSException . (prefix'++)
+<span class="lineno">  228 </span>  where
+<span class="lineno">  229 </span>    prefix' = prefix ++ &quot;&lt;&quot; ++ show rc ++ &quot;&gt;: &quot;
+<span class="lineno">  230 </span>
+<span class="lineno">  231 </span>
+<span class="lineno">  232 </span>------------------------------------------------------------------------------
+<span class="lineno">  233 </span>throwErrorIf :: String -&gt; IO ReturnCode -&gt; IO ()
+<span class="lineno">  234 </span>throwErrorIf prefix action = do
+<span class="lineno">  235 </span>    rc &lt;- action
+<span class="lineno">  236 </span>    if (rc &lt; 0)
+<span class="lineno">  237 </span>        then throwError prefix rc
+<span class="lineno">  238 </span>        else return ()
+<span class="lineno">  239 </span>
+<span class="lineno">  240 </span>
+<span class="lineno">  241 </span>------------------------------------------------------------------------------
+<span class="lineno">  242 </span>isAgainCode :: (Integral a) =&gt; a -&gt; Bool
+<span class="lineno">  243 </span>isAgainCode x = (fromIntegral x) == (-28 :: Int)
+<span class="lineno">  244 </span>
+<span class="lineno">  245 </span>
+<span class="lineno">  246 </span>------------------------------------------------------------------------------
+<span class="lineno">  247 </span>isIntrCode :: (Integral a) =&gt; a -&gt; Bool
+<span class="lineno">  248 </span>isIntrCode x = (fromIntegral x) == (-52 :: Int)
+<span class="lineno">  249 </span>
+<span class="lineno">  250 </span>
+<span class="lineno">  251 </span>------------------------------------------------------------------------------
+<span class="lineno">  252 </span>getHostAddr :: Int
+<span class="lineno">  253 </span>            -&gt; ByteString
+<span class="lineno">  254 </span>            -&gt; IO Socket.SockAddr
+<span class="lineno">  255 </span>getHostAddr p s = do
+<span class="lineno">  256 </span>    h &lt;- if s == &quot;*&quot;
+<span class="lineno">  257 </span>          then return Socket.iNADDR_ANY
+<span class="lineno">  258 </span>          else Socket.inet_addr (map w2c . B.unpack $ s)
 <span class="lineno">  259 </span>
-<span class="lineno">  260 </span>-- Types
+<span class="lineno">  260 </span>    return $ Socket.SockAddrInet (fromIntegral p) h
 <span class="lineno">  261 </span>
-<span class="lineno">  262 </span>newtype ReturnCode = ReturnCode CInt
-<span class="lineno">  263 </span>    deriving (Show, Eq, Ord, Num, Real, Enum, Integral)
-<span class="lineno">  264 </span>
-<span class="lineno">  265 </span>data GnuTLSCredentials
-<span class="lineno">  266 </span>data GnuTLSSession
-<span class="lineno">  267 </span>data GnuTLSDHParam
-<span class="lineno">  268 </span>
-<span class="lineno">  269 </span>------------------------------------------------------------------------------
-<span class="lineno">  270 </span>-- Global init/errors
-<span class="lineno">  271 </span>
-<span class="lineno">  272 </span>foreign import ccall safe
-<span class="lineno">  273 </span>    &quot;gnutls_set_threading_helper&quot;
-<span class="lineno">  274 </span>    gnutls_set_threading_helper :: IO ()
-<span class="lineno">  275 </span>
-<span class="lineno">  276 </span>foreign import ccall safe
-<span class="lineno">  277 </span>    &quot;gnutls/gnutls.h gnutls_global_init&quot;
-<span class="lineno">  278 </span>    gnutls_global_init :: IO ReturnCode
-<span class="lineno">  279 </span>
-<span class="lineno">  280 </span>foreign import ccall safe
-<span class="lineno">  281 </span>    &quot;gnutls/gnutls.h gnutls_global_deinit&quot;
-<span class="lineno">  282 </span>    gnutls_global_deinit :: IO ()
-<span class="lineno">  283 </span>
-<span class="lineno">  284 </span>foreign import ccall safe
-<span class="lineno">  285 </span>    &quot;gnutls/gnutls.h gnutls_strerror&quot;
-<span class="lineno">  286 </span>    gnutls_strerror :: ReturnCode -&gt; IO CString
-<span class="lineno">  287 </span>
-<span class="lineno">  288 </span>------------------------------------------------------------------------------
-<span class="lineno">  289 </span>-- Sessions.  All functions here except handshake and bye just
-<span class="lineno">  290 </span>-- allocate memory or update members of structures, so they are ok with
-<span class="lineno">  291 </span>-- unsafe ccall.
-<span class="lineno">  292 </span>
-<span class="lineno">  293 </span>foreign import ccall unsafe
-<span class="lineno">  294 </span>    &quot;gnutls/gnutls.h gnutls_init&quot;
-<span class="lineno">  295 </span>    gnutls_init :: Ptr (Ptr GnuTLSSession) -&gt; CInt -&gt; IO ReturnCode
-<span class="lineno">  296 </span>
-<span class="lineno">  297 </span>foreign import ccall unsafe
-<span class="lineno">  298 </span>    &quot;gnutls/gnutls.h gnutls_deinit&quot;
-<span class="lineno">  299 </span>    gnutls_deinit :: Ptr GnuTLSSession -&gt; IO ()
-<span class="lineno">  300 </span>
-<span class="lineno">  301 </span>foreign import ccall safe
-<span class="lineno">  302 </span>    &quot;gnutls/gnutls.h gnutls_handshake&quot;
-<span class="lineno">  303 </span>    gnutls_handshake :: Ptr GnuTLSSession -&gt; IO ReturnCode
-<span class="lineno">  304 </span>
-<span class="lineno">  305 </span>foreign import ccall safe
-<span class="lineno">  306 </span>    &quot;gnutls/gnutls.h gnutls_bye&quot;
-<span class="lineno">  307 </span>    gnutls_bye :: Ptr GnuTLSSession -&gt; CInt -&gt; IO ReturnCode
-<span class="lineno">  308 </span>
-<span class="lineno">  309 </span>foreign import ccall unsafe
-<span class="lineno">  310 </span>    &quot;gnutls/gnutls.h gnutls_set_default_priority&quot;
-<span class="lineno">  311 </span>    gnutls_set_default_priority :: Ptr GnuTLSSession -&gt; IO ReturnCode
-<span class="lineno">  312 </span>
-<span class="lineno">  313 </span>foreign import ccall unsafe
-<span class="lineno">  314 </span>    &quot;gnutls/gnutls.h gnutls_session_enable_compatibility_mode&quot;
-<span class="lineno">  315 </span>    gnutls_session_enable_compatibility_mode :: Ptr GnuTLSSession -&gt; IO ()
-<span class="lineno">  316 </span>
-<span class="lineno">  317 </span>foreign import ccall unsafe
-<span class="lineno">  318 </span>    &quot;gnutls/gnutls.h gnutls_certificate_send_x509_rdn_sequence&quot;
-<span class="lineno">  319 </span>    gnutls_certificate_send_x509_rdn_sequence
-<span class="lineno">  320 </span>      :: Ptr GnuTLSSession -&gt; CInt -&gt; IO ()
-<span class="lineno">  321 </span>
-<span class="lineno">  322 </span>------------------------------------------------------------------------------
-<span class="lineno">  323 </span>-- Certificates.  Perhaps these could be unsafe but they are not performance
-<span class="lineno">  324 </span>-- critical, since they are called only once during server startup.
-<span class="lineno">  325 </span>
-<span class="lineno">  326 </span>foreign import ccall safe
-<span class="lineno">  327 </span>    &quot;gnutls/gnutls.h gnutls_certificate_allocate_credentials&quot;
-<span class="lineno">  328 </span>    gnutls_certificate_allocate_credentials
-<span class="lineno">  329 </span>      :: Ptr (Ptr GnuTLSCredentials) -&gt; IO ReturnCode
-<span class="lineno">  330 </span>
-<span class="lineno">  331 </span>foreign import ccall safe
-<span class="lineno">  332 </span>    &quot;gnutls/gnutls.h gnutls_certificate_free_credentials&quot;
-<span class="lineno">  333 </span>    gnutls_certificate_free_credentials
-<span class="lineno">  334 </span>      :: Ptr GnuTLSCredentials -&gt; IO ()
-<span class="lineno">  335 </span>
-<span class="lineno">  336 </span>gnutls_x509_fmt_pem :: CInt
-<span class="lineno">  337 </span>gnutls_x509_fmt_pem = 1
-<span class="lineno">  338 </span>
-<span class="lineno">  339 </span>foreign import ccall safe
-<span class="lineno">  340 </span>    &quot;gnutls/gnutls.h gnutls_certificate_set_x509_key_file&quot;
-<span class="lineno">  341 </span>    gnutls_certificate_set_x509_key_file
-<span class="lineno">  342 </span>      :: Ptr GnuTLSCredentials -&gt; CString -&gt; CString -&gt; CInt -&gt; IO ReturnCode
-<span class="lineno">  343 </span>
-<span class="lineno">  344 </span>
-<span class="lineno">  345 </span>------------------------------------------------------------------------------
-<span class="lineno">  346 </span>-- Credentials.  This is ok as unsafe because it just sets members in the
-<span class="lineno">  347 </span>-- session structure.
-<span class="lineno">  348 </span>
-<span class="lineno">  349 </span>foreign import ccall unsafe
-<span class="lineno">  350 </span>    &quot;gnutls/gnutls.h gnutls_credentials_set&quot;
-<span class="lineno">  351 </span>    gnutls_credentials_set
-<span class="lineno">  352 </span>        :: Ptr GnuTLSSession -&gt; CInt -&gt; Ptr a -&gt; IO ReturnCode
-<span class="lineno">  353 </span>
-<span class="lineno">  354 </span>------------------------------------------------------------------------------
-<span class="lineno">  355 </span>-- Records.  These are marked unsafe because they are very performance
-<span class="lineno">  356 </span>-- critical.  Since we are using non-blocking sockets send and recv will not
-<span class="lineno">  357 </span>-- block.
-<span class="lineno">  358 </span>
-<span class="lineno">  359 </span>foreign import ccall unsafe
-<span class="lineno">  360 </span>    &quot;gnutls/gnutls.h gnutls_transport_set_ptr&quot;
-<span class="lineno">  361 </span>    gnutls_transport_set_ptr :: Ptr GnuTLSSession -&gt; Ptr a -&gt; IO ()
-<span class="lineno">  362 </span>
-<span class="lineno">  363 </span>foreign import ccall unsafe
-<span class="lineno">  364 </span>    &quot;gnutls/gnutls.h gnutls_record_recv&quot;
-<span class="lineno">  365 </span>    gnutls_record_recv :: Ptr GnuTLSSession -&gt; Ptr a -&gt; CSize -&gt; IO CSize
-<span class="lineno">  366 </span>
-<span class="lineno">  367 </span>foreign import ccall unsafe
-<span class="lineno">  368 </span>    &quot;gnutls/gnutls.h gnutls_record_send&quot;
-<span class="lineno">  369 </span>    gnutls_record_send :: Ptr GnuTLSSession -&gt; Ptr a -&gt; CSize -&gt; IO CSize
-<span class="lineno">  370 </span>
-<span class="lineno">  371 </span>------------------------------------------------------------------------------
-<span class="lineno">  372 </span>-- DHParam.  Perhaps these could be unsafe but they are not performance
-<span class="lineno">  373 </span>-- critical.
-<span class="lineno">  374 </span>
-<span class="lineno">  375 </span>foreign import ccall safe
-<span class="lineno">  376 </span>    &quot;gnutls/gnutls.h gnutls_dh_params_init&quot;
-<span class="lineno">  377 </span>    gnutls_dh_params_init :: Ptr (Ptr GnuTLSDHParam) -&gt; IO ReturnCode
-<span class="lineno">  378 </span>
-<span class="lineno">  379 </span>foreign import ccall safe
-<span class="lineno">  380 </span>    &quot;gnutls/gnutls.h gnutls_dh_params_deinit&quot;
-<span class="lineno">  381 </span>    gnutls_dh_params_deinit :: Ptr GnuTLSDHParam -&gt; IO ()
-<span class="lineno">  382 </span>
-<span class="lineno">  383 </span>foreign import ccall safe
-<span class="lineno">  384 </span>    &quot;gnutls/gnutls.h gnutls_dh_params_generate2&quot;
-<span class="lineno">  385 </span>    gnutls_dh_params_generate2 :: Ptr GnuTLSDHParam -&gt; CUInt -&gt; IO ReturnCode
-<span class="lineno">  386 </span>
-<span class="lineno">  387 </span>foreign import ccall safe
-<span class="lineno">  388 </span>    &quot;gnutls/gnutls.h gnutls_certificate_set_dh_params&quot;
-<span class="lineno">  389 </span>    gnutls_certificate_set_dh_params
-<span class="lineno">  390 </span>      :: Ptr GnuTLSCredentials -&gt; Ptr GnuTLSDHParam -&gt; IO ()
-<span class="lineno">  391 </span>
-<span class="lineno">  392 </span>#endif
+<span class="lineno">  262 </span>-- Types
+<span class="lineno">  263 </span>
+<span class="lineno">  264 </span>newtype ReturnCode = ReturnCode CInt
+<span class="lineno">  265 </span>    deriving (Show, Eq, Ord, Num, Real, Enum, Integral)
+<span class="lineno">  266 </span>
+<span class="lineno">  267 </span>data GnuTLSCredentials
+<span class="lineno">  268 </span>data GnuTLSSession
+<span class="lineno">  269 </span>data GnuTLSDHParam
+<span class="lineno">  270 </span>
+<span class="lineno">  271 </span>------------------------------------------------------------------------------
+<span class="lineno">  272 </span>-- Global init/errors
+<span class="lineno">  273 </span>
+<span class="lineno">  274 </span>foreign import ccall safe
+<span class="lineno">  275 </span>    &quot;gnutls_set_threading_helper&quot;
+<span class="lineno">  276 </span>    gnutls_set_threading_helper :: IO ()
+<span class="lineno">  277 </span>
+<span class="lineno">  278 </span>foreign import ccall safe
+<span class="lineno">  279 </span>    &quot;gnutls/gnutls.h gnutls_global_init&quot;
+<span class="lineno">  280 </span>    gnutls_global_init :: IO ReturnCode
+<span class="lineno">  281 </span>
+<span class="lineno">  282 </span>foreign import ccall safe
+<span class="lineno">  283 </span>    &quot;gnutls/gnutls.h gnutls_global_deinit&quot;
+<span class="lineno">  284 </span>    gnutls_global_deinit :: IO ()
+<span class="lineno">  285 </span>
+<span class="lineno">  286 </span>foreign import ccall safe
+<span class="lineno">  287 </span>    &quot;gnutls/gnutls.h gnutls_strerror&quot;
+<span class="lineno">  288 </span>    gnutls_strerror :: ReturnCode -&gt; IO CString
+<span class="lineno">  289 </span>
+<span class="lineno">  290 </span>------------------------------------------------------------------------------
+<span class="lineno">  291 </span>-- Sessions.  All functions here except handshake and bye just
+<span class="lineno">  292 </span>-- allocate memory or update members of structures, so they are ok with
+<span class="lineno">  293 </span>-- unsafe ccall.
+<span class="lineno">  294 </span>
+<span class="lineno">  295 </span>foreign import ccall unsafe
+<span class="lineno">  296 </span>    &quot;gnutls/gnutls.h gnutls_init&quot;
+<span class="lineno">  297 </span>    gnutls_init :: Ptr (Ptr GnuTLSSession) -&gt; CInt -&gt; IO ReturnCode
+<span class="lineno">  298 </span>
+<span class="lineno">  299 </span>foreign import ccall unsafe
+<span class="lineno">  300 </span>    &quot;gnutls/gnutls.h gnutls_deinit&quot;
+<span class="lineno">  301 </span>    gnutls_deinit :: Ptr GnuTLSSession -&gt; IO ()
+<span class="lineno">  302 </span>
+<span class="lineno">  303 </span>foreign import ccall safe
+<span class="lineno">  304 </span>    &quot;gnutls/gnutls.h gnutls_handshake&quot;
+<span class="lineno">  305 </span>    gnutls_handshake :: Ptr GnuTLSSession -&gt; IO ReturnCode
+<span class="lineno">  306 </span>
+<span class="lineno">  307 </span>foreign import ccall safe
+<span class="lineno">  308 </span>    &quot;gnutls/gnutls.h gnutls_bye&quot;
+<span class="lineno">  309 </span>    gnutls_bye :: Ptr GnuTLSSession -&gt; CInt -&gt; IO ReturnCode
+<span class="lineno">  310 </span>
+<span class="lineno">  311 </span>foreign import ccall unsafe
+<span class="lineno">  312 </span>    &quot;gnutls/gnutls.h gnutls_set_default_priority&quot;
+<span class="lineno">  313 </span>    gnutls_set_default_priority :: Ptr GnuTLSSession -&gt; IO ReturnCode
+<span class="lineno">  314 </span>
+<span class="lineno">  315 </span>foreign import ccall unsafe
+<span class="lineno">  316 </span>    &quot;gnutls/gnutls.h gnutls_session_enable_compatibility_mode&quot;
+<span class="lineno">  317 </span>    gnutls_session_enable_compatibility_mode :: Ptr GnuTLSSession -&gt; IO ()
+<span class="lineno">  318 </span>
+<span class="lineno">  319 </span>foreign import ccall unsafe
+<span class="lineno">  320 </span>    &quot;gnutls/gnutls.h gnutls_certificate_send_x509_rdn_sequence&quot;
+<span class="lineno">  321 </span>    gnutls_certificate_send_x509_rdn_sequence
+<span class="lineno">  322 </span>      :: Ptr GnuTLSSession -&gt; CInt -&gt; IO ()
+<span class="lineno">  323 </span>
+<span class="lineno">  324 </span>------------------------------------------------------------------------------
+<span class="lineno">  325 </span>-- Certificates.  Perhaps these could be unsafe but they are not performance
+<span class="lineno">  326 </span>-- critical, since they are called only once during server startup.
+<span class="lineno">  327 </span>
+<span class="lineno">  328 </span>foreign import ccall safe
+<span class="lineno">  329 </span>    &quot;gnutls/gnutls.h gnutls_certificate_allocate_credentials&quot;
+<span class="lineno">  330 </span>    gnutls_certificate_allocate_credentials
+<span class="lineno">  331 </span>      :: Ptr (Ptr GnuTLSCredentials) -&gt; IO ReturnCode
+<span class="lineno">  332 </span>
+<span class="lineno">  333 </span>foreign import ccall safe
+<span class="lineno">  334 </span>    &quot;gnutls/gnutls.h gnutls_certificate_free_credentials&quot;
+<span class="lineno">  335 </span>    gnutls_certificate_free_credentials
+<span class="lineno">  336 </span>      :: Ptr GnuTLSCredentials -&gt; IO ()
+<span class="lineno">  337 </span>
+<span class="lineno">  338 </span>gnutls_x509_fmt_pem :: CInt
+<span class="lineno">  339 </span>gnutls_x509_fmt_pem = 1
+<span class="lineno">  340 </span>
+<span class="lineno">  341 </span>foreign import ccall safe
+<span class="lineno">  342 </span>    &quot;gnutls/gnutls.h gnutls_certificate_set_x509_key_file&quot;
+<span class="lineno">  343 </span>    gnutls_certificate_set_x509_key_file
+<span class="lineno">  344 </span>      :: Ptr GnuTLSCredentials -&gt; CString -&gt; CString -&gt; CInt -&gt; IO ReturnCode
+<span class="lineno">  345 </span>
+<span class="lineno">  346 </span>
+<span class="lineno">  347 </span>------------------------------------------------------------------------------
+<span class="lineno">  348 </span>-- Credentials.  This is ok as unsafe because it just sets members in the
+<span class="lineno">  349 </span>-- session structure.
+<span class="lineno">  350 </span>
+<span class="lineno">  351 </span>foreign import ccall unsafe
+<span class="lineno">  352 </span>    &quot;gnutls/gnutls.h gnutls_credentials_set&quot;
+<span class="lineno">  353 </span>    gnutls_credentials_set
+<span class="lineno">  354 </span>        :: Ptr GnuTLSSession -&gt; CInt -&gt; Ptr a -&gt; IO ReturnCode
+<span class="lineno">  355 </span>
+<span class="lineno">  356 </span>------------------------------------------------------------------------------
+<span class="lineno">  357 </span>-- Records.  These are marked unsafe because they are very performance
+<span class="lineno">  358 </span>-- critical.  Since we are using non-blocking sockets send and recv will not
+<span class="lineno">  359 </span>-- block.
+<span class="lineno">  360 </span>
+<span class="lineno">  361 </span>foreign import ccall unsafe
+<span class="lineno">  362 </span>    &quot;gnutls/gnutls.h gnutls_transport_set_ptr&quot;
+<span class="lineno">  363 </span>    gnutls_transport_set_ptr :: Ptr GnuTLSSession -&gt; Ptr a -&gt; IO ()
+<span class="lineno">  364 </span>
+<span class="lineno">  365 </span>foreign import ccall unsafe
+<span class="lineno">  366 </span>    &quot;gnutls/gnutls.h gnutls_record_recv&quot;
+<span class="lineno">  367 </span>    gnutls_record_recv :: Ptr GnuTLSSession -&gt; Ptr a -&gt; CSize -&gt; IO CSize
+<span class="lineno">  368 </span>
+<span class="lineno">  369 </span>foreign import ccall unsafe
+<span class="lineno">  370 </span>    &quot;gnutls/gnutls.h gnutls_record_send&quot;
+<span class="lineno">  371 </span>    gnutls_record_send :: Ptr GnuTLSSession -&gt; Ptr a -&gt; CSize -&gt; IO CSize
+<span class="lineno">  372 </span>
+<span class="lineno">  373 </span>------------------------------------------------------------------------------
+<span class="lineno">  374 </span>-- DHParam.  Perhaps these could be unsafe but they are not performance
+<span class="lineno">  375 </span>-- critical.
+<span class="lineno">  376 </span>
+<span class="lineno">  377 </span>foreign import ccall safe
+<span class="lineno">  378 </span>    &quot;gnutls/gnutls.h gnutls_dh_params_init&quot;
+<span class="lineno">  379 </span>    gnutls_dh_params_init :: Ptr (Ptr GnuTLSDHParam) -&gt; IO ReturnCode
+<span class="lineno">  380 </span>
+<span class="lineno">  381 </span>foreign import ccall safe
+<span class="lineno">  382 </span>    &quot;gnutls/gnutls.h gnutls_dh_params_deinit&quot;
+<span class="lineno">  383 </span>    gnutls_dh_params_deinit :: Ptr GnuTLSDHParam -&gt; IO ()
+<span class="lineno">  384 </span>
+<span class="lineno">  385 </span>foreign import ccall safe
+<span class="lineno">  386 </span>    &quot;gnutls/gnutls.h gnutls_dh_params_generate2&quot;
+<span class="lineno">  387 </span>    gnutls_dh_params_generate2 :: Ptr GnuTLSDHParam -&gt; CUInt -&gt; IO ReturnCode
+<span class="lineno">  388 </span>
+<span class="lineno">  389 </span>foreign import ccall safe
+<span class="lineno">  390 </span>    &quot;gnutls/gnutls.h gnutls_certificate_set_dh_params&quot;
+<span class="lineno">  391 </span>    gnutls_certificate_set_dh_params
+<span class="lineno">  392 </span>      :: Ptr GnuTLSCredentials -&gt; Ptr GnuTLSDHParam -&gt; IO ()
+<span class="lineno">  393 </span>
+<span class="lineno">  394 </span>#endif
 
 </pre>
 </html>

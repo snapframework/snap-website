@@ -1,8 +1,145 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Text.XmlHtml</title><link href="haddock.css" rel="stylesheet" type="text/css" title="haddock" /><script src="haddock-util.js" type="text/javascript"></script><script type="text/javascript">//<![CDATA[
-window.onload = function () {pageLoad();};
-//]]>
-</script></head><body id="mini"><div id="module-header"><p class="caption">Text.XmlHtml</p></div><div id="interface"><h1>Types
-</h1><div class="top"><p class="src"><span class="keyword">data</span> <a href="Text-XmlHtml.html#t:Document" target="main">Document</a> </p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Text-XmlHtml.html#t:Node" target="main">Node</a> </p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Text-XmlHtml.html#t:DocType" target="main">DocType</a> </p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Text-XmlHtml.html#t:ExternalID" target="main">ExternalID</a> </p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Text-XmlHtml.html#t:InternalSubset" target="main">InternalSubset</a> </p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Text-XmlHtml.html#t:Encoding" target="main">Encoding</a> </p></div><h1>Manipulating documents
-</h1><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:isTextNode" target="main">isTextNode</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:isComment" target="main">isComment</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:isElement" target="main">isElement</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:tagName" target="main">tagName</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:getAttribute" target="main">getAttribute</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:hasAttribute" target="main">hasAttribute</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:setAttribute" target="main">setAttribute</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:nodeText" target="main">nodeText</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:childNodes" target="main">childNodes</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:childElements" target="main">childElements</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:childElementsTag" target="main">childElementsTag</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:childElementTag" target="main">childElementTag</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:descendantNodes" target="main">descendantNodes</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:descendantElements" target="main">descendantElements</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:descendantElementsTag" target="main">descendantElementsTag</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:descendantElementTag" target="main">descendantElementTag</a></p></div><h1>Parsing
-</h1><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:parseXML" target="main">parseXML</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:parseHTML" target="main">parseHTML</a></p></div><h1>Rendering
-</h1><div class="top"><p class="src"><a href="Text-XmlHtml.html#v:render" target="main">render</a></p></div></div></body></html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Text.XmlHtml</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+></HEAD
+><BODY
+><DIV CLASS="outer"
+><DIV CLASS="mini-topbar"
+>Text.XmlHtml</DIV
+><DIV CLASS="mini-synopsis"
+><H1
+>Types
+</H1
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Text-XmlHtml.html#t%3ADocument" TARGET="main"
+>Document</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Text-XmlHtml.html#t%3ANode" TARGET="main"
+>Node</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Text-XmlHtml.html#t%3ADocType" TARGET="main"
+>DocType</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Text-XmlHtml.html#t%3AExternalID" TARGET="main"
+>ExternalID</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Text-XmlHtml.html#t%3AInternalSubset" TARGET="main"
+>InternalSubset</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Text-XmlHtml.html#t%3AEncoding" TARGET="main"
+>Encoding</A
+> </DIV
+> <H1
+>Manipulating documents
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AisTextNode" TARGET="main"
+>isTextNode</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AisComment" TARGET="main"
+>isComment</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AisElement" TARGET="main"
+>isElement</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AtagName" TARGET="main"
+>tagName</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AgetAttribute" TARGET="main"
+>getAttribute</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AhasAttribute" TARGET="main"
+>hasAttribute</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AsetAttribute" TARGET="main"
+>setAttribute</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AnodeText" TARGET="main"
+>nodeText</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AchildNodes" TARGET="main"
+>childNodes</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AchildElements" TARGET="main"
+>childElements</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AchildElementsTag" TARGET="main"
+>childElementsTag</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AchildElementTag" TARGET="main"
+>childElementTag</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AdescendantNodes" TARGET="main"
+>descendantNodes</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AdescendantElements" TARGET="main"
+>descendantElements</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AdescendantElementsTag" TARGET="main"
+>descendantElementsTag</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AdescendantElementTag" TARGET="main"
+>descendantElementTag</A
+></DIV
+> <H1
+>Parsing
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AparseXML" TARGET="main"
+>parseXML</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3AparseHTML" TARGET="main"
+>parseHTML</A
+></DIV
+> <H1
+>Rendering
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml.html#v%3Arender" TARGET="main"
+>render</A
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

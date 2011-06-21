@@ -1,11 +1,193 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Text.Templating.Heist</title><link href="haddock.css" rel="stylesheet" type="text/css" title="haddock" /><script src="haddock-util.js" type="text/javascript"></script><script type="text/javascript">//<![CDATA[
-window.onload = function () {pageLoad();};
-//]]>
-</script></head><body id="mini"><div id="module-header"><p class="caption">Text.Templating.Heist</p></div><div id="interface"><h1>Types
-</h1><div class="top"><p class="src"><span class="keyword">type</span> <a href="Text-Templating-Heist.html#t:Template" target="main">Template</a> </p></div><div class="top"><p class="src"><span class="keyword">type</span> <a href="Text-Templating-Heist.html#t:MIMEType" target="main">MIMEType</a> </p></div><div class="top"><p class="src"><span class="keyword">type</span> <a href="Text-Templating-Heist.html#t:Splice" target="main">Splice</a> m</p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Text-Templating-Heist.html#t:TemplateMonad" target="main">TemplateMonad</a> m a</p></div><div class="top"><p class="src"><span class="keyword">type</span> <a href="Text-Templating-Heist.html#t:HeistT" target="main">HeistT</a> </p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Text-Templating-Heist.html#t:TemplateState" target="main">TemplateState</a> m</p></div><h1>Functions and declarations on TemplateState values
-</h1><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:addTemplate" target="main">addTemplate</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:addXMLTemplate" target="main">addXMLTemplate</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:emptyTemplateState" target="main">emptyTemplateState</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:bindSplice" target="main">bindSplice</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:bindSplices" target="main">bindSplices</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:lookupSplice" target="main">lookupSplice</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:setTemplates" target="main">setTemplates</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:loadTemplates" target="main">loadTemplates</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:hasTemplate" target="main">hasTemplate</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:addTemplatePathPrefix" target="main">addTemplatePathPrefix</a></p></div><h1>Hook functions
-</h1><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:addOnLoadHook" target="main">addOnLoadHook</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:addPreRunHook" target="main">addPreRunHook</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:addPostRunHook" target="main">addPostRunHook</a></p></div><h1>HeistT functions
-</h1><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:stopRecursion" target="main">stopRecursion</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:getParamNode" target="main">getParamNode</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:runNodeList" target="main">runNodeList</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:getContext" target="main">getContext</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:getTemplateFilePath" target="main">getTemplateFilePath</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:localParamNode" target="main">localParamNode</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:getsTS" target="main">getsTS</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:getTS" target="main">getTS</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:putTS" target="main">putTS</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:modifyTS" target="main">modifyTS</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:restoreTS" target="main">restoreTS</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:localTS" target="main">localTS</a></p></div><h1>Functions for running splices and templates
-</h1><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:evalTemplate" target="main">evalTemplate</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:callTemplate" target="main">callTemplate</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:renderTemplate" target="main">renderTemplate</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:renderWithArgs" target="main">renderWithArgs</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:bindStrings" target="main">bindStrings</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:bindString" target="main">bindString</a></p></div><h1>Functions for creating splices
-</h1><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:textSplice" target="main">textSplice</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:runChildren" target="main">runChildren</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:runChildrenWith" target="main">runChildrenWith</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:runChildrenWithTrans" target="main">runChildrenWithTrans</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:runChildrenWithTemplates" target="main">runChildrenWithTemplates</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:runChildrenWithText" target="main">runChildrenWithText</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:mapSplices" target="main">mapSplices</a></p></div><h1>Misc functions
-</h1><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:getDoc" target="main">getDoc</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:getXMLDoc" target="main">getXMLDoc</a></p></div><div class="top"><p class="src"><a href="Text-Templating-Heist.html#v:bindStaticTag" target="main">bindStaticTag</a></p></div></div></body></html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Text.Templating.Heist</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+></HEAD
+><BODY
+><DIV CLASS="outer"
+><DIV CLASS="mini-topbar"
+>Text.Templating.Heist</DIV
+><DIV CLASS="mini-synopsis"
+><H1
+>Types
+</H1
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+>&nbsp;<A HREF="Text-Templating-Heist.html#t%3ATemplate" TARGET="main"
+>Template</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+>&nbsp;<A HREF="Text-Templating-Heist.html#t%3AMIMEType" TARGET="main"
+>MIMEType</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+>&nbsp;<A HREF="Text-Templating-Heist.html#t%3ASplice" TARGET="main"
+>Splice</A
+> m</DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Text-Templating-Heist.html#t%3ATemplateMonad" TARGET="main"
+>TemplateMonad</A
+> m a</DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Text-Templating-Heist.html#t%3ATemplateState" TARGET="main"
+>TemplateState</A
+> m</DIV
+> <H1
+>Functions and declarations on TemplateState values
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AaddTemplate" TARGET="main"
+>addTemplate</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AaddXMLTemplate" TARGET="main"
+>addXMLTemplate</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AemptyTemplateState" TARGET="main"
+>emptyTemplateState</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AbindSplice" TARGET="main"
+>bindSplice</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AbindSplices" TARGET="main"
+>bindSplices</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AlookupSplice" TARGET="main"
+>lookupSplice</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AsetTemplates" TARGET="main"
+>setTemplates</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AloadTemplates" TARGET="main"
+>loadTemplates</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AhasTemplate" TARGET="main"
+>hasTemplate</A
+></DIV
+> <H1
+>Hook functions
+</H1
+>  <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AaddOnLoadHook" TARGET="main"
+>addOnLoadHook</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AaddPreRunHook" TARGET="main"
+>addPreRunHook</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AaddPostRunHook" TARGET="main"
+>addPostRunHook</A
+></DIV
+> <H1
+>TemplateMonad functions
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AstopRecursion" TARGET="main"
+>stopRecursion</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AgetParamNode" TARGET="main"
+>getParamNode</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3ArunNodeList" TARGET="main"
+>runNodeList</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AgetContext" TARGET="main"
+>getContext</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AlocalParamNode" TARGET="main"
+>localParamNode</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AgetsTS" TARGET="main"
+>getsTS</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AgetTS" TARGET="main"
+>getTS</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AputTS" TARGET="main"
+>putTS</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AmodifyTS" TARGET="main"
+>modifyTS</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3ArestoreTS" TARGET="main"
+>restoreTS</A
+></DIV
+> <H1
+>Functions for running splices and templates
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AevalTemplate" TARGET="main"
+>evalTemplate</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AcallTemplate" TARGET="main"
+>callTemplate</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3ArenderTemplate" TARGET="main"
+>renderTemplate</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3ArenderWithArgs" TARGET="main"
+>renderWithArgs</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AbindStrings" TARGET="main"
+>bindStrings</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AbindString" TARGET="main"
+>bindString</A
+></DIV
+> <H1
+>Misc functions
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AgetDoc" TARGET="main"
+>getDoc</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AgetXMLDoc" TARGET="main"
+>getXMLDoc</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-Templating-Heist.html#v%3AbindStaticTag" TARGET="main"
+>bindStaticTag</A
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

@@ -15,233 +15,232 @@
 <a name="line-6"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
 <a name="line-7"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>S</span>
 <a name="line-8"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Lazy</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>L</span>
-<a name="line-9"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>CaseInsensitive</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>CI</span>
-<a name="line-10"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>CaseInsensitive</span> <span class='hs-layout'>(</span><span class='hs-conid'>CI</span><span class='hs-layout'>)</span>
-<a name="line-11"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Char</span> <span class='hs-layout'>(</span><span class='hs-varid'>isAlpha</span><span class='hs-layout'>,</span> <span class='hs-varid'>isAscii</span><span class='hs-layout'>,</span> <span class='hs-varid'>isControl</span><span class='hs-layout'>)</span>
-<a name="line-12"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Applicative</span>
-<a name="line-13"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span>
-<a name="line-14"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Attoparsec</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-conid'>Done</span><span class='hs-layout'>,</span> <span class='hs-varid'>many</span><span class='hs-layout'>)</span>
-<a name="line-15"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Attoparsec</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Atto</span>
-<a name="line-16"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Nums</span><span class='hs-varop'>.</span><span class='hs-conid'>Careless</span><span class='hs-varop'>.</span><span class='hs-conid'>Int</span> <span class='hs-layout'>(</span><span class='hs-varid'>int</span><span class='hs-layout'>)</span>
-<a name="line-17"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Int</span>
-<a name="line-18"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Vector</span><span class='hs-varop'>.</span><span class='hs-conid'>Unboxed</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Vec</span>
-<a name="line-19"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Vector</span><span class='hs-varop'>.</span><span class='hs-conid'>Unboxed</span> <span class='hs-layout'>(</span><span class='hs-conid'>Vector</span><span class='hs-layout'>)</span>
-<a name="line-20"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Prelude</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>head</span><span class='hs-layout'>,</span> <span class='hs-varid'>take</span><span class='hs-layout'>,</span> <span class='hs-varid'>takeWhile</span><span class='hs-layout'>)</span>
+<a name="line-9"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>CIByteString</span>
+<a name="line-10"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Char</span> <span class='hs-layout'>(</span><span class='hs-varid'>isAlpha</span><span class='hs-layout'>,</span> <span class='hs-varid'>isAscii</span><span class='hs-layout'>,</span> <span class='hs-varid'>isControl</span><span class='hs-layout'>)</span>
+<a name="line-11"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Applicative</span>
+<a name="line-12"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span>
+<a name="line-13"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Attoparsec</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-conid'>Done</span><span class='hs-layout'>,</span> <span class='hs-varid'>many</span><span class='hs-layout'>)</span>
+<a name="line-14"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Attoparsec</span><span class='hs-varop'>.</span><span class='hs-conid'>Char8</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Atto</span>
+<a name="line-15"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Nums</span><span class='hs-varop'>.</span><span class='hs-conid'>Careless</span><span class='hs-varop'>.</span><span class='hs-conid'>Int</span> <span class='hs-layout'>(</span><span class='hs-varid'>int</span><span class='hs-layout'>)</span>
+<a name="line-16"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Int</span>
+<a name="line-17"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Vector</span><span class='hs-varop'>.</span><span class='hs-conid'>Unboxed</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Vec</span>
+<a name="line-18"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Vector</span><span class='hs-varop'>.</span><span class='hs-conid'>Unboxed</span> <span class='hs-layout'>(</span><span class='hs-conid'>Vector</span><span class='hs-layout'>)</span>
+<a name="line-19"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Prelude</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>head</span><span class='hs-layout'>,</span> <span class='hs-varid'>take</span><span class='hs-layout'>,</span> <span class='hs-varid'>takeWhile</span><span class='hs-layout'>)</span>
+<a name="line-20"></a>
 <a name="line-21"></a>
-<a name="line-22"></a>
-<a name="line-23"></a><a name="fullyParse"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-24"></a><span class='hs-definition'>fullyParse</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Parser</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Either</span> <span class='hs-conid'>String</span> <span class='hs-varid'>a</span>
-<a name="line-25"></a><span class='hs-definition'>fullyParse</span> <span class='hs-varid'>s</span> <span class='hs-varid'>p</span> <span class='hs-keyglyph'>=</span>
-<a name="line-26"></a>    <span class='hs-keyword'>case</span> <span class='hs-varid'>r'</span> <span class='hs-keyword'>of</span>
-<a name="line-27"></a>      <span class='hs-layout'>(</span><span class='hs-conid'>Fail</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>e</span><span class='hs-layout'>)</span>    <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Left</span> <span class='hs-varid'>e</span>
-<a name="line-28"></a>      <span class='hs-layout'>(</span><span class='hs-conid'>Partial</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span>     <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Left</span> <span class='hs-str'>"parse failed"</span>
-<a name="line-29"></a>      <span class='hs-layout'>(</span><span class='hs-conid'>Atto</span><span class='hs-varop'>.</span><span class='hs-conid'>Done</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Right</span> <span class='hs-varid'>x</span>
-<a name="line-30"></a>  <span class='hs-keyword'>where</span>
-<a name="line-31"></a>    <span class='hs-varid'>r</span>  <span class='hs-keyglyph'>=</span> <span class='hs-varid'>parse</span> <span class='hs-varid'>p</span> <span class='hs-varid'>s</span>
-<a name="line-32"></a>    <span class='hs-varid'>r'</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>feed</span> <span class='hs-varid'>r</span> <span class='hs-str'>""</span>
+<a name="line-22"></a><a name="fullyParse"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-23"></a><span class='hs-definition'>fullyParse</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Parser</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Either</span> <span class='hs-conid'>String</span> <span class='hs-varid'>a</span>
+<a name="line-24"></a><span class='hs-definition'>fullyParse</span> <span class='hs-varid'>s</span> <span class='hs-varid'>p</span> <span class='hs-keyglyph'>=</span>
+<a name="line-25"></a>    <span class='hs-keyword'>case</span> <span class='hs-varid'>r'</span> <span class='hs-keyword'>of</span>
+<a name="line-26"></a>      <span class='hs-layout'>(</span><span class='hs-conid'>Fail</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>e</span><span class='hs-layout'>)</span>    <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Left</span> <span class='hs-varid'>e</span>
+<a name="line-27"></a>      <span class='hs-layout'>(</span><span class='hs-conid'>Partial</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span>     <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Left</span> <span class='hs-str'>"parse failed"</span>
+<a name="line-28"></a>      <span class='hs-layout'>(</span><span class='hs-conid'>Atto</span><span class='hs-varop'>.</span><span class='hs-conid'>Done</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Right</span> <span class='hs-varid'>x</span>
+<a name="line-29"></a>  <span class='hs-keyword'>where</span>
+<a name="line-30"></a>    <span class='hs-varid'>r</span>  <span class='hs-keyglyph'>=</span> <span class='hs-varid'>parse</span> <span class='hs-varid'>p</span> <span class='hs-varid'>s</span>
+<a name="line-31"></a>    <span class='hs-varid'>r'</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>feed</span> <span class='hs-varid'>r</span> <span class='hs-str'>""</span>
+<a name="line-32"></a>
 <a name="line-33"></a>
-<a name="line-34"></a>
-<a name="line-35"></a><a name="parseNum"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-36"></a><span class='hs-definition'>parseNum</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>Int64</span>
-<a name="line-37"></a><span class='hs-definition'>parseNum</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>int</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Atto</span><span class='hs-varop'>.</span><span class='hs-varid'>takeWhile1</span> <span class='hs-conid'>Atto</span><span class='hs-varop'>.</span><span class='hs-varid'>isDigit</span>
+<a name="line-34"></a><a name="parseNum"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-35"></a><span class='hs-definition'>parseNum</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>Int64</span>
+<a name="line-36"></a><span class='hs-definition'>parseNum</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>int</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Atto</span><span class='hs-varop'>.</span><span class='hs-varid'>takeWhile1</span> <span class='hs-conid'>Atto</span><span class='hs-varop'>.</span><span class='hs-varid'>isDigit</span>
+<a name="line-37"></a>
 <a name="line-38"></a>
-<a name="line-39"></a>
-<a name="line-40"></a><a name="sp"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-41"></a><span class='hs-comment'>-- | Parsers for different tokens in an HTTP request.</span>
-<a name="line-42"></a><span class='hs-definition'>sp</span><span class='hs-layout'>,</span> <span class='hs-varid'>digit</span><span class='hs-layout'>,</span> <span class='hs-varid'>letter</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>Char</span>
-<a name="line-43"></a><span class='hs-definition'>sp</span>       <span class='hs-keyglyph'>=</span> <span class='hs-varid'>char</span> <span class='hs-chr'>' '</span>
-<a name="line-44"></a><a name="digit"></a><span class='hs-definition'>digit</span>    <span class='hs-keyglyph'>=</span> <span class='hs-varid'>satisfy</span> <span class='hs-varid'>isDigit</span>
-<a name="line-45"></a><a name="letter"></a><span class='hs-definition'>letter</span>   <span class='hs-keyglyph'>=</span> <span class='hs-varid'>satisfy</span> <span class='hs-varid'>isAlpha</span>
+<a name="line-39"></a><a name="sp"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-40"></a><span class='hs-comment'>-- | Parsers for different tokens in an HTTP request.</span>
+<a name="line-41"></a><span class='hs-definition'>sp</span><span class='hs-layout'>,</span> <span class='hs-varid'>digit</span><span class='hs-layout'>,</span> <span class='hs-varid'>letter</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>Char</span>
+<a name="line-42"></a><span class='hs-definition'>sp</span>       <span class='hs-keyglyph'>=</span> <span class='hs-varid'>char</span> <span class='hs-chr'>' '</span>
+<a name="line-43"></a><a name="digit"></a><span class='hs-definition'>digit</span>    <span class='hs-keyglyph'>=</span> <span class='hs-varid'>satisfy</span> <span class='hs-varid'>isDigit</span>
+<a name="line-44"></a><a name="letter"></a><span class='hs-definition'>letter</span>   <span class='hs-keyglyph'>=</span> <span class='hs-varid'>satisfy</span> <span class='hs-varid'>isAlpha</span>
+<a name="line-45"></a>
 <a name="line-46"></a>
-<a name="line-47"></a>
-<a name="line-48"></a><a name="untilEOL"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-49"></a><span class='hs-definition'>untilEOL</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
-<a name="line-50"></a><span class='hs-definition'>untilEOL</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeWhile</span> <span class='hs-varid'>notend</span>
-<a name="line-51"></a>  <span class='hs-keyword'>where</span>
-<a name="line-52"></a>    <span class='hs-varid'>notend</span> <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>not</span> <span class='hs-varop'>$</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>'\r'</span> <span class='hs-varop'>||</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>'\n'</span>
+<a name="line-47"></a><a name="untilEOL"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-48"></a><span class='hs-definition'>untilEOL</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
+<a name="line-49"></a><span class='hs-definition'>untilEOL</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeWhile</span> <span class='hs-varid'>notend</span>
+<a name="line-50"></a>  <span class='hs-keyword'>where</span>
+<a name="line-51"></a>    <span class='hs-varid'>notend</span> <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>not</span> <span class='hs-varop'>$</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>'\r'</span> <span class='hs-varop'>||</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>'\n'</span>
+<a name="line-52"></a>
 <a name="line-53"></a>
-<a name="line-54"></a>
-<a name="line-55"></a><a name="crlf"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-56"></a><span class='hs-definition'>crlf</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
-<a name="line-57"></a><span class='hs-definition'>crlf</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>string</span> <span class='hs-str'>"\r\n"</span>
+<a name="line-54"></a><a name="crlf"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-55"></a><span class='hs-definition'>crlf</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
+<a name="line-56"></a><span class='hs-definition'>crlf</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>string</span> <span class='hs-str'>"\r\n"</span>
+<a name="line-57"></a>
 <a name="line-58"></a>
-<a name="line-59"></a>
-<a name="line-60"></a><a name="spaces"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-61"></a><span class='hs-comment'>-- | Parser for zero or more spaces.</span>
-<a name="line-62"></a><span class='hs-definition'>spaces</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Char</span><span class='hs-keyglyph'>]</span>
-<a name="line-63"></a><span class='hs-definition'>spaces</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>many</span> <span class='hs-varid'>sp</span>
+<a name="line-59"></a><a name="spaces"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-60"></a><span class='hs-comment'>-- | Parser for zero or more spaces.</span>
+<a name="line-61"></a><span class='hs-definition'>spaces</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Char</span><span class='hs-keyglyph'>]</span>
+<a name="line-62"></a><span class='hs-definition'>spaces</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>many</span> <span class='hs-varid'>sp</span>
+<a name="line-63"></a>
 <a name="line-64"></a>
-<a name="line-65"></a>
-<a name="line-66"></a><a name="pSpaces"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-67"></a><span class='hs-definition'>pSpaces</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
-<a name="line-68"></a><span class='hs-definition'>pSpaces</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeWhile</span> <span class='hs-varid'>isSpace</span>
+<a name="line-65"></a><a name="pSpaces"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-66"></a><span class='hs-definition'>pSpaces</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
+<a name="line-67"></a><span class='hs-definition'>pSpaces</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeWhile</span> <span class='hs-varid'>isSpace</span>
+<a name="line-68"></a>
 <a name="line-69"></a>
-<a name="line-70"></a>
-<a name="line-71"></a><a name="fieldChars"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-72"></a><span class='hs-definition'>fieldChars</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
-<a name="line-73"></a><span class='hs-definition'>fieldChars</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeWhile</span> <span class='hs-varid'>isFieldChar</span>
-<a name="line-74"></a>  <span class='hs-keyword'>where</span>
-<a name="line-75"></a>    <span class='hs-varid'>isFieldChar</span> <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-conid'>Vec</span><span class='hs-varop'>.!</span><span class='hs-layout'>)</span> <span class='hs-varid'>fieldCharTable</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromEnum</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span>
+<a name="line-70"></a><a name="fieldChars"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-71"></a><span class='hs-definition'>fieldChars</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
+<a name="line-72"></a><span class='hs-definition'>fieldChars</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeWhile</span> <span class='hs-varid'>isFieldChar</span>
+<a name="line-73"></a>  <span class='hs-keyword'>where</span>
+<a name="line-74"></a>    <span class='hs-varid'>isFieldChar</span> <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-conid'>Vec</span><span class='hs-varop'>.!</span><span class='hs-layout'>)</span> <span class='hs-varid'>fieldCharTable</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromEnum</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span>
+<a name="line-75"></a>
 <a name="line-76"></a>
-<a name="line-77"></a>
-<a name="line-78"></a><a name="fieldCharTable"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-79"></a><span class='hs-definition'>fieldCharTable</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Vector</span> <span class='hs-conid'>Bool</span>
-<a name="line-80"></a><span class='hs-definition'>fieldCharTable</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Vec</span><span class='hs-varop'>.</span><span class='hs-varid'>generate</span> <span class='hs-num'>256</span> <span class='hs-varid'>f</span>
-<a name="line-81"></a>  <span class='hs-keyword'>where</span>
-<a name="line-82"></a>    <span class='hs-varid'>f</span> <span class='hs-varid'>d</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>let</span> <span class='hs-varid'>c</span><span class='hs-keyglyph'>=</span><span class='hs-varid'>toEnum</span> <span class='hs-varid'>d</span> <span class='hs-keyword'>in</span> <span class='hs-layout'>(</span><span class='hs-varid'>isDigit</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span> <span class='hs-varop'>||</span> <span class='hs-layout'>(</span><span class='hs-varid'>isAlpha</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span> <span class='hs-varop'>||</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>'-'</span> <span class='hs-varop'>||</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>'_'</span>
+<a name="line-77"></a><a name="fieldCharTable"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-78"></a><span class='hs-definition'>fieldCharTable</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Vector</span> <span class='hs-conid'>Bool</span>
+<a name="line-79"></a><span class='hs-definition'>fieldCharTable</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Vec</span><span class='hs-varop'>.</span><span class='hs-varid'>generate</span> <span class='hs-num'>256</span> <span class='hs-varid'>f</span>
+<a name="line-80"></a>  <span class='hs-keyword'>where</span>
+<a name="line-81"></a>    <span class='hs-varid'>f</span> <span class='hs-varid'>d</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>let</span> <span class='hs-varid'>c</span><span class='hs-keyglyph'>=</span><span class='hs-varid'>toEnum</span> <span class='hs-varid'>d</span> <span class='hs-keyword'>in</span> <span class='hs-layout'>(</span><span class='hs-varid'>isDigit</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span> <span class='hs-varop'>||</span> <span class='hs-layout'>(</span><span class='hs-varid'>isAlpha</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span> <span class='hs-varop'>||</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>'-'</span> <span class='hs-varop'>||</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>'_'</span>
+<a name="line-82"></a>
 <a name="line-83"></a>
-<a name="line-84"></a>
-<a name="line-85"></a><a name="pHeaders"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-86"></a><span class='hs-comment'>-- | Parser for request headers.</span>
-<a name="line-87"></a><span class='hs-definition'>pHeaders</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span>
-<a name="line-88"></a><span class='hs-definition'>pHeaders</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>many</span> <span class='hs-varid'>header</span>
-<a name="line-89"></a>  <span class='hs-keyword'>where</span>
-<a name="line-90"></a>    <span class='hs-varid'>header</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/header" #-}</span>
-<a name="line-91"></a>             <span class='hs-varid'>liftA2</span> <span class='hs-conid'>(,)</span>
-<a name="line-92"></a>                 <span class='hs-varid'>fieldName</span>
-<a name="line-93"></a>                 <span class='hs-layout'>(</span><span class='hs-varid'>char</span> <span class='hs-chr'>':'</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>spaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>contents</span><span class='hs-layout'>)</span>
-<a name="line-94"></a>
-<a name="line-95"></a>    <span class='hs-varid'>fieldName</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/fieldName" #-}</span>
-<a name="line-96"></a>                <span class='hs-varid'>liftA2</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>cons</span> <span class='hs-varid'>letter</span> <span class='hs-varid'>fieldChars</span>
-<a name="line-97"></a>
-<a name="line-98"></a>    <span class='hs-varid'>contents</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/contents" #-}</span>
-<a name="line-99"></a>               <span class='hs-varid'>liftA2</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>append</span>
-<a name="line-100"></a>                   <span class='hs-layout'>(</span><span class='hs-varid'>untilEOL</span> <span class='hs-varop'>&lt;*</span> <span class='hs-varid'>crlf</span><span class='hs-layout'>)</span>
-<a name="line-101"></a>                   <span class='hs-layout'>(</span><span class='hs-varid'>continuation</span> <span class='hs-varop'>&lt;|&gt;</span> <span class='hs-varid'>pure</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span><span class='hs-layout'>)</span>
-<a name="line-102"></a>
-<a name="line-103"></a>    <span class='hs-varid'>isLeadingWS</span> <span class='hs-varid'>w</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/isLeadingWS" #-}</span>
-<a name="line-104"></a>                    <span class='hs-varid'>elem</span> <span class='hs-varid'>w</span> <span class='hs-varid'>wstab</span>
-<a name="line-105"></a>
-<a name="line-106"></a>    <span class='hs-varid'>wstab</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>" \t"</span>
-<a name="line-107"></a>
-<a name="line-108"></a>    <span class='hs-varid'>leadingWhiteSpace</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/leadingWhiteSpace" #-}</span>
-<a name="line-109"></a>                        <span class='hs-varid'>takeWhile1</span> <span class='hs-varid'>isLeadingWS</span>
-<a name="line-110"></a>
-<a name="line-111"></a>    <span class='hs-varid'>continuation</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/continuation" #-}</span>
-<a name="line-112"></a>                   <span class='hs-varid'>liftA2</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>cons</span>
-<a name="line-113"></a>                          <span class='hs-layout'>(</span><span class='hs-varid'>leadingWhiteSpace</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pure</span> <span class='hs-chr'>' '</span><span class='hs-layout'>)</span>
-<a name="line-114"></a>                          <span class='hs-varid'>contents</span>
+<a name="line-84"></a><a name="pHeaders"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-85"></a><span class='hs-comment'>-- | Parser for request headers.</span>
+<a name="line-86"></a><span class='hs-definition'>pHeaders</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span>
+<a name="line-87"></a><span class='hs-definition'>pHeaders</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>many</span> <span class='hs-varid'>header</span>
+<a name="line-88"></a>  <span class='hs-keyword'>where</span>
+<a name="line-89"></a>    <span class='hs-varid'>header</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/header" #-}</span>
+<a name="line-90"></a>             <span class='hs-varid'>liftA2</span> <span class='hs-conid'>(,)</span>
+<a name="line-91"></a>                 <span class='hs-varid'>fieldName</span>
+<a name="line-92"></a>                 <span class='hs-layout'>(</span><span class='hs-varid'>char</span> <span class='hs-chr'>':'</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>spaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>contents</span><span class='hs-layout'>)</span>
+<a name="line-93"></a>
+<a name="line-94"></a>    <span class='hs-varid'>fieldName</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/fieldName" #-}</span>
+<a name="line-95"></a>                <span class='hs-varid'>liftA2</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>cons</span> <span class='hs-varid'>letter</span> <span class='hs-varid'>fieldChars</span>
+<a name="line-96"></a>
+<a name="line-97"></a>    <span class='hs-varid'>contents</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/contents" #-}</span>
+<a name="line-98"></a>               <span class='hs-varid'>liftA2</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>append</span>
+<a name="line-99"></a>                   <span class='hs-layout'>(</span><span class='hs-varid'>untilEOL</span> <span class='hs-varop'>&lt;*</span> <span class='hs-varid'>crlf</span><span class='hs-layout'>)</span>
+<a name="line-100"></a>                   <span class='hs-layout'>(</span><span class='hs-varid'>continuation</span> <span class='hs-varop'>&lt;|&gt;</span> <span class='hs-varid'>pure</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span><span class='hs-layout'>)</span>
+<a name="line-101"></a>
+<a name="line-102"></a>    <span class='hs-varid'>isLeadingWS</span> <span class='hs-varid'>w</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/isLeadingWS" #-}</span>
+<a name="line-103"></a>                    <span class='hs-varid'>elem</span> <span class='hs-varid'>w</span> <span class='hs-varid'>wstab</span>
+<a name="line-104"></a>
+<a name="line-105"></a>    <span class='hs-varid'>wstab</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>" \t"</span>
+<a name="line-106"></a>
+<a name="line-107"></a>    <span class='hs-varid'>leadingWhiteSpace</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/leadingWhiteSpace" #-}</span>
+<a name="line-108"></a>                        <span class='hs-varid'>takeWhile1</span> <span class='hs-varid'>isLeadingWS</span>
+<a name="line-109"></a>
+<a name="line-110"></a>    <span class='hs-varid'>continuation</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>{-# SCC "pHeaders/continuation" #-}</span>
+<a name="line-111"></a>                   <span class='hs-varid'>liftA2</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>cons</span>
+<a name="line-112"></a>                          <span class='hs-layout'>(</span><span class='hs-varid'>leadingWhiteSpace</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pure</span> <span class='hs-chr'>' '</span><span class='hs-layout'>)</span>
+<a name="line-113"></a>                          <span class='hs-varid'>contents</span>
+<a name="line-114"></a>
 <a name="line-115"></a>
-<a name="line-116"></a>
-<a name="line-117"></a><a name="pWord"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-118"></a><span class='hs-comment'>-- unhelpfully, the spec mentions "old-style" cookies that don't have quotes</span>
-<a name="line-119"></a><span class='hs-comment'>-- around the value. wonderful.</span>
-<a name="line-120"></a><span class='hs-definition'>pWord</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
-<a name="line-121"></a><span class='hs-definition'>pWord</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>pQuotedString</span> <span class='hs-varop'>&lt;|&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>takeWhile</span> <span class='hs-layout'>(</span><span class='hs-varop'>/=</span> <span class='hs-chr'>';'</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-116"></a><a name="pWord"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-117"></a><span class='hs-comment'>-- unhelpfully, the spec mentions "old-style" cookies that don't have quotes</span>
+<a name="line-118"></a><span class='hs-comment'>-- around the value. wonderful.</span>
+<a name="line-119"></a><span class='hs-definition'>pWord</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
+<a name="line-120"></a><span class='hs-definition'>pWord</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>pQuotedString</span> <span class='hs-varop'>&lt;|&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>takeWhile</span> <span class='hs-layout'>(</span><span class='hs-varop'>/=</span> <span class='hs-chr'>';'</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-121"></a>
 <a name="line-122"></a>
-<a name="line-123"></a>
-<a name="line-124"></a><a name="pQuotedString"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-125"></a><span class='hs-definition'>pQuotedString</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
-<a name="line-126"></a><span class='hs-definition'>pQuotedString</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>q</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>quotedText</span> <span class='hs-varop'>&lt;*</span> <span class='hs-varid'>q</span>
-<a name="line-127"></a>  <span class='hs-keyword'>where</span>
-<a name="line-128"></a>    <span class='hs-varid'>quotedText</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-varop'>.</span> <span class='hs-varid'>reverse</span><span class='hs-layout'>)</span> <span class='hs-varop'>&lt;$&gt;</span> <span class='hs-varid'>f</span> <span class='hs-conid'>[]</span>
-<a name="line-129"></a>
-<a name="line-130"></a>    <span class='hs-varid'>f</span> <span class='hs-varid'>soFar</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-131"></a>        <span class='hs-varid'>t</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>takeWhile</span> <span class='hs-varid'>qdtext</span>
-<a name="line-132"></a>
-<a name="line-133"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>soFar'</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>t</span><span class='hs-conop'>:</span><span class='hs-varid'>soFar</span>
-<a name="line-134"></a>
-<a name="line-135"></a>        <span class='hs-comment'>-- RFC says that backslash only escapes for &lt;"&gt;</span>
-<a name="line-136"></a>        <span class='hs-varid'>choice</span> <span class='hs-keyglyph'>[</span> <span class='hs-varid'>string</span> <span class='hs-str'>"\\\""</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-str'>"\""</span> <span class='hs-conop'>:</span> <span class='hs-varid'>soFar'</span><span class='hs-layout'>)</span>
-<a name="line-137"></a>               <span class='hs-layout'>,</span> <span class='hs-varid'>pure</span> <span class='hs-varid'>soFar'</span> <span class='hs-keyglyph'>]</span>
+<a name="line-123"></a><a name="pQuotedString"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-124"></a><span class='hs-definition'>pQuotedString</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
+<a name="line-125"></a><span class='hs-definition'>pQuotedString</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>q</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>quotedText</span> <span class='hs-varop'>&lt;*</span> <span class='hs-varid'>q</span>
+<a name="line-126"></a>  <span class='hs-keyword'>where</span>
+<a name="line-127"></a>    <span class='hs-varid'>quotedText</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-varop'>.</span> <span class='hs-varid'>reverse</span><span class='hs-layout'>)</span> <span class='hs-varop'>&lt;$&gt;</span> <span class='hs-varid'>f</span> <span class='hs-conid'>[]</span>
+<a name="line-128"></a>
+<a name="line-129"></a>    <span class='hs-varid'>f</span> <span class='hs-varid'>soFar</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-130"></a>        <span class='hs-varid'>t</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>takeWhile</span> <span class='hs-varid'>qdtext</span>
+<a name="line-131"></a>
+<a name="line-132"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>soFar'</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>t</span><span class='hs-conop'>:</span><span class='hs-varid'>soFar</span>
+<a name="line-133"></a>
+<a name="line-134"></a>        <span class='hs-comment'>-- RFC says that backslash only escapes for &lt;"&gt;</span>
+<a name="line-135"></a>        <span class='hs-varid'>choice</span> <span class='hs-keyglyph'>[</span> <span class='hs-varid'>string</span> <span class='hs-str'>"\\\""</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-str'>"\""</span> <span class='hs-conop'>:</span> <span class='hs-varid'>soFar'</span><span class='hs-layout'>)</span>
+<a name="line-136"></a>               <span class='hs-layout'>,</span> <span class='hs-varid'>pure</span> <span class='hs-varid'>soFar'</span> <span class='hs-keyglyph'>]</span>
+<a name="line-137"></a>
 <a name="line-138"></a>
-<a name="line-139"></a>
-<a name="line-140"></a>    <span class='hs-varid'>q</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>char</span> <span class='hs-chr'>'\"'</span>
-<a name="line-141"></a>
-<a name="line-142"></a>    <span class='hs-varid'>qdtext</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>matchAll</span> <span class='hs-keyglyph'>[</span> <span class='hs-varid'>isRFCText</span><span class='hs-layout'>,</span> <span class='hs-layout'>(</span><span class='hs-varop'>/=</span> <span class='hs-chr'>'\"'</span><span class='hs-layout'>)</span><span class='hs-layout'>,</span> <span class='hs-layout'>(</span><span class='hs-varop'>/=</span> <span class='hs-chr'>'\\'</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>]</span>
+<a name="line-139"></a>    <span class='hs-varid'>q</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>char</span> <span class='hs-chr'>'\"'</span>
+<a name="line-140"></a>
+<a name="line-141"></a>    <span class='hs-varid'>qdtext</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>matchAll</span> <span class='hs-keyglyph'>[</span> <span class='hs-varid'>isRFCText</span><span class='hs-layout'>,</span> <span class='hs-layout'>(</span><span class='hs-varop'>/=</span> <span class='hs-chr'>'\"'</span><span class='hs-layout'>)</span><span class='hs-layout'>,</span> <span class='hs-layout'>(</span><span class='hs-varop'>/=</span> <span class='hs-chr'>'\\'</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>]</span>
+<a name="line-142"></a>
 <a name="line-143"></a>
-<a name="line-144"></a>
-<a name="line-145"></a><a name="isRFCText"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-146"></a><span class='hs-comment'>{-# INLINE isRFCText #-}</span>
-<a name="line-147"></a><span class='hs-definition'>isRFCText</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Char</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
-<a name="line-148"></a><span class='hs-definition'>isRFCText</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>not</span> <span class='hs-varop'>.</span> <span class='hs-varid'>isControl</span>
+<a name="line-144"></a><a name="isRFCText"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-145"></a><span class='hs-comment'>{-# INLINE isRFCText #-}</span>
+<a name="line-146"></a><span class='hs-definition'>isRFCText</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Char</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
+<a name="line-147"></a><span class='hs-definition'>isRFCText</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>not</span> <span class='hs-varop'>.</span> <span class='hs-varid'>isControl</span>
+<a name="line-148"></a>
 <a name="line-149"></a>
-<a name="line-150"></a>
-<a name="line-151"></a><a name="matchAll"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-152"></a><span class='hs-comment'>{-# INLINE matchAll #-}</span>
-<a name="line-153"></a><span class='hs-definition'>matchAll</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span> <span class='hs-conid'>Char</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span> <span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Char</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
-<a name="line-154"></a><span class='hs-definition'>matchAll</span> <span class='hs-varid'>x</span> <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>and</span> <span class='hs-varop'>$</span> <span class='hs-varid'>map</span> <span class='hs-layout'>(</span><span class='hs-varop'>$</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span> <span class='hs-varid'>x</span>
+<a name="line-150"></a><a name="matchAll"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-151"></a><span class='hs-comment'>{-# INLINE matchAll #-}</span>
+<a name="line-152"></a><span class='hs-definition'>matchAll</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span> <span class='hs-conid'>Char</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span> <span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Char</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
+<a name="line-153"></a><span class='hs-definition'>matchAll</span> <span class='hs-varid'>x</span> <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>and</span> <span class='hs-varop'>$</span> <span class='hs-varid'>map</span> <span class='hs-layout'>(</span><span class='hs-varop'>$</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span> <span class='hs-varid'>x</span>
+<a name="line-154"></a>
 <a name="line-155"></a>
-<a name="line-156"></a>
-<a name="line-157"></a><a name="pAvPairs"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-158"></a><span class='hs-definition'>pAvPairs</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span>
-<a name="line-159"></a><span class='hs-definition'>pAvPairs</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-160"></a>    <span class='hs-varid'>a</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>pAvPair</span>
-<a name="line-161"></a>    <span class='hs-varid'>b</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>many</span> <span class='hs-layout'>(</span><span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>char</span> <span class='hs-chr'>';'</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pAvPair</span><span class='hs-layout'>)</span>
-<a name="line-162"></a>
-<a name="line-163"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>a</span><span class='hs-conop'>:</span><span class='hs-varid'>b</span>
+<a name="line-156"></a><a name="pAvPairs"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-157"></a><span class='hs-definition'>pAvPairs</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span>
+<a name="line-158"></a><span class='hs-definition'>pAvPairs</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-159"></a>    <span class='hs-varid'>a</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>pAvPair</span>
+<a name="line-160"></a>    <span class='hs-varid'>b</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>many</span> <span class='hs-layout'>(</span><span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>char</span> <span class='hs-chr'>';'</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pAvPair</span><span class='hs-layout'>)</span>
+<a name="line-161"></a>
+<a name="line-162"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>a</span><span class='hs-conop'>:</span><span class='hs-varid'>b</span>
+<a name="line-163"></a>
 <a name="line-164"></a>
-<a name="line-165"></a>
-<a name="line-166"></a><a name="pAvPair"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-167"></a><span class='hs-definition'>pAvPair</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
-<a name="line-168"></a><span class='hs-definition'>pAvPair</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-169"></a>    <span class='hs-varid'>key</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>pToken</span> <span class='hs-varop'>&lt;*</span> <span class='hs-varid'>pSpaces</span>
-<a name="line-170"></a>    <span class='hs-varid'>val</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>trim</span> <span class='hs-layout'>(</span><span class='hs-varid'>option</span> <span class='hs-str'>""</span> <span class='hs-varop'>$</span> <span class='hs-varid'>char</span> <span class='hs-chr'>'='</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pWord</span><span class='hs-layout'>)</span>
-<a name="line-171"></a>
-<a name="line-172"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>key</span><span class='hs-layout'>,</span> <span class='hs-varid'>val</span><span class='hs-layout'>)</span>
+<a name="line-165"></a><a name="pAvPair"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-166"></a><span class='hs-definition'>pAvPair</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
+<a name="line-167"></a><span class='hs-definition'>pAvPair</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-168"></a>    <span class='hs-varid'>key</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>pToken</span> <span class='hs-varop'>&lt;*</span> <span class='hs-varid'>pSpaces</span>
+<a name="line-169"></a>    <span class='hs-varid'>val</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>trim</span> <span class='hs-layout'>(</span><span class='hs-varid'>option</span> <span class='hs-str'>""</span> <span class='hs-varop'>$</span> <span class='hs-varid'>char</span> <span class='hs-chr'>'='</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pWord</span><span class='hs-layout'>)</span>
+<a name="line-170"></a>
+<a name="line-171"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>key</span><span class='hs-layout'>,</span> <span class='hs-varid'>val</span><span class='hs-layout'>)</span>
+<a name="line-172"></a>
 <a name="line-173"></a>
-<a name="line-174"></a>
-<a name="line-175"></a><a name="pParameter"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-176"></a><span class='hs-definition'>pParameter</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
-<a name="line-177"></a><span class='hs-definition'>pParameter</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-178"></a>    <span class='hs-varid'>key</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>pToken</span> <span class='hs-varop'>&lt;*</span> <span class='hs-varid'>pSpaces</span>
-<a name="line-179"></a>    <span class='hs-varid'>val</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>trim</span> <span class='hs-layout'>(</span><span class='hs-varid'>char</span> <span class='hs-chr'>'='</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pWord</span><span class='hs-layout'>)</span>
-<a name="line-180"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>trim</span> <span class='hs-varid'>key</span><span class='hs-layout'>,</span> <span class='hs-varid'>val</span><span class='hs-layout'>)</span>
+<a name="line-174"></a><a name="pParameter"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-175"></a><span class='hs-definition'>pParameter</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
+<a name="line-176"></a><span class='hs-definition'>pParameter</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-177"></a>    <span class='hs-varid'>key</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>pToken</span> <span class='hs-varop'>&lt;*</span> <span class='hs-varid'>pSpaces</span>
+<a name="line-178"></a>    <span class='hs-varid'>val</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>trim</span> <span class='hs-layout'>(</span><span class='hs-varid'>char</span> <span class='hs-chr'>'='</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pWord</span><span class='hs-layout'>)</span>
+<a name="line-179"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>trim</span> <span class='hs-varid'>key</span><span class='hs-layout'>,</span> <span class='hs-varid'>val</span><span class='hs-layout'>)</span>
+<a name="line-180"></a>
 <a name="line-181"></a>
-<a name="line-182"></a>
-<a name="line-183"></a><a name="trim"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-184"></a><span class='hs-definition'>trim</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span>
-<a name="line-185"></a><span class='hs-definition'>trim</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>snd</span> <span class='hs-varop'>.</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>span</span> <span class='hs-varid'>isSpace</span> <span class='hs-varop'>.</span> <span class='hs-varid'>fst</span> <span class='hs-varop'>.</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>spanEnd</span> <span class='hs-varid'>isSpace</span>
+<a name="line-182"></a><a name="trim"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-183"></a><span class='hs-definition'>trim</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span>
+<a name="line-184"></a><span class='hs-definition'>trim</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>snd</span> <span class='hs-varop'>.</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>span</span> <span class='hs-varid'>isSpace</span> <span class='hs-varop'>.</span> <span class='hs-varid'>fst</span> <span class='hs-varop'>.</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>spanEnd</span> <span class='hs-varid'>isSpace</span>
+<a name="line-185"></a>
 <a name="line-186"></a>
-<a name="line-187"></a>
-<a name="line-188"></a><a name="pValueWithParameters"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-189"></a><span class='hs-definition'>pValueWithParameters</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-conid'>CI</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span><span class='hs-layout'>)</span>
-<a name="line-190"></a><span class='hs-definition'>pValueWithParameters</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-191"></a>    <span class='hs-varid'>value</span>  <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>trim</span> <span class='hs-layout'>(</span><span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>takeWhile</span> <span class='hs-layout'>(</span><span class='hs-varop'>/=</span> <span class='hs-chr'>';'</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-192"></a>    <span class='hs-varid'>params</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>many</span> <span class='hs-varid'>pParam</span>
-<a name="line-193"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>value</span><span class='hs-layout'>,</span> <span class='hs-varid'>map</span> <span class='hs-layout'>(</span><span class='hs-varid'>first</span> <span class='hs-conid'>CI</span><span class='hs-varop'>.</span><span class='hs-varid'>mk</span><span class='hs-layout'>)</span> <span class='hs-varid'>params</span><span class='hs-layout'>)</span>
-<a name="line-194"></a>  <span class='hs-keyword'>where</span>
-<a name="line-195"></a>    <span class='hs-varid'>pParam</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>char</span> <span class='hs-chr'>';'</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pParameter</span>
-<a name="line-196"></a>
-<a name="line-197"></a><a name="pContentTypeWithParameters"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-198"></a><span class='hs-definition'>pContentTypeWithParameters</span> <span class='hs-keyglyph'>::</span>
-<a name="line-199"></a>    <span class='hs-conid'>Parser</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-conid'>CI</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span><span class='hs-layout'>)</span>
-<a name="line-200"></a><span class='hs-definition'>pContentTypeWithParameters</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-201"></a>    <span class='hs-varid'>value</span>  <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>trim</span> <span class='hs-layout'>(</span><span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>takeWhile</span> <span class='hs-layout'>(</span><span class='hs-varid'>not</span> <span class='hs-varop'>.</span> <span class='hs-varid'>isSep</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-202"></a>    <span class='hs-varid'>params</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>many</span> <span class='hs-layout'>(</span><span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>satisfy</span> <span class='hs-varid'>isSep</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pParameter</span><span class='hs-layout'>)</span>
-<a name="line-203"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>value</span><span class='hs-layout'>,</span> <span class='hs-varid'>map</span> <span class='hs-layout'>(</span><span class='hs-varid'>first</span> <span class='hs-conid'>CI</span><span class='hs-varop'>.</span><span class='hs-varid'>mk</span><span class='hs-layout'>)</span> <span class='hs-varid'>params</span><span class='hs-layout'>)</span>
-<a name="line-204"></a>  <span class='hs-keyword'>where</span>
-<a name="line-205"></a>    <span class='hs-varid'>isSep</span> <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>';'</span> <span class='hs-varop'>||</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>','</span>
-<a name="line-206"></a>
-<a name="line-207"></a><a name="pToken"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-208"></a><span class='hs-definition'>pToken</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
-<a name="line-209"></a><span class='hs-definition'>pToken</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeWhile</span> <span class='hs-varid'>isToken</span>
+<a name="line-187"></a><a name="pValueWithParameters"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-188"></a><span class='hs-definition'>pValueWithParameters</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-conid'>CIByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span><span class='hs-layout'>)</span>
+<a name="line-189"></a><span class='hs-definition'>pValueWithParameters</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-190"></a>    <span class='hs-varid'>value</span>  <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>trim</span> <span class='hs-layout'>(</span><span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>takeWhile</span> <span class='hs-layout'>(</span><span class='hs-varop'>/=</span> <span class='hs-chr'>';'</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-191"></a>    <span class='hs-varid'>params</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>many</span> <span class='hs-varid'>pParam</span>
+<a name="line-192"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>value</span><span class='hs-layout'>,</span> <span class='hs-varid'>map</span> <span class='hs-layout'>(</span><span class='hs-varid'>first</span> <span class='hs-varid'>toCI</span><span class='hs-layout'>)</span> <span class='hs-varid'>params</span><span class='hs-layout'>)</span>
+<a name="line-193"></a>  <span class='hs-keyword'>where</span>
+<a name="line-194"></a>    <span class='hs-varid'>pParam</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>char</span> <span class='hs-chr'>';'</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pParameter</span>
+<a name="line-195"></a>
+<a name="line-196"></a><a name="pContentTypeWithParameters"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-197"></a><span class='hs-definition'>pContentTypeWithParameters</span> <span class='hs-keyglyph'>::</span>
+<a name="line-198"></a>    <span class='hs-conid'>Parser</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>,</span> <span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-conid'>CIByteString</span><span class='hs-layout'>,</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span><span class='hs-layout'>)</span>
+<a name="line-199"></a><span class='hs-definition'>pContentTypeWithParameters</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-200"></a>    <span class='hs-varid'>value</span>  <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftM</span> <span class='hs-varid'>trim</span> <span class='hs-layout'>(</span><span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>takeWhile</span> <span class='hs-layout'>(</span><span class='hs-varid'>not</span> <span class='hs-varop'>.</span> <span class='hs-varid'>isSep</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-201"></a>    <span class='hs-varid'>params</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>many</span> <span class='hs-layout'>(</span><span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>satisfy</span> <span class='hs-varid'>isSep</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pSpaces</span> <span class='hs-varop'>*&gt;</span> <span class='hs-varid'>pParameter</span><span class='hs-layout'>)</span>
+<a name="line-202"></a>    <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>value</span><span class='hs-layout'>,</span> <span class='hs-varid'>map</span> <span class='hs-layout'>(</span><span class='hs-varid'>first</span> <span class='hs-varid'>toCI</span><span class='hs-layout'>)</span> <span class='hs-varid'>params</span><span class='hs-layout'>)</span>
+<a name="line-203"></a>  <span class='hs-keyword'>where</span>
+<a name="line-204"></a>    <span class='hs-varid'>isSep</span> <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>';'</span> <span class='hs-varop'>||</span> <span class='hs-varid'>c</span> <span class='hs-varop'>==</span> <span class='hs-chr'>','</span>
+<a name="line-205"></a>
+<a name="line-206"></a><a name="pToken"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-207"></a><span class='hs-definition'>pToken</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Parser</span> <span class='hs-conid'>ByteString</span>
+<a name="line-208"></a><span class='hs-definition'>pToken</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeWhile</span> <span class='hs-varid'>isToken</span>
+<a name="line-209"></a>
 <a name="line-210"></a>
-<a name="line-211"></a>
-<a name="line-212"></a><a name="isToken"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-213"></a><span class='hs-comment'>{-# INLINE isToken #-}</span>
-<a name="line-214"></a><span class='hs-definition'>isToken</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Char</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
-<a name="line-215"></a><span class='hs-definition'>isToken</span> <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-conid'>Vec</span><span class='hs-varop'>.!</span><span class='hs-layout'>)</span> <span class='hs-varid'>tokenTable</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromEnum</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span>
-<a name="line-216"></a>  <span class='hs-keyword'>where</span>
-<a name="line-217"></a>    <span class='hs-varid'>tokenTable</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Vector</span> <span class='hs-conid'>Bool</span>
-<a name="line-218"></a>    <span class='hs-varid'>tokenTable</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Vec</span><span class='hs-varop'>.</span><span class='hs-varid'>generate</span> <span class='hs-num'>256</span> <span class='hs-layout'>(</span><span class='hs-varid'>f</span> <span class='hs-varop'>.</span> <span class='hs-varid'>toEnum</span><span class='hs-layout'>)</span>
-<a name="line-219"></a>
-<a name="line-220"></a>    <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>matchAll</span> <span class='hs-keyglyph'>[</span> <span class='hs-varid'>isAscii</span>
-<a name="line-221"></a>                 <span class='hs-layout'>,</span> <span class='hs-varid'>not</span> <span class='hs-varop'>.</span> <span class='hs-varid'>isControl</span>
-<a name="line-222"></a>                 <span class='hs-layout'>,</span> <span class='hs-varid'>not</span> <span class='hs-varop'>.</span> <span class='hs-varid'>isSpace</span>
-<a name="line-223"></a>                 <span class='hs-layout'>,</span> <span class='hs-varid'>not</span> <span class='hs-varop'>.</span> <span class='hs-varid'>flip</span> <span class='hs-varid'>elem</span> <span class='hs-keyglyph'>[</span> <span class='hs-chr'>'('</span><span class='hs-layout'>,</span> <span class='hs-chr'>')'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'&lt;'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'&gt;'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'@'</span><span class='hs-layout'>,</span> <span class='hs-chr'>','</span><span class='hs-layout'>,</span> <span class='hs-chr'>';'</span>
-<a name="line-224"></a>                                   <span class='hs-layout'>,</span> <span class='hs-chr'>':'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'\\'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'\"'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'/'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'['</span><span class='hs-layout'>,</span> <span class='hs-chr'>']'</span>
-<a name="line-225"></a>                                   <span class='hs-layout'>,</span> <span class='hs-chr'>'?'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'='</span><span class='hs-layout'>,</span> <span class='hs-chr'>'{'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'}'</span> <span class='hs-keyglyph'>]</span>
-<a name="line-226"></a>                 <span class='hs-keyglyph'>]</span>
+<a name="line-211"></a><a name="isToken"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-212"></a><span class='hs-comment'>{-# INLINE isToken #-}</span>
+<a name="line-213"></a><span class='hs-definition'>isToken</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Char</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
+<a name="line-214"></a><span class='hs-definition'>isToken</span> <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-conid'>Vec</span><span class='hs-varop'>.!</span><span class='hs-layout'>)</span> <span class='hs-varid'>tokenTable</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromEnum</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span>
+<a name="line-215"></a>  <span class='hs-keyword'>where</span>
+<a name="line-216"></a>    <span class='hs-varid'>tokenTable</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Vector</span> <span class='hs-conid'>Bool</span>
+<a name="line-217"></a>    <span class='hs-varid'>tokenTable</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Vec</span><span class='hs-varop'>.</span><span class='hs-varid'>generate</span> <span class='hs-num'>256</span> <span class='hs-layout'>(</span><span class='hs-varid'>f</span> <span class='hs-varop'>.</span> <span class='hs-varid'>toEnum</span><span class='hs-layout'>)</span>
+<a name="line-218"></a>
+<a name="line-219"></a>    <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>matchAll</span> <span class='hs-keyglyph'>[</span> <span class='hs-varid'>isAscii</span>
+<a name="line-220"></a>                 <span class='hs-layout'>,</span> <span class='hs-varid'>not</span> <span class='hs-varop'>.</span> <span class='hs-varid'>isControl</span>
+<a name="line-221"></a>                 <span class='hs-layout'>,</span> <span class='hs-varid'>not</span> <span class='hs-varop'>.</span> <span class='hs-varid'>isSpace</span>
+<a name="line-222"></a>                 <span class='hs-layout'>,</span> <span class='hs-varid'>not</span> <span class='hs-varop'>.</span> <span class='hs-varid'>flip</span> <span class='hs-varid'>elem</span> <span class='hs-keyglyph'>[</span> <span class='hs-chr'>'('</span><span class='hs-layout'>,</span> <span class='hs-chr'>')'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'&lt;'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'&gt;'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'@'</span><span class='hs-layout'>,</span> <span class='hs-chr'>','</span><span class='hs-layout'>,</span> <span class='hs-chr'>';'</span>
+<a name="line-223"></a>                                   <span class='hs-layout'>,</span> <span class='hs-chr'>':'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'\\'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'\"'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'/'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'['</span><span class='hs-layout'>,</span> <span class='hs-chr'>']'</span>
+<a name="line-224"></a>                                   <span class='hs-layout'>,</span> <span class='hs-chr'>'?'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'='</span><span class='hs-layout'>,</span> <span class='hs-chr'>'{'</span><span class='hs-layout'>,</span> <span class='hs-chr'>'}'</span> <span class='hs-keyglyph'>]</span>
+<a name="line-225"></a>                 <span class='hs-keyglyph'>]</span>
+<a name="line-226"></a>
 <a name="line-227"></a>
-<a name="line-228"></a>
-<a name="line-229"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-230"></a><span class='hs-comment'>-- utility functions</span>
-<a name="line-231"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-228"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-229"></a><span class='hs-comment'>-- utility functions</span>
+<a name="line-230"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-231"></a>
 <a name="line-232"></a>
-<a name="line-233"></a>
-<a name="line-234"></a><a name="strictize"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-235"></a><span class='hs-definition'>strictize</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span>
-<a name="line-236"></a><span class='hs-definition'>strictize</span>         <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-varop'>.</span> <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-varid'>toChunks</span>
+<a name="line-233"></a><a name="strictize"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-234"></a><span class='hs-definition'>strictize</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span>
+<a name="line-235"></a><span class='hs-definition'>strictize</span>         <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-varop'>.</span> <span class='hs-conid'>L</span><span class='hs-varop'>.</span><span class='hs-varid'>toChunks</span>
 </pre></body>
 </html>

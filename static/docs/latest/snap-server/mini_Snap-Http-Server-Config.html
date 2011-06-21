@@ -1,4 +1,143 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Snap.Http.Server.Config</title><link href="haddock.css" rel="stylesheet" type="text/css" title="haddock" /><script src="haddock-util.js" type="text/javascript"></script><script type="text/javascript">//<![CDATA[
-window.onload = function () {pageLoad();};
-//]]>
-</script></head><body id="mini"><div id="module-header"><p class="caption">Snap.Http.Server.Config</p></div><div id="interface"><div class="top"><p class="src"><span class="keyword">data</span> <a href="Snap-Http-Server-Config.html#t:Config" target="main">Config</a> m a</p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Snap-Http-Server-Config.html#t:ConfigBackend" target="main">ConfigBackend</a> </p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:emptyConfig" target="main">emptyConfig</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:defaultConfig" target="main">defaultConfig</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:commandLineConfig" target="main">commandLineConfig</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:completeConfig" target="main">completeConfig</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getAccessLog" target="main">getAccessLog</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getBackend" target="main">getBackend</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getBind" target="main">getBind</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getCompression" target="main">getCompression</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getDefaultTimeout" target="main">getDefaultTimeout</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getErrorHandler" target="main">getErrorHandler</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getErrorLog" target="main">getErrorLog</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getHostname" target="main">getHostname</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getLocale" target="main">getLocale</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getOther" target="main">getOther</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getPort" target="main">getPort</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getSSLBind" target="main">getSSLBind</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getSSLCert" target="main">getSSLCert</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getSSLKey" target="main">getSSLKey</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getSSLPort" target="main">getSSLPort</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:getVerbose" target="main">getVerbose</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setAccessLog" target="main">setAccessLog</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setBackend" target="main">setBackend</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setBind" target="main">setBind</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setCompression" target="main">setCompression</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setDefaultTimeout" target="main">setDefaultTimeout</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setErrorHandler" target="main">setErrorHandler</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setErrorLog" target="main">setErrorLog</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setHostname" target="main">setHostname</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setLocale" target="main">setLocale</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setOther" target="main">setOther</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setPort" target="main">setPort</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setSSLBind" target="main">setSSLBind</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setSSLCert" target="main">setSSLCert</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setSSLKey" target="main">setSSLKey</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setSSLPort" target="main">setSSLPort</a></p></div><div class="top"><p class="src"><a href="Snap-Http-Server-Config.html#v:setVerbose" target="main">setVerbose</a></p></div></div></body></html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Snap.Http.Server.Config</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+></HEAD
+><BODY
+><DIV CLASS="outer"
+><DIV CLASS="mini-topbar"
+>Snap.Http.Server.Config</DIV
+><DIV CLASS="mini-synopsis"
+><DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Http-Server-Config.html#t%3AConfig" TARGET="main"
+>Config</A
+> m a</DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Http-Server-Config.html#t%3AConfigListen" TARGET="main"
+>ConfigListen</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Http-Server-Config.html#t%3AConfigBackend" TARGET="main"
+>ConfigBackend</A
+> </DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AemptyConfig" TARGET="main"
+>emptyConfig</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AdefaultConfig" TARGET="main"
+>defaultConfig</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AcompleteConfig" TARGET="main"
+>completeConfig</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AcommandLineConfig" TARGET="main"
+>commandLineConfig</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetHostname" TARGET="main"
+>getHostname</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetListen" TARGET="main"
+>getListen</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetAccessLog" TARGET="main"
+>getAccessLog</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetErrorLog" TARGET="main"
+>getErrorLog</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetLocale" TARGET="main"
+>getLocale</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetBackend" TARGET="main"
+>getBackend</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetCompression" TARGET="main"
+>getCompression</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetVerbose" TARGET="main"
+>getVerbose</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetErrorHandler" TARGET="main"
+>getErrorHandler</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetDefaultTimeout" TARGET="main"
+>getDefaultTimeout</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AgetOther" TARGET="main"
+>getOther</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetHostname" TARGET="main"
+>setHostname</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AaddListen" TARGET="main"
+>addListen</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetAccessLog" TARGET="main"
+>setAccessLog</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetErrorLog" TARGET="main"
+>setErrorLog</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetLocale" TARGET="main"
+>setLocale</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetBackend" TARGET="main"
+>setBackend</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetCompression" TARGET="main"
+>setCompression</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetVerbose" TARGET="main"
+>setVerbose</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetErrorHandler" TARGET="main"
+>setErrorHandler</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetDefaultTimeout" TARGET="main"
+>setDefaultTimeout</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Http-Server-Config.html#v%3AsetOther" TARGET="main"
+>setOther</A
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

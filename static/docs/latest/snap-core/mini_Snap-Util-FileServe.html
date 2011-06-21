@@ -1,7 +1,104 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Snap.Util.FileServe</title><link href="haddock.css" rel="stylesheet" type="text/css" title="haddock" /><script src="haddock-util.js" type="text/javascript"></script><script type="text/javascript">//<![CDATA[
-window.onload = function () {pageLoad();};
-//]]>
-</script></head><body id="mini"><div id="module-header"><p class="caption">Snap.Util.FileServe</p></div><div id="interface"><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:getSafePath" target="main">getSafePath</a></p></div><h1>Configuration for directory serving
-</h1><div class="top"><p class="src"><span class="keyword">type</span> <a href="Snap-Util-FileServe.html#t:MimeMap" target="main">MimeMap</a> </p></div><div class="top"><p class="src"><span class="keyword">type</span> <a href="Snap-Util-FileServe.html#t:HandlerMap" target="main">HandlerMap</a> m</p></div><div class="top"><p class="src"><span class="keyword">data</span> <a href="Snap-Util-FileServe.html#t:DirectoryConfig" target="main">DirectoryConfig</a> m</p></div><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:simpleDirectoryConfig" target="main">simpleDirectoryConfig</a></p></div><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:defaultDirectoryConfig" target="main">defaultDirectoryConfig</a></p></div><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:fancyDirectoryConfig" target="main">fancyDirectoryConfig</a></p></div><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:defaultIndexGenerator" target="main">defaultIndexGenerator</a></p></div><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:defaultMimeTypes" target="main">defaultMimeTypes</a></p></div><h1>File servers
-</h1><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:serveDirectory" target="main">serveDirectory</a></p></div><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:serveDirectoryWith" target="main">serveDirectoryWith</a></p></div><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:serveFile" target="main">serveFile</a></p></div><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:serveFileAs" target="main">serveFileAs</a></p></div><h1>Deprecated interface
-</h1><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:fileServe" target="main">fileServe</a></p></div><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:fileServe-39-" target="main">fileServe'</a></p></div><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:fileServeSingle" target="main">fileServeSingle</a></p></div><div class="top"><p class="src"><a href="Snap-Util-FileServe.html#v:fileServeSingle-39-" target="main">fileServeSingle'</a></p></div></div></body></html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Snap.Util.FileServe</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+></HEAD
+><BODY
+><DIV CLASS="outer"
+><DIV CLASS="mini-topbar"
+>Snap.Util.FileServe</DIV
+><DIV CLASS="mini-synopsis"
+><DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AgetSafePath" TARGET="main"
+>getSafePath</A
+></DIV
+> <H1
+>Configuration for directory serving
+</H1
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+>&nbsp;<A HREF="Snap-Util-FileServe.html#t%3AMimeMap" TARGET="main"
+>MimeMap</A
+> </DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>type</SPAN
+>&nbsp;<A HREF="Snap-Util-FileServe.html#t%3AHandlerMap" TARGET="main"
+>HandlerMap</A
+> m</DIV
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Snap-Util-FileServe.html#t%3ADirectoryConfig" TARGET="main"
+>DirectoryConfig</A
+> m</DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AsimpleDirectoryConfig" TARGET="main"
+>simpleDirectoryConfig</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AdefaultDirectoryConfig" TARGET="main"
+>defaultDirectoryConfig</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AfancyDirectoryConfig" TARGET="main"
+>fancyDirectoryConfig</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AdefaultIndexGenerator" TARGET="main"
+>defaultIndexGenerator</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AdefaultMimeTypes" TARGET="main"
+>defaultMimeTypes</A
+></DIV
+> <H1
+>File servers
+</H1
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AserveDirectory" TARGET="main"
+>serveDirectory</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AserveDirectoryWith" TARGET="main"
+>serveDirectoryWith</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AserveFile" TARGET="main"
+>serveFile</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AserveFileAs" TARGET="main"
+>serveFileAs</A
+></DIV
+> <H1
+>Deprecated interface
+</H1
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AfileServe" TARGET="main"
+>fileServe</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AfileServe%27" TARGET="main"
+>fileServe'</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AfileServeSingle" TARGET="main"
+>fileServeSingle</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Util-FileServe.html#v%3AfileServeSingle%27" TARGET="main"
+>fileServeSingle'</A
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

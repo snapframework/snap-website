@@ -1,0 +1,217 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>{-# LANGUAGE BangPatterns      #-}
+<span class="lineno">    2 </span>{-# LANGUAGE OverloadedStrings #-}
+<span class="lineno">    3 </span>{-# LANGUAGE RankNTypes        #-}
+<span class="lineno">    4 </span>
+<span class="lineno">    5 </span>module Snap.Internal.Iteratee.KnuthMorrisPratt
+<span class="lineno">    6 </span>  ( kmpEnumeratee
+<span class="lineno">    7 </span>  , MatchInfo(..) )
+<span class="lineno">    8 </span>  where
+<span class="lineno">    9 </span>
+<span class="lineno">   10 </span>import           Control.Monad.Trans
+<span class="lineno">   11 </span>import qualified Data.ByteString.Char8 as S
+<span class="lineno">   12 </span>import           Data.ByteString.Char8 (ByteString)
+<span class="lineno">   13 </span>import           Data.ByteString.Unsafe as S
+<span class="lineno">   14 </span>import           Data.Enumerator hiding (head)
+<span class="lineno">   15 </span>import qualified Data.Enumerator.List as EL
+<span class="lineno">   16 </span>import qualified Data.Vector           as V
+<span class="lineno">   17 </span>import           Data.Vector           (Vector)
+<span class="lineno">   18 </span>import qualified Data.Vector.Mutable   as MV
+<span class="lineno">   19 </span>import           Prelude               hiding (head)
+<span class="lineno">   20 </span>
+<span class="lineno">   21 </span>------------------------------------------------------------------------------
+<span class="lineno">   22 </span>data MatchInfo = Match !ByteString
+<span class="lineno">   23 </span>               | NoMatch !ByteString
+<span class="lineno">   24 </span>  deriving (<span class="decl"><span class="istickedoff"><span class="decl"><span class="nottickedoff">Show</span></span></span></span>)
+<span class="lineno">   25 </span>
+<span class="lineno">   26 </span>------------------------------------------------------------------------------
+<span class="lineno">   27 </span>-- FIXME: s/MonadIO/Monad/
+<span class="lineno">   28 </span>kmpEnumeratee :: (MonadIO m) =&gt;
+<span class="lineno">   29 </span>                 ByteString                         -- ^ needle
+<span class="lineno">   30 </span>              -&gt; Enumeratee ByteString MatchInfo m a
+<span class="lineno">   31 </span><span class="decl"><span class="istickedoff">kmpEnumeratee needle = checkDone (iter &quot;&quot; 0)</span>
+<span class="lineno">   32 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   33 </span><span class="spaces">    </span><span class="istickedoff">needleLen = S.length needle</span>
+<span class="lineno">   34 </span><span class="spaces">    </span><span class="istickedoff">table     = buildKmpTable needle</span>
+<span class="lineno">   35 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   36 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">   37 </span><span class="spaces">    </span><span class="istickedoff">iter :: (MonadIO m) =&gt;</span>
+<span class="lineno">   38 </span><span class="spaces">            </span><span class="istickedoff">ByteString</span>
+<span class="lineno">   39 </span><span class="spaces">         </span><span class="istickedoff">-- ^ num bytes left over from previous match</span>
+<span class="lineno">   40 </span><span class="spaces">         </span><span class="istickedoff">-&gt; Int  -- ^ needle index</span>
+<span class="lineno">   41 </span><span class="spaces">         </span><span class="istickedoff">-&gt; (Stream MatchInfo -&gt; Iteratee MatchInfo m a)</span>
+<span class="lineno">   42 </span><span class="spaces">         </span><span class="istickedoff">-- ^ iteratee continuation</span>
+<span class="lineno">   43 </span><span class="spaces">         </span><span class="istickedoff">-&gt; Iteratee ByteString m (Step MatchInfo m a)</span>
+<span class="lineno">   44 </span><span class="spaces">    </span><span class="istickedoff">iter !leftOver !needleIndex !k = do</span>
+<span class="lineno">   45 </span><span class="spaces">        </span><span class="istickedoff">EL.head &gt;&gt;= maybe (finish leftOver k)</span>
+<span class="lineno">   46 </span><span class="spaces">                          </span><span class="istickedoff">(processChunk leftOver needleIndex k)</span>
+<span class="lineno">   47 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   48 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">   49 </span><span class="spaces">    </span><span class="istickedoff">finish :: (MonadIO m) =&gt;</span>
+<span class="lineno">   50 </span><span class="spaces">              </span><span class="istickedoff">ByteString</span>
+<span class="lineno">   51 </span><span class="spaces">           </span><span class="istickedoff">-&gt; (Stream MatchInfo -&gt; Iteratee MatchInfo m a)</span>
+<span class="lineno">   52 </span><span class="spaces">           </span><span class="istickedoff">-&gt; Iteratee ByteString m (Step MatchInfo m a)</span>
+<span class="lineno">   53 </span><span class="spaces">    </span><span class="istickedoff">finish !leftOver !k</span>
+<span class="lineno">   54 </span><span class="spaces">        </span><span class="istickedoff">| <span class="tickonlytrue">S.null leftOver</span> = lift $ runIteratee $ k EOF</span>
+<span class="lineno">   55 </span><span class="spaces">        </span><span class="istickedoff">| <span class="nottickedoff">otherwise</span> = <span class="nottickedoff">do</span></span>
+<span class="lineno">   56 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">step &lt;- lift $ runIteratee $ k $ Chunks [NoMatch leftOver]</span></span>
+<span class="lineno">   57 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">checkDone (\k' -&gt; lift $ runIteratee $ k' EOF) step</span></span>
+<span class="lineno">   58 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   59 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">   60 </span><span class="spaces">    </span><span class="istickedoff">processChunk :: (MonadIO m) =&gt;</span>
+<span class="lineno">   61 </span><span class="spaces">                    </span><span class="istickedoff">ByteString</span>
+<span class="lineno">   62 </span><span class="spaces">                 </span><span class="istickedoff">-&gt; Int</span>
+<span class="lineno">   63 </span><span class="spaces">                 </span><span class="istickedoff">-&gt; (Stream MatchInfo -&gt; Iteratee MatchInfo m a)</span>
+<span class="lineno">   64 </span><span class="spaces">                 </span><span class="istickedoff">-&gt; ByteString</span>
+<span class="lineno">   65 </span><span class="spaces">                 </span><span class="istickedoff">-&gt; Iteratee ByteString m (Step MatchInfo m a)</span>
+<span class="lineno">   66 </span><span class="spaces">    </span><span class="istickedoff">processChunk !leftOver !needleIndex !k !input = go 0 needleIndex</span>
+<span class="lineno">   67 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   68 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">   69 </span><span class="spaces">        </span><span class="istickedoff">!inputLen    = S.length input</span>
+<span class="lineno">   70 </span><span class="spaces">        </span><span class="istickedoff">!leftOverLen = S.length leftOver</span>
+<span class="lineno">   71 </span><span class="spaces">        </span><span class="istickedoff">!totalLen    = inputLen + leftOverLen</span>
+<span class="lineno">   72 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   73 </span><span class="spaces">        </span><span class="istickedoff">-- m = start of match in leftOver + index</span>
+<span class="lineno">   74 </span><span class="spaces">        </span><span class="istickedoff">-- i = needle index</span>
+<span class="lineno">   75 </span><span class="spaces">        </span><span class="istickedoff">go !m !i</span>
+<span class="lineno">   76 </span><span class="spaces">           </span><span class="istickedoff">| (m+i &gt;= totalLen) = finalize m i</span>
+<span class="lineno">   77 </span><span class="spaces">           </span><span class="istickedoff">| (S.unsafeIndex needle i == S.unsafeIndex input ii) =</span>
+<span class="lineno">   78 </span><span class="spaces">                 </span><span class="istickedoff">if i == needleLen - 1</span>
+<span class="lineno">   79 </span><span class="spaces">                   </span><span class="istickedoff">then yieldMatch m</span>
+<span class="lineno">   80 </span><span class="spaces">                   </span><span class="istickedoff">else go m (i+1)</span>
+<span class="lineno">   81 </span><span class="spaces">           </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = go m' i'</span>
+<span class="lineno">   82 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   83 </span><span class="spaces">          </span><span class="istickedoff">where</span>
+<span class="lineno">   84 </span><span class="spaces">            </span><span class="istickedoff">ii = i + m - leftOverLen</span>
+<span class="lineno">   85 </span><span class="spaces">            </span><span class="istickedoff">ti = V.unsafeIndex table i</span>
+<span class="lineno">   86 </span><span class="spaces">            </span><span class="istickedoff">m' = m + i - ti</span>
+<span class="lineno">   87 </span><span class="spaces">            </span><span class="istickedoff">i' = max 0 ti</span>
+<span class="lineno">   88 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   89 </span><span class="spaces">           </span><span class="istickedoff"></span>
+<span class="lineno">   90 </span><span class="spaces">        </span><span class="istickedoff">----------------------------------------------------------------------</span>
+<span class="lineno">   91 </span><span class="spaces">        </span><span class="istickedoff">-- here we've reached the end of the input chunk. A couple of things</span>
+<span class="lineno">   92 </span><span class="spaces">        </span><span class="istickedoff">-- we know:</span>
+<span class="lineno">   93 </span><span class="spaces">        </span><span class="istickedoff">--</span>
+<span class="lineno">   94 </span><span class="spaces">        </span><span class="istickedoff">-- * the input from [0..m) doesn't match the needle and we should</span>
+<span class="lineno">   95 </span><span class="spaces">        </span><span class="istickedoff">--   yield it to the inner iteratee. However if m == 0 then the whole</span>
+<span class="lineno">   96 </span><span class="spaces">        </span><span class="istickedoff">--   input string was a match and we need to feed our previous</span>
+<span class="lineno">   97 </span><span class="spaces">        </span><span class="istickedoff">--   leftovers forward plus our entire input string.</span>
+<span class="lineno">   98 </span><span class="spaces">        </span><span class="istickedoff">--</span>
+<span class="lineno">   99 </span><span class="spaces">        </span><span class="istickedoff">-- * the input from [m..ilen) is a partial match that we need to feed</span>
+<span class="lineno">  100 </span><span class="spaces">        </span><span class="istickedoff">--   forward</span>
+<span class="lineno">  101 </span><span class="spaces">        </span><span class="istickedoff">finalize m i</span>
+<span class="lineno">  102 </span><span class="spaces">            </span><span class="istickedoff">| m == 0 = iter (S.append leftOver input) i k</span>
+<span class="lineno">  103 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  104 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlyfalse">m &lt; leftOverLen</span> = <span class="nottickedoff">do</span></span>
+<span class="lineno">  105 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">-- here part of the leftover is the no match and we carry the</span></span>
+<span class="lineno">  106 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">-- rest forward along with the input</span></span>
+<span class="lineno">  107 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">let (nomatch, restLeftOver) = S.splitAt m leftOver</span></span>
+<span class="lineno">  108 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">let rest = S.append restLeftOver input</span></span>
+<span class="lineno">  109 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">let chunk = Chunks [NoMatch nomatch]</span></span>
+<span class="lineno">  110 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">step &lt;- lift $ runIteratee $ k chunk</span></span>
+<span class="lineno">  111 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">checkDone (iter rest i) step</span></span>
+<span class="lineno">  112 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  113 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
+<span class="lineno">  114 </span><span class="spaces">                </span><span class="istickedoff">-- the whole leftOver part was garbage.</span>
+<span class="lineno">  115 </span><span class="spaces">                </span><span class="istickedoff">let m' = m - leftOverLen</span>
+<span class="lineno">  116 </span><span class="spaces">                </span><span class="istickedoff">let (nomatchInput, rest) = S.splitAt m' input</span>
+<span class="lineno">  117 </span><span class="spaces">                </span><span class="istickedoff">let nomatch = S.append leftOver nomatchInput</span>
+<span class="lineno">  118 </span><span class="spaces">                </span><span class="istickedoff">let chunk = Chunks [NoMatch nomatch]</span>
+<span class="lineno">  119 </span><span class="spaces">                </span><span class="istickedoff">step &lt;- lift $ runIteratee $ k chunk</span>
+<span class="lineno">  120 </span><span class="spaces">                </span><span class="istickedoff">checkDone (iter rest i) step</span>
+<span class="lineno">  121 </span><span class="spaces">            </span><span class="istickedoff"></span>
+<span class="lineno">  122 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  123 </span><span class="spaces">        </span><span class="istickedoff">----------------------------------------------------------------------</span>
+<span class="lineno">  124 </span><span class="spaces">        </span><span class="istickedoff">-- we got a match! We need to yield [0..m) to the inner iteratee as a</span>
+<span class="lineno">  125 </span><span class="spaces">        </span><span class="istickedoff">-- nomatch, then yield the needle, then go back to processing the rest</span>
+<span class="lineno">  126 </span><span class="spaces">        </span><span class="istickedoff">-- of the input from scratch. Same caveats re: m==0 apply here.</span>
+<span class="lineno">  127 </span><span class="spaces">        </span><span class="istickedoff">yieldMatch m </span>
+<span class="lineno">  128 </span><span class="spaces">            </span><span class="istickedoff">| m == 0 = do</span>
+<span class="lineno">  129 </span><span class="spaces">                 </span><span class="istickedoff">-- we have no garbage and just advance by the size of the needle</span>
+<span class="lineno">  130 </span><span class="spaces">                 </span><span class="istickedoff">step &lt;- lift $ runIteratee $ k $ Chunks [Match needle]</span>
+<span class="lineno">  131 </span><span class="spaces">                 </span><span class="istickedoff">-- we also can be sure here that the needle crosses the</span>
+<span class="lineno">  132 </span><span class="spaces">                 </span><span class="istickedoff">-- leftOver..input boundary (otherwise we would have yielded</span>
+<span class="lineno">  133 </span><span class="spaces">                 </span><span class="istickedoff">-- it earlier)</span>
+<span class="lineno">  134 </span><span class="spaces">                 </span><span class="istickedoff">let m' = needleLen - leftOverLen</span>
+<span class="lineno">  135 </span><span class="spaces">                 </span><span class="istickedoff">let rest = S.drop m' input</span>
+<span class="lineno">  136 </span><span class="spaces">                 </span><span class="istickedoff">checkDone (\k' -&gt; processChunk &quot;&quot; 0 k' rest) step</span>
+<span class="lineno">  137 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  138 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
+<span class="lineno">  139 </span><span class="spaces">                 </span><span class="istickedoff">let (garbage,rest) =</span>
+<span class="lineno">  140 </span><span class="spaces">                         </span><span class="istickedoff">if <span class="tickonlyfalse">m &lt; leftOverLen</span></span>
+<span class="lineno">  141 </span><span class="spaces">                           </span><span class="istickedoff">then <span class="nottickedoff">let (a,b) = S.splitAt m leftOver</span></span>
+<span class="lineno">  142 </span><span class="spaces">                                </span><span class="istickedoff"><span class="nottickedoff">in (a, S.drop needleLen $ S.append b input)</span></span>
+<span class="lineno">  143 </span><span class="spaces">                           </span><span class="istickedoff">else let m'    = m - leftOverLen</span>
+<span class="lineno">  144 </span><span class="spaces">                                    </span><span class="istickedoff">(a,b) = S.splitAt m' input</span>
+<span class="lineno">  145 </span><span class="spaces">                                </span><span class="istickedoff">in (S.append leftOver a, S.drop needleLen b)</span>
+<span class="lineno">  146 </span><span class="spaces">                 </span><span class="istickedoff"></span>
+<span class="lineno">  147 </span><span class="spaces">                 </span><span class="istickedoff">step &lt;- lift $ runIteratee $ k $ Chunks [NoMatch garbage]</span>
+<span class="lineno">  148 </span><span class="spaces">                 </span><span class="istickedoff">flip checkDone step $ \k' -&gt; do</span>
+<span class="lineno">  149 </span><span class="spaces">                     </span><span class="istickedoff">step' &lt;- lift $ runIteratee $ k' $ Chunks [Match needle]</span>
+<span class="lineno">  150 </span><span class="spaces">                     </span><span class="istickedoff">flip checkDone step' $ \k'' -&gt; processChunk &quot;&quot; 0 k'' rest</span></span>
+<span class="lineno">  151 </span>
+<span class="lineno">  152 </span>
+<span class="lineno">  153 </span>------------------------------------------------------------------------------
+<span class="lineno">  154 </span>buildKmpTable :: ByteString -&gt; Vector Int
+<span class="lineno">  155 </span><span class="decl"><span class="istickedoff">buildKmpTable needle = V.create $ do</span>
+<span class="lineno">  156 </span><span class="spaces">    </span><span class="istickedoff">t &lt;- MV.new (max 2 needleLen)</span>
+<span class="lineno">  157 </span><span class="spaces">    </span><span class="istickedoff">MV.write t 0 (-1)</span>
+<span class="lineno">  158 </span><span class="spaces">    </span><span class="istickedoff">MV.write t 1 0</span>
+<span class="lineno">  159 </span><span class="spaces">    </span><span class="istickedoff">f 2 0 t</span>
+<span class="lineno">  160 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  161 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  162 </span><span class="spaces">    </span><span class="istickedoff">needleLen = S.length needle</span>
+<span class="lineno">  163 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  164 </span><span class="spaces">    </span><span class="istickedoff">f !pos !cnd t =</span>
+<span class="lineno">  165 </span><span class="spaces">        </span><span class="istickedoff">-- are we finished? return the vector.</span>
+<span class="lineno">  166 </span><span class="spaces">        </span><span class="istickedoff">if pos &gt;= needleLen</span>
+<span class="lineno">  167 </span><span class="spaces">          </span><span class="istickedoff">then return t</span>
+<span class="lineno">  168 </span><span class="spaces">          </span><span class="istickedoff">else do</span>
+<span class="lineno">  169 </span><span class="spaces">            </span><span class="istickedoff">let wPos1 = S.unsafeIndex needle (pos-1)</span>
+<span class="lineno">  170 </span><span class="spaces">            </span><span class="istickedoff">let wCnd  = S.unsafeIndex needle cnd</span>
+<span class="lineno">  171 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  172 </span><span class="spaces">            </span><span class="istickedoff">if wPos1 == wCnd</span>
+<span class="lineno">  173 </span><span class="spaces">              </span><span class="istickedoff">then do</span>
+<span class="lineno">  174 </span><span class="spaces">                </span><span class="istickedoff">-- first case: the substring continues</span>
+<span class="lineno">  175 </span><span class="spaces">                </span><span class="istickedoff">let cnd' = cnd+1</span>
+<span class="lineno">  176 </span><span class="spaces">                </span><span class="istickedoff">MV.write t pos cnd'</span>
+<span class="lineno">  177 </span><span class="spaces">                </span><span class="istickedoff">f (pos+1) cnd' t</span>
+<span class="lineno">  178 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  179 </span><span class="spaces">              </span><span class="istickedoff">else if cnd &gt; 0</span>
+<span class="lineno">  180 </span><span class="spaces">                     </span><span class="istickedoff">then do</span>
+<span class="lineno">  181 </span><span class="spaces">                       </span><span class="istickedoff">-- second case: it doesn't, but we can fall back</span>
+<span class="lineno">  182 </span><span class="spaces">                       </span><span class="istickedoff">cnd' &lt;- MV.read t cnd</span>
+<span class="lineno">  183 </span><span class="spaces">                       </span><span class="istickedoff">f pos cnd' t</span>
+<span class="lineno">  184 </span><span class="spaces">                     </span><span class="istickedoff">else do</span>
+<span class="lineno">  185 </span><span class="spaces">                       </span><span class="istickedoff">-- we have run out of candidates.</span>
+<span class="lineno">  186 </span><span class="spaces">                       </span><span class="istickedoff">MV.write t pos 0</span>
+<span class="lineno">  187 </span><span class="spaces">                       </span><span class="istickedoff">f (pos+1) cnd t</span></span>
+<span class="lineno">  188 </span>
+<span class="lineno">  189 </span>
+<span class="lineno">  190 </span>{-
+<span class="lineno">  191 </span>testIt :: ByteString -&gt; [ByteString] -&gt; IO [MatchInfo]
+<span class="lineno">  192 </span>testIt needle haystack = do
+<span class="lineno">  193 </span>    consumeStep &lt;- runIteratee consume
+<span class="lineno">  194 </span>    eteeStep    &lt;- runIteratee $ etee consumeStep
+<span class="lineno">  195 </span>    -- iter :: Iteratee ByteString m (Step MatchInfo m [MatchInfo])
+<span class="lineno">  196 </span>    let iter = enumList 1 haystack eteeStep
+<span class="lineno">  197 </span>    finalInnerStep &lt;- run_ iter
+<span class="lineno">  198 </span>    run_ $ returnI finalInnerStep
+<span class="lineno">  199 </span>
+<span class="lineno">  200 </span>  where
+<span class="lineno">  201 </span>    etee = kmpEnumeratee needle
+<span class="lineno">  202 </span>
+<span class="lineno">  203 </span>-}
+
+</pre>
+</html>

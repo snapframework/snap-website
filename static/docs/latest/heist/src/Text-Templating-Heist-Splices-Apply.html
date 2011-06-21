@@ -7,70 +7,58 @@
 <link type='text/css' rel='stylesheet' href='hscolour.css' />
 </head>
 <body>
-<pre><a name="line-1"></a><span class='hs-keyword'>module</span> <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Splices</span><span class='hs-varop'>.</span><span class='hs-conid'>Apply</span> <span class='hs-keyword'>where</span>
+<pre><a name="line-1"></a><span class='hs-comment'>{-# LANGUAGE OverloadedStrings #-}</span>
 <a name="line-2"></a>
-<a name="line-3"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-4"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Maybe</span>
-<a name="line-5"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Text</span> <span class='hs-layout'>(</span><span class='hs-conid'>Text</span><span class='hs-layout'>)</span>
-<a name="line-6"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Encoding</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>T</span>
-<a name="line-7"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>XmlHtml</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>X</span>
-<a name="line-8"></a>
-<a name="line-9"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-10"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span>
-<a name="line-11"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Types</span>
-<a name="line-12"></a>
-<a name="line-13"></a><a name="applyTag"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-14"></a><span class='hs-comment'>-- | Default name for the apply splice.</span>
-<a name="line-15"></a><span class='hs-definition'>applyTag</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Text</span>
-<a name="line-16"></a><span class='hs-definition'>applyTag</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"apply"</span>
-<a name="line-17"></a>
-<a name="line-18"></a>
-<a name="line-19"></a><a name="applyAttr"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-20"></a><span class='hs-comment'>-- | Default attribute name for the apply tag.</span>
-<a name="line-21"></a><span class='hs-definition'>applyAttr</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Text</span>
-<a name="line-22"></a><span class='hs-definition'>applyAttr</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"template"</span>
-<a name="line-23"></a>
-<a name="line-24"></a>
-<a name="line-25"></a><a name="rawApply"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-26"></a><span class='hs-comment'>-- | Raw core of apply functionality.  This is abstracted for use in other</span>
-<a name="line-27"></a><span class='hs-comment'>-- places like an enhanced (from the original) bind</span>
-<a name="line-28"></a><span class='hs-definition'>rawApply</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Monad</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span>
-<a name="line-29"></a>         <span class='hs-keyglyph'>=&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>X</span><span class='hs-varop'>.</span><span class='hs-conid'>Node</span><span class='hs-keyglyph'>]</span>
-<a name="line-30"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>TPath</span>
-<a name="line-31"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>X</span><span class='hs-varop'>.</span><span class='hs-conid'>Node</span><span class='hs-keyglyph'>]</span>
-<a name="line-32"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>HeistT</span> <span class='hs-varid'>m</span> <span class='hs-conid'>Template</span>
-<a name="line-33"></a><span class='hs-definition'>rawApply</span> <span class='hs-varid'>calledNodes</span> <span class='hs-varid'>newContext</span> <span class='hs-varid'>paramNodes</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-34"></a>    <span class='hs-varid'>st</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getTS</span>  <span class='hs-comment'>-- Can't use localTS here because the modifier is not pure</span>
-<a name="line-35"></a>    <span class='hs-varid'>processedParams</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runNodeList</span> <span class='hs-varid'>paramNodes</span>
-<a name="line-36"></a>    <span class='hs-varid'>modifyTS</span> <span class='hs-layout'>(</span><span class='hs-varid'>bindSplice</span> <span class='hs-str'>"content"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>return</span> <span class='hs-varid'>processedParams</span><span class='hs-layout'>)</span>
-<a name="line-37"></a>    <span class='hs-varid'>setContext</span> <span class='hs-varid'>newContext</span>
-<a name="line-38"></a>    <span class='hs-varid'>result</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runNodeList</span> <span class='hs-varid'>calledNodes</span>
-<a name="line-39"></a>    <span class='hs-varid'>restoreTS</span> <span class='hs-varid'>st</span>
-<a name="line-40"></a>    <span class='hs-varid'>return</span> <span class='hs-varid'>result</span>
-<a name="line-41"></a>
-<a name="line-42"></a>
-<a name="line-43"></a><a name="applyNodes"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-44"></a><span class='hs-comment'>-- | Applies a template as if the supplied nodes were the children of the</span>
-<a name="line-45"></a><span class='hs-comment'>-- &lt;apply&gt; tag.</span>
-<a name="line-46"></a><span class='hs-definition'>applyNodes</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Monad</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Template</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Text</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Splice</span> <span class='hs-varid'>m</span>
-<a name="line-47"></a><span class='hs-definition'>applyNodes</span> <span class='hs-varid'>nodes</span> <span class='hs-varid'>template</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-48"></a>    <span class='hs-varid'>st</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getTS</span>
-<a name="line-49"></a>    <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-conid'>[]</span><span class='hs-layout'>)</span> <span class='hs-comment'>-- TODO: error handling</span>
-<a name="line-50"></a>          <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-layout'>,</span><span class='hs-varid'>ctx</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-51"></a>              <span class='hs-varid'>addDoctype</span> <span class='hs-varop'>$</span> <span class='hs-varid'>maybeToList</span> <span class='hs-varop'>$</span> <span class='hs-conid'>X</span><span class='hs-varop'>.</span><span class='hs-varid'>docType</span> <span class='hs-varop'>$</span> <span class='hs-varid'>dfDoc</span> <span class='hs-varid'>t</span>
-<a name="line-52"></a>              <span class='hs-varid'>rawApply</span> <span class='hs-layout'>(</span><span class='hs-conid'>X</span><span class='hs-varop'>.</span><span class='hs-varid'>docContent</span> <span class='hs-varop'>$</span> <span class='hs-varid'>dfDoc</span> <span class='hs-varid'>t</span><span class='hs-layout'>)</span> <span class='hs-varid'>ctx</span> <span class='hs-varid'>nodes</span><span class='hs-layout'>)</span>
-<a name="line-53"></a>          <span class='hs-layout'>(</span><span class='hs-varid'>lookupTemplate</span> <span class='hs-layout'>(</span><span class='hs-conid'>T</span><span class='hs-varop'>.</span><span class='hs-varid'>encodeUtf8</span> <span class='hs-varid'>template</span><span class='hs-layout'>)</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span>
-<a name="line-54"></a>
-<a name="line-55"></a>
-<a name="line-56"></a><a name="applyImpl"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-57"></a><span class='hs-comment'>-- | Implementation of the apply splice.</span>
-<a name="line-58"></a><span class='hs-definition'>applyImpl</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Monad</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Splice</span> <span class='hs-varid'>m</span>
-<a name="line-59"></a><span class='hs-definition'>applyImpl</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-60"></a>    <span class='hs-varid'>node</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getParamNode</span>
-<a name="line-61"></a>    <span class='hs-keyword'>case</span> <span class='hs-conid'>X</span><span class='hs-varop'>.</span><span class='hs-varid'>getAttribute</span> <span class='hs-varid'>applyAttr</span> <span class='hs-varid'>node</span> <span class='hs-keyword'>of</span>
-<a name="line-62"></a>        <span class='hs-conid'>Nothing</span>   <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>[]</span> <span class='hs-comment'>-- TODO: error handling</span>
-<a name="line-63"></a>        <span class='hs-conid'>Just</span> <span class='hs-varid'>template</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>applyNodes</span> <span class='hs-layout'>(</span><span class='hs-conid'>X</span><span class='hs-varop'>.</span><span class='hs-varid'>childNodes</span> <span class='hs-varid'>node</span><span class='hs-layout'>)</span> <span class='hs-varid'>template</span>
-<a name="line-64"></a>
-<a name="line-65"></a>
+<a name="line-3"></a><span class='hs-keyword'>module</span> <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Splices</span><span class='hs-varop'>.</span><span class='hs-conid'>Apply</span> <span class='hs-keyword'>where</span>
+<a name="line-4"></a>
+<a name="line-5"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-6"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Maybe</span>
+<a name="line-7"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Text</span> <span class='hs-layout'>(</span><span class='hs-conid'>Text</span><span class='hs-layout'>)</span>
+<a name="line-8"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Text</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>T</span>
+<a name="line-9"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Encoding</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>T</span>
+<a name="line-10"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>XmlHtml</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>X</span>
+<a name="line-11"></a>
+<a name="line-12"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-13"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span>
+<a name="line-14"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Templating</span><span class='hs-varop'>.</span><span class='hs-conid'>Heist</span><span class='hs-varop'>.</span><span class='hs-conid'>Types</span>
+<a name="line-15"></a>
+<a name="line-16"></a><a name="applyTag"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-17"></a><span class='hs-comment'>-- | Default name for the apply splice.</span>
+<a name="line-18"></a><span class='hs-definition'>applyTag</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Text</span>
+<a name="line-19"></a><span class='hs-definition'>applyTag</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"apply"</span>
+<a name="line-20"></a>
+<a name="line-21"></a>
+<a name="line-22"></a><a name="applyAttr"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-23"></a><span class='hs-comment'>-- | Default attribute name for the apply tag.</span>
+<a name="line-24"></a><span class='hs-definition'>applyAttr</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Text</span>
+<a name="line-25"></a><span class='hs-definition'>applyAttr</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"template"</span>
+<a name="line-26"></a>
+<a name="line-27"></a>
+<a name="line-28"></a><a name="applyImpl"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-29"></a><span class='hs-comment'>-- | Implementation of the apply splice.</span>
+<a name="line-30"></a><span class='hs-definition'>applyImpl</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Monad</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Splice</span> <span class='hs-varid'>m</span>
+<a name="line-31"></a><span class='hs-definition'>applyImpl</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-32"></a>    <span class='hs-varid'>node</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getParamNode</span>
+<a name="line-33"></a>    <span class='hs-keyword'>case</span> <span class='hs-conid'>X</span><span class='hs-varop'>.</span><span class='hs-varid'>getAttribute</span> <span class='hs-varid'>applyAttr</span> <span class='hs-varid'>node</span> <span class='hs-keyword'>of</span>
+<a name="line-34"></a>        <span class='hs-conid'>Nothing</span>   <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>[]</span> <span class='hs-comment'>-- TODO: error handling</span>
+<a name="line-35"></a>        <span class='hs-conid'>Just</span> <span class='hs-varid'>attr</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-36"></a>            <span class='hs-varid'>st</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getTS</span>
+<a name="line-37"></a>            <span class='hs-varid'>maybe</span> <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-conid'>[]</span><span class='hs-layout'>)</span> <span class='hs-comment'>-- TODO: error handling</span>
+<a name="line-38"></a>                  <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-layout'>,</span><span class='hs-varid'>ctx</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-39"></a>                      <span class='hs-varid'>addDoctype</span> <span class='hs-varop'>$</span> <span class='hs-varid'>maybeToList</span> <span class='hs-varop'>$</span> <span class='hs-conid'>X</span><span class='hs-varop'>.</span><span class='hs-varid'>docType</span> <span class='hs-varid'>t</span>
+<a name="line-40"></a>                      <span class='hs-varid'>processedChildren</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runNodeList</span> <span class='hs-varop'>$</span> <span class='hs-conid'>X</span><span class='hs-varop'>.</span><span class='hs-varid'>childNodes</span> <span class='hs-varid'>node</span>
+<a name="line-41"></a>                      <span class='hs-varid'>modifyTS</span> <span class='hs-layout'>(</span><span class='hs-varid'>bindSplice</span> <span class='hs-str'>"content"</span> <span class='hs-varop'>$</span>
+<a name="line-42"></a>                                <span class='hs-varid'>return</span> <span class='hs-varid'>processedChildren</span><span class='hs-layout'>)</span>
+<a name="line-43"></a>                      <span class='hs-varid'>setContext</span> <span class='hs-varid'>ctx</span>
+<a name="line-44"></a>                      <span class='hs-varid'>result</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runNodeList</span> <span class='hs-varop'>$</span> <span class='hs-conid'>X</span><span class='hs-varop'>.</span><span class='hs-varid'>docContent</span> <span class='hs-varid'>t</span>
+<a name="line-45"></a>                      <span class='hs-varid'>restoreTS</span> <span class='hs-varid'>st</span>
+<a name="line-46"></a>                      <span class='hs-varid'>return</span> <span class='hs-varid'>result</span><span class='hs-layout'>)</span>
+<a name="line-47"></a>                  <span class='hs-layout'>(</span><span class='hs-varid'>lookupTemplate</span> <span class='hs-layout'>(</span><span class='hs-conid'>T</span><span class='hs-varop'>.</span><span class='hs-varid'>encodeUtf8</span> <span class='hs-varid'>attr</span><span class='hs-layout'>)</span>
+<a name="line-48"></a>                                  <span class='hs-layout'>(</span><span class='hs-varid'>st</span> <span class='hs-layout'>{</span><span class='hs-sel'>_curContext</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>nextCtx</span> <span class='hs-varid'>attr</span> <span class='hs-varid'>st</span><span class='hs-layout'>}</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-49"></a>  <span class='hs-keyword'>where</span> <span class='hs-varid'>nextCtx</span> <span class='hs-varid'>name</span> <span class='hs-varid'>st</span>
+<a name="line-50"></a>            <span class='hs-keyglyph'>|</span> <span class='hs-conid'>T</span><span class='hs-varop'>.</span><span class='hs-varid'>isPrefixOf</span> <span class='hs-str'>"/"</span> <span class='hs-varid'>name</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>[]</span>
+<a name="line-51"></a>            <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>             <span class='hs-keyglyph'>=</span> <span class='hs-sel'>_curContext</span> <span class='hs-varid'>st</span>
+<a name="line-52"></a>
+<a name="line-53"></a>
 </pre></body>
 </html>

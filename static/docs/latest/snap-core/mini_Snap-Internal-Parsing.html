@@ -1,4 +1,121 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Snap.Internal.Parsing</title><link href="haddock.css" rel="stylesheet" type="text/css" title="haddock" /><script src="haddock-util.js" type="text/javascript"></script><script type="text/javascript">//<![CDATA[
-window.onload = function () {pageLoad();};
-//]]>
-</script></head><body id="mini"><div id="module-header"><p class="caption">Snap.Internal.Parsing</p></div><div id="interface"><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:fullyParse" target="main">fullyParse</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:parseNum" target="main">parseNum</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:digit" target="main">digit</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:letter" target="main">letter</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:sp" target="main">sp</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:untilEOL" target="main">untilEOL</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:crlf" target="main">crlf</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:spaces" target="main">spaces</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:pSpaces" target="main">pSpaces</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:fieldChars" target="main">fieldChars</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:fieldCharTable" target="main">fieldCharTable</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:pHeaders" target="main">pHeaders</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:pWord" target="main">pWord</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:pQuotedString" target="main">pQuotedString</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:isRFCText" target="main">isRFCText</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:matchAll" target="main">matchAll</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:pAvPairs" target="main">pAvPairs</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:pAvPair" target="main">pAvPair</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:pParameter" target="main">pParameter</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:trim" target="main">trim</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:pValueWithParameters" target="main">pValueWithParameters</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:pContentTypeWithParameters" target="main">pContentTypeWithParameters</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:pToken" target="main">pToken</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:isToken" target="main">isToken</a></p></div><div class="top"><p class="src"><a href="Snap-Internal-Parsing.html#v:strictize" target="main">strictize</a></p></div></div></body></html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Snap.Internal.Parsing</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+></HEAD
+><BODY
+><DIV CLASS="outer"
+><DIV CLASS="mini-topbar"
+>Snap.Internal.Parsing</DIV
+><DIV CLASS="mini-synopsis"
+><DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3AfullyParse" TARGET="main"
+>fullyParse</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3AparseNum" TARGET="main"
+>parseNum</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3Adigit" TARGET="main"
+>digit</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3Aletter" TARGET="main"
+>letter</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3Asp" TARGET="main"
+>sp</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3AuntilEOL" TARGET="main"
+>untilEOL</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3Acrlf" TARGET="main"
+>crlf</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3Aspaces" TARGET="main"
+>spaces</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3ApSpaces" TARGET="main"
+>pSpaces</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3AfieldChars" TARGET="main"
+>fieldChars</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3AfieldCharTable" TARGET="main"
+>fieldCharTable</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3ApHeaders" TARGET="main"
+>pHeaders</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3ApWord" TARGET="main"
+>pWord</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3ApQuotedString" TARGET="main"
+>pQuotedString</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3AisRFCText" TARGET="main"
+>isRFCText</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3AmatchAll" TARGET="main"
+>matchAll</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3ApAvPairs" TARGET="main"
+>pAvPairs</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3ApAvPair" TARGET="main"
+>pAvPair</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3ApParameter" TARGET="main"
+>pParameter</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3Atrim" TARGET="main"
+>trim</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3ApValueWithParameters" TARGET="main"
+>pValueWithParameters</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3ApContentTypeWithParameters" TARGET="main"
+>pContentTypeWithParameters</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3ApToken" TARGET="main"
+>pToken</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3AisToken" TARGET="main"
+>isToken</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Snap-Internal-Parsing.html#v%3Astrictize" TARGET="main"
+>strictize</A
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

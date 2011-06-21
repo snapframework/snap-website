@@ -1,12 +1,223 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Text.XmlHtml.Cursor</title><link href="haddock.css" rel="stylesheet" type="text/css" title="haddock" /><script src="haddock-util.js" type="text/javascript"></script><script type="text/javascript">//<![CDATA[
-window.onload = function () {pageLoad();};
-//]]>
-</script></head><body id="mini"><div id="module-header"><p class="caption">Text.XmlHtml.Cursor</p></div><div id="interface"><h1>Cursor type
-</h1><div class="top"><p class="src"><span class="keyword">data</span> <a href="Text-XmlHtml-Cursor.html#t:Cursor" target="main">Cursor</a> </p></div><h1>Conversion to and from cursors
-</h1><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:fromNode" target="main">fromNode</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:fromNodes" target="main">fromNodes</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:topNode" target="main">topNode</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:topNodes" target="main">topNodes</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:current" target="main">current</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:siblings" target="main">siblings</a></p></div><h1>Cursor navigation
-</h1><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:parent" target="main">parent</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:root" target="main">root</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:getChild" target="main">getChild</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:firstChild" target="main">firstChild</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:lastChild" target="main">lastChild</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:left" target="main">left</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:right" target="main">right</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:nextDF" target="main">nextDF</a></p></div><h1>Search
-</h1><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:findChild" target="main">findChild</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:findLeft" target="main">findLeft</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:findRight" target="main">findRight</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:findRec" target="main">findRec</a></p></div><h1>Node classification
-</h1><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:isRoot" target="main">isRoot</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:isFirst" target="main">isFirst</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:isLast" target="main">isLast</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:isLeaf" target="main">isLeaf</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:isChild" target="main">isChild</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:hasChildren" target="main">hasChildren</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:getNodeIndex" target="main">getNodeIndex</a></p></div><h1>Updates
-</h1><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:setNode" target="main">setNode</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:modifyNode" target="main">modifyNode</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:modifyNodeM" target="main">modifyNodeM</a></p></div><h1>Insertions
-</h1><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:insertLeft" target="main">insertLeft</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:insertRight" target="main">insertRight</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:insertManyLeft" target="main">insertManyLeft</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:insertManyRight" target="main">insertManyRight</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:insertFirstChild" target="main">insertFirstChild</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:insertLastChild" target="main">insertLastChild</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:insertManyFirstChild" target="main">insertManyFirstChild</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:insertManyLastChild" target="main">insertManyLastChild</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:insertGoLeft" target="main">insertGoLeft</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:insertGoRight" target="main">insertGoRight</a></p></div><h1>Deletions
-</h1><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:removeLeft" target="main">removeLeft</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:removeRight" target="main">removeRight</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:removeGoLeft" target="main">removeGoLeft</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:removeGoRight" target="main">removeGoRight</a></p></div><div class="top"><p class="src"><a href="Text-XmlHtml-Cursor.html#v:removeGoUp" target="main">removeGoUp</a></p></div></div></body></html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--Rendered using the Haskell Html Library v0.2-->
+<HTML
+><HEAD
+><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"
+><TITLE
+>Text.XmlHtml.Cursor</TITLE
+><LINK HREF="haddock.css" REL="stylesheet" TYPE="text/css"
+><SCRIPT SRC="haddock-util.js" TYPE="text/javascript"
+></SCRIPT
+></HEAD
+><BODY
+><DIV CLASS="outer"
+><DIV CLASS="mini-topbar"
+>Text.XmlHtml.Cursor</DIV
+><DIV CLASS="mini-synopsis"
+><H1
+>Cursor type
+</H1
+> <DIV CLASS="decl"
+><SPAN CLASS="keyword"
+>data</SPAN
+>&nbsp;<A HREF="Text-XmlHtml-Cursor.html#t%3ACursor" TARGET="main"
+>Cursor</A
+> </DIV
+> <H1
+>Conversion to and from cursors
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AfromNode" TARGET="main"
+>fromNode</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AfromNodes" TARGET="main"
+>fromNodes</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AtopNode" TARGET="main"
+>topNode</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AtopNodes" TARGET="main"
+>topNodes</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3Acurrent" TARGET="main"
+>current</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3Asiblings" TARGET="main"
+>siblings</A
+></DIV
+> <H1
+>Cursor navigation
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3Aparent" TARGET="main"
+>parent</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3Aroot" TARGET="main"
+>root</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AgetChild" TARGET="main"
+>getChild</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AfirstChild" TARGET="main"
+>firstChild</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AlastChild" TARGET="main"
+>lastChild</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3Aleft" TARGET="main"
+>left</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3Aright" TARGET="main"
+>right</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AnextDF" TARGET="main"
+>nextDF</A
+></DIV
+> <H1
+>Search
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AfindChild" TARGET="main"
+>findChild</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AfindLeft" TARGET="main"
+>findLeft</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AfindRight" TARGET="main"
+>findRight</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AfindRec" TARGET="main"
+>findRec</A
+></DIV
+> <H1
+>Node classification
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AisRoot" TARGET="main"
+>isRoot</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AisFirst" TARGET="main"
+>isFirst</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AisLast" TARGET="main"
+>isLast</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AisLeaf" TARGET="main"
+>isLeaf</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AisChild" TARGET="main"
+>isChild</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AhasChildren" TARGET="main"
+>hasChildren</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AgetNodeIndex" TARGET="main"
+>getNodeIndex</A
+></DIV
+> <H1
+>Updates
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AsetNode" TARGET="main"
+>setNode</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AmodifyNode" TARGET="main"
+>modifyNode</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AmodifyNodeM" TARGET="main"
+>modifyNodeM</A
+></DIV
+> <H1
+>Insertions
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AinsertLeft" TARGET="main"
+>insertLeft</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AinsertRight" TARGET="main"
+>insertRight</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AinsertManyLeft" TARGET="main"
+>insertManyLeft</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AinsertManyRight" TARGET="main"
+>insertManyRight</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AinsertFirstChild" TARGET="main"
+>insertFirstChild</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AinsertLastChild" TARGET="main"
+>insertLastChild</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AinsertManyFirstChild" TARGET="main"
+>insertManyFirstChild</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AinsertManyLastChild" TARGET="main"
+>insertManyLastChild</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AinsertGoLeft" TARGET="main"
+>insertGoLeft</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AinsertGoRight" TARGET="main"
+>insertGoRight</A
+></DIV
+> <H1
+>Deletions
+</H1
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AremoveLeft" TARGET="main"
+>removeLeft</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AremoveRight" TARGET="main"
+>removeRight</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AremoveGoLeft" TARGET="main"
+>removeGoLeft</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AremoveGoRight" TARGET="main"
+>removeGoRight</A
+></DIV
+> <DIV CLASS="decl"
+><A HREF="Text-XmlHtml-Cursor.html#v%3AremoveGoUp" TARGET="main"
+>removeGoUp</A
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>
