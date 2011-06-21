@@ -1,8 +1,8 @@
-<static>
-  <bind tag="subtitle">: FAQ</bind>
-  <apply template="page">
-    <div class="singlecolumn">
+<bind tag="subtitle">: FAQ</bind>
+<apply template="page">
+  <div class="singlecolumn">
+    <static>
       <markdown file="faq.md"/>
-    </div>
-  </apply>
-</static>
+    </static>
+  </div>
+</apply>
