@@ -1,0 +1,184 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>{-# LANGUAGE BangPatterns #-}
+<span class="lineno">    2 </span>
+<span class="lineno">    3 </span>module Snap.Internal.Http.Server.TimeoutManager
+<span class="lineno">    4 </span>  ( TimeoutManager
+<span class="lineno">    5 </span>  , TimeoutHandle
+<span class="lineno">    6 </span>  , initialize
+<span class="lineno">    7 </span>  , stop
+<span class="lineno">    8 </span>  , register
+<span class="lineno">    9 </span>  , tickle
+<span class="lineno">   10 </span>  , cancel
+<span class="lineno">   11 </span>  ) where
+<span class="lineno">   12 </span>
+<span class="lineno">   13 </span>------------------------------------------------------------------------------
+<span class="lineno">   14 </span>import           Control.Concurrent
+<span class="lineno">   15 </span>import           Control.Exception
+<span class="lineno">   16 </span>import           Control.Monad
+<span class="lineno">   17 </span>import           Data.IORef
+<span class="lineno">   18 </span>import           Foreign.C.Types
+<span class="lineno">   19 </span>
+<span class="lineno">   20 </span>------------------------------------------------------------------------------
+<span class="lineno">   21 </span>data State = Deadline !CTime
+<span class="lineno">   22 </span>           | Canceled
+<span class="lineno">   23 </span>
+<span class="lineno">   24 </span>
+<span class="lineno">   25 </span>------------------------------------------------------------------------------
+<span class="lineno">   26 </span>data <span class="istickedoff">TimeoutHandle</span> = TimeoutHandle {
+<span class="lineno">   27 </span>      _killAction :: !(IO ())
+<span class="lineno">   28 </span>    , _state      :: !(IORef State)
+<span class="lineno">   29 </span>    , _hGetTime   :: !(IO CTime)
+<span class="lineno">   30 </span>    }
+<span class="lineno">   31 </span>
+<span class="lineno">   32 </span>
+<span class="lineno">   33 </span>------------------------------------------------------------------------------
+<span class="lineno">   34 </span>data <span class="istickedoff">TimeoutManager</span> = TimeoutManager {
+<span class="lineno">   35 </span>      _defaultTimeout :: !Int
+<span class="lineno">   36 </span>    , _getTime        :: !(IO CTime)
+<span class="lineno">   37 </span>    , _connections    :: !(IORef [TimeoutHandle])
+<span class="lineno">   38 </span>    , _inactivity     :: !(IORef Bool)
+<span class="lineno">   39 </span>    , _morePlease     :: !(MVar ())
+<span class="lineno">   40 </span>    , _managerThread  :: !(MVar ThreadId)
+<span class="lineno">   41 </span>    }
+<span class="lineno">   42 </span>
+<span class="lineno">   43 </span>
+<span class="lineno">   44 </span>------------------------------------------------------------------------------
+<span class="lineno">   45 </span>-- | Create a new TimeoutManager.
+<span class="lineno">   46 </span>initialize :: Int               -- ^ default timeout
+<span class="lineno">   47 </span>           -&gt; IO CTime          -- ^ function to get current time
+<span class="lineno">   48 </span>           -&gt; IO TimeoutManager
+<span class="lineno">   49 </span><span class="decl"><span class="istickedoff">initialize defaultTimeout getTime = do</span>
+<span class="lineno">   50 </span><span class="spaces">    </span><span class="istickedoff">conns &lt;- newIORef []</span>
+<span class="lineno">   51 </span><span class="spaces">    </span><span class="istickedoff">inact &lt;- newIORef False</span>
+<span class="lineno">   52 </span><span class="spaces">    </span><span class="istickedoff">mp    &lt;- newEmptyMVar</span>
+<span class="lineno">   53 </span><span class="spaces">    </span><span class="istickedoff">mthr  &lt;- newEmptyMVar</span>
+<span class="lineno">   54 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   55 </span><span class="spaces">    </span><span class="istickedoff">let tm = TimeoutManager defaultTimeout getTime conns inact mp mthr</span>
+<span class="lineno">   56 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   57 </span><span class="spaces">    </span><span class="istickedoff">thr &lt;- forkIO $ managerThread tm</span>
+<span class="lineno">   58 </span><span class="spaces">    </span><span class="istickedoff">putMVar mthr thr</span>
+<span class="lineno">   59 </span><span class="spaces">    </span><span class="istickedoff">return tm</span></span>
+<span class="lineno">   60 </span>
+<span class="lineno">   61 </span>
+<span class="lineno">   62 </span>------------------------------------------------------------------------------
+<span class="lineno">   63 </span>-- | Stop a TimeoutManager.
+<span class="lineno">   64 </span>stop :: TimeoutManager -&gt; IO ()
+<span class="lineno">   65 </span><span class="decl"><span class="istickedoff">stop tm = readMVar (_managerThread tm) &gt;&gt;= killThread</span></span>
+<span class="lineno">   66 </span>
+<span class="lineno">   67 </span>
+<span class="lineno">   68 </span>------------------------------------------------------------------------------
+<span class="lineno">   69 </span>-- | Register a new connection with the TimeoutManager.
+<span class="lineno">   70 </span>register :: IO ()               -- ^ action to run when the timeout deadline is
+<span class="lineno">   71 </span>                                -- exceeded.
+<span class="lineno">   72 </span>         -&gt; TimeoutManager      -- ^ manager to register with.
+<span class="lineno">   73 </span>         -&gt; IO TimeoutHandle
+<span class="lineno">   74 </span><span class="decl"><span class="istickedoff">register killAction tm = do</span>
+<span class="lineno">   75 </span><span class="spaces">    </span><span class="istickedoff">now &lt;- getTime</span>
+<span class="lineno">   76 </span><span class="spaces">    </span><span class="istickedoff">let !state = Deadline $ now + toEnum defaultTimeout</span>
+<span class="lineno">   77 </span><span class="spaces">    </span><span class="istickedoff">stateRef &lt;- newIORef state</span>
+<span class="lineno">   78 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   79 </span><span class="spaces">    </span><span class="istickedoff">let !h = TimeoutHandle killAction stateRef getTime</span>
+<span class="lineno">   80 </span><span class="spaces">    </span><span class="istickedoff">atomicModifyIORef connections $ \x -&gt; (h:x, <span class="nottickedoff">()</span>)</span>
+<span class="lineno">   81 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   82 </span><span class="spaces">    </span><span class="istickedoff">inact &lt;- readIORef inactivity</span>
+<span class="lineno">   83 </span><span class="spaces">    </span><span class="istickedoff">when inact $ do</span>
+<span class="lineno">   84 </span><span class="spaces">        </span><span class="istickedoff">-- wake up manager thread</span>
+<span class="lineno">   85 </span><span class="spaces">        </span><span class="istickedoff">writeIORef inactivity False</span>
+<span class="lineno">   86 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- tryPutMVar morePlease <span class="nottickedoff">()</span></span>
+<span class="lineno">   87 </span><span class="spaces">        </span><span class="istickedoff">return <span class="nottickedoff">()</span></span>
+<span class="lineno">   88 </span><span class="spaces">    </span><span class="istickedoff">return h</span>
+<span class="lineno">   89 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   90 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   91 </span><span class="spaces">    </span><span class="istickedoff">getTime        = _getTime tm</span>
+<span class="lineno">   92 </span><span class="spaces">    </span><span class="istickedoff">inactivity     = _inactivity tm</span>
+<span class="lineno">   93 </span><span class="spaces">    </span><span class="istickedoff">morePlease     = _morePlease tm</span>
+<span class="lineno">   94 </span><span class="spaces">    </span><span class="istickedoff">connections    = _connections tm</span>
+<span class="lineno">   95 </span><span class="spaces">    </span><span class="istickedoff">defaultTimeout = _defaultTimeout tm</span></span>
+<span class="lineno">   96 </span>
+<span class="lineno">   97 </span>
+<span class="lineno">   98 </span>------------------------------------------------------------------------------
+<span class="lineno">   99 </span>-- | Tickle the timeout on a connection to be N seconds into the future.
+<span class="lineno">  100 </span>tickle :: TimeoutHandle -&gt; Int -&gt; IO ()
+<span class="lineno">  101 </span><span class="decl"><span class="istickedoff">tickle th n = do</span>
+<span class="lineno">  102 </span><span class="spaces">    </span><span class="istickedoff">now &lt;- getTime</span>
+<span class="lineno">  103 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  104 </span><span class="spaces">    </span><span class="istickedoff">let state = Deadline $ now + toEnum n</span>
+<span class="lineno">  105 </span><span class="spaces">    </span><span class="istickedoff">writeIORef stateRef state</span>
+<span class="lineno">  106 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  107 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  108 </span><span class="spaces">    </span><span class="istickedoff">getTime  = _hGetTime th</span>
+<span class="lineno">  109 </span><span class="spaces">    </span><span class="istickedoff">stateRef = _state th</span></span>
+<span class="lineno">  110 </span>
+<span class="lineno">  111 </span>
+<span class="lineno">  112 </span>------------------------------------------------------------------------------
+<span class="lineno">  113 </span>-- | Cancel a timeout.
+<span class="lineno">  114 </span>cancel :: TimeoutHandle -&gt; IO ()
+<span class="lineno">  115 </span><span class="decl"><span class="istickedoff">cancel h = writeIORef (_state h) Canceled</span></span>
+<span class="lineno">  116 </span>
+<span class="lineno">  117 </span>
+<span class="lineno">  118 </span>------------------------------------------------------------------------------
+<span class="lineno">  119 </span>managerThread :: TimeoutManager -&gt; IO ()
+<span class="lineno">  120 </span><span class="decl"><span class="istickedoff">managerThread tm = loop `finally` (readIORef connections &gt;&gt;= destroyAll)</span>
+<span class="lineno">  121 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  122 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  123 </span><span class="spaces">    </span><span class="istickedoff">connections = _connections tm</span>
+<span class="lineno">  124 </span><span class="spaces">    </span><span class="istickedoff">getTime     = _getTime tm</span>
+<span class="lineno">  125 </span><span class="spaces">    </span><span class="istickedoff">inactivity  = _inactivity tm</span>
+<span class="lineno">  126 </span><span class="spaces">    </span><span class="istickedoff">morePlease  = _morePlease tm</span>
+<span class="lineno">  127 </span><span class="spaces">    </span><span class="istickedoff">waitABit    = threadDelay 5000000</span>
+<span class="lineno">  128 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  129 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  130 </span><span class="spaces">    </span><span class="istickedoff">loop = do</span>
+<span class="lineno">  131 </span><span class="spaces">        </span><span class="istickedoff">waitABit</span>
+<span class="lineno">  132 </span><span class="spaces">        </span><span class="istickedoff">handles &lt;- atomicModifyIORef connections (\x -&gt; ([],x))</span>
+<span class="lineno">  133 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  134 </span><span class="spaces">        </span><span class="istickedoff">if null handles</span>
+<span class="lineno">  135 </span><span class="spaces">          </span><span class="istickedoff">then do</span>
+<span class="lineno">  136 </span><span class="spaces">            </span><span class="istickedoff">-- we're inactive, go to sleep until we get new threads</span>
+<span class="lineno">  137 </span><span class="spaces">            </span><span class="istickedoff">writeIORef inactivity True</span>
+<span class="lineno">  138 </span><span class="spaces">            </span><span class="istickedoff">takeMVar morePlease</span>
+<span class="lineno">  139 </span><span class="spaces">          </span><span class="istickedoff">else do</span>
+<span class="lineno">  140 </span><span class="spaces">            </span><span class="istickedoff">now   &lt;- getTime</span>
+<span class="lineno">  141 </span><span class="spaces">            </span><span class="istickedoff">dlist &lt;- processHandles now handles id</span>
+<span class="lineno">  142 </span><span class="spaces">            </span><span class="istickedoff">atomicModifyIORef connections (\x -&gt; (dlist x, <span class="nottickedoff">()</span>))</span>
+<span class="lineno">  143 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  144 </span><span class="spaces">        </span><span class="istickedoff">loop</span>
+<span class="lineno">  145 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  146 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  147 </span><span class="spaces">    </span><span class="istickedoff">processHandles !now handles initDlist = go handles initDlist</span>
+<span class="lineno">  148 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  149 </span><span class="spaces">        </span><span class="istickedoff">go [] !dlist = return dlist</span>
+<span class="lineno">  150 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  151 </span><span class="spaces">        </span><span class="istickedoff">go (x:xs) !dlist = do</span>
+<span class="lineno">  152 </span><span class="spaces">            </span><span class="istickedoff">state   &lt;- readIORef $ _state x</span>
+<span class="lineno">  153 </span><span class="spaces">            </span><span class="istickedoff">!dlist' &lt;- case state of</span>
+<span class="lineno">  154 </span><span class="spaces">                         </span><span class="istickedoff">Canceled   -&gt; return dlist</span>
+<span class="lineno">  155 </span><span class="spaces">                         </span><span class="istickedoff">Deadline t -&gt; if t &lt;= now</span>
+<span class="lineno">  156 </span><span class="spaces">                                         </span><span class="istickedoff">then do</span>
+<span class="lineno">  157 </span><span class="spaces">                                           </span><span class="istickedoff">_killAction x</span>
+<span class="lineno">  158 </span><span class="spaces">                                           </span><span class="istickedoff">return dlist</span>
+<span class="lineno">  159 </span><span class="spaces">                                         </span><span class="istickedoff">else return (dlist . (x:))</span>
+<span class="lineno">  160 </span><span class="spaces">            </span><span class="istickedoff">go xs dlist'</span>
+<span class="lineno">  161 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  162 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  163 </span><span class="spaces">    </span><span class="istickedoff">destroyAll = mapM_ diediedie</span>
+<span class="lineno">  164 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  165 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  166 </span><span class="spaces">    </span><span class="istickedoff">diediedie x = do</span>
+<span class="lineno">  167 </span><span class="spaces">        </span><span class="istickedoff">state &lt;- readIORef $ _state x</span>
+<span class="lineno">  168 </span><span class="spaces">        </span><span class="istickedoff">case state of</span>
+<span class="lineno">  169 </span><span class="spaces">          </span><span class="istickedoff">Canceled -&gt; return <span class="nottickedoff">()</span></span>
+<span class="lineno">  170 </span><span class="spaces">          </span><span class="istickedoff">_        -&gt; _killAction x</span></span>
+
+</pre>
+</html>

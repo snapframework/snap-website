@@ -1,0 +1,90 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>module Snap.Internal.Http.Server.TimeoutManager.Tests
+<span class="lineno">    2 </span>  ( tests ) where
+<span class="lineno">    3 </span>
+<span class="lineno">    4 </span>import           Control.Concurrent
+<span class="lineno">    5 </span>import           Data.IORef
+<span class="lineno">    6 </span>import           Data.Maybe
+<span class="lineno">    7 </span>import           System.PosixCompat.Time
+<span class="lineno">    8 </span>import           System.Timeout
+<span class="lineno">    9 </span>import           Test.Framework
+<span class="lineno">   10 </span>import           Test.Framework.Providers.HUnit
+<span class="lineno">   11 </span>import           Test.HUnit hiding (Test, path)
+<span class="lineno">   12 </span>
+<span class="lineno">   13 </span>import qualified Snap.Internal.Http.Server.TimeoutManager as TM
+<span class="lineno">   14 </span>
+<span class="lineno">   15 </span>tests :: [Test]
+<span class="lineno">   16 </span><span class="decl"><span class="istickedoff">tests = [ testOneTimeout</span>
+<span class="lineno">   17 </span><span class="spaces">        </span><span class="istickedoff">, testOneTimeoutAfterInactivity</span>
+<span class="lineno">   18 </span><span class="spaces">        </span><span class="istickedoff">, testCancel</span>
+<span class="lineno">   19 </span><span class="spaces">        </span><span class="istickedoff">, testTickle ]</span></span>
+<span class="lineno">   20 </span>
+<span class="lineno">   21 </span>
+<span class="lineno">   22 </span>testOneTimeout :: Test
+<span class="lineno">   23 </span><span class="decl"><span class="istickedoff">testOneTimeout = testCase &quot;timeout/oneTimeout&quot; $ do</span>
+<span class="lineno">   24 </span><span class="spaces">    </span><span class="istickedoff">mgr &lt;- TM.initialize 3 epochTime</span>
+<span class="lineno">   25 </span><span class="spaces">    </span><span class="istickedoff">oneTimeout mgr</span></span>
+<span class="lineno">   26 </span>
+<span class="lineno">   27 </span>
+<span class="lineno">   28 </span>testOneTimeoutAfterInactivity :: Test
+<span class="lineno">   29 </span><span class="decl"><span class="istickedoff">testOneTimeoutAfterInactivity =</span>
+<span class="lineno">   30 </span><span class="spaces">    </span><span class="istickedoff">testCase &quot;timeout/oneTimeoutAfterInactivity&quot; $ do</span>
+<span class="lineno">   31 </span><span class="spaces">        </span><span class="istickedoff">mgr &lt;- TM.initialize 3 epochTime</span>
+<span class="lineno">   32 </span><span class="spaces">        </span><span class="istickedoff">threadDelay $ 7 * seconds</span>
+<span class="lineno">   33 </span><span class="spaces">        </span><span class="istickedoff">oneTimeout mgr</span></span>
+<span class="lineno">   34 </span>
+<span class="lineno">   35 </span>oneTimeout :: TM.TimeoutManager -&gt; IO ()
+<span class="lineno">   36 </span><span class="decl"><span class="istickedoff">oneTimeout mgr = do</span>
+<span class="lineno">   37 </span><span class="spaces">    </span><span class="istickedoff">mv  &lt;- newEmptyMVar</span>
+<span class="lineno">   38 </span><span class="spaces">    </span><span class="istickedoff">_   &lt;- TM.register (putMVar mv <span class="nottickedoff">()</span>) mgr</span>
+<span class="lineno">   39 </span><span class="spaces">    </span><span class="istickedoff">m   &lt;- timeout (6*seconds) $ takeMVar mv</span>
+<span class="lineno">   40 </span><span class="spaces">    </span><span class="istickedoff">assertBool <span class="nottickedoff">&quot;timeout fired&quot;</span> $ isJust m</span>
+<span class="lineno">   41 </span><span class="spaces">    </span><span class="istickedoff">TM.stop mgr</span></span>
+<span class="lineno">   42 </span>
+<span class="lineno">   43 </span>
+<span class="lineno">   44 </span>testTickle :: Test
+<span class="lineno">   45 </span><span class="decl"><span class="istickedoff">testTickle = testCase &quot;timeout/tickle&quot; $ do</span>
+<span class="lineno">   46 </span><span class="spaces">    </span><span class="istickedoff">mgr &lt;- TM.initialize 8 epochTime</span>
+<span class="lineno">   47 </span><span class="spaces">    </span><span class="istickedoff">ref &lt;- newIORef (0 :: Int)</span>
+<span class="lineno">   48 </span><span class="spaces">    </span><span class="istickedoff">h &lt;- TM.register (writeIORef ref 1) mgr</span>
+<span class="lineno">   49 </span><span class="spaces">    </span><span class="istickedoff">threadDelay $ 5 * seconds</span>
+<span class="lineno">   50 </span><span class="spaces">    </span><span class="istickedoff">b0 &lt;- readIORef ref</span>
+<span class="lineno">   51 </span><span class="spaces">    </span><span class="istickedoff">assertEqual <span class="nottickedoff">&quot;b0&quot;</span> 0 b0</span>
+<span class="lineno">   52 </span><span class="spaces">    </span><span class="istickedoff">TM.tickle h 8</span>
+<span class="lineno">   53 </span><span class="spaces">    </span><span class="istickedoff">threadDelay $ 5 * seconds</span>
+<span class="lineno">   54 </span><span class="spaces">    </span><span class="istickedoff">b1 &lt;- readIORef ref</span>
+<span class="lineno">   55 </span><span class="spaces">    </span><span class="istickedoff">assertEqual <span class="nottickedoff">&quot;b1&quot;</span> 0 b1</span>
+<span class="lineno">   56 </span><span class="spaces">    </span><span class="istickedoff">threadDelay $ 8 * seconds</span>
+<span class="lineno">   57 </span><span class="spaces">    </span><span class="istickedoff">b2 &lt;- readIORef ref</span>
+<span class="lineno">   58 </span><span class="spaces">    </span><span class="istickedoff">assertEqual <span class="nottickedoff">&quot;b2&quot;</span> 1 b2</span>
+<span class="lineno">   59 </span><span class="spaces">    </span><span class="istickedoff">TM.stop mgr</span></span>
+<span class="lineno">   60 </span>
+<span class="lineno">   61 </span>
+<span class="lineno">   62 </span>testCancel :: Test
+<span class="lineno">   63 </span><span class="decl"><span class="istickedoff">testCancel = testCase &quot;timeout/cancel&quot; $ do</span>
+<span class="lineno">   64 </span><span class="spaces">    </span><span class="istickedoff">mgr &lt;- TM.initialize 3 epochTime</span>
+<span class="lineno">   65 </span><span class="spaces">    </span><span class="istickedoff">ref &lt;- newIORef (0 :: Int)</span>
+<span class="lineno">   66 </span><span class="spaces">    </span><span class="istickedoff">h &lt;- TM.register (writeIORef <span class="nottickedoff">ref</span> <span class="nottickedoff">1</span>) mgr</span>
+<span class="lineno">   67 </span><span class="spaces">    </span><span class="istickedoff">threadDelay $ 1 * seconds</span>
+<span class="lineno">   68 </span><span class="spaces">    </span><span class="istickedoff">TM.cancel h</span>
+<span class="lineno">   69 </span><span class="spaces">    </span><span class="istickedoff">threadDelay $ 5 * seconds</span>
+<span class="lineno">   70 </span><span class="spaces">    </span><span class="istickedoff">b0 &lt;- readIORef ref</span>
+<span class="lineno">   71 </span><span class="spaces">    </span><span class="istickedoff">assertEqual <span class="nottickedoff">&quot;b0&quot;</span> 0 b0</span>
+<span class="lineno">   72 </span><span class="spaces">    </span><span class="istickedoff">TM.stop mgr</span></span>
+<span class="lineno">   73 </span>
+<span class="lineno">   74 </span>
+<span class="lineno">   75 </span>seconds :: Int
+<span class="lineno">   76 </span><span class="decl"><span class="istickedoff">seconds = (10::Int) ^ (6::Int)</span></span>
+
+</pre>
+</html>

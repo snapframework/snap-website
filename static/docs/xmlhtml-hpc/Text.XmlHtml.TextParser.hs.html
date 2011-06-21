@@ -80,7 +80,7 @@ span.spaces    { background: white }
 <span class="lineno">   69 </span>-- | Parses a 'Text' value and gives back the result.  The parser is expected
 <span class="lineno">   70 </span>-- to match the entire string.
 <span class="lineno">   71 </span>parseText :: Parser a         -- ^ The parser to match
-<span class="lineno">   72 </span>          -&gt; String           -- ^ Name of the source file (can be @&quot;&quot;@)
+<span class="lineno">   72 </span>          -&gt; String           -- ^ Name of the source file (can be @\&quot;\&quot;@)
 <span class="lineno">   73 </span>          -&gt; Text             -- ^ Text to parse
 <span class="lineno">   74 </span>          -&gt; Either String a  -- Either an error message or the result
 <span class="lineno">   75 </span><span class="decl"><span class="istickedoff">parseText p src t = inLeft <span class="nottickedoff">show</span> (P.parse p <span class="nottickedoff">src</span> t)</span>
