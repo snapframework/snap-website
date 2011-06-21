@@ -33,132 +33,132 @@
 <a name="line-24"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Dynamic</span>
 <a name="line-25"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Foreign</span><span class='hs-varop'>.</span><span class='hs-conid'>C</span>
 <a name="line-26"></a>
-<a name="line-27"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>Backend</span>
-<a name="line-28"></a>
-<a name="line-29"></a><span class='hs-cpp'>#ifdef GNUTLS</span>
-<a name="line-30"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span> <span class='hs-layout'>(</span><span class='hs-varid'>liftM</span><span class='hs-layout'>)</span>
+<a name="line-27"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Debug</span>
+<a name="line-28"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>Backend</span>
+<a name="line-29"></a>
+<a name="line-30"></a><span class='hs-cpp'>#ifdef GNUTLS</span>
 <a name="line-31"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>B</span>
-<a name="line-32"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Unsafe</span> <span class='hs-layout'>(</span><span class='hs-varid'>unsafeUseAsCStringLen</span><span class='hs-layout'>)</span>
-<a name="line-33"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span> <span class='hs-layout'>(</span><span class='hs-varid'>w2c</span><span class='hs-layout'>)</span>
-<a name="line-34"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Foreign</span>
-<a name="line-35"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Network</span><span class='hs-varop'>.</span><span class='hs-conid'>Socket</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Socket</span>
-<a name="line-36"></a><span class='hs-cpp'>#endif</span>
-<a name="line-37"></a>
+<a name="line-32"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span> <span class='hs-layout'>(</span><span class='hs-varid'>w2c</span><span class='hs-layout'>)</span>
+<a name="line-33"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>BI</span>
+<a name="line-34"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Unsafe</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>BI</span>
+<a name="line-35"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Foreign</span>
+<a name="line-36"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Network</span><span class='hs-varop'>.</span><span class='hs-conid'>Socket</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Socket</span>
+<a name="line-37"></a><span class='hs-cpp'>#endif</span>
 <a name="line-38"></a>
-<a name="line-39"></a><a name="GnuTLSException"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-40"></a><a name="GnuTLSException"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-conid'>String</span>
-<a name="line-41"></a>    <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Show</span><span class='hs-layout'>,</span> <span class='hs-conid'>Typeable</span><span class='hs-layout'>)</span>
-<a name="line-42"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Exception</span> <span class='hs-conid'>GnuTLSException</span>
-<a name="line-43"></a>
-<a name="line-44"></a><span class='hs-cpp'>#ifndef GNUTLS</span>
-<a name="line-45"></a>
-<a name="line-46"></a><a name="initTLS"></a><span class='hs-definition'>initTLS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-47"></a><span class='hs-definition'>initTLS</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-str'>"TLS is not supported"</span>
-<a name="line-48"></a>
-<a name="line-49"></a><a name="stopTLS"></a><span class='hs-definition'>stopTLS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-50"></a><span class='hs-definition'>stopTLS</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-51"></a>
-<a name="line-52"></a><a name="bindHttps"></a><span class='hs-definition'>bindHttps</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ListenSocket</span>
-<a name="line-53"></a><span class='hs-definition'>bindHttps</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-str'>"TLS is not supported"</span>
-<a name="line-54"></a>
-<a name="line-55"></a><a name="freePort"></a><span class='hs-definition'>freePort</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ListenSocket</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-56"></a><span class='hs-definition'>freePort</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-57"></a>
-<a name="line-58"></a><a name="createSession"></a><span class='hs-definition'>createSession</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ListenSocket</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>NetworkSession</span>
-<a name="line-59"></a><span class='hs-definition'>createSession</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-str'>"TLS is not supported"</span>
-<a name="line-60"></a>
-<a name="line-61"></a><a name="endSession"></a><span class='hs-definition'>endSession</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-62"></a><span class='hs-definition'>endSession</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-63"></a>
-<a name="line-64"></a><a name="send"></a><span class='hs-definition'>send</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-65"></a><span class='hs-definition'>send</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-66"></a>
-<a name="line-67"></a><a name="recv"></a><span class='hs-definition'>recv</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>b</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
-<a name="line-68"></a><span class='hs-definition'>recv</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-str'>"TLS is not supported"</span>
-<a name="line-69"></a>
-<a name="line-70"></a><span class='hs-cpp'>#else</span>
-<a name="line-71"></a>
+<a name="line-39"></a>
+<a name="line-40"></a><a name="GnuTLSException"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-41"></a><a name="GnuTLSException"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-conid'>String</span>
+<a name="line-42"></a>    <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Show</span><span class='hs-layout'>,</span> <span class='hs-conid'>Typeable</span><span class='hs-layout'>)</span>
+<a name="line-43"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Exception</span> <span class='hs-conid'>GnuTLSException</span>
+<a name="line-44"></a>
+<a name="line-45"></a><span class='hs-cpp'>#ifndef GNUTLS</span>
+<a name="line-46"></a>
+<a name="line-47"></a><a name="initTLS"></a><span class='hs-definition'>initTLS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-48"></a><span class='hs-definition'>initTLS</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-str'>"TLS is not supported"</span>
+<a name="line-49"></a>
+<a name="line-50"></a><a name="stopTLS"></a><span class='hs-definition'>stopTLS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-51"></a><span class='hs-definition'>stopTLS</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
+<a name="line-52"></a>
+<a name="line-53"></a><a name="bindHttps"></a><span class='hs-definition'>bindHttps</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ListenSocket</span>
+<a name="line-54"></a><span class='hs-definition'>bindHttps</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-str'>"TLS is not supported"</span>
+<a name="line-55"></a>
+<a name="line-56"></a><a name="freePort"></a><span class='hs-definition'>freePort</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ListenSocket</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-57"></a><span class='hs-definition'>freePort</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
+<a name="line-58"></a>
+<a name="line-59"></a><a name="createSession"></a><span class='hs-definition'>createSession</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ListenSocket</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>NetworkSession</span>
+<a name="line-60"></a><span class='hs-definition'>createSession</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-str'>"TLS is not supported"</span>
+<a name="line-61"></a>
+<a name="line-62"></a><a name="endSession"></a><span class='hs-definition'>endSession</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-63"></a><span class='hs-definition'>endSession</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
+<a name="line-64"></a>
+<a name="line-65"></a><a name="send"></a><span class='hs-definition'>send</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-66"></a><span class='hs-definition'>send</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
+<a name="line-67"></a>
+<a name="line-68"></a><a name="recv"></a><span class='hs-definition'>recv</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>b</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
+<a name="line-69"></a><span class='hs-definition'>recv</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-str'>"TLS is not supported"</span>
+<a name="line-70"></a>
+<a name="line-71"></a><span class='hs-cpp'>#else</span>
 <a name="line-72"></a>
-<a name="line-73"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-74"></a><span class='hs-comment'>-- | Init</span>
-<a name="line-75"></a><span class='hs-definition'>initTLS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-76"></a><span class='hs-definition'>initTLS</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>gnutls_set_threading_helper</span> <span class='hs-varop'>&gt;&gt;</span>
-<a name="line-77"></a>          <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS init"</span> <span class='hs-varid'>gnutls_global_init</span>
-<a name="line-78"></a>
+<a name="line-73"></a>
+<a name="line-74"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-75"></a><span class='hs-comment'>-- | Init</span>
+<a name="line-76"></a><span class='hs-definition'>initTLS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-77"></a><span class='hs-definition'>initTLS</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>gnutls_set_threading_helper</span> <span class='hs-varop'>&gt;&gt;</span>
+<a name="line-78"></a>          <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS init"</span> <span class='hs-varid'>gnutls_global_init</span>
 <a name="line-79"></a>
-<a name="line-80"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-81"></a><span class='hs-definition'>stopTLS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-82"></a><span class='hs-definition'>stopTLS</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>gnutls_global_deinit</span>
-<a name="line-83"></a>
+<a name="line-80"></a>
+<a name="line-81"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-82"></a><span class='hs-definition'>stopTLS</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-83"></a><span class='hs-definition'>stopTLS</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>gnutls_global_deinit</span>
 <a name="line-84"></a>
-<a name="line-85"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-86"></a><span class='hs-comment'>-- | Binds ssl port</span>
-<a name="line-87"></a><span class='hs-definition'>bindHttps</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span>
-<a name="line-88"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span>
-<a name="line-89"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span>
+<a name="line-85"></a>
+<a name="line-86"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-87"></a><span class='hs-comment'>-- | Binds ssl port</span>
+<a name="line-88"></a><span class='hs-definition'>bindHttps</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span>
+<a name="line-89"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span>
 <a name="line-90"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span>
-<a name="line-91"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ListenSocket</span>
-<a name="line-92"></a><span class='hs-definition'>bindHttps</span> <span class='hs-varid'>bindAddress</span> <span class='hs-varid'>bindPort</span> <span class='hs-varid'>cert</span> <span class='hs-varid'>key</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-93"></a>    <span class='hs-varid'>sock</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>socket</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-conid'>AF_INET</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-conid'>Stream</span> <span class='hs-num'>0</span>
-<a name="line-94"></a>    <span class='hs-varid'>addr</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getHostAddr</span> <span class='hs-varid'>bindPort</span> <span class='hs-varid'>bindAddress</span>
-<a name="line-95"></a>    <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>setSocketOption</span> <span class='hs-varid'>sock</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-conid'>ReuseAddr</span> <span class='hs-num'>1</span>
-<a name="line-96"></a>    <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>bindSocket</span> <span class='hs-varid'>sock</span> <span class='hs-varid'>addr</span>
-<a name="line-97"></a>    <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>listen</span> <span class='hs-varid'>sock</span> <span class='hs-num'>150</span>
-<a name="line-98"></a>
-<a name="line-99"></a>    <span class='hs-varid'>creds</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>loadCredentials</span> <span class='hs-varid'>cert</span> <span class='hs-varid'>key</span>
-<a name="line-100"></a>    <span class='hs-varid'>dh</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>regenerateDHParam</span> <span class='hs-varid'>creds</span>
-<a name="line-101"></a>
-<a name="line-102"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>ListenHttps</span> <span class='hs-varid'>sock</span> <span class='hs-layout'>(</span><span class='hs-varid'>castPtr</span> <span class='hs-varid'>creds</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-varid'>castPtr</span> <span class='hs-varid'>dh</span><span class='hs-layout'>)</span>
-<a name="line-103"></a>
+<a name="line-91"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span>
+<a name="line-92"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ListenSocket</span>
+<a name="line-93"></a><span class='hs-definition'>bindHttps</span> <span class='hs-varid'>bindAddress</span> <span class='hs-varid'>bindPort</span> <span class='hs-varid'>cert</span> <span class='hs-varid'>key</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-94"></a>    <span class='hs-varid'>sock</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>socket</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-conid'>AF_INET</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-conid'>Stream</span> <span class='hs-num'>0</span>
+<a name="line-95"></a>    <span class='hs-varid'>addr</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getHostAddr</span> <span class='hs-varid'>bindPort</span> <span class='hs-varid'>bindAddress</span>
+<a name="line-96"></a>    <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>setSocketOption</span> <span class='hs-varid'>sock</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-conid'>ReuseAddr</span> <span class='hs-num'>1</span>
+<a name="line-97"></a>    <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>bindSocket</span> <span class='hs-varid'>sock</span> <span class='hs-varid'>addr</span>
+<a name="line-98"></a>    <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>listen</span> <span class='hs-varid'>sock</span> <span class='hs-num'>150</span>
+<a name="line-99"></a>
+<a name="line-100"></a>    <span class='hs-varid'>creds</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>loadCredentials</span> <span class='hs-varid'>cert</span> <span class='hs-varid'>key</span>
+<a name="line-101"></a>    <span class='hs-varid'>dh</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>regenerateDHParam</span> <span class='hs-varid'>creds</span>
+<a name="line-102"></a>
+<a name="line-103"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>ListenHttps</span> <span class='hs-varid'>sock</span> <span class='hs-layout'>(</span><span class='hs-varid'>castPtr</span> <span class='hs-varid'>creds</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-varid'>castPtr</span> <span class='hs-varid'>dh</span><span class='hs-layout'>)</span>
 <a name="line-104"></a>
-<a name="line-105"></a><a name="loadCredentials"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-106"></a><span class='hs-definition'>loadCredentials</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>FilePath</span>       <span class='hs-comment'>--- ^ Path to certificate</span>
-<a name="line-107"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span>       <span class='hs-comment'>--- ^ Path to key</span>
-<a name="line-108"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span><span class='hs-layout'>)</span>
-<a name="line-109"></a><span class='hs-definition'>loadCredentials</span> <span class='hs-varid'>cert</span> <span class='hs-varid'>key</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>alloca</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>cPtr</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-110"></a>    <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS allocate"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gnutls_certificate_allocate_credentials</span> <span class='hs-varid'>cPtr</span>
-<a name="line-111"></a>    <span class='hs-varid'>creds</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>peek</span> <span class='hs-varid'>cPtr</span>
-<a name="line-112"></a>
-<a name="line-113"></a>    <span class='hs-varid'>withCString</span> <span class='hs-varid'>cert</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>certstr</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>withCString</span> <span class='hs-varid'>key</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>keystr</span> <span class='hs-keyglyph'>-&gt;</span>
-<a name="line-114"></a>        <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS set Certificate"</span> <span class='hs-varop'>$</span>
-<a name="line-115"></a>        <span class='hs-varid'>gnutls_certificate_set_x509_key_file</span>
-<a name="line-116"></a>            <span class='hs-varid'>creds</span> <span class='hs-varid'>certstr</span> <span class='hs-varid'>keystr</span> <span class='hs-varid'>gnutls_x509_fmt_pem</span>
-<a name="line-117"></a>
-<a name="line-118"></a>    <span class='hs-varid'>return</span> <span class='hs-varid'>creds</span>
-<a name="line-119"></a>
+<a name="line-105"></a>
+<a name="line-106"></a><a name="loadCredentials"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-107"></a><span class='hs-definition'>loadCredentials</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>FilePath</span>       <span class='hs-comment'>--- ^ Path to certificate</span>
+<a name="line-108"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span>       <span class='hs-comment'>--- ^ Path to key</span>
+<a name="line-109"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span><span class='hs-layout'>)</span>
+<a name="line-110"></a><span class='hs-definition'>loadCredentials</span> <span class='hs-varid'>cert</span> <span class='hs-varid'>key</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>alloca</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>cPtr</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-111"></a>    <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS allocate"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gnutls_certificate_allocate_credentials</span> <span class='hs-varid'>cPtr</span>
+<a name="line-112"></a>    <span class='hs-varid'>creds</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>peek</span> <span class='hs-varid'>cPtr</span>
+<a name="line-113"></a>
+<a name="line-114"></a>    <span class='hs-varid'>withCString</span> <span class='hs-varid'>cert</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>certstr</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>withCString</span> <span class='hs-varid'>key</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>keystr</span> <span class='hs-keyglyph'>-&gt;</span>
+<a name="line-115"></a>        <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS set Certificate"</span> <span class='hs-varop'>$</span>
+<a name="line-116"></a>        <span class='hs-varid'>gnutls_certificate_set_x509_key_file</span>
+<a name="line-117"></a>            <span class='hs-varid'>creds</span> <span class='hs-varid'>certstr</span> <span class='hs-varid'>keystr</span> <span class='hs-varid'>gnutls_x509_fmt_pem</span>
+<a name="line-118"></a>
+<a name="line-119"></a>    <span class='hs-varid'>return</span> <span class='hs-varid'>creds</span>
 <a name="line-120"></a>
-<a name="line-121"></a><a name="regenerateDHParam"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-122"></a><span class='hs-definition'>regenerateDHParam</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSDHParam</span><span class='hs-layout'>)</span>
-<a name="line-123"></a><span class='hs-definition'>regenerateDHParam</span> <span class='hs-varid'>creds</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>alloca</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>dhptr</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-124"></a>    <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS allocate"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gnutls_dh_params_init</span> <span class='hs-varid'>dhptr</span>
-<a name="line-125"></a>    <span class='hs-varid'>dh</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>peek</span> <span class='hs-varid'>dhptr</span>
-<a name="line-126"></a>    <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS DHParm"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gnutls_dh_params_generate2</span> <span class='hs-varid'>dh</span> <span class='hs-num'>1024</span>
-<a name="line-127"></a>    <span class='hs-varid'>gnutls_certificate_set_dh_params</span> <span class='hs-varid'>creds</span> <span class='hs-varid'>dh</span>
-<a name="line-128"></a>    <span class='hs-varid'>return</span> <span class='hs-varid'>dh</span>
-<a name="line-129"></a>
+<a name="line-121"></a>
+<a name="line-122"></a><a name="regenerateDHParam"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-123"></a><span class='hs-definition'>regenerateDHParam</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSDHParam</span><span class='hs-layout'>)</span>
+<a name="line-124"></a><span class='hs-definition'>regenerateDHParam</span> <span class='hs-varid'>creds</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>alloca</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>dhptr</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-125"></a>    <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS allocate"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gnutls_dh_params_init</span> <span class='hs-varid'>dhptr</span>
+<a name="line-126"></a>    <span class='hs-varid'>dh</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>peek</span> <span class='hs-varid'>dhptr</span>
+<a name="line-127"></a>    <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS DHParm"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gnutls_dh_params_generate2</span> <span class='hs-varid'>dh</span> <span class='hs-num'>1024</span>
+<a name="line-128"></a>    <span class='hs-varid'>gnutls_certificate_set_dh_params</span> <span class='hs-varid'>creds</span> <span class='hs-varid'>dh</span>
+<a name="line-129"></a>    <span class='hs-varid'>return</span> <span class='hs-varid'>dh</span>
 <a name="line-130"></a>
-<a name="line-131"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-132"></a><span class='hs-definition'>freePort</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ListenSocket</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-133"></a><span class='hs-definition'>freePort</span> <span class='hs-layout'>(</span><span class='hs-conid'>ListenHttps</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>creds</span> <span class='hs-varid'>dh</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-134"></a>    <span class='hs-varid'>gnutls_certificate_free_credentials</span> <span class='hs-varop'>$</span> <span class='hs-varid'>castPtr</span> <span class='hs-varid'>creds</span>
-<a name="line-135"></a>    <span class='hs-varid'>gnutls_dh_params_deinit</span> <span class='hs-varop'>$</span> <span class='hs-varid'>castPtr</span> <span class='hs-varid'>dh</span>
-<a name="line-136"></a><span class='hs-definition'>freePort</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-137"></a>
+<a name="line-131"></a>
+<a name="line-132"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-133"></a><span class='hs-definition'>freePort</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ListenSocket</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-134"></a><span class='hs-definition'>freePort</span> <span class='hs-layout'>(</span><span class='hs-conid'>ListenHttps</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>creds</span> <span class='hs-varid'>dh</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-135"></a>    <span class='hs-varid'>gnutls_certificate_free_credentials</span> <span class='hs-varop'>$</span> <span class='hs-varid'>castPtr</span> <span class='hs-varid'>creds</span>
+<a name="line-136"></a>    <span class='hs-varid'>gnutls_dh_params_deinit</span> <span class='hs-varop'>$</span> <span class='hs-varid'>castPtr</span> <span class='hs-varid'>dh</span>
+<a name="line-137"></a><span class='hs-definition'>freePort</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
 <a name="line-138"></a>
-<a name="line-139"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-140"></a><span class='hs-definition'>createSession</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ListenSocket</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>NetworkSession</span>
-<a name="line-141"></a><span class='hs-definition'>createSession</span> <span class='hs-layout'>(</span><span class='hs-conid'>ListenHttps</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>creds</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-varid'>recvSize</span> <span class='hs-varid'>socket</span> <span class='hs-varid'>on_block</span> <span class='hs-keyglyph'>=</span>
-<a name="line-142"></a>    <span class='hs-varid'>alloca</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>sPtr</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-143"></a>        <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS alloacte"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gnutls_init</span> <span class='hs-varid'>sPtr</span> <span class='hs-num'>1</span>
-<a name="line-144"></a>        <span class='hs-varid'>session</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>peek</span> <span class='hs-varid'>sPtr</span>
-<a name="line-145"></a>        <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS session"</span> <span class='hs-varop'>$</span>
-<a name="line-146"></a>            <span class='hs-varid'>gnutls_credentials_set</span> <span class='hs-varid'>session</span> <span class='hs-num'>1</span> <span class='hs-varop'>$</span> <span class='hs-varid'>castPtr</span> <span class='hs-varid'>creds</span>
-<a name="line-147"></a>        <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS session"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gnutls_set_default_priority</span> <span class='hs-varid'>session</span>
-<a name="line-148"></a>        <span class='hs-varid'>gnutls_certificate_send_x509_rdn_sequence</span> <span class='hs-varid'>session</span> <span class='hs-num'>1</span>
-<a name="line-149"></a>        <span class='hs-varid'>gnutls_session_enable_compatibility_mode</span> <span class='hs-varid'>session</span>
-<a name="line-150"></a>
-<a name="line-151"></a>        <span class='hs-varid'>buffer</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>mallocBytes</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>recvSize</span>
-<a name="line-152"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-varid'>socket</span> <span class='hs-layout'>(</span><span class='hs-varid'>castPtr</span> <span class='hs-varid'>session</span><span class='hs-layout'>)</span> <span class='hs-varid'>buffer</span> <span class='hs-varop'>$</span>
+<a name="line-139"></a>
+<a name="line-140"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-141"></a><span class='hs-definition'>createSession</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ListenSocket</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>NetworkSession</span>
+<a name="line-142"></a><span class='hs-definition'>createSession</span> <span class='hs-layout'>(</span><span class='hs-conid'>ListenHttps</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>creds</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-varid'>recvSize</span> <span class='hs-varid'>socket</span> <span class='hs-varid'>on_block</span> <span class='hs-keyglyph'>=</span>
+<a name="line-143"></a>    <span class='hs-varid'>alloca</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>sPtr</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-144"></a>        <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS alloacte"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gnutls_init</span> <span class='hs-varid'>sPtr</span> <span class='hs-num'>1</span>
+<a name="line-145"></a>        <span class='hs-varid'>session</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>peek</span> <span class='hs-varid'>sPtr</span>
+<a name="line-146"></a>        <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS session"</span> <span class='hs-varop'>$</span>
+<a name="line-147"></a>            <span class='hs-varid'>gnutls_credentials_set</span> <span class='hs-varid'>session</span> <span class='hs-num'>1</span> <span class='hs-varop'>$</span> <span class='hs-varid'>castPtr</span> <span class='hs-varid'>creds</span>
+<a name="line-148"></a>        <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS session"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gnutls_set_default_priority</span> <span class='hs-varid'>session</span>
+<a name="line-149"></a>        <span class='hs-varid'>gnutls_certificate_send_x509_rdn_sequence</span> <span class='hs-varid'>session</span> <span class='hs-num'>1</span>
+<a name="line-150"></a>        <span class='hs-varid'>gnutls_session_enable_compatibility_mode</span> <span class='hs-varid'>session</span>
+<a name="line-151"></a>
+<a name="line-152"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-varid'>socket</span> <span class='hs-layout'>(</span><span class='hs-varid'>castPtr</span> <span class='hs-varid'>session</span><span class='hs-layout'>)</span> <span class='hs-varop'>$</span>
 <a name="line-153"></a>                    <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>recvSize</span>
 <a name="line-154"></a>
 <a name="line-155"></a>        <span class='hs-varid'>gnutls_transport_set_ptr</span> <span class='hs-varid'>session</span> <span class='hs-varop'>$</span> <span class='hs-varid'>intPtrToPtr</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varop'>$</span> <span class='hs-varid'>socket</span>
@@ -171,235 +171,233 @@
 <a name="line-162"></a>
 <a name="line-163"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
 <a name="line-164"></a><span class='hs-definition'>endSession</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-165"></a><span class='hs-definition'>endSession</span> <span class='hs-layout'>(</span><span class='hs-conid'>NetworkSession</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>session</span> <span class='hs-varid'>buffer</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-165"></a><span class='hs-definition'>endSession</span> <span class='hs-layout'>(</span><span class='hs-conid'>NetworkSession</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>session</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
 <a name="line-166"></a>    <span class='hs-varid'>throwErrorIf</span> <span class='hs-str'>"TLS bye"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>gnutls_bye</span> <span class='hs-layout'>(</span><span class='hs-varid'>castPtr</span> <span class='hs-varid'>session</span><span class='hs-layout'>)</span> <span class='hs-num'>1</span> <span class='hs-varop'>`finally`</span> <span class='hs-keyword'>do</span>
 <a name="line-167"></a>        <span class='hs-varid'>gnutls_deinit</span> <span class='hs-varop'>$</span> <span class='hs-varid'>castPtr</span> <span class='hs-varid'>session</span>
-<a name="line-168"></a>        <span class='hs-varid'>free</span> <span class='hs-varid'>buffer</span>
+<a name="line-168"></a>
 <a name="line-169"></a>
-<a name="line-170"></a>
-<a name="line-171"></a><a name="handshake"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-172"></a><span class='hs-definition'>handshake</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-173"></a><span class='hs-definition'>handshake</span> <span class='hs-varid'>s</span><span class='hs-keyglyph'>@</span><span class='hs-layout'>(</span><span class='hs-conid'>NetworkSession</span> <span class='hs-layout'>{</span> <span class='hs-sel'>_session</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>session</span><span class='hs-layout'>}</span><span class='hs-layout'>)</span> <span class='hs-varid'>on_block</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-174"></a>    <span class='hs-varid'>rc</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>gnutls_handshake</span> <span class='hs-varop'>$</span> <span class='hs-varid'>castPtr</span> <span class='hs-varid'>session</span>
-<a name="line-175"></a>    <span class='hs-keyword'>case</span> <span class='hs-varid'>rc</span> <span class='hs-keyword'>of</span>
-<a name="line-176"></a>        <span class='hs-varid'>x</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>x</span> <span class='hs-varop'>&gt;=</span> <span class='hs-num'>0</span>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-177"></a>          <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isIntrCode</span> <span class='hs-varid'>x</span>   <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>handshake</span> <span class='hs-varid'>s</span> <span class='hs-varid'>on_block</span>
-<a name="line-178"></a>          <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isAgainCode</span> <span class='hs-varid'>x</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>on_block</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>handshake</span> <span class='hs-varid'>s</span> <span class='hs-varid'>on_block</span>
-<a name="line-179"></a>          <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>      <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>throwError</span> <span class='hs-str'>"TLS handshake"</span> <span class='hs-varid'>rc</span>
+<a name="line-170"></a><a name="handshake"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-171"></a><span class='hs-definition'>handshake</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-172"></a><span class='hs-definition'>handshake</span> <span class='hs-varid'>s</span><span class='hs-keyglyph'>@</span><span class='hs-layout'>(</span><span class='hs-conid'>NetworkSession</span> <span class='hs-layout'>{</span> <span class='hs-sel'>_session</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>session</span><span class='hs-layout'>}</span><span class='hs-layout'>)</span> <span class='hs-varid'>on_block</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-173"></a>    <span class='hs-varid'>rc</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>gnutls_handshake</span> <span class='hs-varop'>$</span> <span class='hs-varid'>castPtr</span> <span class='hs-varid'>session</span>
+<a name="line-174"></a>    <span class='hs-keyword'>case</span> <span class='hs-varid'>rc</span> <span class='hs-keyword'>of</span>
+<a name="line-175"></a>        <span class='hs-varid'>x</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>x</span> <span class='hs-varop'>&gt;=</span> <span class='hs-num'>0</span>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
+<a name="line-176"></a>          <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isIntrCode</span> <span class='hs-varid'>x</span>   <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>handshake</span> <span class='hs-varid'>s</span> <span class='hs-varid'>on_block</span>
+<a name="line-177"></a>          <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isAgainCode</span> <span class='hs-varid'>x</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>on_block</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>handshake</span> <span class='hs-varid'>s</span> <span class='hs-varid'>on_block</span>
+<a name="line-178"></a>          <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>      <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>throwError</span> <span class='hs-str'>"TLS handshake"</span> <span class='hs-varid'>rc</span>
+<a name="line-179"></a>
 <a name="line-180"></a>
-<a name="line-181"></a>
-<a name="line-182"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-183"></a><span class='hs-definition'>send</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-184"></a><span class='hs-definition'>send</span> <span class='hs-varid'>tickleTimeout</span> <span class='hs-varid'>onBlock</span> <span class='hs-layout'>(</span><span class='hs-conid'>NetworkSession</span> <span class='hs-layout'>{</span> <span class='hs-sel'>_session</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>session</span><span class='hs-layout'>}</span><span class='hs-layout'>)</span> <span class='hs-varid'>bs</span> <span class='hs-keyglyph'>=</span>
-<a name="line-185"></a>     <span class='hs-varid'>unsafeUseAsCStringLen</span> <span class='hs-varid'>bs</span> <span class='hs-varop'>$</span> <span class='hs-varid'>uncurry</span> <span class='hs-varid'>loop</span>
-<a name="line-186"></a>  <span class='hs-keyword'>where</span>
-<a name="line-187"></a>    <span class='hs-varid'>loop</span> <span class='hs-varid'>ptr</span> <span class='hs-varid'>len</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-188"></a>        <span class='hs-varid'>sent</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>gnutls_record_send</span> <span class='hs-layout'>(</span><span class='hs-varid'>castPtr</span> <span class='hs-varid'>session</span><span class='hs-layout'>)</span> <span class='hs-varid'>ptr</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>len</span>
-<a name="line-189"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>sent'</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>sent</span>
-<a name="line-190"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>sent'</span> <span class='hs-keyword'>of</span>
-<a name="line-191"></a>            <span class='hs-varid'>x</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>x</span> <span class='hs-varop'>==</span> <span class='hs-num'>0</span> <span class='hs-varop'>||</span> <span class='hs-varid'>x</span> <span class='hs-varop'>==</span> <span class='hs-varid'>len</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-192"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>x</span> <span class='hs-varop'>&gt;</span> <span class='hs-num'>0</span> <span class='hs-varop'>&amp;&amp;</span> <span class='hs-varid'>x</span> <span class='hs-varop'>&lt;</span> <span class='hs-varid'>len</span>   <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>tickleTimeout</span> <span class='hs-varop'>&gt;&gt;</span>
-<a name="line-193"></a>                                      <span class='hs-varid'>loop</span> <span class='hs-layout'>(</span><span class='hs-varid'>plusPtr</span> <span class='hs-varid'>ptr</span> <span class='hs-varid'>sent'</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-varid'>len</span> <span class='hs-comment'>-</span> <span class='hs-varid'>sent'</span><span class='hs-layout'>)</span>
-<a name="line-194"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isIntrCode</span> <span class='hs-varid'>x</span>       <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>loop</span> <span class='hs-varid'>ptr</span> <span class='hs-varid'>len</span>
-<a name="line-195"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isAgainCode</span> <span class='hs-varid'>x</span>      <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>onBlock</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>loop</span> <span class='hs-varid'>ptr</span> <span class='hs-varid'>len</span>
-<a name="line-196"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>throwError</span> <span class='hs-str'>"TLS send"</span> <span class='hs-varop'>$</span>
-<a name="line-197"></a>                                          <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>sent'</span>
+<a name="line-181"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-182"></a><span class='hs-definition'>send</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-183"></a><span class='hs-definition'>send</span> <span class='hs-varid'>tickleTimeout</span> <span class='hs-varid'>onBlock</span> <span class='hs-layout'>(</span><span class='hs-conid'>NetworkSession</span> <span class='hs-layout'>{</span> <span class='hs-sel'>_session</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>session</span><span class='hs-layout'>}</span><span class='hs-layout'>)</span> <span class='hs-varid'>bs</span> <span class='hs-keyglyph'>=</span>
+<a name="line-184"></a>     <span class='hs-conid'>BI</span><span class='hs-varop'>.</span><span class='hs-varid'>unsafeUseAsCStringLen</span> <span class='hs-varid'>bs</span> <span class='hs-varop'>$</span> <span class='hs-varid'>uncurry</span> <span class='hs-varid'>loop</span>
+<a name="line-185"></a>  <span class='hs-keyword'>where</span>
+<a name="line-186"></a>    <span class='hs-varid'>loop</span> <span class='hs-varid'>ptr</span> <span class='hs-varid'>len</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-187"></a>        <span class='hs-varid'>sent</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>gnutls_record_send</span> <span class='hs-layout'>(</span><span class='hs-varid'>castPtr</span> <span class='hs-varid'>session</span><span class='hs-layout'>)</span> <span class='hs-varid'>ptr</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>len</span>
+<a name="line-188"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>sent'</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>sent</span>
+<a name="line-189"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>sent'</span> <span class='hs-keyword'>of</span>
+<a name="line-190"></a>            <span class='hs-varid'>x</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>x</span> <span class='hs-varop'>==</span> <span class='hs-num'>0</span> <span class='hs-varop'>||</span> <span class='hs-varid'>x</span> <span class='hs-varop'>==</span> <span class='hs-varid'>len</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
+<a name="line-191"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>x</span> <span class='hs-varop'>&gt;</span> <span class='hs-num'>0</span> <span class='hs-varop'>&amp;&amp;</span> <span class='hs-varid'>x</span> <span class='hs-varop'>&lt;</span> <span class='hs-varid'>len</span>   <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>tickleTimeout</span> <span class='hs-varop'>&gt;&gt;</span>
+<a name="line-192"></a>                                      <span class='hs-varid'>loop</span> <span class='hs-layout'>(</span><span class='hs-varid'>plusPtr</span> <span class='hs-varid'>ptr</span> <span class='hs-varid'>sent'</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-varid'>len</span> <span class='hs-comment'>-</span> <span class='hs-varid'>sent'</span><span class='hs-layout'>)</span>
+<a name="line-193"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isIntrCode</span> <span class='hs-varid'>x</span>       <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>loop</span> <span class='hs-varid'>ptr</span> <span class='hs-varid'>len</span>
+<a name="line-194"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isAgainCode</span> <span class='hs-varid'>x</span>      <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>onBlock</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>loop</span> <span class='hs-varid'>ptr</span> <span class='hs-varid'>len</span>
+<a name="line-195"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>throwError</span> <span class='hs-str'>"TLS send"</span> <span class='hs-varop'>$</span>
+<a name="line-196"></a>                                          <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>sent'</span>
+<a name="line-197"></a>
 <a name="line-198"></a>
-<a name="line-199"></a>
-<a name="line-200"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-201"></a><span class='hs-comment'>-- | I originally wrote recv to use mallocBytes and unsafePackCStringFinalizer</span>
-<a name="line-202"></a><span class='hs-comment'>-- to achieve zero-copy.  The downside to that method is we might waste memory</span>
-<a name="line-203"></a><span class='hs-comment'>-- if a malicious adversary only sends us a few bytes, since the entire buffer</span>
-<a name="line-204"></a><span class='hs-comment'>-- won't be freed until the ByteString is collected.  Thus I use</span>
-<a name="line-205"></a><span class='hs-comment'>-- packCStringLen which makes a copy.  Perhaps in the future the recv function</span>
-<a name="line-206"></a><span class='hs-comment'>-- could be changed to use unsafePackCStringFinalizer if the buffer is at</span>
-<a name="line-207"></a><span class='hs-comment'>-- least 3/4 full and packCStringLen otherwise or something like that</span>
-<a name="line-208"></a><span class='hs-definition'>recv</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>b</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
-<a name="line-209"></a><span class='hs-definition'>recv</span> <span class='hs-varid'>onBlock</span> <span class='hs-layout'>(</span><span class='hs-conid'>NetworkSession</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>session</span> <span class='hs-varid'>recvBuf</span> <span class='hs-varid'>recvLen</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>loop</span>
-<a name="line-210"></a>  <span class='hs-keyword'>where</span>
-<a name="line-211"></a>    <span class='hs-varid'>loop</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-212"></a>        <span class='hs-varid'>size</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>gnutls_record_recv</span> <span class='hs-layout'>(</span><span class='hs-varid'>castPtr</span> <span class='hs-varid'>session</span><span class='hs-layout'>)</span> <span class='hs-varid'>recvBuf</span> <span class='hs-varid'>recvLen</span>
+<a name="line-199"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-200"></a><span class='hs-definition'>recv</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>b</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
+<a name="line-201"></a><span class='hs-definition'>recv</span> <span class='hs-varid'>onBlock</span> <span class='hs-layout'>(</span><span class='hs-conid'>NetworkSession</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>session</span> <span class='hs-varid'>recvLen</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-202"></a>    <span class='hs-varid'>fp</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>BI</span><span class='hs-varop'>.</span><span class='hs-varid'>mallocByteString</span> <span class='hs-varid'>recvLen</span>
+<a name="line-203"></a>    <span class='hs-varid'>sz</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>withForeignPtr</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>loop</span>
+<a name="line-204"></a>    <span class='hs-keyword'>if</span> <span class='hs-layout'>(</span><span class='hs-varid'>sz</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span><span class='hs-layout'>)</span> <span class='hs-varop'>&lt;=</span> <span class='hs-num'>0</span>
+<a name="line-205"></a>       <span class='hs-keyword'>then</span> <span class='hs-varid'>return</span> <span class='hs-conid'>Nothing</span>
+<a name="line-206"></a>       <span class='hs-keyword'>else</span> <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Just</span> <span class='hs-varop'>$</span> <span class='hs-conid'>BI</span><span class='hs-varop'>.</span><span class='hs-varid'>fromForeignPtr</span> <span class='hs-varid'>fp</span> <span class='hs-num'>0</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromEnum</span> <span class='hs-varid'>sz</span>
+<a name="line-207"></a>
+<a name="line-208"></a>  <span class='hs-keyword'>where</span>
+<a name="line-209"></a>    <span class='hs-varid'>loop</span> <span class='hs-varid'>recvBuf</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-210"></a>        <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"TLS: calling record_recv with recvLen="</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>recvLen</span>
+<a name="line-211"></a>        <span class='hs-varid'>size</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>gnutls_record_recv</span> <span class='hs-layout'>(</span><span class='hs-varid'>castPtr</span> <span class='hs-varid'>session</span><span class='hs-layout'>)</span> <span class='hs-varid'>recvBuf</span> <span class='hs-varop'>$</span> <span class='hs-varid'>toEnum</span> <span class='hs-varid'>recvLen</span>
+<a name="line-212"></a>        <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"TLS: record_recv returned with size="</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>size</span>
 <a name="line-213"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>size'</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>size</span>
 <a name="line-214"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>size'</span> <span class='hs-keyword'>of</span>
-<a name="line-215"></a>            <span class='hs-varid'>x</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>x</span> <span class='hs-varop'>==</span> <span class='hs-num'>0</span>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>Nothing</span>
-<a name="line-216"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>x</span> <span class='hs-varop'>&gt;</span> <span class='hs-num'>0</span>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>liftM</span> <span class='hs-conid'>Just</span> <span class='hs-varop'>$</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>packCStringLen</span> <span class='hs-layout'>(</span><span class='hs-varid'>recvBuf</span><span class='hs-layout'>,</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span>
-<a name="line-217"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isIntrCode</span> <span class='hs-varid'>x</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>loop</span>
-<a name="line-218"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isAgainCode</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>onBlock</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>loop</span>
-<a name="line-219"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>     <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>throwError</span> <span class='hs-str'>"TLS recv"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>size'</span><span class='hs-layout'>)</span>
-<a name="line-220"></a>                                 <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>Nothing</span>
-<a name="line-221"></a>
-<a name="line-222"></a>
-<a name="line-223"></a><a name="throwError"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-224"></a><span class='hs-definition'>throwError</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>String</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ReturnCode</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-225"></a><span class='hs-definition'>throwError</span> <span class='hs-varid'>prefix</span> <span class='hs-varid'>rc</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>gnutls_strerror</span> <span class='hs-varid'>rc</span> <span class='hs-varop'>&gt;&gt;=</span>
-<a name="line-226"></a>                       <span class='hs-varid'>peekCString</span> <span class='hs-varop'>&gt;&gt;=</span>
-<a name="line-227"></a>                       <span class='hs-varid'>throwIO</span> <span class='hs-varop'>.</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-varop'>.</span> <span class='hs-layout'>(</span><span class='hs-varid'>prefix'</span><span class='hs-varop'>++</span><span class='hs-layout'>)</span>
-<a name="line-228"></a>  <span class='hs-keyword'>where</span>
-<a name="line-229"></a>    <span class='hs-varid'>prefix'</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>prefix</span> <span class='hs-varop'>++</span> <span class='hs-str'>"&lt;"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>rc</span> <span class='hs-varop'>++</span> <span class='hs-str'>"&gt;: "</span>
-<a name="line-230"></a>
-<a name="line-231"></a>
-<a name="line-232"></a><a name="throwErrorIf"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-233"></a><span class='hs-definition'>throwErrorIf</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>String</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-234"></a><span class='hs-definition'>throwErrorIf</span> <span class='hs-varid'>prefix</span> <span class='hs-varid'>action</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-235"></a>    <span class='hs-varid'>rc</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>action</span>
-<a name="line-236"></a>    <span class='hs-keyword'>if</span> <span class='hs-layout'>(</span><span class='hs-varid'>rc</span> <span class='hs-varop'>&lt;</span> <span class='hs-num'>0</span><span class='hs-layout'>)</span>
-<a name="line-237"></a>        <span class='hs-keyword'>then</span> <span class='hs-varid'>throwError</span> <span class='hs-varid'>prefix</span> <span class='hs-varid'>rc</span>
-<a name="line-238"></a>        <span class='hs-keyword'>else</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-239"></a>
-<a name="line-240"></a>
-<a name="line-241"></a><a name="isAgainCode"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-242"></a><span class='hs-definition'>isAgainCode</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Integral</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
-<a name="line-243"></a><span class='hs-definition'>isAgainCode</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-varop'>==</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>28</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span><span class='hs-layout'>)</span>
-<a name="line-244"></a>
-<a name="line-245"></a>
-<a name="line-246"></a><a name="isIntrCode"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-247"></a><span class='hs-definition'>isIntrCode</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Integral</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
-<a name="line-248"></a><span class='hs-definition'>isIntrCode</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-varop'>==</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>52</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span><span class='hs-layout'>)</span>
-<a name="line-249"></a>
-<a name="line-250"></a>
-<a name="line-251"></a><a name="getHostAddr"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-252"></a><span class='hs-definition'>getHostAddr</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span>
-<a name="line-253"></a>            <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span>
-<a name="line-254"></a>            <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-conid'>SockAddr</span>
-<a name="line-255"></a><span class='hs-definition'>getHostAddr</span> <span class='hs-varid'>p</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-256"></a>    <span class='hs-varid'>h</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-keyword'>if</span> <span class='hs-varid'>s</span> <span class='hs-varop'>==</span> <span class='hs-str'>"*"</span>
-<a name="line-257"></a>          <span class='hs-keyword'>then</span> <span class='hs-varid'>return</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>iNADDR_ANY</span>
-<a name="line-258"></a>          <span class='hs-keyword'>else</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>inet_addr</span> <span class='hs-layout'>(</span><span class='hs-varid'>map</span> <span class='hs-varid'>w2c</span> <span class='hs-varop'>.</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>unpack</span> <span class='hs-varop'>$</span> <span class='hs-varid'>s</span><span class='hs-layout'>)</span>
+<a name="line-215"></a>            <span class='hs-varid'>x</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>x</span> <span class='hs-varop'>&gt;=</span> <span class='hs-num'>0</span>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-varid'>x</span>
+<a name="line-216"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isIntrCode</span> <span class='hs-varid'>x</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>loop</span> <span class='hs-varid'>recvBuf</span>
+<a name="line-217"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>isAgainCode</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>onBlock</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>loop</span> <span class='hs-varid'>recvBuf</span>
+<a name="line-218"></a>              <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>     <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>throwError</span> <span class='hs-str'>"TLS recv"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>size'</span><span class='hs-layout'>)</span>
+<a name="line-219"></a>
+<a name="line-220"></a>
+<a name="line-221"></a><a name="throwError"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-222"></a><span class='hs-definition'>throwError</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>String</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ReturnCode</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span>
+<a name="line-223"></a><span class='hs-definition'>throwError</span> <span class='hs-varid'>prefix</span> <span class='hs-varid'>rc</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>gnutls_strerror</span> <span class='hs-varid'>rc</span> <span class='hs-varop'>&gt;&gt;=</span>
+<a name="line-224"></a>                       <span class='hs-varid'>peekCString</span> <span class='hs-varop'>&gt;&gt;=</span>
+<a name="line-225"></a>                       <span class='hs-varid'>throwIO</span> <span class='hs-varop'>.</span> <span class='hs-conid'>GnuTLSException</span> <span class='hs-varop'>.</span> <span class='hs-layout'>(</span><span class='hs-varid'>prefix'</span><span class='hs-varop'>++</span><span class='hs-layout'>)</span>
+<a name="line-226"></a>  <span class='hs-keyword'>where</span>
+<a name="line-227"></a>    <span class='hs-varid'>prefix'</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>prefix</span> <span class='hs-varop'>++</span> <span class='hs-str'>"&lt;"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>rc</span> <span class='hs-varop'>++</span> <span class='hs-str'>"&gt;: "</span>
+<a name="line-228"></a>
+<a name="line-229"></a>
+<a name="line-230"></a><a name="throwErrorIf"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-231"></a><span class='hs-definition'>throwErrorIf</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>String</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-232"></a><span class='hs-definition'>throwErrorIf</span> <span class='hs-varid'>prefix</span> <span class='hs-varid'>action</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-233"></a>    <span class='hs-varid'>rc</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>action</span>
+<a name="line-234"></a>    <span class='hs-keyword'>if</span> <span class='hs-layout'>(</span><span class='hs-varid'>rc</span> <span class='hs-varop'>&lt;</span> <span class='hs-num'>0</span><span class='hs-layout'>)</span>
+<a name="line-235"></a>        <span class='hs-keyword'>then</span> <span class='hs-varid'>throwError</span> <span class='hs-varid'>prefix</span> <span class='hs-varid'>rc</span>
+<a name="line-236"></a>        <span class='hs-keyword'>else</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
+<a name="line-237"></a>
+<a name="line-238"></a>
+<a name="line-239"></a><a name="isAgainCode"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-240"></a><span class='hs-definition'>isAgainCode</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Integral</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
+<a name="line-241"></a><span class='hs-definition'>isAgainCode</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-varop'>==</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>28</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span><span class='hs-layout'>)</span>
+<a name="line-242"></a>
+<a name="line-243"></a>
+<a name="line-244"></a><a name="isIntrCode"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-245"></a><span class='hs-definition'>isIntrCode</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Integral</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
+<a name="line-246"></a><span class='hs-definition'>isIntrCode</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-varop'>==</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>52</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span><span class='hs-layout'>)</span>
+<a name="line-247"></a>
+<a name="line-248"></a>
+<a name="line-249"></a><a name="getHostAddr"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-250"></a><span class='hs-definition'>getHostAddr</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span>
+<a name="line-251"></a>            <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span>
+<a name="line-252"></a>            <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-conid'>SockAddr</span>
+<a name="line-253"></a><span class='hs-definition'>getHostAddr</span> <span class='hs-varid'>p</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-254"></a>    <span class='hs-varid'>h</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-keyword'>if</span> <span class='hs-varid'>s</span> <span class='hs-varop'>==</span> <span class='hs-str'>"*"</span>
+<a name="line-255"></a>          <span class='hs-keyword'>then</span> <span class='hs-varid'>return</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>iNADDR_ANY</span>
+<a name="line-256"></a>          <span class='hs-keyword'>else</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-varid'>inet_addr</span> <span class='hs-layout'>(</span><span class='hs-varid'>map</span> <span class='hs-varid'>w2c</span> <span class='hs-varop'>.</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>unpack</span> <span class='hs-varop'>$</span> <span class='hs-varid'>s</span><span class='hs-layout'>)</span>
+<a name="line-257"></a>
+<a name="line-258"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-conid'>SockAddrInet</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>p</span><span class='hs-layout'>)</span> <span class='hs-varid'>h</span>
 <a name="line-259"></a>
-<a name="line-260"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Socket</span><span class='hs-varop'>.</span><span class='hs-conid'>SockAddrInet</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>p</span><span class='hs-layout'>)</span> <span class='hs-varid'>h</span>
+<a name="line-260"></a><span class='hs-comment'>-- Types</span>
 <a name="line-261"></a>
-<a name="line-262"></a><span class='hs-comment'>-- Types</span>
-<a name="line-263"></a>
-<a name="line-264"></a><a name="ReturnCode"></a><span class='hs-keyword'>newtype</span> <span class='hs-conid'>ReturnCode</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>ReturnCode</span> <span class='hs-conid'>CInt</span>
-<a name="line-265"></a>    <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Show</span><span class='hs-layout'>,</span> <span class='hs-conid'>Eq</span><span class='hs-layout'>,</span> <span class='hs-conid'>Ord</span><span class='hs-layout'>,</span> <span class='hs-conid'>Num</span><span class='hs-layout'>,</span> <span class='hs-conid'>Real</span><span class='hs-layout'>,</span> <span class='hs-conid'>Enum</span><span class='hs-layout'>,</span> <span class='hs-conid'>Integral</span><span class='hs-layout'>)</span>
-<a name="line-266"></a>
-<a name="line-267"></a><a name="GnuTLSCredentials"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>GnuTLSCredentials</span>
-<a name="line-268"></a><a name="GnuTLSSession"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>GnuTLSSession</span>
-<a name="line-269"></a><a name="GnuTLSDHParam"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>GnuTLSDHParam</span>
-<a name="line-270"></a>
-<a name="line-271"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-272"></a><span class='hs-comment'>-- Global init/errors</span>
-<a name="line-273"></a>
-<a name="line-274"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-275"></a>    <span class='hs-str'>"gnutls_set_threading_helper"</span>
-<a name="line-276"></a>    <span class='hs-varid'>gnutls_set_threading_helper</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-277"></a>
-<a name="line-278"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-279"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_global_init"</span>
-<a name="line-280"></a>    <span class='hs-varid'>gnutls_global_init</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
-<a name="line-281"></a>
-<a name="line-282"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-283"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_global_deinit"</span>
-<a name="line-284"></a>    <span class='hs-varid'>gnutls_global_deinit</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-285"></a>
-<a name="line-286"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-287"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_strerror"</span>
-<a name="line-288"></a>    <span class='hs-varid'>gnutls_strerror</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ReturnCode</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>CString</span>
-<a name="line-289"></a>
-<a name="line-290"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-291"></a><span class='hs-comment'>-- Sessions.  All functions here except handshake and bye just</span>
-<a name="line-292"></a><span class='hs-comment'>-- allocate memory or update members of structures, so they are ok with</span>
-<a name="line-293"></a><span class='hs-comment'>-- unsafe ccall.</span>
-<a name="line-294"></a>
-<a name="line-295"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
-<a name="line-296"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_init"</span>
-<a name="line-297"></a>    <span class='hs-varid'>gnutls_init</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
-<a name="line-298"></a>
-<a name="line-299"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
-<a name="line-300"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_deinit"</span>
-<a name="line-301"></a>    <span class='hs-varid'>gnutls_deinit</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-302"></a>
-<a name="line-303"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-304"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_handshake"</span>
-<a name="line-305"></a>    <span class='hs-varid'>gnutls_handshake</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
-<a name="line-306"></a>
-<a name="line-307"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-308"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_bye"</span>
-<a name="line-309"></a>    <span class='hs-varid'>gnutls_bye</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
-<a name="line-310"></a>
-<a name="line-311"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
-<a name="line-312"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_set_default_priority"</span>
-<a name="line-313"></a>    <span class='hs-varid'>gnutls_set_default_priority</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
-<a name="line-314"></a>
-<a name="line-315"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
-<a name="line-316"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_session_enable_compatibility_mode"</span>
-<a name="line-317"></a>    <span class='hs-varid'>gnutls_session_enable_compatibility_mode</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-318"></a>
-<a name="line-319"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
-<a name="line-320"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_certificate_send_x509_rdn_sequence"</span>
-<a name="line-321"></a>    <span class='hs-varid'>gnutls_certificate_send_x509_rdn_sequence</span>
-<a name="line-322"></a>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-323"></a>
-<a name="line-324"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-325"></a><span class='hs-comment'>-- Certificates.  Perhaps these could be unsafe but they are not performance</span>
-<a name="line-326"></a><span class='hs-comment'>-- critical, since they are called only once during server startup.</span>
-<a name="line-327"></a>
-<a name="line-328"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-329"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_certificate_allocate_credentials"</span>
-<a name="line-330"></a>    <span class='hs-varid'>gnutls_certificate_allocate_credentials</span>
-<a name="line-331"></a>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
-<a name="line-332"></a>
-<a name="line-333"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-334"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_certificate_free_credentials"</span>
-<a name="line-335"></a>    <span class='hs-varid'>gnutls_certificate_free_credentials</span>
-<a name="line-336"></a>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-337"></a>
-<a name="line-338"></a><a name="gnutls_x509_fmt_pem"></a><span class='hs-definition'>gnutls_x509_fmt_pem</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>CInt</span>
-<a name="line-339"></a><span class='hs-definition'>gnutls_x509_fmt_pem</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>1</span>
-<a name="line-340"></a>
-<a name="line-341"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-342"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_certificate_set_x509_key_file"</span>
-<a name="line-343"></a>    <span class='hs-varid'>gnutls_certificate_set_x509_key_file</span>
-<a name="line-344"></a>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
-<a name="line-345"></a>
-<a name="line-346"></a>
-<a name="line-347"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-348"></a><span class='hs-comment'>-- Credentials.  This is ok as unsafe because it just sets members in the</span>
-<a name="line-349"></a><span class='hs-comment'>-- session structure.</span>
-<a name="line-350"></a>
-<a name="line-351"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
-<a name="line-352"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_credentials_set"</span>
-<a name="line-353"></a>    <span class='hs-varid'>gnutls_credentials_set</span>
-<a name="line-354"></a>        <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Ptr</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
-<a name="line-355"></a>
-<a name="line-356"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-357"></a><span class='hs-comment'>-- Records.  These are marked unsafe because they are very performance</span>
-<a name="line-358"></a><span class='hs-comment'>-- critical.  Since we are using non-blocking sockets send and recv will not</span>
-<a name="line-359"></a><span class='hs-comment'>-- block.</span>
-<a name="line-360"></a>
-<a name="line-361"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
-<a name="line-362"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_transport_set_ptr"</span>
-<a name="line-363"></a>    <span class='hs-varid'>gnutls_transport_set_ptr</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Ptr</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-364"></a>
-<a name="line-365"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
-<a name="line-366"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_record_recv"</span>
-<a name="line-367"></a>    <span class='hs-varid'>gnutls_record_recv</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Ptr</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CSize</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>CSize</span>
-<a name="line-368"></a>
-<a name="line-369"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
-<a name="line-370"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_record_send"</span>
-<a name="line-371"></a>    <span class='hs-varid'>gnutls_record_send</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Ptr</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CSize</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>CSize</span>
-<a name="line-372"></a>
-<a name="line-373"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-374"></a><span class='hs-comment'>-- DHParam.  Perhaps these could be unsafe but they are not performance</span>
-<a name="line-375"></a><span class='hs-comment'>-- critical.</span>
-<a name="line-376"></a>
-<a name="line-377"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-378"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_dh_params_init"</span>
-<a name="line-379"></a>    <span class='hs-varid'>gnutls_dh_params_init</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSDHParam</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
-<a name="line-380"></a>
-<a name="line-381"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-382"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_dh_params_deinit"</span>
-<a name="line-383"></a>    <span class='hs-varid'>gnutls_dh_params_deinit</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSDHParam</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-384"></a>
-<a name="line-385"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-386"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_dh_params_generate2"</span>
-<a name="line-387"></a>    <span class='hs-varid'>gnutls_dh_params_generate2</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSDHParam</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CUInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
-<a name="line-388"></a>
-<a name="line-389"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
-<a name="line-390"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_certificate_set_dh_params"</span>
-<a name="line-391"></a>    <span class='hs-varid'>gnutls_certificate_set_dh_params</span>
-<a name="line-392"></a>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSDHParam</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-393"></a>
-<a name="line-394"></a><span class='hs-cpp'>#endif</span>
+<a name="line-262"></a><a name="ReturnCode"></a><span class='hs-keyword'>newtype</span> <span class='hs-conid'>ReturnCode</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>ReturnCode</span> <span class='hs-conid'>CInt</span>
+<a name="line-263"></a>    <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Show</span><span class='hs-layout'>,</span> <span class='hs-conid'>Eq</span><span class='hs-layout'>,</span> <span class='hs-conid'>Ord</span><span class='hs-layout'>,</span> <span class='hs-conid'>Num</span><span class='hs-layout'>,</span> <span class='hs-conid'>Real</span><span class='hs-layout'>,</span> <span class='hs-conid'>Enum</span><span class='hs-layout'>,</span> <span class='hs-conid'>Integral</span><span class='hs-layout'>)</span>
+<a name="line-264"></a>
+<a name="line-265"></a><a name="GnuTLSCredentials"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>GnuTLSCredentials</span>
+<a name="line-266"></a><a name="GnuTLSSession"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>GnuTLSSession</span>
+<a name="line-267"></a><a name="GnuTLSDHParam"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>GnuTLSDHParam</span>
+<a name="line-268"></a>
+<a name="line-269"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-270"></a><span class='hs-comment'>-- Global init/errors</span>
+<a name="line-271"></a>
+<a name="line-272"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-273"></a>    <span class='hs-str'>"gnutls_set_threading_helper"</span>
+<a name="line-274"></a>    <span class='hs-varid'>gnutls_set_threading_helper</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-275"></a>
+<a name="line-276"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-277"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_global_init"</span>
+<a name="line-278"></a>    <span class='hs-varid'>gnutls_global_init</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
+<a name="line-279"></a>
+<a name="line-280"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-281"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_global_deinit"</span>
+<a name="line-282"></a>    <span class='hs-varid'>gnutls_global_deinit</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-283"></a>
+<a name="line-284"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-285"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_strerror"</span>
+<a name="line-286"></a>    <span class='hs-varid'>gnutls_strerror</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ReturnCode</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>CString</span>
+<a name="line-287"></a>
+<a name="line-288"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-289"></a><span class='hs-comment'>-- Sessions.  All functions here except handshake and bye just</span>
+<a name="line-290"></a><span class='hs-comment'>-- allocate memory or update members of structures, so they are ok with</span>
+<a name="line-291"></a><span class='hs-comment'>-- unsafe ccall.</span>
+<a name="line-292"></a>
+<a name="line-293"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
+<a name="line-294"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_init"</span>
+<a name="line-295"></a>    <span class='hs-varid'>gnutls_init</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
+<a name="line-296"></a>
+<a name="line-297"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
+<a name="line-298"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_deinit"</span>
+<a name="line-299"></a>    <span class='hs-varid'>gnutls_deinit</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-300"></a>
+<a name="line-301"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-302"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_handshake"</span>
+<a name="line-303"></a>    <span class='hs-varid'>gnutls_handshake</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
+<a name="line-304"></a>
+<a name="line-305"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-306"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_bye"</span>
+<a name="line-307"></a>    <span class='hs-varid'>gnutls_bye</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
+<a name="line-308"></a>
+<a name="line-309"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
+<a name="line-310"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_set_default_priority"</span>
+<a name="line-311"></a>    <span class='hs-varid'>gnutls_set_default_priority</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
+<a name="line-312"></a>
+<a name="line-313"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
+<a name="line-314"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_session_enable_compatibility_mode"</span>
+<a name="line-315"></a>    <span class='hs-varid'>gnutls_session_enable_compatibility_mode</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-316"></a>
+<a name="line-317"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
+<a name="line-318"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_certificate_send_x509_rdn_sequence"</span>
+<a name="line-319"></a>    <span class='hs-varid'>gnutls_certificate_send_x509_rdn_sequence</span>
+<a name="line-320"></a>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-321"></a>
+<a name="line-322"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-323"></a><span class='hs-comment'>-- Certificates.  Perhaps these could be unsafe but they are not performance</span>
+<a name="line-324"></a><span class='hs-comment'>-- critical, since they are called only once during server startup.</span>
+<a name="line-325"></a>
+<a name="line-326"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-327"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_certificate_allocate_credentials"</span>
+<a name="line-328"></a>    <span class='hs-varid'>gnutls_certificate_allocate_credentials</span>
+<a name="line-329"></a>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
+<a name="line-330"></a>
+<a name="line-331"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-332"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_certificate_free_credentials"</span>
+<a name="line-333"></a>    <span class='hs-varid'>gnutls_certificate_free_credentials</span>
+<a name="line-334"></a>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-335"></a>
+<a name="line-336"></a><a name="gnutls_x509_fmt_pem"></a><span class='hs-definition'>gnutls_x509_fmt_pem</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>CInt</span>
+<a name="line-337"></a><span class='hs-definition'>gnutls_x509_fmt_pem</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>1</span>
+<a name="line-338"></a>
+<a name="line-339"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-340"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_certificate_set_x509_key_file"</span>
+<a name="line-341"></a>    <span class='hs-varid'>gnutls_certificate_set_x509_key_file</span>
+<a name="line-342"></a>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
+<a name="line-343"></a>
+<a name="line-344"></a>
+<a name="line-345"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-346"></a><span class='hs-comment'>-- Credentials.  This is ok as unsafe because it just sets members in the</span>
+<a name="line-347"></a><span class='hs-comment'>-- session structure.</span>
+<a name="line-348"></a>
+<a name="line-349"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
+<a name="line-350"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_credentials_set"</span>
+<a name="line-351"></a>    <span class='hs-varid'>gnutls_credentials_set</span>
+<a name="line-352"></a>        <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Ptr</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
+<a name="line-353"></a>
+<a name="line-354"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-355"></a><span class='hs-comment'>-- Records.  These are marked unsafe because they are very performance</span>
+<a name="line-356"></a><span class='hs-comment'>-- critical.  Since we are using non-blocking sockets send and recv will not</span>
+<a name="line-357"></a><span class='hs-comment'>-- block.</span>
+<a name="line-358"></a>
+<a name="line-359"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
+<a name="line-360"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_transport_set_ptr"</span>
+<a name="line-361"></a>    <span class='hs-varid'>gnutls_transport_set_ptr</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Ptr</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-362"></a>
+<a name="line-363"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
+<a name="line-364"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_record_recv"</span>
+<a name="line-365"></a>    <span class='hs-varid'>gnutls_record_recv</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Ptr</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CSize</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>CSize</span>
+<a name="line-366"></a>
+<a name="line-367"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>unsafe</span>
+<a name="line-368"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_record_send"</span>
+<a name="line-369"></a>    <span class='hs-varid'>gnutls_record_send</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSSession</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Ptr</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CSize</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>CSize</span>
+<a name="line-370"></a>
+<a name="line-371"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-372"></a><span class='hs-comment'>-- DHParam.  Perhaps these could be unsafe but they are not performance</span>
+<a name="line-373"></a><span class='hs-comment'>-- critical.</span>
+<a name="line-374"></a>
+<a name="line-375"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-376"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_dh_params_init"</span>
+<a name="line-377"></a>    <span class='hs-varid'>gnutls_dh_params_init</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSDHParam</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
+<a name="line-378"></a>
+<a name="line-379"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-380"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_dh_params_deinit"</span>
+<a name="line-381"></a>    <span class='hs-varid'>gnutls_dh_params_deinit</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSDHParam</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-382"></a>
+<a name="line-383"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-384"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_dh_params_generate2"</span>
+<a name="line-385"></a>    <span class='hs-varid'>gnutls_dh_params_generate2</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSDHParam</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CUInt</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>ReturnCode</span>
+<a name="line-386"></a>
+<a name="line-387"></a><span class='hs-keyword'>foreign</span> <span class='hs-keyword'>import</span> <span class='hs-keyword'>ccall</span> <span class='hs-keyword'>safe</span>
+<a name="line-388"></a>    <span class='hs-str'>"gnutls/gnutls.h gnutls_certificate_set_dh_params"</span>
+<a name="line-389"></a>    <span class='hs-varid'>gnutls_certificate_set_dh_params</span>
+<a name="line-390"></a>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSCredentials</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Ptr</span> <span class='hs-conid'>GnuTLSDHParam</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-391"></a>
+<a name="line-392"></a><span class='hs-cpp'>#endif</span>
 </pre></body>
 </html>

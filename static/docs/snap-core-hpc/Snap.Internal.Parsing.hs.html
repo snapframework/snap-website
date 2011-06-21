@@ -17,233 +17,234 @@ span.spaces    { background: white }
 <span class="lineno">    6 </span>import           Data.ByteString.Char8 (ByteString)
 <span class="lineno">    7 </span>import qualified Data.ByteString.Char8 as S
 <span class="lineno">    8 </span>import qualified Data.ByteString.Lazy.Char8 as L
-<span class="lineno">    9 </span>import           Data.CIByteString
-<span class="lineno">   10 </span>import           Data.Char (isAlpha, isAscii, isControl)
-<span class="lineno">   11 </span>import           Control.Applicative
-<span class="lineno">   12 </span>import           Control.Monad
-<span class="lineno">   13 </span>import           Data.Attoparsec.Char8 hiding (Done, many)
-<span class="lineno">   14 </span>import qualified Data.Attoparsec.Char8 as Atto
-<span class="lineno">   15 </span>import           Data.ByteString.Nums.Careless.Int (int)
-<span class="lineno">   16 </span>import           Data.Int
-<span class="lineno">   17 </span>import qualified Data.Vector.Unboxed as Vec
-<span class="lineno">   18 </span>import           Data.Vector.Unboxed (Vector)
-<span class="lineno">   19 </span>import           Prelude hiding (head, take, takeWhile)
-<span class="lineno">   20 </span>
+<span class="lineno">    9 </span>import qualified Data.CaseInsensitive as CI
+<span class="lineno">   10 </span>import           Data.CaseInsensitive (CI)
+<span class="lineno">   11 </span>import           Data.Char (isAlpha, isAscii, isControl)
+<span class="lineno">   12 </span>import           Control.Applicative
+<span class="lineno">   13 </span>import           Control.Monad
+<span class="lineno">   14 </span>import           Data.Attoparsec.Char8 hiding (Done, many)
+<span class="lineno">   15 </span>import qualified Data.Attoparsec.Char8 as Atto
+<span class="lineno">   16 </span>import           Data.ByteString.Nums.Careless.Int (int)
+<span class="lineno">   17 </span>import           Data.Int
+<span class="lineno">   18 </span>import qualified Data.Vector.Unboxed as Vec
+<span class="lineno">   19 </span>import           Data.Vector.Unboxed (Vector)
+<span class="lineno">   20 </span>import           Prelude hiding (head, take, takeWhile)
 <span class="lineno">   21 </span>
-<span class="lineno">   22 </span>------------------------------------------------------------------------------
-<span class="lineno">   23 </span>fullyParse :: ByteString -&gt; Parser a -&gt; Either String a
-<span class="lineno">   24 </span><span class="decl"><span class="istickedoff">fullyParse s p =</span>
-<span class="lineno">   25 </span><span class="spaces">    </span><span class="istickedoff">case r' of</span>
-<span class="lineno">   26 </span><span class="spaces">      </span><span class="istickedoff">(Fail _ _ e)    -&gt; Left <span class="nottickedoff">e</span></span>
-<span class="lineno">   27 </span><span class="spaces">      </span><span class="istickedoff">(Partial _)     -&gt; <span class="nottickedoff">Left &quot;parse failed&quot;</span></span>
-<span class="lineno">   28 </span><span class="spaces">      </span><span class="istickedoff">(Atto.Done _ x) -&gt; Right x</span>
-<span class="lineno">   29 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">   30 </span><span class="spaces">    </span><span class="istickedoff">r  = parse p s</span>
-<span class="lineno">   31 </span><span class="spaces">    </span><span class="istickedoff">r' = feed r &quot;&quot;</span></span>
-<span class="lineno">   32 </span>
+<span class="lineno">   22 </span>
+<span class="lineno">   23 </span>------------------------------------------------------------------------------
+<span class="lineno">   24 </span>fullyParse :: ByteString -&gt; Parser a -&gt; Either String a
+<span class="lineno">   25 </span><span class="decl"><span class="istickedoff">fullyParse s p =</span>
+<span class="lineno">   26 </span><span class="spaces">    </span><span class="istickedoff">case r' of</span>
+<span class="lineno">   27 </span><span class="spaces">      </span><span class="istickedoff">(Fail _ _ e)    -&gt; Left <span class="nottickedoff">e</span></span>
+<span class="lineno">   28 </span><span class="spaces">      </span><span class="istickedoff">(Partial _)     -&gt; <span class="nottickedoff">Left &quot;parse failed&quot;</span></span>
+<span class="lineno">   29 </span><span class="spaces">      </span><span class="istickedoff">(Atto.Done _ x) -&gt; Right x</span>
+<span class="lineno">   30 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   31 </span><span class="spaces">    </span><span class="istickedoff">r  = parse p s</span>
+<span class="lineno">   32 </span><span class="spaces">    </span><span class="istickedoff">r' = feed r &quot;&quot;</span></span>
 <span class="lineno">   33 </span>
-<span class="lineno">   34 </span>------------------------------------------------------------------------------
-<span class="lineno">   35 </span>parseNum :: Parser Int64
-<span class="lineno">   36 </span><span class="decl"><span class="istickedoff">parseNum = liftM int $ Atto.takeWhile1 Atto.isDigit</span></span>
-<span class="lineno">   37 </span>
+<span class="lineno">   34 </span>
+<span class="lineno">   35 </span>------------------------------------------------------------------------------
+<span class="lineno">   36 </span>parseNum :: Parser Int64
+<span class="lineno">   37 </span><span class="decl"><span class="istickedoff">parseNum = liftM int $ Atto.takeWhile1 Atto.isDigit</span></span>
 <span class="lineno">   38 </span>
-<span class="lineno">   39 </span>------------------------------------------------------------------------------
-<span class="lineno">   40 </span>-- | Parsers for different tokens in an HTTP request.
-<span class="lineno">   41 </span>sp, digit, letter :: Parser Char
-<span class="lineno">   42 </span><span class="decl"><span class="istickedoff">sp       = char ' '</span></span>
-<span class="lineno">   43 </span><span class="decl"><span class="nottickedoff">digit    = satisfy isDigit</span></span>
-<span class="lineno">   44 </span><span class="decl"><span class="istickedoff">letter   = satisfy isAlpha</span></span>
-<span class="lineno">   45 </span>
+<span class="lineno">   39 </span>
+<span class="lineno">   40 </span>------------------------------------------------------------------------------
+<span class="lineno">   41 </span>-- | Parsers for different tokens in an HTTP request.
+<span class="lineno">   42 </span>sp, digit, letter :: Parser Char
+<span class="lineno">   43 </span><span class="decl"><span class="istickedoff">sp       = char ' '</span></span>
+<span class="lineno">   44 </span><span class="decl"><span class="nottickedoff">digit    = satisfy isDigit</span></span>
+<span class="lineno">   45 </span><span class="decl"><span class="istickedoff">letter   = satisfy isAlpha</span></span>
 <span class="lineno">   46 </span>
-<span class="lineno">   47 </span>------------------------------------------------------------------------------
-<span class="lineno">   48 </span>untilEOL :: Parser ByteString
-<span class="lineno">   49 </span><span class="decl"><span class="istickedoff">untilEOL = takeWhile notend</span>
-<span class="lineno">   50 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">   51 </span><span class="spaces">    </span><span class="istickedoff">notend c = not $ c == '\r' || c == '\n'</span></span>
-<span class="lineno">   52 </span>
+<span class="lineno">   47 </span>
+<span class="lineno">   48 </span>------------------------------------------------------------------------------
+<span class="lineno">   49 </span>untilEOL :: Parser ByteString
+<span class="lineno">   50 </span><span class="decl"><span class="istickedoff">untilEOL = takeWhile notend</span>
+<span class="lineno">   51 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   52 </span><span class="spaces">    </span><span class="istickedoff">notend c = not $ c == '\r' || c == '\n'</span></span>
 <span class="lineno">   53 </span>
-<span class="lineno">   54 </span>------------------------------------------------------------------------------
-<span class="lineno">   55 </span>crlf :: Parser ByteString
-<span class="lineno">   56 </span><span class="decl"><span class="istickedoff">crlf = string &quot;\r\n&quot;</span></span>
-<span class="lineno">   57 </span>
+<span class="lineno">   54 </span>
+<span class="lineno">   55 </span>------------------------------------------------------------------------------
+<span class="lineno">   56 </span>crlf :: Parser ByteString
+<span class="lineno">   57 </span><span class="decl"><span class="istickedoff">crlf = string &quot;\r\n&quot;</span></span>
 <span class="lineno">   58 </span>
-<span class="lineno">   59 </span>------------------------------------------------------------------------------
-<span class="lineno">   60 </span>-- | Parser for zero or more spaces.
-<span class="lineno">   61 </span>spaces :: Parser [Char]
-<span class="lineno">   62 </span><span class="decl"><span class="istickedoff">spaces = many sp</span></span>
-<span class="lineno">   63 </span>
+<span class="lineno">   59 </span>
+<span class="lineno">   60 </span>------------------------------------------------------------------------------
+<span class="lineno">   61 </span>-- | Parser for zero or more spaces.
+<span class="lineno">   62 </span>spaces :: Parser [Char]
+<span class="lineno">   63 </span><span class="decl"><span class="istickedoff">spaces = many sp</span></span>
 <span class="lineno">   64 </span>
-<span class="lineno">   65 </span>------------------------------------------------------------------------------
-<span class="lineno">   66 </span>pSpaces :: Parser ByteString
-<span class="lineno">   67 </span><span class="decl"><span class="istickedoff">pSpaces = takeWhile isSpace</span></span>
-<span class="lineno">   68 </span>
+<span class="lineno">   65 </span>
+<span class="lineno">   66 </span>------------------------------------------------------------------------------
+<span class="lineno">   67 </span>pSpaces :: Parser ByteString
+<span class="lineno">   68 </span><span class="decl"><span class="istickedoff">pSpaces = takeWhile isSpace</span></span>
 <span class="lineno">   69 </span>
-<span class="lineno">   70 </span>------------------------------------------------------------------------------
-<span class="lineno">   71 </span>fieldChars :: Parser ByteString
-<span class="lineno">   72 </span><span class="decl"><span class="istickedoff">fieldChars = takeWhile isFieldChar</span>
-<span class="lineno">   73 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">   74 </span><span class="spaces">    </span><span class="istickedoff">isFieldChar c = (Vec.!) fieldCharTable (fromEnum c)</span></span>
-<span class="lineno">   75 </span>
+<span class="lineno">   70 </span>
+<span class="lineno">   71 </span>------------------------------------------------------------------------------
+<span class="lineno">   72 </span>fieldChars :: Parser ByteString
+<span class="lineno">   73 </span><span class="decl"><span class="istickedoff">fieldChars = takeWhile isFieldChar</span>
+<span class="lineno">   74 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   75 </span><span class="spaces">    </span><span class="istickedoff">isFieldChar c = (Vec.!) fieldCharTable (fromEnum c)</span></span>
 <span class="lineno">   76 </span>
-<span class="lineno">   77 </span>------------------------------------------------------------------------------
-<span class="lineno">   78 </span>fieldCharTable :: Vector Bool
-<span class="lineno">   79 </span><span class="decl"><span class="istickedoff">fieldCharTable = Vec.generate 256 f</span>
-<span class="lineno">   80 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">   81 </span><span class="spaces">    </span><span class="istickedoff">f d = let c=toEnum d in (isDigit c) || (isAlpha c) || c == '-' || c == '_'</span></span>
-<span class="lineno">   82 </span>
+<span class="lineno">   77 </span>
+<span class="lineno">   78 </span>------------------------------------------------------------------------------
+<span class="lineno">   79 </span>fieldCharTable :: Vector Bool
+<span class="lineno">   80 </span><span class="decl"><span class="istickedoff">fieldCharTable = Vec.generate 256 f</span>
+<span class="lineno">   81 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   82 </span><span class="spaces">    </span><span class="istickedoff">f d = let c=toEnum d in (isDigit c) || (isAlpha c) || c == '-' || c == '_'</span></span>
 <span class="lineno">   83 </span>
-<span class="lineno">   84 </span>------------------------------------------------------------------------------
-<span class="lineno">   85 </span>-- | Parser for request headers.
-<span class="lineno">   86 </span>pHeaders :: Parser [(ByteString, ByteString)]
-<span class="lineno">   87 </span><span class="decl"><span class="istickedoff">pHeaders = many header</span>
-<span class="lineno">   88 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">   89 </span><span class="spaces">    </span><span class="istickedoff">header = {-# SCC &quot;pHeaders/header&quot; #-}</span>
-<span class="lineno">   90 </span><span class="spaces">             </span><span class="istickedoff">liftA2 (,)</span>
-<span class="lineno">   91 </span><span class="spaces">                 </span><span class="istickedoff">fieldName</span>
-<span class="lineno">   92 </span><span class="spaces">                 </span><span class="istickedoff">(char ':' *&gt; spaces *&gt; contents)</span>
-<span class="lineno">   93 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   94 </span><span class="spaces">    </span><span class="istickedoff">fieldName = {-# SCC &quot;pHeaders/fieldName&quot; #-}</span>
-<span class="lineno">   95 </span><span class="spaces">                </span><span class="istickedoff">liftA2 S.cons letter fieldChars</span>
-<span class="lineno">   96 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   97 </span><span class="spaces">    </span><span class="istickedoff">contents = {-# SCC &quot;pHeaders/contents&quot; #-}</span>
-<span class="lineno">   98 </span><span class="spaces">               </span><span class="istickedoff">liftA2 S.append</span>
-<span class="lineno">   99 </span><span class="spaces">                   </span><span class="istickedoff">(untilEOL &lt;* crlf)</span>
-<span class="lineno">  100 </span><span class="spaces">                   </span><span class="istickedoff">(continuation &lt;|&gt; pure S.empty)</span>
-<span class="lineno">  101 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  102 </span><span class="spaces">    </span><span class="istickedoff">isLeadingWS w = {-# SCC &quot;pHeaders/isLeadingWS&quot; #-}</span>
-<span class="lineno">  103 </span><span class="spaces">                    </span><span class="istickedoff">elem w wstab</span>
-<span class="lineno">  104 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  105 </span><span class="spaces">    </span><span class="istickedoff">wstab = &quot; \t&quot;</span>
-<span class="lineno">  106 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  107 </span><span class="spaces">    </span><span class="istickedoff">leadingWhiteSpace = {-# SCC &quot;pHeaders/leadingWhiteSpace&quot; #-}</span>
-<span class="lineno">  108 </span><span class="spaces">                        </span><span class="istickedoff">takeWhile1 isLeadingWS</span>
-<span class="lineno">  109 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  110 </span><span class="spaces">    </span><span class="istickedoff">continuation = {-# SCC &quot;pHeaders/continuation&quot; #-}</span>
-<span class="lineno">  111 </span><span class="spaces">                   </span><span class="istickedoff">liftA2 <span class="nottickedoff">S.cons</span></span>
-<span class="lineno">  112 </span><span class="spaces">                          </span><span class="istickedoff">(leadingWhiteSpace *&gt; <span class="nottickedoff">pure ' '</span>)</span>
-<span class="lineno">  113 </span><span class="spaces">                          </span><span class="istickedoff"><span class="nottickedoff">contents</span></span></span>
-<span class="lineno">  114 </span>
+<span class="lineno">   84 </span>
+<span class="lineno">   85 </span>------------------------------------------------------------------------------
+<span class="lineno">   86 </span>-- | Parser for request headers.
+<span class="lineno">   87 </span>pHeaders :: Parser [(ByteString, ByteString)]
+<span class="lineno">   88 </span><span class="decl"><span class="istickedoff">pHeaders = many header</span>
+<span class="lineno">   89 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   90 </span><span class="spaces">    </span><span class="istickedoff">header = {-# SCC &quot;pHeaders/header&quot; #-}</span>
+<span class="lineno">   91 </span><span class="spaces">             </span><span class="istickedoff">liftA2 (,)</span>
+<span class="lineno">   92 </span><span class="spaces">                 </span><span class="istickedoff">fieldName</span>
+<span class="lineno">   93 </span><span class="spaces">                 </span><span class="istickedoff">(char ':' *&gt; spaces *&gt; contents)</span>
+<span class="lineno">   94 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   95 </span><span class="spaces">    </span><span class="istickedoff">fieldName = {-# SCC &quot;pHeaders/fieldName&quot; #-}</span>
+<span class="lineno">   96 </span><span class="spaces">                </span><span class="istickedoff">liftA2 S.cons letter fieldChars</span>
+<span class="lineno">   97 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   98 </span><span class="spaces">    </span><span class="istickedoff">contents = {-# SCC &quot;pHeaders/contents&quot; #-}</span>
+<span class="lineno">   99 </span><span class="spaces">               </span><span class="istickedoff">liftA2 S.append</span>
+<span class="lineno">  100 </span><span class="spaces">                   </span><span class="istickedoff">(untilEOL &lt;* crlf)</span>
+<span class="lineno">  101 </span><span class="spaces">                   </span><span class="istickedoff">(continuation &lt;|&gt; pure S.empty)</span>
+<span class="lineno">  102 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  103 </span><span class="spaces">    </span><span class="istickedoff">isLeadingWS w = {-# SCC &quot;pHeaders/isLeadingWS&quot; #-}</span>
+<span class="lineno">  104 </span><span class="spaces">                    </span><span class="istickedoff">elem w wstab</span>
+<span class="lineno">  105 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  106 </span><span class="spaces">    </span><span class="istickedoff">wstab = &quot; \t&quot;</span>
+<span class="lineno">  107 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  108 </span><span class="spaces">    </span><span class="istickedoff">leadingWhiteSpace = {-# SCC &quot;pHeaders/leadingWhiteSpace&quot; #-}</span>
+<span class="lineno">  109 </span><span class="spaces">                        </span><span class="istickedoff">takeWhile1 isLeadingWS</span>
+<span class="lineno">  110 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  111 </span><span class="spaces">    </span><span class="istickedoff">continuation = {-# SCC &quot;pHeaders/continuation&quot; #-}</span>
+<span class="lineno">  112 </span><span class="spaces">                   </span><span class="istickedoff">liftA2 <span class="nottickedoff">S.cons</span></span>
+<span class="lineno">  113 </span><span class="spaces">                          </span><span class="istickedoff">(leadingWhiteSpace *&gt; <span class="nottickedoff">pure ' '</span>)</span>
+<span class="lineno">  114 </span><span class="spaces">                          </span><span class="istickedoff"><span class="nottickedoff">contents</span></span></span>
 <span class="lineno">  115 </span>
-<span class="lineno">  116 </span>------------------------------------------------------------------------------
-<span class="lineno">  117 </span>-- unhelpfully, the spec mentions &quot;old-style&quot; cookies that don't have quotes
-<span class="lineno">  118 </span>-- around the value. wonderful.
-<span class="lineno">  119 </span>pWord :: Parser ByteString
-<span class="lineno">  120 </span><span class="decl"><span class="istickedoff">pWord = pQuotedString &lt;|&gt; (takeWhile (/= ';'))</span></span>
-<span class="lineno">  121 </span>
+<span class="lineno">  116 </span>
+<span class="lineno">  117 </span>------------------------------------------------------------------------------
+<span class="lineno">  118 </span>-- unhelpfully, the spec mentions &quot;old-style&quot; cookies that don't have quotes
+<span class="lineno">  119 </span>-- around the value. wonderful.
+<span class="lineno">  120 </span>pWord :: Parser ByteString
+<span class="lineno">  121 </span><span class="decl"><span class="istickedoff">pWord = pQuotedString &lt;|&gt; (takeWhile (/= ';'))</span></span>
 <span class="lineno">  122 </span>
-<span class="lineno">  123 </span>------------------------------------------------------------------------------
-<span class="lineno">  124 </span>pQuotedString :: Parser ByteString
-<span class="lineno">  125 </span><span class="decl"><span class="istickedoff">pQuotedString = q *&gt; quotedText &lt;* q</span>
-<span class="lineno">  126 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  127 </span><span class="spaces">    </span><span class="istickedoff">quotedText = (S.concat . reverse) &lt;$&gt; f []</span>
-<span class="lineno">  128 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  129 </span><span class="spaces">    </span><span class="istickedoff">f soFar = do</span>
-<span class="lineno">  130 </span><span class="spaces">        </span><span class="istickedoff">t &lt;- takeWhile qdtext</span>
-<span class="lineno">  131 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  132 </span><span class="spaces">        </span><span class="istickedoff">let soFar' = t:soFar</span>
-<span class="lineno">  133 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  134 </span><span class="spaces">        </span><span class="istickedoff">-- RFC says that backslash only escapes for &lt;&quot;&gt;</span>
-<span class="lineno">  135 </span><span class="spaces">        </span><span class="istickedoff">choice [ string &quot;\\\&quot;&quot; *&gt; <span class="nottickedoff">f (&quot;\&quot;&quot; : soFar')</span></span>
-<span class="lineno">  136 </span><span class="spaces">               </span><span class="istickedoff">, pure soFar' ]</span>
-<span class="lineno">  137 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  123 </span>
+<span class="lineno">  124 </span>------------------------------------------------------------------------------
+<span class="lineno">  125 </span>pQuotedString :: Parser ByteString
+<span class="lineno">  126 </span><span class="decl"><span class="istickedoff">pQuotedString = q *&gt; quotedText &lt;* q</span>
+<span class="lineno">  127 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  128 </span><span class="spaces">    </span><span class="istickedoff">quotedText = (S.concat . reverse) &lt;$&gt; f []</span>
+<span class="lineno">  129 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  130 </span><span class="spaces">    </span><span class="istickedoff">f soFar = do</span>
+<span class="lineno">  131 </span><span class="spaces">        </span><span class="istickedoff">t &lt;- takeWhile qdtext</span>
+<span class="lineno">  132 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  133 </span><span class="spaces">        </span><span class="istickedoff">let soFar' = t:soFar</span>
+<span class="lineno">  134 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  135 </span><span class="spaces">        </span><span class="istickedoff">-- RFC says that backslash only escapes for &lt;&quot;&gt;</span>
+<span class="lineno">  136 </span><span class="spaces">        </span><span class="istickedoff">choice [ string &quot;\\\&quot;&quot; *&gt; <span class="nottickedoff">f (&quot;\&quot;&quot; : soFar')</span></span>
+<span class="lineno">  137 </span><span class="spaces">               </span><span class="istickedoff">, pure soFar' ]</span>
 <span class="lineno">  138 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  139 </span><span class="spaces">    </span><span class="istickedoff">q = char '\&quot;'</span>
-<span class="lineno">  140 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  141 </span><span class="spaces">    </span><span class="istickedoff">qdtext = matchAll [ isRFCText, (/= '\&quot;'), (/= '\\') ]</span></span>
-<span class="lineno">  142 </span>
+<span class="lineno">  139 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  140 </span><span class="spaces">    </span><span class="istickedoff">q = char '\&quot;'</span>
+<span class="lineno">  141 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  142 </span><span class="spaces">    </span><span class="istickedoff">qdtext = matchAll [ isRFCText, (/= '\&quot;'), (/= '\\') ]</span></span>
 <span class="lineno">  143 </span>
-<span class="lineno">  144 </span>------------------------------------------------------------------------------
-<span class="lineno">  145 </span>{-# INLINE isRFCText #-}
-<span class="lineno">  146 </span>isRFCText :: Char -&gt; Bool
-<span class="lineno">  147 </span><span class="decl"><span class="istickedoff">isRFCText = not . isControl</span></span>
-<span class="lineno">  148 </span>
+<span class="lineno">  144 </span>
+<span class="lineno">  145 </span>------------------------------------------------------------------------------
+<span class="lineno">  146 </span>{-# INLINE isRFCText #-}
+<span class="lineno">  147 </span>isRFCText :: Char -&gt; Bool
+<span class="lineno">  148 </span><span class="decl"><span class="istickedoff">isRFCText = not . isControl</span></span>
 <span class="lineno">  149 </span>
-<span class="lineno">  150 </span>------------------------------------------------------------------------------
-<span class="lineno">  151 </span>{-# INLINE matchAll #-}
-<span class="lineno">  152 </span>matchAll :: [ Char -&gt; Bool ] -&gt; Char -&gt; Bool
-<span class="lineno">  153 </span><span class="decl"><span class="istickedoff">matchAll x c = and $ map ($ c) x</span></span>
-<span class="lineno">  154 </span>
+<span class="lineno">  150 </span>
+<span class="lineno">  151 </span>------------------------------------------------------------------------------
+<span class="lineno">  152 </span>{-# INLINE matchAll #-}
+<span class="lineno">  153 </span>matchAll :: [ Char -&gt; Bool ] -&gt; Char -&gt; Bool
+<span class="lineno">  154 </span><span class="decl"><span class="istickedoff">matchAll x c = and $ map ($ c) x</span></span>
 <span class="lineno">  155 </span>
-<span class="lineno">  156 </span>------------------------------------------------------------------------------
-<span class="lineno">  157 </span>pAvPairs :: Parser [(ByteString, ByteString)]
-<span class="lineno">  158 </span><span class="decl"><span class="nottickedoff">pAvPairs = do</span>
-<span class="lineno">  159 </span><span class="spaces">    </span><span class="nottickedoff">a &lt;- pAvPair</span>
-<span class="lineno">  160 </span><span class="spaces">    </span><span class="nottickedoff">b &lt;- many (pSpaces *&gt; char ';' *&gt; pSpaces *&gt; pAvPair)</span>
-<span class="lineno">  161 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  162 </span><span class="spaces">    </span><span class="nottickedoff">return $ a:b</span></span>
-<span class="lineno">  163 </span>
+<span class="lineno">  156 </span>
+<span class="lineno">  157 </span>------------------------------------------------------------------------------
+<span class="lineno">  158 </span>pAvPairs :: Parser [(ByteString, ByteString)]
+<span class="lineno">  159 </span><span class="decl"><span class="nottickedoff">pAvPairs = do</span>
+<span class="lineno">  160 </span><span class="spaces">    </span><span class="nottickedoff">a &lt;- pAvPair</span>
+<span class="lineno">  161 </span><span class="spaces">    </span><span class="nottickedoff">b &lt;- many (pSpaces *&gt; char ';' *&gt; pSpaces *&gt; pAvPair)</span>
+<span class="lineno">  162 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  163 </span><span class="spaces">    </span><span class="nottickedoff">return $ a:b</span></span>
 <span class="lineno">  164 </span>
-<span class="lineno">  165 </span>------------------------------------------------------------------------------
-<span class="lineno">  166 </span>pAvPair :: Parser (ByteString, ByteString)
-<span class="lineno">  167 </span><span class="decl"><span class="nottickedoff">pAvPair = do</span>
-<span class="lineno">  168 </span><span class="spaces">    </span><span class="nottickedoff">key &lt;- pToken &lt;* pSpaces</span>
-<span class="lineno">  169 </span><span class="spaces">    </span><span class="nottickedoff">val &lt;- liftM trim (option &quot;&quot; $ char '=' *&gt; pSpaces *&gt; pWord)</span>
-<span class="lineno">  170 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  171 </span><span class="spaces">    </span><span class="nottickedoff">return (key, val)</span></span>
-<span class="lineno">  172 </span>
+<span class="lineno">  165 </span>
+<span class="lineno">  166 </span>------------------------------------------------------------------------------
+<span class="lineno">  167 </span>pAvPair :: Parser (ByteString, ByteString)
+<span class="lineno">  168 </span><span class="decl"><span class="nottickedoff">pAvPair = do</span>
+<span class="lineno">  169 </span><span class="spaces">    </span><span class="nottickedoff">key &lt;- pToken &lt;* pSpaces</span>
+<span class="lineno">  170 </span><span class="spaces">    </span><span class="nottickedoff">val &lt;- liftM trim (option &quot;&quot; $ char '=' *&gt; pSpaces *&gt; pWord)</span>
+<span class="lineno">  171 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  172 </span><span class="spaces">    </span><span class="nottickedoff">return (key, val)</span></span>
 <span class="lineno">  173 </span>
-<span class="lineno">  174 </span>------------------------------------------------------------------------------
-<span class="lineno">  175 </span>pParameter :: Parser (ByteString, ByteString)
-<span class="lineno">  176 </span><span class="decl"><span class="istickedoff">pParameter = do</span>
-<span class="lineno">  177 </span><span class="spaces">    </span><span class="istickedoff">key &lt;- pToken &lt;* pSpaces</span>
-<span class="lineno">  178 </span><span class="spaces">    </span><span class="istickedoff">val &lt;- liftM trim (char '=' *&gt; pSpaces *&gt; pWord)</span>
-<span class="lineno">  179 </span><span class="spaces">    </span><span class="istickedoff">return (trim key, val)</span></span>
-<span class="lineno">  180 </span>
+<span class="lineno">  174 </span>
+<span class="lineno">  175 </span>------------------------------------------------------------------------------
+<span class="lineno">  176 </span>pParameter :: Parser (ByteString, ByteString)
+<span class="lineno">  177 </span><span class="decl"><span class="istickedoff">pParameter = do</span>
+<span class="lineno">  178 </span><span class="spaces">    </span><span class="istickedoff">key &lt;- pToken &lt;* pSpaces</span>
+<span class="lineno">  179 </span><span class="spaces">    </span><span class="istickedoff">val &lt;- liftM trim (char '=' *&gt; pSpaces *&gt; pWord)</span>
+<span class="lineno">  180 </span><span class="spaces">    </span><span class="istickedoff">return (trim key, val)</span></span>
 <span class="lineno">  181 </span>
-<span class="lineno">  182 </span>------------------------------------------------------------------------------
-<span class="lineno">  183 </span>trim :: ByteString -&gt; ByteString
-<span class="lineno">  184 </span><span class="decl"><span class="istickedoff">trim = snd . S.span isSpace . fst . S.spanEnd isSpace</span></span>
-<span class="lineno">  185 </span>
+<span class="lineno">  182 </span>
+<span class="lineno">  183 </span>------------------------------------------------------------------------------
+<span class="lineno">  184 </span>trim :: ByteString -&gt; ByteString
+<span class="lineno">  185 </span><span class="decl"><span class="istickedoff">trim = snd . S.span isSpace . fst . S.spanEnd isSpace</span></span>
 <span class="lineno">  186 </span>
-<span class="lineno">  187 </span>------------------------------------------------------------------------------
-<span class="lineno">  188 </span>pValueWithParameters :: Parser (ByteString, [(CIByteString, ByteString)])
-<span class="lineno">  189 </span><span class="decl"><span class="istickedoff">pValueWithParameters = do</span>
-<span class="lineno">  190 </span><span class="spaces">    </span><span class="istickedoff">value  &lt;- liftM <span class="nottickedoff">trim</span> (pSpaces *&gt; takeWhile (/= ';'))</span>
-<span class="lineno">  191 </span><span class="spaces">    </span><span class="istickedoff">params &lt;- many pParam</span>
-<span class="lineno">  192 </span><span class="spaces">    </span><span class="istickedoff">return (<span class="nottickedoff">value</span>, map (first toCI) params)</span>
-<span class="lineno">  193 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  194 </span><span class="spaces">    </span><span class="istickedoff">pParam = pSpaces *&gt; char ';' *&gt; pSpaces *&gt; pParameter</span></span>
-<span class="lineno">  195 </span>
-<span class="lineno">  196 </span>------------------------------------------------------------------------------
-<span class="lineno">  197 </span>pContentTypeWithParameters ::
-<span class="lineno">  198 </span>    Parser (ByteString, [(CIByteString, ByteString)])
-<span class="lineno">  199 </span><span class="decl"><span class="istickedoff">pContentTypeWithParameters = do</span>
-<span class="lineno">  200 </span><span class="spaces">    </span><span class="istickedoff">value  &lt;- liftM trim (pSpaces *&gt; takeWhile (not . isSep))</span>
-<span class="lineno">  201 </span><span class="spaces">    </span><span class="istickedoff">params &lt;- many (pSpaces *&gt; satisfy isSep *&gt; pSpaces *&gt; pParameter)</span>
-<span class="lineno">  202 </span><span class="spaces">    </span><span class="istickedoff">return (value, map (first toCI) params)</span>
-<span class="lineno">  203 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  204 </span><span class="spaces">    </span><span class="istickedoff">isSep c = c == ';' || c == ','</span></span>
-<span class="lineno">  205 </span>
-<span class="lineno">  206 </span>------------------------------------------------------------------------------
-<span class="lineno">  207 </span>pToken :: Parser ByteString
-<span class="lineno">  208 </span><span class="decl"><span class="istickedoff">pToken = takeWhile isToken</span></span>
-<span class="lineno">  209 </span>
+<span class="lineno">  187 </span>
+<span class="lineno">  188 </span>------------------------------------------------------------------------------
+<span class="lineno">  189 </span>pValueWithParameters :: Parser (ByteString, [(CI ByteString, ByteString)])
+<span class="lineno">  190 </span><span class="decl"><span class="istickedoff">pValueWithParameters = do</span>
+<span class="lineno">  191 </span><span class="spaces">    </span><span class="istickedoff">value  &lt;- liftM <span class="nottickedoff">trim</span> (pSpaces *&gt; takeWhile (/= ';'))</span>
+<span class="lineno">  192 </span><span class="spaces">    </span><span class="istickedoff">params &lt;- many pParam</span>
+<span class="lineno">  193 </span><span class="spaces">    </span><span class="istickedoff">return (<span class="nottickedoff">value</span>, map (first CI.mk) params)</span>
+<span class="lineno">  194 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  195 </span><span class="spaces">    </span><span class="istickedoff">pParam = pSpaces *&gt; char ';' *&gt; pSpaces *&gt; pParameter</span></span>
+<span class="lineno">  196 </span>
+<span class="lineno">  197 </span>------------------------------------------------------------------------------
+<span class="lineno">  198 </span>pContentTypeWithParameters ::
+<span class="lineno">  199 </span>    Parser (ByteString, [(CI ByteString, ByteString)])
+<span class="lineno">  200 </span><span class="decl"><span class="istickedoff">pContentTypeWithParameters = do</span>
+<span class="lineno">  201 </span><span class="spaces">    </span><span class="istickedoff">value  &lt;- liftM trim (pSpaces *&gt; takeWhile (not . isSep))</span>
+<span class="lineno">  202 </span><span class="spaces">    </span><span class="istickedoff">params &lt;- many (pSpaces *&gt; satisfy isSep *&gt; pSpaces *&gt; pParameter)</span>
+<span class="lineno">  203 </span><span class="spaces">    </span><span class="istickedoff">return (value, map (first CI.mk) params)</span>
+<span class="lineno">  204 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  205 </span><span class="spaces">    </span><span class="istickedoff">isSep c = c == ';' || c == ','</span></span>
+<span class="lineno">  206 </span>
+<span class="lineno">  207 </span>------------------------------------------------------------------------------
+<span class="lineno">  208 </span>pToken :: Parser ByteString
+<span class="lineno">  209 </span><span class="decl"><span class="istickedoff">pToken = takeWhile isToken</span></span>
 <span class="lineno">  210 </span>
-<span class="lineno">  211 </span>------------------------------------------------------------------------------
-<span class="lineno">  212 </span>{-# INLINE isToken #-}
-<span class="lineno">  213 </span>isToken :: Char -&gt; Bool
-<span class="lineno">  214 </span><span class="decl"><span class="istickedoff">isToken c = (Vec.!) tokenTable (fromEnum c)</span>
-<span class="lineno">  215 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  216 </span><span class="spaces">    </span><span class="istickedoff">tokenTable :: Vector Bool</span>
-<span class="lineno">  217 </span><span class="spaces">    </span><span class="istickedoff">tokenTable = Vec.generate 256 (f . toEnum)</span>
-<span class="lineno">  218 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  219 </span><span class="spaces">    </span><span class="istickedoff">f = matchAll [ isAscii</span>
-<span class="lineno">  220 </span><span class="spaces">                 </span><span class="istickedoff">, not . isControl</span>
-<span class="lineno">  221 </span><span class="spaces">                 </span><span class="istickedoff">, not . isSpace</span>
-<span class="lineno">  222 </span><span class="spaces">                 </span><span class="istickedoff">, not . flip elem [ '(', ')', '&lt;', '&gt;', '@', ',', ';'</span>
-<span class="lineno">  223 </span><span class="spaces">                                   </span><span class="istickedoff">, ':', '\\', '\&quot;', '/', '[', ']'</span>
-<span class="lineno">  224 </span><span class="spaces">                                   </span><span class="istickedoff">, '?', '=', '{', '}' ]</span>
-<span class="lineno">  225 </span><span class="spaces">                 </span><span class="istickedoff">]</span></span>
-<span class="lineno">  226 </span>
+<span class="lineno">  211 </span>
+<span class="lineno">  212 </span>------------------------------------------------------------------------------
+<span class="lineno">  213 </span>{-# INLINE isToken #-}
+<span class="lineno">  214 </span>isToken :: Char -&gt; Bool
+<span class="lineno">  215 </span><span class="decl"><span class="istickedoff">isToken c = (Vec.!) tokenTable (fromEnum c)</span>
+<span class="lineno">  216 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  217 </span><span class="spaces">    </span><span class="istickedoff">tokenTable :: Vector Bool</span>
+<span class="lineno">  218 </span><span class="spaces">    </span><span class="istickedoff">tokenTable = Vec.generate 256 (f . toEnum)</span>
+<span class="lineno">  219 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  220 </span><span class="spaces">    </span><span class="istickedoff">f = matchAll [ isAscii</span>
+<span class="lineno">  221 </span><span class="spaces">                 </span><span class="istickedoff">, not . isControl</span>
+<span class="lineno">  222 </span><span class="spaces">                 </span><span class="istickedoff">, not . isSpace</span>
+<span class="lineno">  223 </span><span class="spaces">                 </span><span class="istickedoff">, not . flip elem [ '(', ')', '&lt;', '&gt;', '@', ',', ';'</span>
+<span class="lineno">  224 </span><span class="spaces">                                   </span><span class="istickedoff">, ':', '\\', '\&quot;', '/', '[', ']'</span>
+<span class="lineno">  225 </span><span class="spaces">                                   </span><span class="istickedoff">, '?', '=', '{', '}' ]</span>
+<span class="lineno">  226 </span><span class="spaces">                 </span><span class="istickedoff">]</span></span>
 <span class="lineno">  227 </span>
-<span class="lineno">  228 </span>------------------------------------------------------------------------------
-<span class="lineno">  229 </span>-- utility functions
-<span class="lineno">  230 </span>------------------------------------------------------------------------------
-<span class="lineno">  231 </span>
+<span class="lineno">  228 </span>
+<span class="lineno">  229 </span>------------------------------------------------------------------------------
+<span class="lineno">  230 </span>-- utility functions
+<span class="lineno">  231 </span>------------------------------------------------------------------------------
 <span class="lineno">  232 </span>
-<span class="lineno">  233 </span>------------------------------------------------------------------------------
-<span class="lineno">  234 </span>strictize :: L.ByteString -&gt; ByteString
-<span class="lineno">  235 </span><span class="decl"><span class="nottickedoff">strictize         = S.concat . L.toChunks</span></span>
+<span class="lineno">  233 </span>
+<span class="lineno">  234 </span>------------------------------------------------------------------------------
+<span class="lineno">  235 </span>strictize :: L.ByteString -&gt; ByteString
+<span class="lineno">  236 </span><span class="decl"><span class="nottickedoff">strictize         = S.concat . L.toChunks</span></span>
 
 </pre>
 </html>

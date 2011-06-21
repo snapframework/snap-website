@@ -16,7 +16,7 @@
 <a name="line-7"></a><span class='hs-comment'>-- @string@. This also applies to the functions @preEscapedText@,</span>
 <a name="line-8"></a><span class='hs-comment'>-- @preEscapedTextValue@...</span>
 <a name="line-9"></a><span class='hs-comment'>--</span>
-<a name="line-10"></a><span class='hs-keyword'>module</span> <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Blaze</span><span class='hs-varop'>.</span><span class='hs-conid'>Renderer</span><span class='hs-varop'>.</span><span class='hs-conid'>XmlHtml</span> <span class='hs-layout'>(</span><span class='hs-varid'>renderHtml</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
+<a name="line-10"></a><span class='hs-keyword'>module</span> <span class='hs-conid'>Text</span><span class='hs-varop'>.</span><span class='hs-conid'>Blaze</span><span class='hs-varop'>.</span><span class='hs-conid'>Renderer</span><span class='hs-varop'>.</span><span class='hs-conid'>XmlHtml</span> <span class='hs-layout'>(</span><span class='hs-varid'>renderHtml</span><span class='hs-layout'>,</span> <span class='hs-varid'>renderHtmlNodes</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
 <a name="line-11"></a>
 <a name="line-12"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Text</span> <span class='hs-layout'>(</span><span class='hs-conid'>Text</span><span class='hs-layout'>)</span>
 <a name="line-13"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Text</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>T</span>
@@ -77,11 +77,15 @@
 <a name="line-68"></a>    <span class='hs-comment'>{-# NOINLINE go #-}</span>
 <a name="line-69"></a><span class='hs-comment'>{-# INLINE renderNodes #-}</span>
 <a name="line-70"></a>
-<a name="line-71"></a><a name="renderHtml"></a><span class='hs-comment'>-- | Render HTML to an xmlhtml Document</span>
+<a name="line-71"></a><a name="renderHtml"></a><span class='hs-comment'>-- | Render HTML to an xmlhtml 'Document'</span>
 <a name="line-72"></a><span class='hs-comment'>--</span>
 <a name="line-73"></a><span class='hs-definition'>renderHtml</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Html</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Document</span>
 <a name="line-74"></a><span class='hs-definition'>renderHtml</span> <span class='hs-varid'>html</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>HtmlDocument</span> <span class='hs-conid'>UTF8</span> <span class='hs-conid'>Nothing</span> <span class='hs-layout'>(</span><span class='hs-varid'>renderNodes</span> <span class='hs-varid'>html</span> <span class='hs-conid'>[]</span><span class='hs-layout'>)</span>
 <a name="line-75"></a><span class='hs-comment'>{-# INLINE renderHtml #-}</span>
 <a name="line-76"></a>
+<a name="line-77"></a><a name="renderHtmlNodes"></a><span class='hs-comment'>-- | Render HTML to a list of xmlhtml nodes</span>
+<a name="line-78"></a><span class='hs-comment'>--</span>
+<a name="line-79"></a><span class='hs-definition'>renderHtmlNodes</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Html</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Node</span><span class='hs-keyglyph'>]</span>
+<a name="line-80"></a><span class='hs-definition'>renderHtmlNodes</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>flip</span> <span class='hs-varid'>renderNodes</span> <span class='hs-conid'>[]</span>
 </pre></body>
 </html>

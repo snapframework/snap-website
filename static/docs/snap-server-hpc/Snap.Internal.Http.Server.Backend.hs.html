@@ -96,15 +96,15 @@ span.spaces    { background: white }
 <span class="lineno">   85 </span>                  | ListenHttps Socket (Ptr Word) (Ptr Word)
 <span class="lineno">   86 </span>
 <span class="lineno">   87 </span>instance Show ListenSocket where
-<span class="lineno">   88 </span>    <span class="decl"><span class="istickedoff">show (ListenHttp s) = &quot;ListenHttp (&quot; ++ show s ++ &quot;)&quot;</span>
-<span class="lineno">   89 </span><span class="spaces">    </span><span class="istickedoff">show (ListenHttps s _ _) = <span class="nottickedoff">&quot;ListenHttps (&quot; ++ show s ++ &quot;)&quot;</span></span></span>
+<span class="lineno">   88 </span>    <span class="decl"><span class="nottickedoff">show (ListenHttp s) = &quot;ListenHttp (&quot; ++ show s ++ &quot;)&quot;</span>
+<span class="lineno">   89 </span><span class="spaces">    </span><span class="nottickedoff">show (ListenHttps s _ _) = &quot;ListenHttps (&quot; ++ show s ++ &quot;)&quot;</span></span>
 <span class="lineno">   90 </span>
-<span class="lineno">   91 </span>------------------------------------------------------------------------------
-<span class="lineno">   92 </span>data <span class="istickedoff"><span class="nottickedoff">NetworkSession</span></span> = NetworkSession
-<span class="lineno">   93 </span>  { _socket     :: CInt
-<span class="lineno">   94 </span>  , _session    :: Ptr Word
-<span class="lineno">   95 </span>  , _recvBuffer :: Ptr CChar
-<span class="lineno">   96 </span>  , _recvLen    :: CSize
+<span class="lineno">   91 </span>
+<span class="lineno">   92 </span>------------------------------------------------------------------------------
+<span class="lineno">   93 </span>data <span class="nottickedoff">NetworkSession</span> = NetworkSession
+<span class="lineno">   94 </span>  { _socket     :: CInt
+<span class="lineno">   95 </span>  , _session    :: Ptr Word
+<span class="lineno">   96 </span>  , _recvLen    :: Int
 <span class="lineno">   97 </span>  }
 
 </pre>

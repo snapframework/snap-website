@@ -32,342 +32,307 @@
 <a name="line-23"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span> <span class='hs-layout'>(</span><span class='hs-varid'>c2w</span><span class='hs-layout'>)</span>
 <a name="line-24"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Maybe</span>
 <a name="line-25"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Typeable</span>
-<a name="line-26"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Word</span>
-<a name="line-27"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Foreign</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>new</span><span class='hs-layout'>)</span>
-<a name="line-28"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Foreign</span><span class='hs-varop'>.</span><span class='hs-conid'>C</span>
-<a name="line-29"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>GHC</span><span class='hs-varop'>.</span><span class='hs-conid'>Conc</span> <span class='hs-layout'>(</span><span class='hs-varid'>labelThread</span><span class='hs-layout'>,</span> <span class='hs-varid'>forkOnIO</span><span class='hs-layout'>)</span>
-<a name="line-30"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Network</span><span class='hs-varop'>.</span><span class='hs-conid'>Socket</span>
-<a name="line-31"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Prelude</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>catch</span><span class='hs-layout'>)</span>
-<a name="line-32"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-33"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Concurrent</span><span class='hs-varop'>.</span><span class='hs-conid'>HashMap</span> <span class='hs-layout'>(</span><span class='hs-varid'>hashString</span><span class='hs-layout'>)</span>
-<a name="line-34"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Debug</span>
-<a name="line-35"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>Date</span>
-<a name="line-36"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>TimeoutTable</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>TT</span>
-<a name="line-37"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>TimeoutTable</span> <span class='hs-layout'>(</span><span class='hs-conid'>TimeoutTable</span><span class='hs-layout'>)</span>
-<a name="line-38"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>Backend</span>
-<a name="line-39"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>ListenHelpers</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Listen</span>
-<a name="line-40"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>map</span><span class='hs-layout'>)</span>
-<a name="line-41"></a>
-<a name="line-42"></a><span class='hs-cpp'>#if defined(HAS_SENDFILE)</span>
-<a name="line-43"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>SendFile</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>SF</span>
-<a name="line-44"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>Posix</span><span class='hs-varop'>.</span><span class='hs-conid'>IO</span>
-<a name="line-45"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>Posix</span><span class='hs-varop'>.</span><span class='hs-conid'>Types</span> <span class='hs-layout'>(</span><span class='hs-conid'>Fd</span><span class='hs-layout'>(</span><span class='hs-keyglyph'>..</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-46"></a><span class='hs-cpp'>#endif</span>
-<a name="line-47"></a>
-<a name="line-48"></a>
-<a name="line-49"></a><a name="EventLoopCpu"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-50"></a><a name="EventLoopCpu"></a><span class='hs-comment'>-- | For each cpu, we store:</span>
-<a name="line-51"></a><a name="EventLoopCpu"></a><span class='hs-comment'>--    * A list of accept threads, one per port.</span>
-<a name="line-52"></a><a name="EventLoopCpu"></a><span class='hs-comment'>--    * One timeout table and one timeout thread.</span>
-<a name="line-53"></a><a name="EventLoopCpu"></a><span class='hs-comment'>--      These timeout the session threads.</span>
-<a name="line-54"></a><a name="EventLoopCpu"></a><span class='hs-comment'>--    * An mvar to signal when the timeout thread is shutdown</span>
-<a name="line-55"></a><a name="EventLoopCpu"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>EventLoopCpu</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>EventLoopCpu</span>
-<a name="line-56"></a>    <span class='hs-layout'>{</span> <span class='hs-sel'>_boundCpu</span>        <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span>
-<a name="line-57"></a>    <span class='hs-layout'>,</span> <span class='hs-sel'>_acceptThreads</span>   <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>ThreadId</span><span class='hs-keyglyph'>]</span>
-<a name="line-58"></a>    <span class='hs-layout'>,</span> <span class='hs-sel'>_timeoutTable</span>    <span class='hs-keyglyph'>::</span> <span class='hs-conid'>TimeoutTable</span>
-<a name="line-59"></a>    <span class='hs-layout'>,</span> <span class='hs-sel'>_timeoutThread</span>   <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ThreadId</span>
-<a name="line-60"></a>    <span class='hs-layout'>,</span> <span class='hs-sel'>_exitMVar</span>        <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-layout'>(</span><span class='hs-conid'>MVar</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
-<a name="line-61"></a>    <span class='hs-layout'>}</span>
-<a name="line-62"></a>
-<a name="line-63"></a>
-<a name="line-64"></a><a name="simpleEventLoop"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-65"></a><span class='hs-definition'>simpleEventLoop</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>EventLoop</span>
-<a name="line-66"></a><span class='hs-definition'>simpleEventLoop</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>sockets</span> <span class='hs-varid'>cap</span> <span class='hs-varid'>elog</span> <span class='hs-varid'>handler</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-67"></a>    <span class='hs-varid'>loops</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>mapM</span> <span class='hs-layout'>(</span><span class='hs-varid'>newLoop</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>sockets</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>elog</span><span class='hs-layout'>)</span>
-<a name="line-68"></a>                          <span class='hs-keyglyph'>[</span><span class='hs-num'>0</span><span class='hs-keyglyph'>..</span><span class='hs-layout'>(</span><span class='hs-varid'>cap</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span>
-<a name="line-69"></a>
-<a name="line-70"></a>    <span class='hs-varid'>debug</span> <span class='hs-str'>"simpleEventLoop: waiting for mvars"</span>
-<a name="line-71"></a>
-<a name="line-72"></a>    <span class='hs-comment'>--wait for all threads to exit</span>
-<a name="line-73"></a>    <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>mapM_</span> <span class='hs-layout'>(</span><span class='hs-varid'>takeMVar</span> <span class='hs-varop'>.</span> <span class='hs-sel'>_exitMVar</span><span class='hs-layout'>)</span> <span class='hs-varid'>loops</span> <span class='hs-varop'>`finally`</span> <span class='hs-keyword'>do</span>
-<a name="line-74"></a>        <span class='hs-varid'>debug</span> <span class='hs-str'>"simpleEventLoop: killing all threads"</span>
-<a name="line-75"></a>        <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>mapM_</span> <span class='hs-varid'>stopLoop</span> <span class='hs-varid'>loops</span>
-<a name="line-76"></a>        <span class='hs-varid'>mapM_</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>closeSocket</span> <span class='hs-varid'>sockets</span>
-<a name="line-77"></a>
-<a name="line-78"></a>
-<a name="line-79"></a><a name="newLoop"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-80"></a><span class='hs-definition'>newLoop</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span>
-<a name="line-81"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>ListenSocket</span><span class='hs-keyglyph'>]</span>
-<a name="line-82"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>SessionHandler</span>
-<a name="line-83"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
-<a name="line-84"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span>
-<a name="line-85"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>EventLoopCpu</span>
-<a name="line-86"></a><span class='hs-definition'>newLoop</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>sockets</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>elog</span> <span class='hs-varid'>cpu</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-87"></a>    <span class='hs-varid'>tt</span>         <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>TT</span><span class='hs-varop'>.</span><span class='hs-varid'>new</span>
-<a name="line-88"></a>    <span class='hs-varid'>exit</span>       <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>newEmptyMVar</span>
-<a name="line-89"></a>    <span class='hs-varid'>accThreads</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>forM</span> <span class='hs-varid'>sockets</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>p</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>forkOnIO</span> <span class='hs-varid'>cpu</span> <span class='hs-varop'>$</span>
-<a name="line-90"></a>                  <span class='hs-varid'>acceptThread</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>tt</span> <span class='hs-varid'>elog</span> <span class='hs-varid'>cpu</span> <span class='hs-varid'>p</span>
-<a name="line-91"></a>    <span class='hs-varid'>tid</span>        <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>forkOnIO</span> <span class='hs-varid'>cpu</span> <span class='hs-varop'>$</span> <span class='hs-varid'>timeoutThread</span> <span class='hs-varid'>tt</span> <span class='hs-varid'>exit</span>
-<a name="line-92"></a>
-<a name="line-93"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>EventLoopCpu</span> <span class='hs-varid'>cpu</span> <span class='hs-varid'>accThreads</span> <span class='hs-varid'>tt</span> <span class='hs-varid'>tid</span> <span class='hs-varid'>exit</span>
-<a name="line-94"></a>
-<a name="line-95"></a>
-<a name="line-96"></a><a name="stopLoop"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-97"></a><span class='hs-definition'>stopLoop</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>EventLoopCpu</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-98"></a><span class='hs-definition'>stopLoop</span> <span class='hs-varid'>loop</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>block</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>do</span>
-<a name="line-99"></a>    <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>mapM_</span> <span class='hs-varid'>killThread</span> <span class='hs-varop'>$</span> <span class='hs-sel'>_acceptThreads</span> <span class='hs-varid'>loop</span>
-<a name="line-100"></a>    <span class='hs-varid'>killThread</span> <span class='hs-varop'>$</span> <span class='hs-sel'>_timeoutThread</span> <span class='hs-varid'>loop</span>
-<a name="line-101"></a>
-<a name="line-102"></a>
-<a name="line-103"></a><a name="acceptThread"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-104"></a><span class='hs-definition'>acceptThread</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span>
-<a name="line-105"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>SessionHandler</span>
-<a name="line-106"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>TimeoutTable</span>
-<a name="line-107"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
-<a name="line-108"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span>
-<a name="line-109"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ListenSocket</span>
-<a name="line-110"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-111"></a><span class='hs-definition'>acceptThread</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>tt</span> <span class='hs-varid'>elog</span> <span class='hs-varid'>cpu</span> <span class='hs-varid'>sock</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>loop</span>
-<a name="line-112"></a>  <span class='hs-keyword'>where</span>
-<a name="line-113"></a>    <span class='hs-varid'>loop</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-114"></a>        <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"acceptThread: calling accept() on socket "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>sock</span>
-<a name="line-115"></a>        <span class='hs-layout'>(</span><span class='hs-varid'>s</span><span class='hs-layout'>,</span><span class='hs-varid'>addr</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>accept</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>listenSocket</span> <span class='hs-varid'>sock</span>
-<a name="line-116"></a>        <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"acceptThread: accepted connection from remote: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>addr</span>
-<a name="line-117"></a>        <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>forkOnIO</span> <span class='hs-varid'>cpu</span> <span class='hs-layout'>(</span><span class='hs-varid'>go</span> <span class='hs-varid'>s</span> <span class='hs-varid'>addr</span> <span class='hs-varop'>`catches`</span> <span class='hs-varid'>cleanup</span><span class='hs-layout'>)</span>
-<a name="line-118"></a>        <span class='hs-varid'>loop</span>
-<a name="line-119"></a>
-<a name="line-120"></a>    <span class='hs-varid'>go</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>runSession</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>tt</span> <span class='hs-varid'>sock</span>
-<a name="line-121"></a>
-<a name="line-122"></a>    <span class='hs-varid'>cleanup</span> <span class='hs-keyglyph'>=</span>
-<a name="line-123"></a>        <span class='hs-keyglyph'>[</span>
-<a name="line-124"></a>          <span class='hs-conid'>Handler</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-layout'>(</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>AsyncException</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-125"></a>        <span class='hs-layout'>,</span> <span class='hs-conid'>Handler</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-layout'>(</span><span class='hs-varid'>e</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>SomeException</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>elog</span>
-<a name="line-126"></a>                  <span class='hs-varop'>$</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-keyglyph'>[</span> <span class='hs-str'>"SimpleBackend.acceptThread: "</span>
-<a name="line-127"></a>                             <span class='hs-layout'>,</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>pack</span> <span class='hs-varop'>.</span> <span class='hs-varid'>map</span> <span class='hs-varid'>c2w</span> <span class='hs-varop'>$</span> <span class='hs-varid'>show</span> <span class='hs-varid'>e</span><span class='hs-keyglyph'>]</span>
-<a name="line-128"></a>        <span class='hs-keyglyph'>]</span>
-<a name="line-129"></a>
-<a name="line-130"></a>
-<a name="line-131"></a><a name="timeoutThread"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-132"></a><span class='hs-definition'>timeoutThread</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>TimeoutTable</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>MVar</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-133"></a><span class='hs-definition'>timeoutThread</span> <span class='hs-varid'>table</span> <span class='hs-varid'>exitMVar</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-134"></a>    <span class='hs-varid'>go</span> <span class='hs-varop'>`catch`</span> <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-layout'>(</span><span class='hs-keyword'>_</span><span class='hs-keyglyph'>::</span><span class='hs-conid'>SomeException</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>killAll</span><span class='hs-layout'>)</span>
-<a name="line-135"></a>    <span class='hs-varid'>putMVar</span> <span class='hs-varid'>exitMVar</span> <span class='hs-conid'>()</span>
+<a name="line-26"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Foreign</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>new</span><span class='hs-layout'>)</span>
+<a name="line-27"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Foreign</span><span class='hs-varop'>.</span><span class='hs-conid'>C</span>
+<a name="line-28"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>GHC</span><span class='hs-varop'>.</span><span class='hs-conid'>Conc</span> <span class='hs-layout'>(</span><span class='hs-varid'>labelThread</span><span class='hs-layout'>,</span> <span class='hs-varid'>forkOnIO</span><span class='hs-layout'>)</span>
+<a name="line-29"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Network</span><span class='hs-varop'>.</span><span class='hs-conid'>Socket</span>
+<a name="line-30"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Prelude</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>catch</span><span class='hs-layout'>)</span>
+<a name="line-31"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-32"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Debug</span>
+<a name="line-33"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>Date</span>
+<a name="line-34"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>TimeoutManager</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>TM</span>
+<a name="line-35"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>TimeoutManager</span> <span class='hs-layout'>(</span><span class='hs-conid'>TimeoutManager</span><span class='hs-layout'>)</span>
+<a name="line-36"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>Backend</span>
+<a name="line-37"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Internal</span><span class='hs-varop'>.</span><span class='hs-conid'>Http</span><span class='hs-varop'>.</span><span class='hs-conid'>Server</span><span class='hs-varop'>.</span><span class='hs-conid'>ListenHelpers</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>Listen</span>
+<a name="line-38"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>Snap</span><span class='hs-varop'>.</span><span class='hs-conid'>Iteratee</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>map</span><span class='hs-layout'>)</span>
+<a name="line-39"></a>
+<a name="line-40"></a><span class='hs-cpp'>#if defined(HAS_SENDFILE)</span>
+<a name="line-41"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>SendFile</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>SF</span>
+<a name="line-42"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>Posix</span><span class='hs-varop'>.</span><span class='hs-conid'>IO</span>
+<a name="line-43"></a><span class='hs-keyword'>import</span>           <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>Posix</span><span class='hs-varop'>.</span><span class='hs-conid'>Types</span> <span class='hs-layout'>(</span><span class='hs-conid'>Fd</span><span class='hs-layout'>(</span><span class='hs-keyglyph'>..</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-44"></a><span class='hs-cpp'>#endif</span>
+<a name="line-45"></a>
+<a name="line-46"></a>
+<a name="line-47"></a><a name="EventLoopCpu"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-48"></a><a name="EventLoopCpu"></a><span class='hs-comment'>-- | For each cpu, we store:</span>
+<a name="line-49"></a><a name="EventLoopCpu"></a><span class='hs-comment'>--    * A list of accept threads, one per port.</span>
+<a name="line-50"></a><a name="EventLoopCpu"></a><span class='hs-comment'>--    * A TimeoutManager</span>
+<a name="line-51"></a><a name="EventLoopCpu"></a><span class='hs-comment'>--    * An mvar to signal when the timeout thread is shutdown</span>
+<a name="line-52"></a><a name="EventLoopCpu"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>EventLoopCpu</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>EventLoopCpu</span>
+<a name="line-53"></a>    <span class='hs-layout'>{</span> <span class='hs-sel'>_boundCpu</span>        <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span>
+<a name="line-54"></a>    <span class='hs-layout'>,</span> <span class='hs-sel'>_acceptThreads</span>   <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>ThreadId</span><span class='hs-keyglyph'>]</span>
+<a name="line-55"></a>    <span class='hs-layout'>,</span> <span class='hs-sel'>_timeoutManager</span>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>TimeoutManager</span>
+<a name="line-56"></a>    <span class='hs-layout'>,</span> <span class='hs-sel'>_exitMVar</span>        <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-layout'>(</span><span class='hs-conid'>MVar</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
+<a name="line-57"></a>    <span class='hs-layout'>}</span>
+<a name="line-58"></a>
+<a name="line-59"></a>
+<a name="line-60"></a><a name="simpleEventLoop"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-61"></a><span class='hs-definition'>simpleEventLoop</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>EventLoop</span>
+<a name="line-62"></a><span class='hs-definition'>simpleEventLoop</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>sockets</span> <span class='hs-varid'>cap</span> <span class='hs-varid'>elog</span> <span class='hs-varid'>handler</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-63"></a>    <span class='hs-varid'>loops</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>mapM</span> <span class='hs-layout'>(</span><span class='hs-varid'>newLoop</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>sockets</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>elog</span><span class='hs-layout'>)</span>
+<a name="line-64"></a>                          <span class='hs-keyglyph'>[</span><span class='hs-num'>0</span><span class='hs-keyglyph'>..</span><span class='hs-layout'>(</span><span class='hs-varid'>cap</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span>
+<a name="line-65"></a>
+<a name="line-66"></a>    <span class='hs-varid'>debug</span> <span class='hs-str'>"simpleEventLoop: waiting for mvars"</span>
+<a name="line-67"></a>
+<a name="line-68"></a>    <span class='hs-comment'>--wait for all threads to exit</span>
+<a name="line-69"></a>    <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>mapM_</span> <span class='hs-layout'>(</span><span class='hs-varid'>takeMVar</span> <span class='hs-varop'>.</span> <span class='hs-sel'>_exitMVar</span><span class='hs-layout'>)</span> <span class='hs-varid'>loops</span> <span class='hs-varop'>`finally`</span> <span class='hs-keyword'>do</span>
+<a name="line-70"></a>        <span class='hs-varid'>debug</span> <span class='hs-str'>"simpleEventLoop: killing all threads"</span>
+<a name="line-71"></a>        <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>mapM_</span> <span class='hs-varid'>stopLoop</span> <span class='hs-varid'>loops</span>
+<a name="line-72"></a>        <span class='hs-varid'>mapM_</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>closeSocket</span> <span class='hs-varid'>sockets</span>
+<a name="line-73"></a>
+<a name="line-74"></a>
+<a name="line-75"></a><a name="newLoop"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-76"></a><span class='hs-definition'>newLoop</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span>
+<a name="line-77"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>ListenSocket</span><span class='hs-keyglyph'>]</span>
+<a name="line-78"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>SessionHandler</span>
+<a name="line-79"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
+<a name="line-80"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span>
+<a name="line-81"></a>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>EventLoopCpu</span>
+<a name="line-82"></a><span class='hs-definition'>newLoop</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>sockets</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>elog</span> <span class='hs-varid'>cpu</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-83"></a>    <span class='hs-varid'>tmgr</span>       <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>TM</span><span class='hs-varop'>.</span><span class='hs-varid'>initialize</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>getCurrentDateTime</span>
+<a name="line-84"></a>    <span class='hs-varid'>exit</span>       <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>newEmptyMVar</span>
+<a name="line-85"></a>    <span class='hs-varid'>accThreads</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>forM</span> <span class='hs-varid'>sockets</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>p</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>forkOnIO</span> <span class='hs-varid'>cpu</span> <span class='hs-varop'>$</span>
+<a name="line-86"></a>                  <span class='hs-varid'>acceptThread</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>tmgr</span> <span class='hs-varid'>elog</span> <span class='hs-varid'>cpu</span> <span class='hs-varid'>p</span> <span class='hs-varid'>exit</span>
+<a name="line-87"></a>
+<a name="line-88"></a>    <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>EventLoopCpu</span> <span class='hs-varid'>cpu</span> <span class='hs-varid'>accThreads</span> <span class='hs-varid'>tmgr</span> <span class='hs-varid'>exit</span>
+<a name="line-89"></a>
+<a name="line-90"></a>
+<a name="line-91"></a><a name="stopLoop"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-92"></a><span class='hs-definition'>stopLoop</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>EventLoopCpu</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-93"></a><span class='hs-definition'>stopLoop</span> <span class='hs-varid'>loop</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>block</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>do</span>
+<a name="line-94"></a>    <span class='hs-conid'>TM</span><span class='hs-varop'>.</span><span class='hs-varid'>stop</span> <span class='hs-varop'>$</span> <span class='hs-sel'>_timeoutManager</span> <span class='hs-varid'>loop</span>
+<a name="line-95"></a>    <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>mapM_</span> <span class='hs-varid'>killThread</span> <span class='hs-varop'>$</span> <span class='hs-sel'>_acceptThreads</span> <span class='hs-varid'>loop</span>
+<a name="line-96"></a>
+<a name="line-97"></a>
+<a name="line-98"></a><a name="acceptThread"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-99"></a><span class='hs-definition'>acceptThread</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span>
+<a name="line-100"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>SessionHandler</span>
+<a name="line-101"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>TimeoutManager</span>
+<a name="line-102"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
+<a name="line-103"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span>
+<a name="line-104"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ListenSocket</span>
+<a name="line-105"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>MVar</span> <span class='hs-conid'>()</span>
+<a name="line-106"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-107"></a><span class='hs-definition'>acceptThread</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>tmgr</span> <span class='hs-varid'>elog</span> <span class='hs-varid'>cpu</span> <span class='hs-varid'>sock</span> <span class='hs-varid'>exitMVar</span> <span class='hs-keyglyph'>=</span>
+<a name="line-108"></a>    <span class='hs-varid'>loop</span> <span class='hs-varop'>`finally`</span> <span class='hs-layout'>(</span><span class='hs-varid'>tryPutMVar</span> <span class='hs-varid'>exitMVar</span> <span class='hs-conid'>()</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
+<a name="line-109"></a>  <span class='hs-keyword'>where</span>
+<a name="line-110"></a>    <span class='hs-varid'>loop</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-111"></a>        <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"acceptThread: calling accept() on socket "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>sock</span>
+<a name="line-112"></a>        <span class='hs-layout'>(</span><span class='hs-varid'>s</span><span class='hs-layout'>,</span><span class='hs-varid'>addr</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>accept</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>listenSocket</span> <span class='hs-varid'>sock</span>
+<a name="line-113"></a>        <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"acceptThread: accepted connection from remote: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>addr</span>
+<a name="line-114"></a>        <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>forkOnIO</span> <span class='hs-varid'>cpu</span> <span class='hs-layout'>(</span><span class='hs-varid'>go</span> <span class='hs-varid'>s</span> <span class='hs-varid'>addr</span> <span class='hs-varop'>`catches`</span> <span class='hs-varid'>cleanup</span><span class='hs-layout'>)</span>
+<a name="line-115"></a>        <span class='hs-varid'>loop</span>
+<a name="line-116"></a>
+<a name="line-117"></a>    <span class='hs-varid'>go</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>runSession</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>tmgr</span> <span class='hs-varid'>sock</span>
+<a name="line-118"></a>
+<a name="line-119"></a>    <span class='hs-varid'>cleanup</span> <span class='hs-keyglyph'>=</span>
+<a name="line-120"></a>        <span class='hs-keyglyph'>[</span>
+<a name="line-121"></a>          <span class='hs-conid'>Handler</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-layout'>(</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>AsyncException</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
+<a name="line-122"></a>        <span class='hs-layout'>,</span> <span class='hs-conid'>Handler</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-layout'>(</span><span class='hs-varid'>e</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>SomeException</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>elog</span>
+<a name="line-123"></a>                  <span class='hs-varop'>$</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-keyglyph'>[</span> <span class='hs-str'>"SimpleBackend.acceptThread: "</span>
+<a name="line-124"></a>                             <span class='hs-layout'>,</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>pack</span> <span class='hs-varop'>.</span> <span class='hs-varid'>map</span> <span class='hs-varid'>c2w</span> <span class='hs-varop'>$</span> <span class='hs-varid'>show</span> <span class='hs-varid'>e</span><span class='hs-keyglyph'>]</span>
+<a name="line-125"></a>        <span class='hs-keyglyph'>]</span>
+<a name="line-126"></a>
+<a name="line-127"></a>
+<a name="line-128"></a><a name="AddressNotSupportedException"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-129"></a><a name="AddressNotSupportedException"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-conid'>String</span>
+<a name="line-130"></a>   <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Typeable</span><span class='hs-layout'>)</span>
+<a name="line-131"></a>
+<a name="line-132"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Show</span> <span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-keyword'>where</span>
+<a name="line-133"></a>    <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"Address not supported: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>x</span>
+<a name="line-134"></a>
+<a name="line-135"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Exception</span> <span class='hs-conid'>AddressNotSupportedException</span>
 <a name="line-136"></a>
-<a name="line-137"></a>  <span class='hs-keyword'>where</span>
-<a name="line-138"></a>    <span class='hs-varid'>go</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-139"></a>        <span class='hs-varid'>debug</span> <span class='hs-str'>"timeoutThread: waiting for activity on thread table"</span>
-<a name="line-140"></a>        <span class='hs-conid'>TT</span><span class='hs-varop'>.</span><span class='hs-varid'>waitForActivity</span> <span class='hs-varid'>table</span>
-<a name="line-141"></a>        <span class='hs-varid'>debug</span> <span class='hs-str'>"timeoutThread: woke up, killing old connections"</span>
-<a name="line-142"></a>        <span class='hs-varid'>killTooOld</span>
-<a name="line-143"></a>        <span class='hs-varid'>go</span>
-<a name="line-144"></a>
-<a name="line-145"></a>
-<a name="line-146"></a>    <span class='hs-varid'>killTooOld</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-147"></a>        <span class='hs-varid'>now</span>    <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getCurrentDateTime</span>
-<a name="line-148"></a>        <span class='hs-conid'>TT</span><span class='hs-varop'>.</span><span class='hs-varid'>killOlderThan</span> <span class='hs-varid'>now</span> <span class='hs-varid'>table</span>
-<a name="line-149"></a>
-<a name="line-150"></a>    <span class='hs-varid'>killAll</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-151"></a>        <span class='hs-varid'>debug</span> <span class='hs-str'>"Backend.timeoutThread: shutdown, killing all connections"</span>
-<a name="line-152"></a>        <span class='hs-conid'>TT</span><span class='hs-varop'>.</span><span class='hs-varid'>killAll</span> <span class='hs-varid'>table</span>
-<a name="line-153"></a>
-<a name="line-154"></a>
-<a name="line-155"></a><a name="AddressNotSupportedException"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-156"></a><a name="AddressNotSupportedException"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-conid'>String</span>
-<a name="line-157"></a>   <span class='hs-keyword'>deriving</span> <span class='hs-layout'>(</span><span class='hs-conid'>Typeable</span><span class='hs-layout'>)</span>
+<a name="line-137"></a>
+<a name="line-138"></a><a name="runSession"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-139"></a><span class='hs-definition'>runSession</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span>
+<a name="line-140"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>SessionHandler</span>
+<a name="line-141"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>TimeoutManager</span>
+<a name="line-142"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ListenSocket</span>
+<a name="line-143"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Socket</span>
+<a name="line-144"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>SockAddr</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-145"></a><span class='hs-definition'>runSession</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>tmgr</span> <span class='hs-varid'>lsock</span> <span class='hs-varid'>sock</span> <span class='hs-varid'>addr</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-146"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>fd</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fdSocket</span> <span class='hs-varid'>sock</span>
+<a name="line-147"></a>    <span class='hs-varid'>curId</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>myThreadId</span>
+<a name="line-148"></a>
+<a name="line-149"></a>    <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"Backend.withConnection: running session: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>addr</span>
+<a name="line-150"></a>    <span class='hs-varid'>labelThread</span> <span class='hs-varid'>curId</span> <span class='hs-varop'>$</span> <span class='hs-str'>"connHndl "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>fd</span>
+<a name="line-151"></a>
+<a name="line-152"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>rport</span><span class='hs-layout'>,</span><span class='hs-varid'>rhost</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span>
+<a name="line-153"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>addr</span> <span class='hs-keyword'>of</span>
+<a name="line-154"></a>          <span class='hs-conid'>SockAddrInet</span> <span class='hs-varid'>p</span> <span class='hs-varid'>h</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-155"></a>             <span class='hs-varid'>h'</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>inet_ntoa</span> <span class='hs-varid'>h</span>
+<a name="line-156"></a>             <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>p</span><span class='hs-layout'>,</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>pack</span> <span class='hs-varop'>$</span> <span class='hs-varid'>map</span> <span class='hs-varid'>c2w</span> <span class='hs-varid'>h'</span><span class='hs-layout'>)</span>
+<a name="line-157"></a>          <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-varop'>$</span> <span class='hs-varid'>show</span> <span class='hs-varid'>x</span>
 <a name="line-158"></a>
-<a name="line-159"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Show</span> <span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-keyword'>where</span>
-<a name="line-160"></a>    <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"Address not supported: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>x</span>
-<a name="line-161"></a>
-<a name="line-162"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Exception</span> <span class='hs-conid'>AddressNotSupportedException</span>
-<a name="line-163"></a>
-<a name="line-164"></a>
-<a name="line-165"></a><a name="runSession"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-166"></a><span class='hs-definition'>runSession</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span>
-<a name="line-167"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>SessionHandler</span>
-<a name="line-168"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>TimeoutTable</span>
-<a name="line-169"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ListenSocket</span>
-<a name="line-170"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Socket</span>
-<a name="line-171"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>SockAddr</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-172"></a><span class='hs-definition'>runSession</span> <span class='hs-varid'>defaultTimeout</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>tt</span> <span class='hs-varid'>lsock</span> <span class='hs-varid'>sock</span> <span class='hs-varid'>addr</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-173"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>fd</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fdSocket</span> <span class='hs-varid'>sock</span>
-<a name="line-174"></a>    <span class='hs-varid'>curId</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>myThreadId</span>
-<a name="line-175"></a>
-<a name="line-176"></a>    <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"Backend.withConnection: running session: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>addr</span>
-<a name="line-177"></a>    <span class='hs-varid'>labelThread</span> <span class='hs-varid'>curId</span> <span class='hs-varop'>$</span> <span class='hs-str'>"connHndl "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>fd</span>
-<a name="line-178"></a>
-<a name="line-179"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>rport</span><span class='hs-layout'>,</span><span class='hs-varid'>rhost</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span>
-<a name="line-180"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>addr</span> <span class='hs-keyword'>of</span>
-<a name="line-181"></a>          <span class='hs-conid'>SockAddrInet</span> <span class='hs-varid'>p</span> <span class='hs-varid'>h</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-182"></a>             <span class='hs-varid'>h'</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>inet_ntoa</span> <span class='hs-varid'>h</span>
-<a name="line-183"></a>             <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>p</span><span class='hs-layout'>,</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>pack</span> <span class='hs-varop'>$</span> <span class='hs-varid'>map</span> <span class='hs-varid'>c2w</span> <span class='hs-varid'>h'</span><span class='hs-layout'>)</span>
-<a name="line-184"></a>          <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-varop'>$</span> <span class='hs-varid'>show</span> <span class='hs-varid'>x</span>
-<a name="line-185"></a>
-<a name="line-186"></a>    <span class='hs-varid'>laddr</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getSocketName</span> <span class='hs-varid'>sock</span>
-<a name="line-187"></a>
-<a name="line-188"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>lport</span><span class='hs-layout'>,</span><span class='hs-varid'>lhost</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span>
-<a name="line-189"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>laddr</span> <span class='hs-keyword'>of</span>
-<a name="line-190"></a>          <span class='hs-conid'>SockAddrInet</span> <span class='hs-varid'>p</span> <span class='hs-varid'>h</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-191"></a>             <span class='hs-varid'>h'</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>inet_ntoa</span> <span class='hs-varid'>h</span>
-<a name="line-192"></a>             <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>p</span><span class='hs-layout'>,</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>pack</span> <span class='hs-varop'>$</span> <span class='hs-varid'>map</span> <span class='hs-varid'>c2w</span> <span class='hs-varid'>h'</span><span class='hs-layout'>)</span>
-<a name="line-193"></a>          <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-varop'>$</span> <span class='hs-varid'>show</span> <span class='hs-varid'>x</span>
+<a name="line-159"></a>    <span class='hs-varid'>laddr</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getSocketName</span> <span class='hs-varid'>sock</span>
+<a name="line-160"></a>
+<a name="line-161"></a>    <span class='hs-layout'>(</span><span class='hs-varid'>lport</span><span class='hs-layout'>,</span><span class='hs-varid'>lhost</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>&lt;-</span>
+<a name="line-162"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>laddr</span> <span class='hs-keyword'>of</span>
+<a name="line-163"></a>          <span class='hs-conid'>SockAddrInet</span> <span class='hs-varid'>p</span> <span class='hs-varid'>h</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-164"></a>             <span class='hs-varid'>h'</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>inet_ntoa</span> <span class='hs-varid'>h</span>
+<a name="line-165"></a>             <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>p</span><span class='hs-layout'>,</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>pack</span> <span class='hs-varop'>$</span> <span class='hs-varid'>map</span> <span class='hs-varid'>c2w</span> <span class='hs-varid'>h'</span><span class='hs-layout'>)</span>
+<a name="line-166"></a>          <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>throwIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>AddressNotSupportedException</span> <span class='hs-varop'>$</span> <span class='hs-varid'>show</span> <span class='hs-varid'>x</span>
+<a name="line-167"></a>
+<a name="line-168"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>sinfo</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SessionInfo</span> <span class='hs-varid'>lhost</span> <span class='hs-varid'>lport</span> <span class='hs-varid'>rhost</span> <span class='hs-varid'>rport</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>isSecure</span> <span class='hs-varid'>lsock</span>
+<a name="line-169"></a>
+<a name="line-170"></a>    <span class='hs-varid'>timeoutHandle</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>TM</span><span class='hs-varop'>.</span><span class='hs-varid'>register</span> <span class='hs-layout'>(</span><span class='hs-varid'>killThread</span> <span class='hs-varid'>curId</span><span class='hs-layout'>)</span> <span class='hs-varid'>tmgr</span>
+<a name="line-171"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>timeout</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>TM</span><span class='hs-varop'>.</span><span class='hs-varid'>tickle</span> <span class='hs-varid'>timeoutHandle</span>
+<a name="line-172"></a>
+<a name="line-173"></a>    <span class='hs-varid'>bracket</span> <span class='hs-layout'>(</span><span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>createSession</span> <span class='hs-varid'>lsock</span> <span class='hs-num'>8192</span> <span class='hs-varid'>fd</span>
+<a name="line-174"></a>              <span class='hs-layout'>(</span><span class='hs-varid'>threadWaitRead</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>fd</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-175"></a>            <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>session</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>block</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>do</span>
+<a name="line-176"></a>                 <span class='hs-varid'>debug</span> <span class='hs-str'>"thread killed, closing socket"</span>
+<a name="line-177"></a>
+<a name="line-178"></a>                 <span class='hs-comment'>-- cancel thread timeout</span>
+<a name="line-179"></a>                 <span class='hs-conid'>TM</span><span class='hs-varop'>.</span><span class='hs-varid'>cancel</span> <span class='hs-varid'>timeoutHandle</span>
+<a name="line-180"></a>
+<a name="line-181"></a>                 <span class='hs-varid'>eatException</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>endSession</span> <span class='hs-varid'>lsock</span> <span class='hs-varid'>session</span>
+<a name="line-182"></a>                 <span class='hs-varid'>eatException</span> <span class='hs-varop'>$</span> <span class='hs-varid'>shutdown</span> <span class='hs-varid'>sock</span> <span class='hs-conid'>ShutdownBoth</span>
+<a name="line-183"></a>                 <span class='hs-varid'>eatException</span> <span class='hs-varop'>$</span> <span class='hs-varid'>sClose</span> <span class='hs-varid'>sock</span>
+<a name="line-184"></a>            <span class='hs-layout'>)</span>
+<a name="line-185"></a>            <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>s</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>let</span> <span class='hs-varid'>writeEnd</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>writeOut</span> <span class='hs-varid'>lsock</span> <span class='hs-varid'>s</span> <span class='hs-varid'>sock</span>
+<a name="line-186"></a>                                      <span class='hs-layout'>(</span><span class='hs-varid'>timeout</span> <span class='hs-varid'>defaultTimeout</span><span class='hs-layout'>)</span>
+<a name="line-187"></a>                   <span class='hs-keyword'>in</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>sinfo</span>
+<a name="line-188"></a>                              <span class='hs-layout'>(</span><span class='hs-varid'>enumerate</span> <span class='hs-varid'>lsock</span> <span class='hs-varid'>s</span> <span class='hs-varid'>sock</span><span class='hs-layout'>)</span>
+<a name="line-189"></a>                              <span class='hs-varid'>writeEnd</span>
+<a name="line-190"></a>                              <span class='hs-layout'>(</span><span class='hs-varid'>sendFile</span> <span class='hs-varid'>lsock</span> <span class='hs-layout'>(</span><span class='hs-varid'>timeout</span> <span class='hs-varid'>defaultTimeout</span><span class='hs-layout'>)</span> <span class='hs-varid'>fd</span>
+<a name="line-191"></a>                                        <span class='hs-varid'>writeEnd</span><span class='hs-layout'>)</span>
+<a name="line-192"></a>                              <span class='hs-varid'>timeout</span>
+<a name="line-193"></a>            <span class='hs-layout'>)</span>
 <a name="line-194"></a>
-<a name="line-195"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>sinfo</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SessionInfo</span> <span class='hs-varid'>lhost</span> <span class='hs-varid'>lport</span> <span class='hs-varid'>rhost</span> <span class='hs-varid'>rport</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>isSecure</span> <span class='hs-varid'>lsock</span>
-<a name="line-196"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>curHash</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>hashString</span> <span class='hs-varop'>$</span> <span class='hs-varid'>show</span> <span class='hs-varid'>curId</span>
-<a name="line-197"></a>    <span class='hs-keyword'>let</span> <span class='hs-varid'>timeout</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>tickleTimeout</span> <span class='hs-varid'>tt</span> <span class='hs-varid'>curId</span> <span class='hs-varid'>curHash</span>
-<a name="line-198"></a>
-<a name="line-199"></a>    <span class='hs-varid'>timeout</span> <span class='hs-varid'>defaultTimeout</span>
+<a name="line-195"></a>
+<a name="line-196"></a><a name="eatException"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-197"></a><span class='hs-definition'>eatException</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-198"></a><span class='hs-definition'>eatException</span> <span class='hs-varid'>act</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>act</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span> <span class='hs-varop'>`catch`</span> <span class='hs-keyglyph'>\</span><span class='hs-layout'>(</span><span class='hs-keyword'>_</span><span class='hs-keyglyph'>::</span><span class='hs-conid'>SomeException</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
+<a name="line-199"></a>
 <a name="line-200"></a>
-<a name="line-201"></a>    <span class='hs-varid'>bracket</span> <span class='hs-layout'>(</span><span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>createSession</span> <span class='hs-varid'>lsock</span> <span class='hs-num'>8192</span> <span class='hs-varid'>fd</span>
-<a name="line-202"></a>              <span class='hs-layout'>(</span><span class='hs-varid'>threadWaitRead</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>fd</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-203"></a>            <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>session</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>block</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>do</span>
-<a name="line-204"></a>                 <span class='hs-varid'>debug</span> <span class='hs-str'>"thread killed, closing socket"</span>
-<a name="line-205"></a>
-<a name="line-206"></a>                 <span class='hs-comment'>-- remove thread from timeout table</span>
-<a name="line-207"></a>                 <span class='hs-conid'>TT</span><span class='hs-varop'>.</span><span class='hs-varid'>delete</span> <span class='hs-varid'>curHash</span> <span class='hs-varid'>curId</span> <span class='hs-varid'>tt</span>
-<a name="line-208"></a>
-<a name="line-209"></a>                 <span class='hs-varid'>eatException</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>endSession</span> <span class='hs-varid'>lsock</span> <span class='hs-varid'>session</span>
-<a name="line-210"></a>                 <span class='hs-varid'>eatException</span> <span class='hs-varop'>$</span> <span class='hs-varid'>shutdown</span> <span class='hs-varid'>sock</span> <span class='hs-conid'>ShutdownBoth</span>
-<a name="line-211"></a>                 <span class='hs-varid'>eatException</span> <span class='hs-varop'>$</span> <span class='hs-varid'>sClose</span> <span class='hs-varid'>sock</span>
-<a name="line-212"></a>            <span class='hs-layout'>)</span>
-<a name="line-213"></a>            <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>s</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>let</span> <span class='hs-varid'>writeEnd</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>writeOut</span> <span class='hs-varid'>lsock</span> <span class='hs-varid'>s</span> <span class='hs-varid'>sock</span>
-<a name="line-214"></a>                                      <span class='hs-layout'>(</span><span class='hs-varid'>timeout</span> <span class='hs-varid'>defaultTimeout</span><span class='hs-layout'>)</span>
-<a name="line-215"></a>                   <span class='hs-keyword'>in</span> <span class='hs-varid'>handler</span> <span class='hs-varid'>sinfo</span>
-<a name="line-216"></a>                              <span class='hs-layout'>(</span><span class='hs-varid'>enumerate</span> <span class='hs-varid'>lsock</span> <span class='hs-varid'>s</span> <span class='hs-varid'>sock</span><span class='hs-layout'>)</span>
-<a name="line-217"></a>                              <span class='hs-varid'>writeEnd</span>
-<a name="line-218"></a>                              <span class='hs-layout'>(</span><span class='hs-varid'>sendFile</span> <span class='hs-varid'>lsock</span> <span class='hs-layout'>(</span><span class='hs-varid'>timeout</span> <span class='hs-varid'>defaultTimeout</span><span class='hs-layout'>)</span> <span class='hs-varid'>fd</span>
-<a name="line-219"></a>                                        <span class='hs-varid'>writeEnd</span><span class='hs-layout'>)</span>
-<a name="line-220"></a>                              <span class='hs-varid'>timeout</span>
-<a name="line-221"></a>            <span class='hs-layout'>)</span>
-<a name="line-222"></a>
-<a name="line-223"></a>
-<a name="line-224"></a><a name="eatException"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-225"></a><span class='hs-definition'>eatException</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-226"></a><span class='hs-definition'>eatException</span> <span class='hs-varid'>act</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>act</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span> <span class='hs-varop'>`catch`</span> <span class='hs-keyglyph'>\</span><span class='hs-layout'>(</span><span class='hs-keyword'>_</span><span class='hs-keyglyph'>::</span><span class='hs-conid'>SomeException</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-227"></a>
+<a name="line-201"></a><a name="sendFile"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-202"></a><span class='hs-definition'>sendFile</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ListenSocket</span>
+<a name="line-203"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-204"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span>
+<a name="line-205"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>ByteString</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-206"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span>
+<a name="line-207"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int64</span>
+<a name="line-208"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int64</span>
+<a name="line-209"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-210"></a><span class='hs-cpp'>#if defined(HAS_SENDFILE)</span>
+<a name="line-211"></a><span class='hs-definition'>sendFile</span> <span class='hs-varid'>lsock</span> <span class='hs-varid'>tickle</span> <span class='hs-varid'>sock</span> <span class='hs-varid'>writeEnd</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>start</span> <span class='hs-varid'>sz</span> <span class='hs-keyglyph'>=</span>
+<a name="line-212"></a>    <span class='hs-keyword'>case</span> <span class='hs-varid'>lsock</span> <span class='hs-keyword'>of</span>
+<a name="line-213"></a>        <span class='hs-conid'>ListenHttp</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>bracket</span> <span class='hs-layout'>(</span><span class='hs-varid'>openFd</span> <span class='hs-varid'>fp</span> <span class='hs-conid'>ReadOnly</span> <span class='hs-conid'>Nothing</span> <span class='hs-varid'>defaultFileFlags</span><span class='hs-layout'>)</span>
+<a name="line-214"></a>                                <span class='hs-layout'>(</span><span class='hs-varid'>closeFd</span><span class='hs-layout'>)</span>
+<a name="line-215"></a>                                <span class='hs-layout'>(</span><span class='hs-varid'>go</span> <span class='hs-varid'>start</span> <span class='hs-varid'>sz</span><span class='hs-layout'>)</span>
+<a name="line-216"></a>        <span class='hs-keyword'>_</span>            <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-217"></a>                   <span class='hs-varid'>step</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runIteratee</span> <span class='hs-varid'>writeEnd</span>
+<a name="line-218"></a>                   <span class='hs-varid'>run_</span> <span class='hs-varop'>$</span> <span class='hs-varid'>enumFilePartial</span> <span class='hs-varid'>fp</span> <span class='hs-layout'>(</span><span class='hs-varid'>start</span><span class='hs-layout'>,</span><span class='hs-varid'>start</span><span class='hs-varop'>+</span><span class='hs-varid'>sz</span><span class='hs-layout'>)</span> <span class='hs-varid'>step</span>
+<a name="line-219"></a>  <span class='hs-keyword'>where</span>
+<a name="line-220"></a>    <span class='hs-varid'>go</span> <span class='hs-varid'>off</span> <span class='hs-varid'>bytes</span> <span class='hs-varid'>fd</span>
+<a name="line-221"></a>      <span class='hs-keyglyph'>|</span> <span class='hs-varid'>bytes</span> <span class='hs-varop'>==</span> <span class='hs-num'>0</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
+<a name="line-222"></a>      <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>  <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-223"></a>            <span class='hs-varid'>sent</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>SF</span><span class='hs-varop'>.</span><span class='hs-varid'>sendFile</span> <span class='hs-layout'>(</span><span class='hs-varid'>threadWaitWrite</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>sock</span><span class='hs-layout'>)</span>
+<a name="line-224"></a>                                <span class='hs-varid'>sfd</span> <span class='hs-varid'>fd</span> <span class='hs-varid'>off</span> <span class='hs-varid'>bytes</span>
+<a name="line-225"></a>            <span class='hs-keyword'>if</span> <span class='hs-varid'>sent</span> <span class='hs-varop'>&lt;</span> <span class='hs-varid'>bytes</span>
+<a name="line-226"></a>              <span class='hs-keyword'>then</span> <span class='hs-varid'>tickle</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>go</span> <span class='hs-layout'>(</span><span class='hs-varid'>off</span><span class='hs-varop'>+</span><span class='hs-varid'>sent</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-varid'>bytes</span><span class='hs-comment'>-</span><span class='hs-varid'>sent</span><span class='hs-layout'>)</span> <span class='hs-varid'>fd</span>
+<a name="line-227"></a>              <span class='hs-keyword'>else</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
 <a name="line-228"></a>
-<a name="line-229"></a><a name="sendFile"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-230"></a><span class='hs-definition'>sendFile</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ListenSocket</span>
-<a name="line-231"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-232"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>CInt</span>
-<a name="line-233"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>ByteString</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-234"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>FilePath</span>
-<a name="line-235"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int64</span>
-<a name="line-236"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int64</span>
-<a name="line-237"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-238"></a><span class='hs-cpp'>#if defined(HAS_SENDFILE)</span>
-<a name="line-239"></a><span class='hs-definition'>sendFile</span> <span class='hs-varid'>lsock</span> <span class='hs-varid'>tickle</span> <span class='hs-varid'>sock</span> <span class='hs-varid'>writeEnd</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>start</span> <span class='hs-varid'>sz</span> <span class='hs-keyglyph'>=</span>
-<a name="line-240"></a>    <span class='hs-keyword'>case</span> <span class='hs-varid'>lsock</span> <span class='hs-keyword'>of</span>
-<a name="line-241"></a>        <span class='hs-conid'>ListenHttp</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>bracket</span> <span class='hs-layout'>(</span><span class='hs-varid'>openFd</span> <span class='hs-varid'>fp</span> <span class='hs-conid'>ReadOnly</span> <span class='hs-conid'>Nothing</span> <span class='hs-varid'>defaultFileFlags</span><span class='hs-layout'>)</span>
-<a name="line-242"></a>                                <span class='hs-layout'>(</span><span class='hs-varid'>closeFd</span><span class='hs-layout'>)</span>
-<a name="line-243"></a>                                <span class='hs-layout'>(</span><span class='hs-varid'>go</span> <span class='hs-varid'>start</span> <span class='hs-varid'>sz</span><span class='hs-layout'>)</span>
-<a name="line-244"></a>        <span class='hs-keyword'>_</span>            <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-245"></a>                   <span class='hs-varid'>step</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runIteratee</span> <span class='hs-varid'>writeEnd</span>
-<a name="line-246"></a>                   <span class='hs-varid'>run_</span> <span class='hs-varop'>$</span> <span class='hs-varid'>enumFilePartial</span> <span class='hs-varid'>fp</span> <span class='hs-layout'>(</span><span class='hs-varid'>start</span><span class='hs-layout'>,</span><span class='hs-varid'>start</span><span class='hs-varop'>+</span><span class='hs-varid'>sz</span><span class='hs-layout'>)</span> <span class='hs-varid'>step</span>
-<a name="line-247"></a>  <span class='hs-keyword'>where</span>
-<a name="line-248"></a>    <span class='hs-varid'>go</span> <span class='hs-varid'>off</span> <span class='hs-varid'>bytes</span> <span class='hs-varid'>fd</span>
-<a name="line-249"></a>      <span class='hs-keyglyph'>|</span> <span class='hs-varid'>bytes</span> <span class='hs-varop'>==</span> <span class='hs-num'>0</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-250"></a>      <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>  <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-251"></a>            <span class='hs-varid'>sent</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>SF</span><span class='hs-varop'>.</span><span class='hs-varid'>sendFile</span> <span class='hs-varid'>sfd</span> <span class='hs-varid'>fd</span> <span class='hs-varid'>off</span> <span class='hs-varid'>bytes</span>
-<a name="line-252"></a>            <span class='hs-keyword'>if</span> <span class='hs-varid'>sent</span> <span class='hs-varop'>&lt;</span> <span class='hs-varid'>bytes</span>
-<a name="line-253"></a>              <span class='hs-keyword'>then</span> <span class='hs-varid'>tickle</span> <span class='hs-varop'>&gt;&gt;</span> <span class='hs-varid'>go</span> <span class='hs-layout'>(</span><span class='hs-varid'>off</span><span class='hs-varop'>+</span><span class='hs-varid'>sent</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-varid'>bytes</span><span class='hs-comment'>-</span><span class='hs-varid'>sent</span><span class='hs-layout'>)</span> <span class='hs-varid'>fd</span>
-<a name="line-254"></a>              <span class='hs-keyword'>else</span> <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-255"></a>
-<a name="line-256"></a>    <span class='hs-varid'>sfd</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Fd</span> <span class='hs-varid'>sock</span>
-<a name="line-257"></a><span class='hs-cpp'>#else</span>
-<a name="line-258"></a><span class='hs-definition'>sendFile</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>writeEnd</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>start</span> <span class='hs-varid'>sz</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-259"></a>    <span class='hs-comment'>-- no need to count bytes</span>
-<a name="line-260"></a>    <span class='hs-varid'>step</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runIteratee</span> <span class='hs-varid'>writeEnd</span>
-<a name="line-261"></a>    <span class='hs-varid'>run_</span> <span class='hs-varop'>$</span> <span class='hs-varid'>enumFilePartial</span> <span class='hs-varid'>fp</span> <span class='hs-layout'>(</span><span class='hs-varid'>start</span><span class='hs-layout'>,</span><span class='hs-varid'>start</span><span class='hs-varop'>+</span><span class='hs-varid'>sz</span><span class='hs-layout'>)</span> <span class='hs-varid'>step</span>
-<a name="line-262"></a>    <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
-<a name="line-263"></a><span class='hs-cpp'>#endif</span>
+<a name="line-229"></a>    <span class='hs-varid'>sfd</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Fd</span> <span class='hs-varid'>sock</span>
+<a name="line-230"></a><span class='hs-cpp'>#else</span>
+<a name="line-231"></a><span class='hs-definition'>sendFile</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>writeEnd</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>start</span> <span class='hs-varid'>sz</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-232"></a>    <span class='hs-comment'>-- no need to count bytes</span>
+<a name="line-233"></a>    <span class='hs-varid'>step</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>runIteratee</span> <span class='hs-varid'>writeEnd</span>
+<a name="line-234"></a>    <span class='hs-varid'>run_</span> <span class='hs-varop'>$</span> <span class='hs-varid'>enumFilePartial</span> <span class='hs-varid'>fp</span> <span class='hs-layout'>(</span><span class='hs-varid'>start</span><span class='hs-layout'>,</span><span class='hs-varid'>start</span><span class='hs-varop'>+</span><span class='hs-varid'>sz</span><span class='hs-layout'>)</span> <span class='hs-varid'>step</span>
+<a name="line-235"></a>    <span class='hs-varid'>return</span> <span class='hs-conid'>()</span>
+<a name="line-236"></a><span class='hs-cpp'>#endif</span>
+<a name="line-237"></a>
+<a name="line-238"></a>
+<a name="line-239"></a><a name="enumerate"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-240"></a><span class='hs-definition'>enumerate</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>MonadIO</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span>
+<a name="line-241"></a>          <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>ListenSocket</span>
+<a name="line-242"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span>
+<a name="line-243"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Socket</span>
+<a name="line-244"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Enumerator</span> <span class='hs-conid'>ByteString</span> <span class='hs-varid'>m</span> <span class='hs-varid'>a</span>
+<a name="line-245"></a><span class='hs-definition'>enumerate</span> <span class='hs-varid'>port</span> <span class='hs-varid'>session</span> <span class='hs-varid'>sock</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>loop</span>
+<a name="line-246"></a>  <span class='hs-keyword'>where</span>
+<a name="line-247"></a>    <span class='hs-varid'>dbg</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"SimpleBackend.enumerate("</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-sel'>_socket</span> <span class='hs-varid'>session</span><span class='hs-layout'>)</span>
+<a name="line-248"></a>            <span class='hs-varop'>++</span> <span class='hs-str'>"): "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>s</span>
+<a name="line-249"></a>
+<a name="line-250"></a>    <span class='hs-varid'>loop</span> <span class='hs-layout'>(</span><span class='hs-conid'>Continue</span> <span class='hs-varid'>k</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-251"></a>        <span class='hs-varid'>dbg</span> <span class='hs-str'>"reading from socket"</span>
+<a name="line-252"></a>        <span class='hs-varid'>s</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>timeoutRecv</span>
+<a name="line-253"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>s</span> <span class='hs-keyword'>of</span>
+<a name="line-254"></a>            <span class='hs-conid'>Nothing</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-255"></a>                   <span class='hs-varid'>dbg</span> <span class='hs-str'>"got EOF from socket"</span>
+<a name="line-256"></a>                   <span class='hs-varid'>sendOne</span> <span class='hs-varid'>k</span> <span class='hs-str'>""</span>
+<a name="line-257"></a>            <span class='hs-conid'>Just</span> <span class='hs-varid'>s'</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-258"></a>                   <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"got "</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>length</span> <span class='hs-varid'>s'</span><span class='hs-layout'>)</span>
+<a name="line-259"></a>                           <span class='hs-varop'>++</span> <span class='hs-str'>" bytes from read end"</span>
+<a name="line-260"></a>                   <span class='hs-varid'>sendOne</span> <span class='hs-varid'>k</span> <span class='hs-varid'>s'</span>
+<a name="line-261"></a>
+<a name="line-262"></a>    <span class='hs-varid'>loop</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>returnI</span> <span class='hs-varid'>x</span>
+<a name="line-263"></a>
 <a name="line-264"></a>
-<a name="line-265"></a>
-<a name="line-266"></a><a name="tickleTimeout"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-267"></a><span class='hs-definition'>tickleTimeout</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>TimeoutTable</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ThreadId</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Word</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-268"></a><span class='hs-definition'>tickleTimeout</span> <span class='hs-varid'>table</span> <span class='hs-varid'>tid</span> <span class='hs-varid'>thash</span> <span class='hs-varid'>tm</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-269"></a>    <span class='hs-varid'>debug</span> <span class='hs-str'>"Backend.tickleTimeout"</span>
-<a name="line-270"></a>    <span class='hs-varid'>now</span>   <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getCurrentDateTime</span>
-<a name="line-271"></a>    <span class='hs-conid'>TT</span><span class='hs-varop'>.</span><span class='hs-varid'>insert</span> <span class='hs-varid'>thash</span> <span class='hs-varid'>tid</span> <span class='hs-layout'>(</span><span class='hs-varid'>now</span> <span class='hs-varop'>+</span> <span class='hs-varid'>toEnum</span> <span class='hs-varid'>tm</span><span class='hs-layout'>)</span> <span class='hs-varid'>table</span>
-<a name="line-272"></a>
-<a name="line-273"></a>
-<a name="line-274"></a><a name="enumerate"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-275"></a><span class='hs-definition'>enumerate</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>MonadIO</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span>
-<a name="line-276"></a>          <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>ListenSocket</span>
-<a name="line-277"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span>
-<a name="line-278"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Socket</span>
-<a name="line-279"></a>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Enumerator</span> <span class='hs-conid'>ByteString</span> <span class='hs-varid'>m</span> <span class='hs-varid'>a</span>
-<a name="line-280"></a><span class='hs-definition'>enumerate</span> <span class='hs-varid'>port</span> <span class='hs-varid'>session</span> <span class='hs-varid'>sock</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>loop</span>
-<a name="line-281"></a>  <span class='hs-keyword'>where</span>
-<a name="line-282"></a>    <span class='hs-varid'>dbg</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"SimpleBackend.enumerate("</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-sel'>_socket</span> <span class='hs-varid'>session</span><span class='hs-layout'>)</span>
-<a name="line-283"></a>            <span class='hs-varop'>++</span> <span class='hs-str'>"): "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>s</span>
-<a name="line-284"></a>
-<a name="line-285"></a>    <span class='hs-varid'>loop</span> <span class='hs-layout'>(</span><span class='hs-conid'>Continue</span> <span class='hs-varid'>k</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-286"></a>        <span class='hs-varid'>dbg</span> <span class='hs-str'>"reading from socket"</span>
-<a name="line-287"></a>        <span class='hs-varid'>s</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>timeoutRecv</span>
-<a name="line-288"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>s</span> <span class='hs-keyword'>of</span>
-<a name="line-289"></a>            <span class='hs-conid'>Nothing</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-290"></a>                   <span class='hs-varid'>dbg</span> <span class='hs-str'>"got EOF from socket"</span>
-<a name="line-291"></a>                   <span class='hs-varid'>sendOne</span> <span class='hs-varid'>k</span> <span class='hs-str'>""</span>
-<a name="line-292"></a>            <span class='hs-conid'>Just</span> <span class='hs-varid'>s'</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-293"></a>                   <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"got "</span> <span class='hs-varop'>++</span> <span class='hs-conid'>Prelude</span><span class='hs-varop'>.</span><span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>length</span> <span class='hs-varid'>s'</span><span class='hs-layout'>)</span>
-<a name="line-294"></a>                           <span class='hs-varop'>++</span> <span class='hs-str'>" bytes from read end"</span>
-<a name="line-295"></a>                   <span class='hs-varid'>sendOne</span> <span class='hs-varid'>k</span> <span class='hs-varid'>s'</span>
-<a name="line-296"></a>
-<a name="line-297"></a>    <span class='hs-varid'>loop</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>returnI</span> <span class='hs-varid'>x</span>
-<a name="line-298"></a>
-<a name="line-299"></a>
-<a name="line-300"></a>    <span class='hs-varid'>sendOne</span> <span class='hs-varid'>k</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>|</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>null</span> <span class='hs-varid'>s</span>  <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-301"></a>        <span class='hs-varid'>dbg</span> <span class='hs-str'>"sending EOF to continuation"</span>
-<a name="line-302"></a>        <span class='hs-varid'>enumEOF</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Continue</span> <span class='hs-varid'>k</span>
-<a name="line-303"></a>
-<a name="line-304"></a>                <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-305"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"sending "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>s</span> <span class='hs-varop'>++</span> <span class='hs-str'>" to continuation"</span>
-<a name="line-306"></a>        <span class='hs-varid'>step</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>lift</span> <span class='hs-varop'>$</span> <span class='hs-varid'>runIteratee</span> <span class='hs-varop'>$</span> <span class='hs-varid'>k</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Chunks</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>s</span><span class='hs-keyglyph'>]</span>
-<a name="line-307"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>step</span> <span class='hs-keyword'>of</span>
-<a name="line-308"></a>          <span class='hs-layout'>(</span><span class='hs-conid'>Yield</span> <span class='hs-varid'>x</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span>   <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-309"></a>                      <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"got yield, remainder is "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>st</span>
-<a name="line-310"></a>                      <span class='hs-varid'>yield</span> <span class='hs-varid'>x</span> <span class='hs-varid'>st</span>
-<a name="line-311"></a>          <span class='hs-varid'>r</span><span class='hs-keyglyph'>@</span><span class='hs-layout'>(</span><span class='hs-conid'>Continue</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-312"></a>                      <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"got continue"</span>
-<a name="line-313"></a>                      <span class='hs-varid'>loop</span> <span class='hs-varid'>r</span>
-<a name="line-314"></a>          <span class='hs-layout'>(</span><span class='hs-conid'>Error</span> <span class='hs-varid'>e</span><span class='hs-layout'>)</span>      <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>throwError</span> <span class='hs-varid'>e</span>
-<a name="line-315"></a>
-<a name="line-316"></a>    <span class='hs-varid'>fd</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fdSocket</span> <span class='hs-varid'>sock</span>
-<a name="line-317"></a><span class='hs-cpp'>#ifdef PORTABLE</span>
-<a name="line-318"></a>    <span class='hs-varid'>timeoutRecv</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>recv</span> <span class='hs-varid'>port</span> <span class='hs-varid'>sock</span> <span class='hs-layout'>(</span><span class='hs-varid'>threadWaitRead</span> <span class='hs-varop'>$</span>
-<a name="line-319"></a>                  <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>fd</span><span class='hs-layout'>)</span> <span class='hs-varid'>session</span>
-<a name="line-320"></a><span class='hs-cpp'>#else</span>
-<a name="line-321"></a>    <span class='hs-varid'>timeoutRecv</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>recv</span> <span class='hs-varid'>port</span> <span class='hs-layout'>(</span><span class='hs-varid'>threadWaitRead</span> <span class='hs-varop'>$</span>
-<a name="line-322"></a>                  <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>fd</span><span class='hs-layout'>)</span> <span class='hs-varid'>session</span>
-<a name="line-323"></a><span class='hs-cpp'>#endif</span>
-<a name="line-324"></a>
-<a name="line-325"></a>
-<a name="line-326"></a><a name="writeOut"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
-<a name="line-327"></a><span class='hs-definition'>writeOut</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>MonadIO</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span>
-<a name="line-328"></a>         <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>ListenSocket</span>
-<a name="line-329"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span>
-<a name="line-330"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Socket</span>
-<a name="line-331"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-conid'>IO</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
-<a name="line-332"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>ByteString</span> <span class='hs-varid'>m</span> <span class='hs-conid'>()</span>
-<a name="line-333"></a><span class='hs-definition'>writeOut</span> <span class='hs-varid'>port</span> <span class='hs-varid'>session</span> <span class='hs-varid'>sock</span> <span class='hs-varid'>tickle</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>loop</span>
-<a name="line-334"></a>  <span class='hs-keyword'>where</span>
-<a name="line-335"></a>    <span class='hs-varid'>dbg</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"SimpleBackend.writeOut("</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-sel'>_socket</span> <span class='hs-varid'>session</span><span class='hs-layout'>)</span>
-<a name="line-336"></a>            <span class='hs-varop'>++</span> <span class='hs-str'>"): "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>s</span>
-<a name="line-337"></a>
-<a name="line-338"></a>    <span class='hs-varid'>loop</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>continue</span> <span class='hs-varid'>k</span>
-<a name="line-339"></a>
-<a name="line-340"></a>    <span class='hs-varid'>k</span> <span class='hs-conid'>EOF</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>yield</span> <span class='hs-conid'>()</span> <span class='hs-conid'>EOF</span>
-<a name="line-341"></a>    <span class='hs-varid'>k</span> <span class='hs-layout'>(</span><span class='hs-conid'>Chunks</span> <span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-342"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-varid'>xs</span>
-<a name="line-343"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>n</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>length</span> <span class='hs-varid'>s</span>
-<a name="line-344"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"got chunk with "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>n</span> <span class='hs-varop'>++</span> <span class='hs-str'>" bytes"</span>
-<a name="line-345"></a>        <span class='hs-varid'>ee</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>try</span> <span class='hs-varop'>$</span> <span class='hs-varid'>timeoutSend</span> <span class='hs-varid'>s</span>
-<a name="line-346"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>ee</span> <span class='hs-keyword'>of</span>
-<a name="line-347"></a>          <span class='hs-layout'>(</span><span class='hs-conid'>Left</span> <span class='hs-layout'>(</span><span class='hs-varid'>e</span><span class='hs-keyglyph'>::</span><span class='hs-conid'>SomeException</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-348"></a>              <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"timeoutSend got error "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>e</span>
-<a name="line-349"></a>              <span class='hs-varid'>throwError</span> <span class='hs-varid'>e</span>
-<a name="line-350"></a>          <span class='hs-layout'>(</span><span class='hs-conid'>Right</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-351"></a>              <span class='hs-keyword'>let</span> <span class='hs-varid'>last10</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>drop</span> <span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-comment'>-</span><span class='hs-num'>10</span><span class='hs-layout'>)</span> <span class='hs-varid'>s</span>
-<a name="line-352"></a>              <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"wrote "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>n</span> <span class='hs-varop'>++</span> <span class='hs-str'>" bytes, last 10="</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>last10</span>
-<a name="line-353"></a>              <span class='hs-varid'>loop</span>
-<a name="line-354"></a>
-<a name="line-355"></a>    <span class='hs-varid'>fd</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fdSocket</span> <span class='hs-varid'>sock</span>
-<a name="line-356"></a><span class='hs-cpp'>#ifdef PORTABLE</span>
-<a name="line-357"></a>    <span class='hs-varid'>timeoutSend</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>send</span> <span class='hs-varid'>port</span> <span class='hs-varid'>sock</span> <span class='hs-varid'>tickle</span>
-<a name="line-358"></a>                              <span class='hs-layout'>(</span><span class='hs-varid'>threadWaitWrite</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>fd</span><span class='hs-layout'>)</span> <span class='hs-varid'>session</span>
-<a name="line-359"></a><span class='hs-cpp'>#else</span>
-<a name="line-360"></a>    <span class='hs-varid'>timeoutSend</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>send</span> <span class='hs-varid'>port</span> <span class='hs-varid'>tickle</span>
-<a name="line-361"></a>                              <span class='hs-layout'>(</span><span class='hs-varid'>threadWaitWrite</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>fd</span><span class='hs-layout'>)</span> <span class='hs-varid'>session</span>
-<a name="line-362"></a><span class='hs-cpp'>#endif</span>
+<a name="line-265"></a>    <span class='hs-varid'>sendOne</span> <span class='hs-varid'>k</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>|</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>null</span> <span class='hs-varid'>s</span>  <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-266"></a>        <span class='hs-varid'>dbg</span> <span class='hs-str'>"sending EOF to continuation"</span>
+<a name="line-267"></a>        <span class='hs-varid'>enumEOF</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Continue</span> <span class='hs-varid'>k</span>
+<a name="line-268"></a>
+<a name="line-269"></a>                <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-270"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"sending "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>s</span> <span class='hs-varop'>++</span> <span class='hs-str'>" to continuation"</span>
+<a name="line-271"></a>        <span class='hs-varid'>step</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>lift</span> <span class='hs-varop'>$</span> <span class='hs-varid'>runIteratee</span> <span class='hs-varop'>$</span> <span class='hs-varid'>k</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Chunks</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>s</span><span class='hs-keyglyph'>]</span>
+<a name="line-272"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>step</span> <span class='hs-keyword'>of</span>
+<a name="line-273"></a>          <span class='hs-layout'>(</span><span class='hs-conid'>Yield</span> <span class='hs-varid'>x</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span>   <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-274"></a>                      <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"got yield, remainder is "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>st</span>
+<a name="line-275"></a>                      <span class='hs-varid'>yield</span> <span class='hs-varid'>x</span> <span class='hs-varid'>st</span>
+<a name="line-276"></a>          <span class='hs-varid'>r</span><span class='hs-keyglyph'>@</span><span class='hs-layout'>(</span><span class='hs-conid'>Continue</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-277"></a>                      <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"got continue"</span>
+<a name="line-278"></a>                      <span class='hs-varid'>loop</span> <span class='hs-varid'>r</span>
+<a name="line-279"></a>          <span class='hs-layout'>(</span><span class='hs-conid'>Error</span> <span class='hs-varid'>e</span><span class='hs-layout'>)</span>      <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>throwError</span> <span class='hs-varid'>e</span>
+<a name="line-280"></a>
+<a name="line-281"></a>    <span class='hs-varid'>fd</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fdSocket</span> <span class='hs-varid'>sock</span>
+<a name="line-282"></a><span class='hs-cpp'>#ifdef PORTABLE</span>
+<a name="line-283"></a>    <span class='hs-varid'>timeoutRecv</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>recv</span> <span class='hs-varid'>port</span> <span class='hs-varid'>sock</span> <span class='hs-layout'>(</span><span class='hs-varid'>threadWaitRead</span> <span class='hs-varop'>$</span>
+<a name="line-284"></a>                  <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>fd</span><span class='hs-layout'>)</span> <span class='hs-varid'>session</span>
+<a name="line-285"></a><span class='hs-cpp'>#else</span>
+<a name="line-286"></a>    <span class='hs-varid'>timeoutRecv</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>recv</span> <span class='hs-varid'>port</span> <span class='hs-layout'>(</span><span class='hs-varid'>threadWaitRead</span> <span class='hs-varop'>$</span>
+<a name="line-287"></a>                  <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>fd</span><span class='hs-layout'>)</span> <span class='hs-varid'>session</span>
+<a name="line-288"></a><span class='hs-cpp'>#endif</span>
+<a name="line-289"></a>
+<a name="line-290"></a>
+<a name="line-291"></a><a name="writeOut"></a><span class='hs-comment'>------------------------------------------------------------------------------</span>
+<a name="line-292"></a><span class='hs-definition'>writeOut</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>MonadIO</span> <span class='hs-varid'>m</span><span class='hs-layout'>)</span>
+<a name="line-293"></a>         <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>ListenSocket</span>
+<a name="line-294"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>NetworkSession</span>
+<a name="line-295"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Socket</span>
+<a name="line-296"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-conid'>IO</span> <span class='hs-conid'>()</span><span class='hs-layout'>)</span>
+<a name="line-297"></a>         <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Iteratee</span> <span class='hs-conid'>ByteString</span> <span class='hs-varid'>m</span> <span class='hs-conid'>()</span>
+<a name="line-298"></a><span class='hs-definition'>writeOut</span> <span class='hs-varid'>port</span> <span class='hs-varid'>session</span> <span class='hs-varid'>sock</span> <span class='hs-varid'>tickle</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>loop</span>
+<a name="line-299"></a>  <span class='hs-keyword'>where</span>
+<a name="line-300"></a>    <span class='hs-varid'>dbg</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>debug</span> <span class='hs-varop'>$</span> <span class='hs-str'>"SimpleBackend.writeOut("</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-sel'>_socket</span> <span class='hs-varid'>session</span><span class='hs-layout'>)</span>
+<a name="line-301"></a>            <span class='hs-varop'>++</span> <span class='hs-str'>"): "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>s</span>
+<a name="line-302"></a>
+<a name="line-303"></a>    <span class='hs-varid'>loop</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>continue</span> <span class='hs-varid'>k</span>
+<a name="line-304"></a>
+<a name="line-305"></a>    <span class='hs-varid'>k</span> <span class='hs-conid'>EOF</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>yield</span> <span class='hs-conid'>()</span> <span class='hs-conid'>EOF</span>
+<a name="line-306"></a>    <span class='hs-varid'>k</span> <span class='hs-layout'>(</span><span class='hs-conid'>Chunks</span> <span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-307"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>s</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>concat</span> <span class='hs-varid'>xs</span>
+<a name="line-308"></a>        <span class='hs-keyword'>let</span> <span class='hs-varid'>n</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>length</span> <span class='hs-varid'>s</span>
+<a name="line-309"></a>        <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"got chunk with "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>n</span> <span class='hs-varop'>++</span> <span class='hs-str'>" bytes"</span>
+<a name="line-310"></a>        <span class='hs-varid'>ee</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>try</span> <span class='hs-varop'>$</span> <span class='hs-varid'>timeoutSend</span> <span class='hs-varid'>s</span>
+<a name="line-311"></a>        <span class='hs-keyword'>case</span> <span class='hs-varid'>ee</span> <span class='hs-keyword'>of</span>
+<a name="line-312"></a>          <span class='hs-layout'>(</span><span class='hs-conid'>Left</span> <span class='hs-layout'>(</span><span class='hs-varid'>e</span><span class='hs-keyglyph'>::</span><span class='hs-conid'>SomeException</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-313"></a>              <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"timeoutSend got error "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>e</span>
+<a name="line-314"></a>              <span class='hs-varid'>throwError</span> <span class='hs-varid'>e</span>
+<a name="line-315"></a>          <span class='hs-layout'>(</span><span class='hs-conid'>Right</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-316"></a>              <span class='hs-keyword'>let</span> <span class='hs-varid'>last10</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>drop</span> <span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-comment'>-</span><span class='hs-num'>10</span><span class='hs-layout'>)</span> <span class='hs-varid'>s</span>
+<a name="line-317"></a>              <span class='hs-varid'>dbg</span> <span class='hs-varop'>$</span> <span class='hs-str'>"wrote "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>n</span> <span class='hs-varop'>++</span> <span class='hs-str'>" bytes, last 10="</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>last10</span>
+<a name="line-318"></a>              <span class='hs-varid'>loop</span>
+<a name="line-319"></a>
+<a name="line-320"></a>    <span class='hs-varid'>fd</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fdSocket</span> <span class='hs-varid'>sock</span>
+<a name="line-321"></a><span class='hs-cpp'>#ifdef PORTABLE</span>
+<a name="line-322"></a>    <span class='hs-varid'>timeoutSend</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>send</span> <span class='hs-varid'>port</span> <span class='hs-varid'>sock</span> <span class='hs-varid'>tickle</span>
+<a name="line-323"></a>                              <span class='hs-layout'>(</span><span class='hs-varid'>threadWaitWrite</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>fd</span><span class='hs-layout'>)</span> <span class='hs-varid'>session</span>
+<a name="line-324"></a><span class='hs-cpp'>#else</span>
+<a name="line-325"></a>    <span class='hs-varid'>timeoutSend</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Listen</span><span class='hs-varop'>.</span><span class='hs-varid'>send</span> <span class='hs-varid'>port</span> <span class='hs-varid'>tickle</span>
+<a name="line-326"></a>                              <span class='hs-layout'>(</span><span class='hs-varid'>threadWaitWrite</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromIntegral</span> <span class='hs-varid'>fd</span><span class='hs-layout'>)</span> <span class='hs-varid'>session</span>
+<a name="line-327"></a><span class='hs-cpp'>#endif</span>
 </pre></body>
 </html>
