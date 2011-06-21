@@ -49,7 +49,7 @@ $ cabal install snap</pre>
             <dd>Core type definitions (<tt>Snap</tt> monad, HTTP types, etc) and
               utilities for web
               handlers. <br/><span class="linklist">
-                [ <a href="/docs/latest/snap-core/index.html"
+                [ <a href="/http://hackage.haskell.org/package/snap-core"
                      >api docs</a> |
                 <a href="http://hackage.haskell.org/package/snap-core"
                    >hackage</a> |
@@ -61,7 +61,7 @@ $ cabal install snap</pre>
             <dt>snap-server</dt>
             <dd>An iteratee-based HTTP server library, which runs <tt>Snap</tt> web
               handlers. <br/><span class="linklist">
-                [ <a href="/docs/latest/snap-server/index.html"
+                [ <a href="/http://hackage.haskell.org/package/snap-server"
                      >api docs</a> |
                 <a href="http://hackage.haskell.org/package/snap-server"
                    >hackage</a> |
@@ -74,7 +74,7 @@ $ cabal install snap</pre>
             <dt>snap</dt>
             <dd>Umbrella project pulling together Snap's component libraries
                 into a coherent framework.  <br/><span class="linklist">
-                [ <a href="/docs/latest/snap/index.html"
+                [ <a href="/http://hackage.haskell.org/package/snap"
                      >api docs</a> |
                 <a href="http://hackage.haskell.org/package/snap"
                    >hackage</a> |
@@ -85,7 +85,7 @@ $ cabal install snap</pre>
             <dt>heist</dt>
             <dd>An HTML-based templating engine, allowing Haskell functions to be
               bound to tags. <br/><span class="linklist">
-                [ <a href="/docs/latest/heist/index.html" >api docs</a> |
+                [ <a href="/http://hackage.haskell.org/package/heist" >api docs</a> |
                 <a href="http://hackage.haskell.org/package/heist"
                    >hackage</a> |
                 <a href="http://github.com/snapframework/heist"
@@ -97,7 +97,7 @@ $ cabal install snap</pre>
             <dt>xmlhtml</dt>
             <dd>A hybrid XML/HTML5 parsing and rendering library written
               specifically for Heist. <br/><span class="linklist">
-                [ <a href="/docs/latest/xmlhtml/index.html" >api docs</a> |
+                [ <a href="/http://hackage.haskell.org/package/xmlhtml" >api docs</a> |
                 <a href="http://hackage.haskell.org/package/xmlhtml"
                    >hackage</a> |
                 <a href="http://github.com/snapframework/xmlhtml"
