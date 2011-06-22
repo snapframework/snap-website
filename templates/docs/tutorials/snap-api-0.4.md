@@ -72,8 +72,8 @@ $ curl 'http://localhost:8000/'; echo
 ...
 ~~~~~~
 
-Make sure to try the some of the echo examples. When you are satisfied, we can
-kill the server by hitting `CTRL-C`.
+Make sure to try some of the echo examples. When you are satisfied, we can kill
+the server by hitting `CTRL-C`.
 
 
 ### Under the Hood
