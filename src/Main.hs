@@ -61,7 +61,8 @@ initSiteState = do
     setLocaleToUTF8
 
     (origTs,staticState) <- bindStaticTag .
-                            bindSplice "snap-version" serverVersion
+                            bindSplice "snap-version" serverVersion .
+                            bindSplice "feed-autodiscovery-link" "" .
                             $ emptyTemplateState "templates"
 
     ets <- loadTemplates "templates" origTs
