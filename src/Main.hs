@@ -62,8 +62,8 @@ initSiteState = do
 
     (origTs,staticState) <- bindStaticTag .
                             bindSplice "snap-version" serverVersion .
-                            bindSplice "feed-autodiscovery-link" "" .
-                            $ emptyTemplateState "templates"
+                            bindSplice "feed-autodiscovery-link" "" $
+                            emptyTemplateState "templates"
 
     ets <- loadTemplates "templates" origTs
     let ts = either error id ets
