@@ -10,6 +10,7 @@
 1. [How do I run my app in development mode?](#how-do-i-run-my-app-in-development-mode)
 1. [I am getting a "cannot find normal object file" error when trying to build Snap. Why?](#i-am-getting-a-cannot-find-normal-object-file-error-when-trying-to-build-snap.-why)
 1. [Why doesn't Heist display templates?    ](#why-doesnt-heist-display-templates)
+1. [Why can't I nest a `div` in a `p` with Heist?](#why-cant-i-nest-a-div-in-a-p-with-heist)
 1. [How do I get the libev backend working? ](#how-do-i-get-the-libev-backend-working)
 1. [How can I get debugging output?         ](#how-can-i-get-debugging-output)
 1. [When I run snap with multiple cores, throughput plummets. What's going on?](#when-i-run-snap-with-multiple-cores-throughput-plummets.-whats-going-on)
@@ -113,6 +114,38 @@ $ cabal build
 The most common problem we've seen is that you have ".tpl" included as part of
 your template name.  Heist automatically adds the ".tpl" extension, so you
 shouldn't include it.
+
+### Why can't I nest a `div` in a `p` with Heist?
+
+This is not allowed in HTML.  Suppose you write HTML that look like the
+following:
+
+~~~~~~ {.html}
+<p>
+  <div>
+    Some content
+  </div>
+</p>
+~~~~~~
+
+It may look like you've nested a `div` element inside of a `p` element, but
+that isn't what really happened.  In fact, the start tag `<div>` caused the
+paragraph to end.  The `div` element occurs after the `p` element.  Finally,
+the closing `</p>` tag doesn't match anything, and most web browsers will
+discard it.
+
+Heist HTML templates parse things the same way, but since templates are
+expected to be valid HTML 5, the invalid closing tag causes a parse error.
+Heist prefers to give you the error sooner, rather than surprising you with
+an unexpected document structure in your splices.
+
+The best answer is to just place the `div` element at the top level beside
+your paragraphs.  That's what you were doing anyway, so it won't break
+anything.
+
+Remember that you can disable HTML 5 parsing by naming your templates with the
+suffix `.xtpl`, so if you don't want Heist to implicitly close paragraphs and
+follow other HTML 5 specific rules, you can follow XML document rules instead.
 
 ### How do I get the libev backend working?
 
