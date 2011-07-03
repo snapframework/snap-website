@@ -31,6 +31,8 @@ Found a bug in Snap? Please create a ticket on our
 Yes!  Here is a list of sites that we know of that use Snap.  Let us know if
 you know of others:
 
+  -  [housetab.org](http://housetab.org)
+
   -  [JCU](https://github.com/norm2782/JCU) a web-based Prolog environment.
 
   -  [hpaste](http://hpaste.org/), a simple Haskell pastebin.  A blog post
