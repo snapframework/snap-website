@@ -172,7 +172,7 @@ template looks like this:
 ## What Now?
 
 We hope we've whetted your appetite for using Snap. From here on out you should
-take a look at the [API documentation](/docs/latest/snap-core/index.html),
+take a look at the [API documentation](http://hackage.haskell.org/package/snap-core),
 which explains many of the concepts and functions here in further detail.
 
 You can also come hang out in
