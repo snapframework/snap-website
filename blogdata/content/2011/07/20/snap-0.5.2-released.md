@@ -33,11 +33,14 @@ of the Snap Framework.
 
 ## Functions added
 
-  - Added a function to `Snap.Types`:
+Added a function to `Snap.Types`:
 
 ~~~~~~ {.haskell}
 terminateConnection :: (Exception e, MonadCatchIO m) => e -> m a
 ~~~~~~
+    
+This function causes the HTTP connection to be immediately terminated. The
+exception generated is not catchable.
 
 
 ## Dependency changes
