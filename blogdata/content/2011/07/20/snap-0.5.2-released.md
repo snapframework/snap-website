@@ -37,7 +37,6 @@ of the Snap Framework.
 
 ~~~~~~ {.haskell}
 terminateConnection :: (Exception e, MonadCatchIO m) => e -> m a
-terminateConnection = throw . ConnectionTerminatedException . toException
 ~~~~~~
 
 
