@@ -1,7 +1,7 @@
 | title: Announcing: Snap Framework v0.5.3
 | author: Gregory Collins <greg@gregorycollins.net>
 | published: 2011-08-13T10:01:00+0100
-| updated: 
+| updated: 2011-08-13T10:01:00+0100
 | summary: Release notes for Snap 0.5.3
 
 Hello from [CamHac](http://www.haskell.org/haskellwiki/CamHac)! The Snap team
