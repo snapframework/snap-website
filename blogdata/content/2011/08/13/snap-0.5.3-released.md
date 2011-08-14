@@ -1,7 +1,7 @@
 | title: Announcing: Snap Framework v0.5.3
 | author: Gregory Collins <greg@gregorycollins.net>
 | published: 2011-08-13T10:01:00+0100
-| updated: 2011-08-13T10:01:00+0100
+| updated: 2011-08-14T09:41:00+0100
 | summary: Release notes for Snap 0.5.3
 
 Hello from [CamHac](http://www.haskell.org/haskellwiki/CamHac)! The Snap team
@@ -32,3 +32,8 @@ Framework.
   - Several tweaks to dependencies to get Snap building on GHC 7.2; many thanks
     to Herbert Valerio Riedel and Bryan O'Sullivan for contributing these
     patches.
+
+  - /Updated, Aug 14, 2011/: Now that GHC 7.2 has been released, Snap 0.5.3 now
+    requires base >= 4.3, meaning that it only works with GHC 7 and above. (We
+    try to support the 2 most recent GHC versions.) Uploaded Snap 0.5.3.1 to
+    fix the broken dependency.
