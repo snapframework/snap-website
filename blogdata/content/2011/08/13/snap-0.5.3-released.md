@@ -33,7 +33,7 @@ Framework.
     to Herbert Valerio Riedel and Bryan O'Sullivan for contributing these
     patches.
 
-  - /Updated, Aug 14, 2011/: Now that GHC 7.2 has been released, Snap 0.5.3 now
+  - *Updated, Aug 14, 2011*: Now that GHC 7.2 has been released, Snap 0.5.3 now
     requires base >= 4.3, meaning that it only works with GHC 7 and above. (We
     try to support the 2 most recent GHC versions.) Uploaded Snap 0.5.3.1 to
     fix the broken dependency.
