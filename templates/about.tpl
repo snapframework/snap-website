@@ -84,9 +84,10 @@
           </p>
           <p>
             <strong><a href="http://softwaresimply.blogspot.com/">Doug
-            Beardsley</a></strong> loves Haskell and has been playing with
-            Haskell web development since 2008.  He currently works for a
-            finance company doing Haskell development.
+            Beardsley</a></strong> has been programming since 1990, doing
+            web development in Haskell since 2008, and laments that those
+            two dates are so far apart.  He currently works for a finance
+            company doing Haskell development.
           </p>
           <p>
             <strong><a href="http://rfrn.org/~shu">Shu-yu Guo</a></strong>
@@ -100,7 +101,7 @@
             Sanders</a></strong> is a self-taught software developer living
             and working in the great American South.  He works as the resident
             Star Trek expert at <a href="http://thisismedium.com/">Medium</a>.
-            His interest include music, mathematics and classic european cars.
+            His interests include music, mathematics and classic european cars.
           </p>
           <p>
             <strong>Carl Howells</strong> is a veteran of web app
