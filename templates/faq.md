@@ -10,6 +10,7 @@
 1. [How do I run my app in development mode?](#how-do-i-run-my-app-in-development-mode)
 1. [I am getting a "cannot find normal object file" error when trying to build Snap. Why?](#i-am-getting-a-cannot-find-normal-object-file-error-when-trying-to-build-snap.-why)
 1. [Why doesn't Heist display templates?    ](#why-doesnt-heist-display-templates)
+1. [How do I do looping in Heist?           ](#how-do-i-do-looping-in-heist)
 1. [Why can't I nest a `div` in a `p` with Heist?](#why-cant-i-nest-a-div-in-a-p-with-heist)
 1. [How do I get the libev backend working? ](#how-do-i-get-the-libev-backend-working)
 1. [How can I get debugging output?         ](#how-can-i-get-debugging-output)
@@ -116,6 +117,13 @@ $ cabal build
 The most common problem we've seen is that you have ".tpl" included as part of
 your template name.  Heist automatically adds the ".tpl" extension, so you
 shouldn't include it.
+
+### How do I do looping in Heist?
+
+Heist is different from a lot of other template systems in this regard.  You
+actually don't do any looping in Heist.  You do your looping in Haskell.  See
+[http://softwaresimply.blogspot.com/2011/04/looping-and-control-flow-in-heist.html](http://softwaresimply.blogspot.com/2011/04/looping-and-control-flow-in-heist.html)
+for more information.
 
 ### Why can't I nest a `div` in a `p` with Heist?
 
