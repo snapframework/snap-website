@@ -1,7 +1,7 @@
 | title: Announcing: Snap Framework v0.5.5
 | author: Gregory Collins <greg@gregorycollins.net>
-| published: 2011-10-16 12:13:00+0200
-| updated: 2011-10-16 12:13:00+0200
+| published: 2011-10-16T12:13:00+0200
+| updated: 2011-10-16T12:13:00+0200
 | summary: Release notes for Snap 0.5.5
 
 The Snap team is happy to announce the release of version 0.5.5 of the Snap
