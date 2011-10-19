@@ -48,9 +48,9 @@ epochTime = do
 description :: Text
 description = "The snapframework.com website"
 
+
 appInit :: SnapletInit App App
 appInit = makeSnaplet "snap-website" description Nothing $ do
-    liftIO setLocaleToUTF8
     hs <- nestSnaplet "" heist $ heistInit "templates"
     bs <- nestSnaplet "blog" blog $ staticPagesInit "blogdata"
     addSplices [ ("snap-version", serverVersion)
@@ -89,27 +89,10 @@ catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
     r = setContentType "text/html" $
         setResponseStatus 500 "Internal Server Error" emptyResponse
 
-setLocaleToUTF8 :: IO ()
-setLocaleToUTF8 = do
-    mapM_ (\k -> setEnv k "en_US.UTF-8" True)
-          [ "LANG"
-          , "LC_CTYPE"
-          , "LC_NUMERIC"
-          , "LC_TIME"
-          , "LC_COLLATE"
-          , "LC_MONETARY"
-          , "LC_MESSAGES"
-          , "LC_PAPER"
-          , "LC_NAME"
-          , "LC_ADDRESS"
-          , "LC_TELEPHONE"
-          , "LC_MEASUREMENT"
-          , "LC_IDENTIFICATION"
-          , "LC_ALL" ]
-
 
 serverVersion :: SnapletSplice b v
 serverVersion = liftHeist $ textSplice $ T.decodeUtf8 snapServerVersion
+
 
 main :: IO ()
 main = serveSnaplet defaultConfig appInit
