@@ -2,7 +2,7 @@
 <static>
   <apply template="page">
     <div class="singlecolumn">
-      <markdown file="docs/tutorials/heist.md"/>
+      <markdown file="heist.md"/>
     </div>
   </apply>
 </static>
