@@ -15,6 +15,7 @@
 1. [How do I get the libev backend working? ](#how-do-i-get-the-libev-backend-working)
 1. [How can I get debugging output?         ](#how-can-i-get-debugging-output)
 1. [When I run snap with multiple cores, throughput plummets. What's going on?](#when-i-run-snap-with-multiple-cores-throughput-plummets.-whats-going-on)
+1. [How do I fix the libstdc++ error?](#how-do-i-fix-the-libstdc-error)
 1. [How can I help?                         ](#how-can-i-help)
 
 </div>
@@ -191,6 +192,23 @@ building `snap-core` by passing the `no-debug` flag to `cabal install`:
 $ cabal install snap-core -fno-debug
 ~~~~~~~~
 
+
+### How do I fix the libstdc++ error?
+
+In some cases (most notably on MacOS), people have encountered this error when
+building snap:
+
+~~~~~~~~ {.shell}
+Loading package double-conversion-0.2.0.1 ... <command line>: can't load
+.so/.DLL for: stdc++ (dlopen(libstdc++.dylib, 9): image not found)
+~~~~~~~~
+
+The issue is supposed to be fixed in GHC 7.4, but until then rebuilding
+blaze-textual with the following command has been known to work.
+
+~~~~~~~~ {.shell}
+$ cabal install blaze-textual --reinstall -fnative
+~~~~~~~~
 
 ### How can I help?
 
