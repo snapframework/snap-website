@@ -28,6 +28,20 @@
                 <img src="/media/css/book.png" />
               </a>
               A tutorial for the Heist HTML templating library.</dd>
+
+            <dt><a href="docs/tutorials/snaplets-tutorial">Snaplets Tutorial</a></dt>
+            <dd>
+              <a class="book" href="docs/tutorials/snaplets-tutorial">
+                <img src="/media/css/book.png" />
+              </a>
+              Guide to using snaplets to build reusable web components.</dd>
+
+            <dt><a href="docs/tutorials/snaplets-design">Snaplets Design</a></dt>
+            <dd>
+              <a class="book" href="docs/tutorials/snaplets-design">
+                <img src="/media/css/book.png" />
+              </a>
+              Description of the snaplets internal design and motivation.</dd>
           </dl>
         </div>
       </div>

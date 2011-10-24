@@ -26,7 +26,6 @@ import           Snap.Snaplet
 import           Snap.Snaplet.Heist
 import           Snap.Util.FileServe
 import           Snap.Util.GZip
-import           System.Posix.Env
 import           Text.Templating.Heist
 import qualified Text.XHtmlCombinators.Escape as XH
 

@@ -669,13 +669,9 @@ p.foundabug {
     letter-spacing: 2px;
 }
 
-#docdls dt {
-    height: 28px;
-    border-bottom: 1px dotted #C2D1E1;
-
-    font-family: "PT Sans", sans-serif;
-    letter-spacing: 2px;
-    padding: 0 5px;
+#packages dd{
+    background: url(package.png) no-repeat center left;
+    padding-left: 110px;
 }
 
 #packages dd, #docdls dd {
@@ -684,9 +680,13 @@ p.foundabug {
     line-height: 28px;
 }
 
-#packages dd{
-    background: url(package.png) no-repeat center left;
-    padding-left: 110px;
+#docdls dt {
+    height: 28px;
+    border-bottom: 1px dotted #C2D1E1;
+
+    font-family: "PT Sans", sans-serif;
+    letter-spacing: 2px;
+    padding: 0 5px;
 }
 
 #docdls dd{
@@ -700,6 +700,27 @@ p.foundabug {
     margin-top: -5px;
     margin-right: 20px;
     height: 100px;
+}
+
+
+#snapletdls dd {
+    padding: 5px 10px 10px 10px;
+    font-size:1em;
+    line-height: 28px;
+    width: 100%;
+}
+
+#snapletdls dt {
+    height: 28px;
+    border-bottom: 1px dotted #C2D1E1;
+    font-family: "PT Sans", sans-serif;
+    letter-spacing: 2px;
+    padding: 0 5px;
+    color: #2c558a;
+}
+
+#snapletdls dt span {
+    float:right;
 }
 
 .small-logo{
