@@ -8,13 +8,13 @@
 1. [Where's the high-level functionality?   ](#wheres-the-high-level-functionality)
 1. [Why can't I install Snap?               ](#why-cant-i-install-snap)
 1. [How do I run my app in development mode?](#how-do-i-run-my-app-in-development-mode)
-1. [I am getting a "cannot find normal object file" error when trying to build Snap. Why?](#i-am-getting-a-cannot-find-normal-object-file-error-when-trying-to-build-snap.-why)
+1. [Why do I get a "cannot find normal object file" error when building Snap?](#why-do-i-get-a-cannot-find-normal-object-file-error-when-building-snap)
 1. [Why doesn't Heist display templates?    ](#why-doesnt-heist-display-templates)
 1. [How do I do looping in Heist?           ](#how-do-i-do-looping-in-heist)
 1. [Why can't I nest a `div` in a `p` with Heist?](#why-cant-i-nest-a-div-in-a-p-with-heist)
 1. [How do I get the libev backend working? ](#how-do-i-get-the-libev-backend-working)
 1. [How can I get debugging output?         ](#how-can-i-get-debugging-output)
-1. [When I run snap with multiple cores, throughput plummets. What's going on?](#when-i-run-snap-with-multiple-cores-throughput-plummets.-whats-going-on)
+1. [Why does throughput plummet when I run snap with multiple cores?](#why-does-throughput-plummet-when-i-run-snap-with-multiple-cores)
 1. [How do I fix the libstdc++ error?](#how-do-i-fix-the-libstdc-error)
 1. [How can I help?                         ](#how-can-i-help)
 
@@ -92,7 +92,7 @@ If you've already built your application without development mode, it's
 important to do a clean first.
 
 
-### I am getting a "cannot find normal object file" error when trying to build Snap. Why?
+### Why do I get a "cannot find normal object file" error when building Snap?
 
 If you try to build Snap in profiling mode, sometimes you will encounter this error:
 
@@ -173,7 +173,7 @@ install the latest [libev](http://software.schmorp.de/pkg/libev.html)
 from [source](http://dist.schmorp.de/libev/).
 
 
-### When I run snap with multiple cores, throughput plummets. What's going on?
+### Why does throughput plummet when I run snap with multiple cores?
 
 The parallel GC introduced in GHC 6.10 doesn't seem to play very well with
 Snap. If you turn parallel GC off (using the "`-qg`" flag, e.g. "`./foo-website
