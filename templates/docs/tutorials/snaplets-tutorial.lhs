@@ -1,10 +1,9 @@
 What Are Snaplets?
 ==================
 
-Snaplets allow you to build web applications out of composable parts.  This
-lets you build self-contained pieces of functionality and glue them together
-to make your overall application.  Here are some of the things provided by the
-snaplet infrastructure:
+A snaplet is a composable web application.  Snaplets allow you to build
+self-contained pieces of functionality and glue them together to make larger
+applications.  Here are some of the things provided by the snaplet API:
 
   - Infrastructure for application state/environment
 
@@ -21,9 +20,9 @@ snaplet's code would provide the necessary API to let your application
 interact seamlessly with the wiki functionality.  When you run your
 application for the first time, all of the wiki snaplet's filesystem resources
 will automatically be copied into the appropriate places.  Then you will
-immediately be able to customize it to fit your needs by editing config files,
-or even providing your own stylesheets.  We will discuss this in more detail
-later.
+immediately be able to customize the wiki to fit your needs by editing config
+files, providing your own stylesheets, etc.  We will discuss this in more
+detail later.
 
 A snaplet can represent anything from backend Haskell infrastructure with no
 user facing functionality to a small widget like a chat box that goes in the
@@ -35,10 +34,9 @@ into another one.
 
 We're really excited about the possibilities available with snaplets.  In
 fact, Snap already ships with snaplets for sessions, authentication, and
-templating (with Heist),  This not only gives you useful functionality out of
-the box, but it also gives you examples of how to use the snaplet API and help
-you to start writing your own snaplets quickly.  So without further ado,
-let's get started.
+templating (with Heist),  This gives you useful functionality out of the box,
+and jump starts your own snaplet development by demonstrating some useful
+design patterns.  So without further ado, let's get started.
 
 Snaplet Overview
 ================
@@ -64,15 +62,10 @@ of the way.
 > 
 > module Main where
 > 
-> import           Control.Applicative
 > import           Data.IORef
-> import           Control.Monad.State
-> import           Data.Lens.Template
-> import           Data.Maybe
 > import qualified Data.ByteString.Char8 as B
-> import           Snap.Core
-> import           Snap.Http.Server
-> import           Snap.Snaplet
+> import           Data.Maybe
+> import           Snap
 > import           Snap.Snaplet.Heist
 > import           Part2
 
@@ -299,20 +292,20 @@ snaplet filesystem layout might look like:
 Only the starred items are actually enforced by current code, but we want to
 establish the others as a convention.  The file snaplet.cfg is automatically
 read by the snaplet infrastructure.  It is available to you via the
-getSnapletUserConfig function.  Config files use the format defined by Bryan
+`getSnapletUserConfig` function.  Config files use the format defined by Bryan
 O'Sullivan's excellent [configurator
 package](http://hackage.haskell.org/package/configurator).  In this example,
 the user has chosen to put db config items in a separate file and use
 configurator's import functionality to include it in snaplet.cfg.  If
 foosnaplet uses `nestSnaplet` or `embedSnaplet` to include any other snaplets,
 then filesystem data defined by those snaplets will be included in
-subdirectories under the snaplets/ directory.
+subdirectories under the `snaplets/` directory.
 
 So how do you tell the snaplet infrastructure that your snaplet has filesystem
 data that should be installed?  Look at the definition of appInit above.  The
 third argument to the makeSnaplet function is where we specify the filesystem
-directory that should be installed.  That argument has the type "Maybe (IO
-FilePath)".  In this case we used Nothing because our simple example doesn't
+directory that should be installed.  That argument has the type `Maybe (IO
+FilePath)`.  In this case we used `Nothing` because our simple example doesn't
 have any filesystem data.  As an example, let's say you are creating a snaplet
 called killerapp that will be distributed as a hackage project called
 snaplet-killerapp.  Your project directory structure will look something like

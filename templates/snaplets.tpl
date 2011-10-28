@@ -51,13 +51,6 @@
             </dt>
             <dd>HDBC database support</dd>
 
-            <dt>static pages
-                <span class="linklist">
-                [ <a href="https://github.com/snapframework/snap-static-pages"
-                   >github</a> ]</span>
-            </dt>
-            <dd>Simple blog infrastructure based on flat files</dd>
-
           </dl>
         </div>
       </div>
