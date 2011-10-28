@@ -669,15 +669,15 @@ p.foundabug {
     letter-spacing: 2px;
 }
 
-#packages dd{
-    background: url(package.png) no-repeat center left;
-    padding-left: 110px;
-}
-
 #packages dd, #docdls dd {
     padding: 29px 0 ;
     font-size:1em;
     line-height: 28px;
+}
+
+#packages dd{
+    background: url(package.png) no-repeat center left;
+    padding-left: 110px;
 }
 
 #docdls dt {
