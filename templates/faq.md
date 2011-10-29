@@ -91,6 +91,9 @@ list](http://mailman-mail5.webfaction.com/listinfo/snap) or contact us on our
 If you've already built your application without development mode, it's
 important to do a clean first.
 
+NOTE: As of Snap 0.6, to get development mode you first need to build snap
+with `-fhint`, and then build your application with `-fdevelopment`.  If you
+don't do this, you'll get `Could not find module 'Snap.Loader.Devel'`.
 
 ### Why do I get a "cannot find normal object file" error when building Snap?
 
