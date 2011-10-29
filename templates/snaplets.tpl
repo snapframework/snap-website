@@ -46,8 +46,13 @@
           <dl>
             <dt>hdbc
                 <span class="linklist">
-                [ <a href="https://github.com/norm2782/snaplet-hdbc"
-                   >github</a> ]</span>
+                  [ <a href="https://github.com/norm2782/snaplet-hdbc/wiki/HDBC-Snaplet-Tutorial"
+                   >tutorial</a>
+                  | <a href="http://hackage.haskell.org/package/snaplet-hdbc"
+                   > hackage </a>
+                  | <a href="https://github.com/norm2782/snaplet-hdbc"
+                   >github</a> ]
+                </span>
             </dt>
             <dd>HDBC database support</dd>
 
