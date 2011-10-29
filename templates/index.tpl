@@ -50,7 +50,7 @@ $ mkdir foo; cd foo; snap init</pre>
             <h2>Downloads</h2>
             <h2>Documentation</h2>
             <h2>About</h2>
-            
+
           </div>
         </div>
 
@@ -75,11 +75,6 @@ $ mkdir foo; cd foo; snap init</pre>
                   appropriate for early adopters and potential contributors.
                 </p>
 
-              </div>
-            </div><!--end about-->
-
-            <div id="project-status" class="section right">
-              <div class="inner">
                 <h2>Snap Features:</h2>
 
                   <ul>
@@ -91,12 +86,31 @@ $ mkdir foo; cd foo; snap init</pre>
                     <li>An HTML-based templating system for generating pages</li>
                   </ul>
 
+              </div>
+            </div><!--end about-->
+
+            <div id="project-status" class="section right">
+              <div class="inner">
+                <h2>New: Snap 0.6</h2>
+                <p>
+                  Snap 0.6 is an exciting new release which offers a completely
+                  revamped extension system called
+                  <a href="/docs/tutorials/snaplets-tutorial">"snaplets"</a>.
+                  It is now easier then ever before to write, share and reuse
+                  code and get your applications up and running in no-time.
+                </p>
+                <p>
+                  <a href="/download">Install</a> Snap 0.6 now, check out the
+                  <a href="/snaplets">available snaplets</a> and
+                  start <a href="/docs/tutorials/snaplets-tutorial">writing</a>
+                  your own!
+                </p>
               </div><!--end inner-->
             </div><!--end project-status-->
 
           </div>
 
         </div><!--end content-->
-        
+
 </div>
 </apply>
