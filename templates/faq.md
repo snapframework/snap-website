@@ -16,6 +16,7 @@
 1. [How can I get debugging output?         ](#how-can-i-get-debugging-output)
 1. [Why does throughput plummet when I run snap with multiple cores?](#why-does-throughput-plummet-when-i-run-snap-with-multiple-cores)
 1. [How do I fix the libstdc++ error?](#how-do-i-fix-the-libstdc-error)
+1. [Can I develop with Snap on Windows?](#can-i-develop-with-snap-on-windows)
 1. [How can I help?                         ](#how-can-i-help)
 
 </div>
@@ -212,6 +213,19 @@ blaze-textual with the following command has been known to work.
 ~~~~~~~~ {.shell}
 $ cabal install blaze-textual --reinstall -fnative
 ~~~~~~~~
+
+### Can I develop with Snap on Windows?
+
+Yes! Snap 0.5.5 and Snap 0.6 have been tested to work on Windows&nbsp;7 using [Haskell&nbsp;Platform](http://hackage.haskell.org/platform/windows.html)&nbsp;2011.2.0.1.
+
+To compile the Snap 0.6 package on Windows, you will need to apply the work-around
+mentioned in FAQ entry [How do I fix the libstdc++ error?](#how-do-i-fix-the-libstdc-error):
+
+~~~~~~~~ {.cmdprompt}
+>cabal install blaze-textual --reinstall -fnative
+~~~~~~~~
+
+Note that in order to quit a running Snap app on Windows, you need to press `Ctrl+C` *twice*.
 
 ### How can I help?
 
