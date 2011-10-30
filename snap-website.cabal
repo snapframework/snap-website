@@ -33,7 +33,6 @@ Executable snap-website
     text,
     time,
     transformers,
-    unix,
     utf8-string,
     xhtml-combinators >= 0.2.2 && < 0.3,
     xmlhtml ==0.1.*
