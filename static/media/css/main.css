@@ -110,7 +110,7 @@ dl span.linklist {
     font-family: "PT Sans", "Arial", sans-serif;
 }
 
-pre.code, pre.sourceCode, pre.shell, pre.cmdprompt, .faqs {
+pre.code, pre.sourceCode, pre.shell, .faqs {
     background: #222 url(black-screen.png) scroll repeat-x top left;
     color: #ffbf00;
     width: 87%;
@@ -119,14 +119,6 @@ pre.code, pre.sourceCode, pre.shell, pre.cmdprompt, .faqs {
 
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
-}
-
-pre.cmdprompt {
-    background: #000;
-    padding: 8px 0 8px 0;
-    color: #ccc;
-    font-family: "Courier New", monospace;
-    font-weight: bold;
 }
 
 .faqs a {

@@ -221,10 +221,6 @@ Yes! Snap 0.5.5 and Snap 0.6 have been tested to work on Windows&nbsp;7 using [H
 To compile the Snap 0.6 package on Windows, you will need to apply the work-around
 mentioned in FAQ entry [How do I fix the libstdc++ error?](#how-do-i-fix-the-libstdc-error):
 
-~~~~~~~~ {.cmdprompt}
->cabal install blaze-textual --reinstall -fnative
-~~~~~~~~
-
 Note that in order to quit a running Snap app on Windows, you need to press `Ctrl+C` *twice*.
 
 ### How can I help?
