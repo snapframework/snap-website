@@ -50,8 +50,6 @@ you know of others:
 
   -  [http://snapframework.com](http://snapframework.com) (this site)
 
-  -  [http://ego.fm           ](http://ego.fm) (not always up)
-
 
 ### Where's the high-level functionality?
 
@@ -62,19 +60,29 @@ accomplish this goal we needed to build our own web server and API to interface
 with it.  This was an unanticipated detour, and we will resume working on
 higher-level functionality when the core has stabilized.
 
+With the addition of snaplets in 0.6 we now have the infrastructure needed for
+high-level features.  New functionality will be coming soon.
+
 
 ### Why can't I install Snap?
 
 First, make sure you have `"$HOME/.cabal/bin"` at the beginning of your path.
 
-You may have an old version of Cabal.  Try running "`cabal update && cabal
-install Cabal`".  After this, "`cabal --version`" should say that you're using
+You may have an old version of Cabal.  Try running `cabal update && cabal
+install Cabal`.  After this, `cabal --version` should say that you're using
 version 1.8.0.4 of the Cabal library or higher.  After you do this, try
 installing Snap again.
 
-If that doesn't work, and you're getting an error that mentions `monads-fd` or
-`transformers`, try running "`cabal install --reinstall monads-fd`"
-(or `transformers`).
+If you're getting getting a different error involving dependencies that are
+not available, one of the best ways to fix the problem is `rm -fr ~/.ghc`
+and then try installing again.  This deletes all your user-installed packages
+and starts fresh from scratch.  Obviously this is a suboptimal solution, but
+unfortunately, due to current limitations of Cabal it is pretty much a fact of
+life when doing significant Haskell development.  It will probably take 15-20
+minutes to rebuild everything, but it has a high rate of success for a variety
+of different dependency problems.  Another alternative is to use
+[cabal-dev](http://hackage.haskell.org/package/cabal-dev) instead of
+cabal-install.
 
 If you are an OpenBSD user, check out the guide Jim Razmus wrote on [installing
 Snap](http://www.bonetruck.org/2010/10/quick-start-to-web-app-development-with-the-snap-framework-and-openbsd.html).
@@ -219,7 +227,7 @@ $ cabal install blaze-textual --reinstall -fnative
 Yes! Snap 0.5.5 and Snap 0.6 have been tested to work on Windows&nbsp;7 using [Haskell&nbsp;Platform](http://hackage.haskell.org/platform/windows.html)&nbsp;2011.2.0.1.
 
 To compile the Snap 0.6 package on Windows, you will need to apply the work-around
-mentioned in FAQ entry [How do I fix the libstdc++ error?](#how-do-i-fix-the-libstdc-error):
+mentioned in FAQ entry [How do I fix the libstdc++ error?](#how-do-i-fix-the-libstdc-error).
 
 Note that in order to quit a running Snap app on Windows, you need to press `Ctrl+C` *twice*.
 

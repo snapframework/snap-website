@@ -62,29 +62,23 @@ $ mkdir foo; cd foo; snap init</pre>
                 <h2>What is Snap?</h2>
 
                 <p>
+
                   <strong>Snap</strong> is a simple web development framework for
                   unix systems, written in the
                   <a href="http://www.haskell.org">Haskell</a> programming
-                  language.
+                  language.  Snap has a high level of test coverage and is
+                  well-documented.  Features include:
+
                 </p>
 
-                <p>
-                  Snap is well-documented and has a test suite with a high level
-                  of code coverage, but it is <b>early-stage software</b> with
-                  still-evolving interfaces. Snap is therefore likely to be most
-                  appropriate for early adopters and potential contributors.
-                </p>
-
-                <h2>Snap Features:</h2>
-
-                  <ul>
-                    <li>A fast HTTP server library with an optional
-                      high-concurrency backend using
-                      the <a href="http://software.schmorp.de/pkg/libev.html">libev</a>
-                      event loop library</li>
-                    <li>A sensible and clean monad for web programming</li>
-                    <li>An HTML-based templating system for generating pages</li>
-                  </ul>
+                <ul>
+                  <li>A fast HTTP server library with an optional
+                    high-concurrency backend using
+                    the <a href="http://software.schmorp.de/pkg/libev.html">libev</a>
+                    event loop library</li>
+                  <li>A sensible and clean monad for web programming</li>
+                  <li>An HTML-based templating system for generating pages</li>
+                </ul>
 
               </div>
             </div><!--end about-->
@@ -94,14 +88,14 @@ $ mkdir foo; cd foo; snap init</pre>
                 <h2>New: Snap 0.6</h2>
                 <p>
                   Snap 0.6 is an exciting new release which offers a completely
-                  revamped extension system called
+                  redesigned extension system called
                   <a href="/docs/tutorials/snaplets-tutorial">"snaplets"</a>.
-                  It is now easier then ever before to write, share and reuse
-                  code and get your applications up and running in no-time.
+                  It is now easier then ever before to write, share, reuse
+                  code, and get your applications up and running in no time.
                 </p>
                 <p>
                   <a href="/download">Install</a> Snap 0.6 now, check out the
-                  <a href="/snaplets">available snaplets</a> and
+                  <a href="/snaplets">available snaplets</a>, and
                   start <a href="/docs/tutorials/snaplets-tutorial">writing</a>
                   your own!
                 </p>
