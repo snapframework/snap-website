@@ -219,7 +219,7 @@ $ cabal install blaze-textual --reinstall -fnative
 Yes! Snap 0.5.5 and Snap 0.6 have been tested to work on Windows&nbsp;7 using [Haskell&nbsp;Platform](http://hackage.haskell.org/platform/windows.html)&nbsp;2011.2.0.1.
 
 To compile the Snap 0.6 package on Windows, you will need to apply the work-around
-mentioned in FAQ entry [How do I fix the libstdc++ error?](#how-do-i-fix-the-libstdc-error):
+mentioned in FAQ entry [How do I fix the libstdc++ error?](#how-do-i-fix-the-libstdc-error).
 
 Note that in order to quit a running Snap app on Windows, you need to press `Ctrl+C` *twice*.
 
