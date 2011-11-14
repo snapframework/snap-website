@@ -101,8 +101,14 @@ If you've already built your application without development mode, it's
 important to do a clean first.
 
 NOTE: As of Snap 0.6, to get development mode you first need to build snap
-with `-fhint`, and then build your application with `-fdevelopment`.  If you
+with `-fhint`:
+
+    cabal install snap -fhint
+
+and then build your application with `-fdevelopment`.  If you
 don't do this, you'll get `Could not find module 'Snap.Loader.Devel'`.
+
+> Actually, the development mode requires ghc >= 7.0.4
 
 ### Why do I get a "cannot find normal object file" error when building Snap?
 
