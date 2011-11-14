@@ -108,8 +108,6 @@ with `-fhint`:
 and then build your application with `-fdevelopment`.  If you
 don't do this, you'll get `Could not find module 'Snap.Loader.Devel'`.
 
-> Actually, the development mode requires ghc >= 7.0.4
-
 ### Why do I get a "cannot find normal object file" error when building Snap?
 
 If you try to build Snap in profiling mode, sometimes you will encounter this error:
