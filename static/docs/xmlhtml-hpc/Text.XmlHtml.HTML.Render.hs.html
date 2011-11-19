@@ -1,0 +1,152 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>{-# LANGUAGE OverloadedStrings #-}
+<span class="lineno">    2 </span>{-# LANGUAGE PatternGuards     #-}
+<span class="lineno">    3 </span>
+<span class="lineno">    4 </span>module Text.XmlHtml.HTML.Render where
+<span class="lineno">    5 </span>
+<span class="lineno">    6 </span>import           Blaze.ByteString.Builder
+<span class="lineno">    7 </span>import           Control.Applicative
+<span class="lineno">    8 </span>import           Data.Maybe
+<span class="lineno">    9 </span>import           Data.Monoid
+<span class="lineno">   10 </span>import qualified Text.Parsec as P
+<span class="lineno">   11 </span>import           Text.XmlHtml.Common
+<span class="lineno">   12 </span>import           Text.XmlHtml.TextParser
+<span class="lineno">   13 </span>import           Text.XmlHtml.HTML.Meta
+<span class="lineno">   14 </span>import qualified Text.XmlHtml.HTML.Parse as P
+<span class="lineno">   15 </span>import           Text.XmlHtml.XML.Render (docTypeDecl, entity)
+<span class="lineno">   16 </span>
+<span class="lineno">   17 </span>import           Data.Text (Text)
+<span class="lineno">   18 </span>import qualified Data.Text as T
+<span class="lineno">   19 </span>
+<span class="lineno">   20 </span>import qualified Data.Set as S
+<span class="lineno">   21 </span>
+<span class="lineno">   22 </span>------------------------------------------------------------------------------
+<span class="lineno">   23 </span>-- | And, the rendering code.
+<span class="lineno">   24 </span>render :: Encoding -&gt; Maybe DocType -&gt; [Node] -&gt; Builder
+<span class="lineno">   25 </span><span class="decl"><span class="istickedoff">render e dt ns = byteOrder</span>
+<span class="lineno">   26 </span><span class="spaces">       </span><span class="istickedoff">`mappend` docTypeDecl e dt</span>
+<span class="lineno">   27 </span><span class="spaces">       </span><span class="istickedoff">`mappend` nodes</span>
+<span class="lineno">   28 </span><span class="spaces">    </span><span class="istickedoff">where byteOrder | isUTF16 e = fromText e &quot;\xFEFF&quot; -- byte order mark</span>
+<span class="lineno">   29 </span><span class="spaces">                    </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = mempty</span>
+<span class="lineno">   30 </span><span class="spaces">          </span><span class="istickedoff">nodes | null ns   = mempty</span>
+<span class="lineno">   31 </span><span class="spaces">                </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = firstNode e (head ns)</span>
+<span class="lineno">   32 </span><span class="spaces">                    </span><span class="istickedoff">`mappend` (mconcat $ map (node e) (tail ns))</span></span>
+<span class="lineno">   33 </span>
+<span class="lineno">   34 </span>
+<span class="lineno">   35 </span>------------------------------------------------------------------------------
+<span class="lineno">   36 </span>-- | HTML allows &amp; so long as it is not &quot;ambiguous&quot; (i.e., looks like an
+<span class="lineno">   37 </span>-- entity).  So we have a special case for that.
+<span class="lineno">   38 </span>escaped :: [Char] -&gt; Encoding -&gt; Text -&gt; Builder
+<span class="lineno">   39 </span><span class="decl"><span class="istickedoff">escaped _   _ &quot;&quot; = mempty</span>
+<span class="lineno">   40 </span><span class="spaces"></span><span class="istickedoff">escaped bad e t  =</span>
+<span class="lineno">   41 </span><span class="spaces">    </span><span class="istickedoff">let (p,s) = T.break (`elem` bad) t</span>
+<span class="lineno">   42 </span><span class="spaces">        </span><span class="istickedoff">r     = T.uncons s</span>
+<span class="lineno">   43 </span><span class="spaces">    </span><span class="istickedoff">in  fromText e p `mappend` case r of</span>
+<span class="lineno">   44 </span><span class="spaces">            </span><span class="istickedoff">Nothing</span>
+<span class="lineno">   45 </span><span class="spaces">                </span><span class="istickedoff">-&gt; mempty</span>
+<span class="lineno">   46 </span><span class="spaces">            </span><span class="istickedoff">Just ('&amp;',ss) | isLeft (parseText ambigAmp <span class="nottickedoff">&quot;&quot;</span> s)</span>
+<span class="lineno">   47 </span><span class="spaces">                </span><span class="istickedoff">-&gt; fromText e &quot;&amp;&quot; `mappend` escaped bad e ss</span>
+<span class="lineno">   48 </span><span class="spaces">            </span><span class="istickedoff">Just (c,ss)</span>
+<span class="lineno">   49 </span><span class="spaces">                </span><span class="istickedoff">-&gt; entity e c `mappend` escaped bad e ss</span>
+<span class="lineno">   50 </span><span class="spaces">  </span><span class="istickedoff">where isLeft   = either (const True) (const False)</span>
+<span class="lineno">   51 </span><span class="spaces">        </span><span class="istickedoff">ambigAmp = P.char '&amp;' *&gt;</span>
+<span class="lineno">   52 </span><span class="spaces">            </span><span class="istickedoff">(P.finishCharRef *&gt; return <span class="nottickedoff">()</span> &lt;|&gt; P.finishEntityRef *&gt; return <span class="nottickedoff">()</span>)</span></span>
+<span class="lineno">   53 </span>
+<span class="lineno">   54 </span>
+<span class="lineno">   55 </span>------------------------------------------------------------------------------
+<span class="lineno">   56 </span>node :: Encoding -&gt; Node -&gt; Builder
+<span class="lineno">   57 </span><span class="decl"><span class="istickedoff">node e (TextNode t)                        = escaped &quot;&lt;&gt;&amp;&quot; e t</span>
+<span class="lineno">   58 </span><span class="spaces"></span><span class="istickedoff">node e (Comment t) | &quot;--&quot; `T.isInfixOf`  t = error &quot;Invalid comment&quot;</span>
+<span class="lineno">   59 </span><span class="spaces">                   </span><span class="istickedoff">| &quot;-&quot;  `T.isSuffixOf` t = error &quot;Invalid comment&quot;</span>
+<span class="lineno">   60 </span><span class="spaces">                   </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span>             = fromText e &quot;&lt;!--&quot;</span>
+<span class="lineno">   61 </span><span class="spaces">                                             </span><span class="istickedoff">`mappend` fromText e t</span>
+<span class="lineno">   62 </span><span class="spaces">                                             </span><span class="istickedoff">`mappend` fromText e &quot;--&gt;&quot;</span>
+<span class="lineno">   63 </span><span class="spaces"></span><span class="istickedoff">node e (Element t a c)                     =</span>
+<span class="lineno">   64 </span><span class="spaces">    </span><span class="istickedoff">let tbase = T.toLower $ snd $ T.breakOnEnd &quot;:&quot; t</span>
+<span class="lineno">   65 </span><span class="spaces">    </span><span class="istickedoff">in  element e t tbase a c</span></span>
+<span class="lineno">   66 </span>
+<span class="lineno">   67 </span>
+<span class="lineno">   68 </span>------------------------------------------------------------------------------
+<span class="lineno">   69 </span>-- | Process the first node differently to encode leading whitespace.  This
+<span class="lineno">   70 </span>-- lets us be sure that @parseHTML@ is a left inverse to @render@.
+<span class="lineno">   71 </span>firstNode :: Encoding -&gt; Node -&gt; Builder
+<span class="lineno">   72 </span><span class="decl"><span class="istickedoff">firstNode e (Comment t)     = node e (Comment t)</span>
+<span class="lineno">   73 </span><span class="spaces"></span><span class="istickedoff">firstNode e (Element t a c) = node e (Element t a c)</span>
+<span class="lineno">   74 </span><span class="spaces"></span><span class="istickedoff">firstNode _ (TextNode &quot;&quot;)   = mempty</span>
+<span class="lineno">   75 </span><span class="spaces"></span><span class="istickedoff">firstNode e (TextNode t)    = let (c,t') = fromJust $ T.uncons t</span>
+<span class="lineno">   76 </span><span class="spaces">                              </span><span class="istickedoff">in escaped &quot;&lt;&gt;&amp; \t\r\n&quot; e (T.singleton c)</span>
+<span class="lineno">   77 </span><span class="spaces">                                 </span><span class="istickedoff">`mappend` node e (TextNode t')</span></span>
+<span class="lineno">   78 </span>
+<span class="lineno">   79 </span>
+<span class="lineno">   80 </span>------------------------------------------------------------------------------
+<span class="lineno">   81 </span>-- XXX: Should do something to avoid concatting large CDATA sections before
+<span class="lineno">   82 </span>-- writing them to the output.
+<span class="lineno">   83 </span>element :: Encoding -&gt; Text -&gt; Text -&gt; [(Text, Text)] -&gt; [Node] -&gt; Builder
+<span class="lineno">   84 </span><span class="decl"><span class="istickedoff">element e t tb a c</span>
+<span class="lineno">   85 </span><span class="spaces">    </span><span class="istickedoff">| tb `S.member` voidTags &amp;&amp; null c         =</span>
+<span class="lineno">   86 </span><span class="spaces">        </span><span class="istickedoff">fromText e &quot;&lt;&quot;</span>
+<span class="lineno">   87 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e t</span>
+<span class="lineno">   88 </span><span class="spaces">        </span><span class="istickedoff">`mappend` (mconcat $ map (attribute e) a)</span>
+<span class="lineno">   89 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e &quot; /&gt;&quot;</span>
+<span class="lineno">   90 </span><span class="spaces">    </span><span class="istickedoff">| tb `S.member` voidTags                   =</span>
+<span class="lineno">   91 </span><span class="spaces">        </span><span class="istickedoff">error $ T.unpack t ++ <span class="nottickedoff">&quot; must be empty&quot;</span></span>
+<span class="lineno">   92 </span><span class="spaces">    </span><span class="istickedoff">| tb `S.member` rawTextTags,</span>
+<span class="lineno">   93 </span><span class="spaces">      </span><span class="istickedoff">all isTextNode c,</span>
+<span class="lineno">   94 </span><span class="spaces">      </span><span class="istickedoff">let s = T.concat (map nodeText c),</span>
+<span class="lineno">   95 </span><span class="spaces">      </span><span class="istickedoff">not (&quot;&lt;/&quot; `T.append` t `T.isInfixOf` s) =</span>
+<span class="lineno">   96 </span><span class="spaces">        </span><span class="istickedoff">fromText e &quot;&lt;&quot;</span>
+<span class="lineno">   97 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e t</span>
+<span class="lineno">   98 </span><span class="spaces">        </span><span class="istickedoff">`mappend` (mconcat $ map (attribute e) a)</span>
+<span class="lineno">   99 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e &quot;&gt;&quot;</span>
+<span class="lineno">  100 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e s</span>
+<span class="lineno">  101 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e &quot;&lt;/&quot;</span>
+<span class="lineno">  102 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e t</span>
+<span class="lineno">  103 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e &quot;&gt;&quot;</span>
+<span class="lineno">  104 </span><span class="spaces">    </span><span class="istickedoff">| tb `S.member` rawTextTags,</span>
+<span class="lineno">  105 </span><span class="spaces">      </span><span class="istickedoff">[ TextNode _ ] &lt;- c                     =</span>
+<span class="lineno">  106 </span><span class="spaces">        </span><span class="istickedoff">error $ T.unpack t ++ <span class="nottickedoff">&quot; cannot contain text looking like its end tag&quot;</span></span>
+<span class="lineno">  107 </span><span class="spaces">    </span><span class="istickedoff">| tb `S.member` rawTextTags                =</span>
+<span class="lineno">  108 </span><span class="spaces">        </span><span class="istickedoff">error $ T.unpack t ++ <span class="nottickedoff">&quot; cannot contain child elements or comments&quot;</span></span>
+<span class="lineno">  109 </span><span class="spaces">    </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> =</span>
+<span class="lineno">  110 </span><span class="spaces">        </span><span class="istickedoff">fromText e &quot;&lt;&quot;</span>
+<span class="lineno">  111 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e t</span>
+<span class="lineno">  112 </span><span class="spaces">        </span><span class="istickedoff">`mappend` (mconcat $ map (attribute e) a)</span>
+<span class="lineno">  113 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e &quot;&gt;&quot;</span>
+<span class="lineno">  114 </span><span class="spaces">        </span><span class="istickedoff">`mappend` (mconcat $ map (node e) c)</span>
+<span class="lineno">  115 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e &quot;&lt;/&quot;</span>
+<span class="lineno">  116 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e t</span>
+<span class="lineno">  117 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e &quot;&gt;&quot;</span></span>
+<span class="lineno">  118 </span>
+<span class="lineno">  119 </span>
+<span class="lineno">  120 </span>------------------------------------------------------------------------------
+<span class="lineno">  121 </span>attribute :: Encoding -&gt; (Text, Text) -&gt; Builder
+<span class="lineno">  122 </span><span class="decl"><span class="istickedoff">attribute e (n,v)</span>
+<span class="lineno">  123 </span><span class="spaces">    </span><span class="istickedoff">| v == &quot;&quot;                    =</span>
+<span class="lineno">  124 </span><span class="spaces">        </span><span class="istickedoff">fromText e &quot; &quot;</span>
+<span class="lineno">  125 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e n</span>
+<span class="lineno">  126 </span><span class="spaces">    </span><span class="istickedoff">| not (&quot;\'&quot; `T.isInfixOf` v) =</span>
+<span class="lineno">  127 </span><span class="spaces">        </span><span class="istickedoff">fromText e &quot; &quot;</span>
+<span class="lineno">  128 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e n</span>
+<span class="lineno">  129 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e &quot;=\'&quot;</span>
+<span class="lineno">  130 </span><span class="spaces">        </span><span class="istickedoff">`mappend` escaped &quot;&amp;&quot; e v</span>
+<span class="lineno">  131 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e &quot;\'&quot;</span>
+<span class="lineno">  132 </span><span class="spaces">    </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span>                  =</span>
+<span class="lineno">  133 </span><span class="spaces">        </span><span class="istickedoff">fromText e &quot; &quot;</span>
+<span class="lineno">  134 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e n</span>
+<span class="lineno">  135 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e &quot;=\&quot;&quot;</span>
+<span class="lineno">  136 </span><span class="spaces">        </span><span class="istickedoff">`mappend` escaped &quot;&amp;\&quot;&quot; e v</span>
+<span class="lineno">  137 </span><span class="spaces">        </span><span class="istickedoff">`mappend` fromText e &quot;\&quot;&quot;</span></span>
+<span class="lineno">  138 </span>
+
+</pre>
+</html>

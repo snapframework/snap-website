@@ -28,617 +28,714 @@ span.spaces    { background: white }
 <span class="lineno">   17 </span>    -- * Enumerators
 <span class="lineno">   18 </span>    enumBS
 <span class="lineno">   19 </span>  , enumLBS
-<span class="lineno">   20 </span>  , enumFile
-<span class="lineno">   21 </span>  , enumFilePartial
-<span class="lineno">   22 </span>  , InvalidRangeException
-<span class="lineno">   23 </span>
+<span class="lineno">   20 </span>  , enumBuilder
+<span class="lineno">   21 </span>  , enumFile
+<span class="lineno">   22 </span>  , enumFilePartial
+<span class="lineno">   23 </span>  , InvalidRangeException
 <span class="lineno">   24 </span>
-<span class="lineno">   25 </span>    -- * Iteratee utilities
-<span class="lineno">   26 </span>  , countBytes
-<span class="lineno">   27 </span>  , drop'
-<span class="lineno">   28 </span>  , mkIterateeBuffer
-<span class="lineno">   29 </span>  , unsafeBufferIterateeWithBuffer
-<span class="lineno">   30 </span>  , unsafeBufferIteratee
-<span class="lineno">   31 </span>  , take
-<span class="lineno">   32 </span>  , drop
-<span class="lineno">   33 </span>  , takeExactly
-<span class="lineno">   34 </span>  , takeNoMoreThan
-<span class="lineno">   35 </span>  , skipToEof
-<span class="lineno">   36 </span>
-<span class="lineno">   37 </span>  , TooManyBytesReadException
-<span class="lineno">   38 </span>  , ShortWriteException
-<span class="lineno">   39 </span>
-<span class="lineno">   40 </span>    -- * Re-export types and functions from @Data.Enumerator@
-<span class="lineno">   41 </span>  , Stream (..)
-<span class="lineno">   42 </span>  , Step (..)
-<span class="lineno">   43 </span>  , Iteratee (..)
-<span class="lineno">   44 </span>  , Enumerator
-<span class="lineno">   45 </span>  , Enumeratee
-<span class="lineno">   46 </span>
-<span class="lineno">   47 </span>    -- ** Primitives
-<span class="lineno">   48 </span>    -- *** Combinators
-<span class="lineno">   49 </span>    -- | These are common patterns which occur whenever iteratees are
-<span class="lineno">   50 </span>    -- being defined.
-<span class="lineno">   51 </span>  , returnI
-<span class="lineno">   52 </span>  , yield
-<span class="lineno">   53 </span>  , continue
-<span class="lineno">   54 </span>  , throwError
-<span class="lineno">   55 </span>  , catchError
-<span class="lineno">   56 </span>  , liftI
-<span class="lineno">   57 </span>  , (&gt;&gt;==)
-<span class="lineno">   58 </span>  , (==&lt;&lt;)
-<span class="lineno">   59 </span>  , ($$)
-<span class="lineno">   60 </span>  , (&gt;==&gt;)
-<span class="lineno">   61 </span>  , (&lt;==&lt;)
-<span class="lineno">   62 </span>
-<span class="lineno">   63 </span>    -- *** Iteratees
-<span class="lineno">   64 </span>  , run
-<span class="lineno">   65 </span>  , run_
-<span class="lineno">   66 </span>  , consume
-<span class="lineno">   67 </span>  , Data.Enumerator.isEOF
-<span class="lineno">   68 </span>  , liftTrans
-<span class="lineno">   69 </span>  , liftFoldL
-<span class="lineno">   70 </span>  , liftFoldL'
-<span class="lineno">   71 </span>  , liftFoldM
-<span class="lineno">   72 </span>  , printChunks
-<span class="lineno">   73 </span>  , head
-<span class="lineno">   74 </span>  , peek
-<span class="lineno">   75 </span>
-<span class="lineno">   76 </span>    -- *** Enumerators
-<span class="lineno">   77 </span>  , enumEOF
-<span class="lineno">   78 </span>  , enumList
-<span class="lineno">   79 </span>  , concatEnums
-<span class="lineno">   80 </span>    -- *** Enumeratees
-<span class="lineno">   81 </span>  , checkDone
-<span class="lineno">   82 </span>  , Data.Enumerator.map
-<span class="lineno">   83 </span>  , Data.Enumerator.sequence
-<span class="lineno">   84 </span>  , joinI
-<span class="lineno">   85 </span>
-<span class="lineno">   86 </span>
-<span class="lineno">   87 </span>{-
-<span class="lineno">   88 </span>    -- ** Iteratee utilities
-<span class="lineno">   89 </span>  , drop'
-<span class="lineno">   90 </span>
-<span class="lineno">   91 </span>-}
-<span class="lineno">   92 </span>  ) where
-<span class="lineno">   93 </span>
-<span class="lineno">   94 </span>------------------------------------------------------------------------------
-<span class="lineno">   95 </span>
-<span class="lineno">   96 </span>{-
-<span class="lineno">   97 </span>
-<span class="lineno">   98 </span>import             Control.Exception (SomeException)
-<span class="lineno">   99 </span>import &quot;MonadCatchIO-transformers&quot; Control.Monad.CatchIO
-<span class="lineno">  100 </span>import qualified   Data.DList as D
-<span class="lineno">  101 </span>import             Data.IORef
-<span class="lineno">  102 </span>import             Prelude hiding (catch,drop)
-<span class="lineno">  103 </span>
-<span class="lineno">  104 </span>-}
-<span class="lineno">  105 </span>
-<span class="lineno">  106 </span>import             Control.DeepSeq
-<span class="lineno">  107 </span>import             Control.Exception (SomeException, assert)
-<span class="lineno">  108 </span>import             Control.Monad
-<span class="lineno">  109 </span>import &quot;MonadCatchIO-transformers&quot; Control.Monad.CatchIO
-<span class="lineno">  110 </span>import             Control.Monad.Trans (MonadIO, lift, liftIO)
-<span class="lineno">  111 </span>import             Data.ByteString (ByteString)
-<span class="lineno">  112 </span>import qualified   Data.ByteString.Char8 as S
-<span class="lineno">  113 </span>import qualified   Data.ByteString.Unsafe as S
-<span class="lineno">  114 </span>import qualified   Data.ByteString.Lazy.Char8 as L
-<span class="lineno">  115 </span>import             Data.Enumerator hiding (drop)
-<span class="lineno">  116 </span>import             Data.Enumerator.IO (enumHandle)
-<span class="lineno">  117 </span>import             Data.List (foldl')
-<span class="lineno">  118 </span>import             Data.Monoid (mappend)
-<span class="lineno">  119 </span>import             Data.Typeable
-<span class="lineno">  120 </span>import             Foreign hiding (peek)
-<span class="lineno">  121 </span>import             Foreign.C.Types
-<span class="lineno">  122 </span>import             GHC.ForeignPtr
-<span class="lineno">  123 </span>import             Prelude hiding (drop, head, take)
-<span class="lineno">  124 </span>import             System.IO
-<span class="lineno">  125 </span>
-<span class="lineno">  126 </span>#ifndef PORTABLE
-<span class="lineno">  127 </span>import           System.IO.Posix.MMap
-<span class="lineno">  128 </span>import           System.PosixCompat.Files
-<span class="lineno">  129 </span>import           System.PosixCompat.Types
-<span class="lineno">  130 </span>#endif
-<span class="lineno">  131 </span>
+<span class="lineno">   25 </span>
+<span class="lineno">   26 </span>    -- * Iteratee utilities
+<span class="lineno">   27 </span>  , joinI'
+<span class="lineno">   28 </span>  , countBytes
+<span class="lineno">   29 </span>  , drop'
+<span class="lineno">   30 </span>  , mkIterateeBuffer
+<span class="lineno">   31 </span>  , unsafeBufferIterateeWithBuffer
+<span class="lineno">   32 </span>  , unsafeBufferIteratee
+<span class="lineno">   33 </span>  , take
+<span class="lineno">   34 </span>  , drop
+<span class="lineno">   35 </span>  , takeExactly
+<span class="lineno">   36 </span>  , takeNoMoreThan
+<span class="lineno">   37 </span>  , skipToEof
+<span class="lineno">   38 </span>  , mapEnum
+<span class="lineno">   39 </span>  , mapIter
+<span class="lineno">   40 </span>  , killIfTooSlow
+<span class="lineno">   41 </span>
+<span class="lineno">   42 </span>  , TooManyBytesReadException
+<span class="lineno">   43 </span>  , ShortWriteException
+<span class="lineno">   44 </span>  , RateTooSlowException
+<span class="lineno">   45 </span>
+<span class="lineno">   46 </span>    -- * Re-export types and functions from @Data.Enumerator@
+<span class="lineno">   47 </span>  , Stream (..)
+<span class="lineno">   48 </span>  , Step (..)
+<span class="lineno">   49 </span>  , Iteratee (..)
+<span class="lineno">   50 </span>  , Enumerator
+<span class="lineno">   51 </span>  , Enumeratee
+<span class="lineno">   52 </span>
+<span class="lineno">   53 </span>    -- ** Primitives
+<span class="lineno">   54 </span>    -- *** Combinators
+<span class="lineno">   55 </span>    -- | These are common patterns which occur whenever iteratees are
+<span class="lineno">   56 </span>    -- being defined.
+<span class="lineno">   57 </span>  , returnI
+<span class="lineno">   58 </span>  , yield
+<span class="lineno">   59 </span>  , continue
+<span class="lineno">   60 </span>  , throwError
+<span class="lineno">   61 </span>  , catchError
+<span class="lineno">   62 </span>  , liftI
+<span class="lineno">   63 </span>  , (&gt;&gt;==)
+<span class="lineno">   64 </span>  , (==&lt;&lt;)
+<span class="lineno">   65 </span>  , ($$)
+<span class="lineno">   66 </span>  , (&gt;==&gt;)
+<span class="lineno">   67 </span>  , (&lt;==&lt;)
+<span class="lineno">   68 </span>
+<span class="lineno">   69 </span>    -- *** Iteratees
+<span class="lineno">   70 </span>  , run
+<span class="lineno">   71 </span>  , run_
+<span class="lineno">   72 </span>  , consume
+<span class="lineno">   73 </span>  , Data.Enumerator.isEOF
+<span class="lineno">   74 </span>  , liftTrans
+<span class="lineno">   75 </span>  , liftFoldL
+<span class="lineno">   76 </span>  , liftFoldL'
+<span class="lineno">   77 </span>  , liftFoldM
+<span class="lineno">   78 </span>  , printChunks
+<span class="lineno">   79 </span>  , head
+<span class="lineno">   80 </span>  , peek
+<span class="lineno">   81 </span>
+<span class="lineno">   82 </span>    -- *** Enumerators
+<span class="lineno">   83 </span>  , enumEOF
+<span class="lineno">   84 </span>  , enumList
+<span class="lineno">   85 </span>  , concatEnums
+<span class="lineno">   86 </span>    -- *** Enumeratees
+<span class="lineno">   87 </span>  , checkDone
+<span class="lineno">   88 </span>  , Data.Enumerator.List.map
+<span class="lineno">   89 </span>  , Data.Enumerator.sequence
+<span class="lineno">   90 </span>  , joinI
+<span class="lineno">   91 </span>
+<span class="lineno">   92 </span>
+<span class="lineno">   93 </span>{-
+<span class="lineno">   94 </span>    -- ** Iteratee utilities
+<span class="lineno">   95 </span>  , drop'
+<span class="lineno">   96 </span>
+<span class="lineno">   97 </span>-}
+<span class="lineno">   98 </span>  ) where
+<span class="lineno">   99 </span>
+<span class="lineno">  100 </span>------------------------------------------------------------------------------
+<span class="lineno">  101 </span>
+<span class="lineno">  102 </span>import           Blaze.ByteString.Builder
+<span class="lineno">  103 </span>import           Control.DeepSeq
+<span class="lineno">  104 </span>import           Control.Exception (SomeException, assert)
+<span class="lineno">  105 </span>import           Control.Monad
+<span class="lineno">  106 </span>import           Control.Monad.CatchIO
+<span class="lineno">  107 </span>import           Control.Monad.Trans (MonadIO, lift, liftIO)
+<span class="lineno">  108 </span>import           Data.ByteString (ByteString)
+<span class="lineno">  109 </span>import qualified Data.ByteString.Char8 as S
+<span class="lineno">  110 </span>import qualified Data.ByteString.Unsafe as S
+<span class="lineno">  111 </span>import qualified Data.ByteString.Lazy.Char8 as L
+<span class="lineno">  112 </span>import           Data.Enumerator hiding (consume, drop, head)
+<span class="lineno">  113 </span>import qualified Data.Enumerator as I
+<span class="lineno">  114 </span>import           Data.Enumerator.Binary (enumHandle)
+<span class="lineno">  115 </span>import           Data.Enumerator.List hiding (take, drop)
+<span class="lineno">  116 </span>import qualified Data.Enumerator.List as IL
+<span class="lineno">  117 </span>import qualified Data.List as List
+<span class="lineno">  118 </span>import           Data.Monoid (mappend)
+<span class="lineno">  119 </span>import           Data.Time.Clock.POSIX (getPOSIXTime)
+<span class="lineno">  120 </span>import           Data.Typeable
+<span class="lineno">  121 </span>import           Foreign hiding (peek)
+<span class="lineno">  122 </span>import           Foreign.C.Types
+<span class="lineno">  123 </span>import           GHC.ForeignPtr
+<span class="lineno">  124 </span>import           Prelude hiding (catch, drop, head, take)
+<span class="lineno">  125 </span>import           System.IO
+<span class="lineno">  126 </span>
+<span class="lineno">  127 </span>#ifndef PORTABLE
+<span class="lineno">  128 </span>import           System.IO.Posix.MMap
+<span class="lineno">  129 </span>import           System.PosixCompat.Files
+<span class="lineno">  130 </span>import           System.PosixCompat.Types
+<span class="lineno">  131 </span>#endif
 <span class="lineno">  132 </span>
 <span class="lineno">  133 </span>------------------------------------------------------------------------------
 <span class="lineno">  134 </span>instance (Functor m, MonadCatchIO m) =&gt;
 <span class="lineno">  135 </span>         MonadCatchIO (Iteratee s m) where
 <span class="lineno">  136 </span>    --catch  :: Exception  e =&gt; m a -&gt; (e -&gt; m a) -&gt; m a
-<span class="lineno">  137 </span>    <span class="istickedoff"><span class="decl"><span class="istickedoff">catch m handler = Iteratee $ do</span>
-<span class="lineno">  138 </span><span class="spaces">        </span><span class="istickedoff">ee &lt;- try $ runIteratee m</span>
-<span class="lineno">  139 </span><span class="spaces">        </span><span class="istickedoff">case ee of</span>
-<span class="lineno">  140 </span><span class="spaces">          </span><span class="istickedoff">(Left e)  -&gt; runIteratee (handler e)</span>
-<span class="lineno">  141 </span><span class="spaces">          </span><span class="istickedoff">(Right v) -&gt; return v</span></span></span>
-<span class="lineno">  142 </span>
-<span class="lineno">  143 </span>    --block :: m a -&gt; m a
-<span class="lineno">  144 </span>    <span class="decl"><span class="istickedoff">block m = Iteratee $ block $ runIteratee m</span></span>
-<span class="lineno">  145 </span>    <span class="decl"><span class="istickedoff">unblock m = Iteratee $ unblock $ runIteratee m</span></span>
-<span class="lineno">  146 </span>
-<span class="lineno">  147 </span>
-<span class="lineno">  148 </span>
-<span class="lineno">  149 </span>------------------------------------------------------------------------------
-<span class="lineno">  150 </span>-- | Get the length of a bytestring Stream
-<span class="lineno">  151 </span>streamLength :: Stream ByteString -&gt; Int
-<span class="lineno">  152 </span><span class="decl"><span class="istickedoff">streamLength (Chunks xs) = foldl' (\c s -&gt; c + S.length s) 0 xs</span>
-<span class="lineno">  153 </span><span class="spaces"></span><span class="istickedoff">streamLength EOF         = 0</span></span>
-<span class="lineno">  154 </span>
+<span class="lineno">  137 </span>    <span class="decl"><span class="istickedoff">catch m handler = insideCatch (m `catchError` h)</span>
+<span class="lineno">  138 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  139 </span><span class="spaces">        </span><span class="istickedoff">insideCatch !mm = Iteratee $ do</span>
+<span class="lineno">  140 </span><span class="spaces">            </span><span class="istickedoff">ee &lt;- try $ runIteratee mm</span>
+<span class="lineno">  141 </span><span class="spaces">            </span><span class="istickedoff">case ee of</span>
+<span class="lineno">  142 </span><span class="spaces">                </span><span class="istickedoff">(Left e)  -&gt; runIteratee $ handler e</span>
+<span class="lineno">  143 </span><span class="spaces">                </span><span class="istickedoff">(Right v) -&gt; step v</span>
+<span class="lineno">  144 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  145 </span><span class="spaces">        </span><span class="istickedoff">step (Continue !k)  = do</span>
+<span class="lineno">  146 </span><span class="spaces">            </span><span class="istickedoff">return $ Continue (\s -&gt; insideCatch $ k s)</span>
+<span class="lineno">  147 </span><span class="spaces">        </span><span class="istickedoff">-- don't worry about Error here because the error had to come from the</span>
+<span class="lineno">  148 </span><span class="spaces">        </span><span class="istickedoff">-- handler (because of 'catchError' above)</span>
+<span class="lineno">  149 </span><span class="spaces">        </span><span class="istickedoff">step y             = return y</span>
+<span class="lineno">  150 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  151 </span><span class="spaces">        </span><span class="istickedoff">-- we can only catch iteratee errors if &quot;e&quot; matches &quot;SomeException&quot;</span>
+<span class="lineno">  152 </span><span class="spaces">        </span><span class="istickedoff">h e = maybe <span class="nottickedoff">(throwError e)</span></span>
+<span class="lineno">  153 </span><span class="spaces">                    </span><span class="istickedoff">(handler)</span>
+<span class="lineno">  154 </span><span class="spaces">                    </span><span class="istickedoff">(fromException e)</span></span>
 <span class="lineno">  155 </span>
-<span class="lineno">  156 </span>------------------------------------------------------------------------------
-<span class="lineno">  157 </span>-- | Enumerates a strict bytestring.
-<span class="lineno">  158 </span>enumBS :: (Monad m) =&gt; ByteString -&gt; Enumerator ByteString m a
-<span class="lineno">  159 </span><span class="decl"><span class="istickedoff">enumBS bs (Continue k) = k (Chunks [bs])</span>
-<span class="lineno">  160 </span><span class="spaces"></span><span class="istickedoff">enumBS bs (Yield x s)  = <span class="nottickedoff">Iteratee $ return $ Yield x (s `mappend` Chunks [bs])</span></span>
-<span class="lineno">  161 </span><span class="spaces"></span><span class="istickedoff">enumBS _  (Error e)    = <span class="nottickedoff">Iteratee $ return $ Error e</span></span></span>
-<span class="lineno">  162 </span>{-# INLINE enumBS #-}
-<span class="lineno">  163 </span>
-<span class="lineno">  164 </span>
-<span class="lineno">  165 </span>------------------------------------------------------------------------------
-<span class="lineno">  166 </span>-- | Enumerates a lazy bytestring.
+<span class="lineno">  156 </span>    --block :: m a -&gt; m a
+<span class="lineno">  157 </span>    <span class="decl"><span class="istickedoff">block m = Iteratee $ block $ (runIteratee m &gt;&gt;= step)</span>
+<span class="lineno">  158 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  159 </span><span class="spaces">        </span><span class="istickedoff">step (Continue k) = return $ Continue (\s -&gt; block (k s))</span>
+<span class="lineno">  160 </span><span class="spaces">        </span><span class="istickedoff">step y            = return y</span></span>
+<span class="lineno">  161 </span>
+<span class="lineno">  162 </span>    <span class="decl"><span class="istickedoff">unblock m = Iteratee $ unblock $ (runIteratee m &gt;&gt;= step)</span>
+<span class="lineno">  163 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  164 </span><span class="spaces">        </span><span class="istickedoff">step (Continue k) = return $ Continue (\s -&gt; unblock (k s))</span>
+<span class="lineno">  165 </span><span class="spaces">        </span><span class="istickedoff">step y            = return y</span></span>
+<span class="lineno">  166 </span>
 <span class="lineno">  167 </span>
-<span class="lineno">  168 </span>enumLBS :: (Monad m) =&gt; L.ByteString -&gt; Enumerator ByteString m a
-<span class="lineno">  169 </span><span class="decl"><span class="istickedoff">enumLBS bs = enumList 1 (L.toChunks bs)</span></span>
-<span class="lineno">  170 </span>{-# INLINE enumLBS #-}
-<span class="lineno">  171 </span>
-<span class="lineno">  172 </span>
-<span class="lineno">  173 </span>------------------------------------------------------------------------------
-<span class="lineno">  174 </span>skipToEof :: (Monad m) =&gt; Iteratee a m ()
-<span class="lineno">  175 </span><span class="decl"><span class="istickedoff">skipToEof = continue k</span>
-<span class="lineno">  176 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  177 </span><span class="spaces">    </span><span class="istickedoff">k EOF = return <span class="nottickedoff">()</span></span>
-<span class="lineno">  178 </span><span class="spaces">    </span><span class="istickedoff">k _   = <span class="nottickedoff">skipToEof</span></span></span>
-<span class="lineno">  179 </span>
+<span class="lineno">  168 </span>------------------------------------------------------------------------------
+<span class="lineno">  169 </span>-- | Get the length of a bytestring Stream
+<span class="lineno">  170 </span>streamLength :: Stream ByteString -&gt; Int
+<span class="lineno">  171 </span><span class="decl"><span class="istickedoff">streamLength (Chunks xs) = List.foldl' (\c s -&gt; c + S.length s) 0 xs</span>
+<span class="lineno">  172 </span><span class="spaces"></span><span class="istickedoff">streamLength EOF         = 0</span></span>
+<span class="lineno">  173 </span>
+<span class="lineno">  174 </span>
+<span class="lineno">  175 </span>------------------------------------------------------------------------------
+<span class="lineno">  176 </span>-- | Enumerates a Builder.
+<span class="lineno">  177 </span>enumBuilder :: (Monad m) =&gt; Builder -&gt; Enumerator Builder m a
+<span class="lineno">  178 </span><span class="decl"><span class="istickedoff">enumBuilder = enumList 1 . (:[])</span></span>
+<span class="lineno">  179 </span>{-# INLINE enumBuilder #-}
 <span class="lineno">  180 </span>
-<span class="lineno">  181 </span>------------------------------------------------------------------------------
-<span class="lineno">  182 </span>-- | Wraps an 'Iteratee', counting the number of bytes consumed by it.
-<span class="lineno">  183 </span>countBytes :: (Monad m) =&gt; forall a .
-<span class="lineno">  184 </span>              Iteratee ByteString m a
-<span class="lineno">  185 </span>           -&gt; Iteratee ByteString m (a, Int64)
-<span class="lineno">  186 </span><span class="decl"><span class="istickedoff">countBytes i = Iteratee $ do</span>
-<span class="lineno">  187 </span><span class="spaces">    </span><span class="istickedoff">step &lt;- runIteratee i</span>
-<span class="lineno">  188 </span><span class="spaces">    </span><span class="istickedoff">case step of</span>
-<span class="lineno">  189 </span><span class="spaces">      </span><span class="istickedoff">(Continue k) -&gt; return (Continue $ go 0 k)</span>
-<span class="lineno">  190 </span><span class="spaces">      </span><span class="istickedoff">(Yield x s)  -&gt; return $ Yield (x,0) <span class="nottickedoff">s</span></span>
-<span class="lineno">  191 </span><span class="spaces">      </span><span class="istickedoff">(Error e)    -&gt; return $ Error e</span>
-<span class="lineno">  192 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  193 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  194 </span><span class="spaces">    </span><span class="istickedoff">go !n k str = Iteratee $ do</span>
-<span class="lineno">  195 </span><span class="spaces">        </span><span class="istickedoff">let len = toEnum $ streamLength str</span>
-<span class="lineno">  196 </span><span class="spaces">        </span><span class="istickedoff">step &lt;- runIteratee (k str)</span>
-<span class="lineno">  197 </span><span class="spaces">        </span><span class="istickedoff">case step of</span>
-<span class="lineno">  198 </span><span class="spaces">          </span><span class="istickedoff">(Continue k') -&gt; return (Continue $ go (n + len) k')</span>
-<span class="lineno">  199 </span><span class="spaces">          </span><span class="istickedoff">(Yield x s)   -&gt; let len' = n + len - (toEnum $ streamLength s)</span>
-<span class="lineno">  200 </span><span class="spaces">                           </span><span class="istickedoff">in return (Yield (x, len') s)</span>
-<span class="lineno">  201 </span><span class="spaces">          </span><span class="istickedoff">(Error e)     -&gt; <span class="nottickedoff">return (Error e)</span></span></span>
-<span class="lineno">  202 </span>
+<span class="lineno">  181 </span>
+<span class="lineno">  182 </span>------------------------------------------------------------------------------
+<span class="lineno">  183 </span>-- | Enumerates a strict bytestring.
+<span class="lineno">  184 </span>enumBS :: (Monad m) =&gt; ByteString -&gt; Enumerator ByteString m a
+<span class="lineno">  185 </span><span class="decl"><span class="istickedoff">enumBS = enumList 1 . (:[])</span></span>
+<span class="lineno">  186 </span>{-# INLINE enumBS #-}
+<span class="lineno">  187 </span>
+<span class="lineno">  188 </span>
+<span class="lineno">  189 </span>------------------------------------------------------------------------------
+<span class="lineno">  190 </span>-- | Enumerates a lazy bytestring.
+<span class="lineno">  191 </span>
+<span class="lineno">  192 </span>enumLBS :: (Monad m) =&gt; L.ByteString -&gt; Enumerator ByteString m a
+<span class="lineno">  193 </span><span class="decl"><span class="istickedoff">enumLBS bs = enumList 1 (L.toChunks bs)</span></span>
+<span class="lineno">  194 </span>{-# INLINE enumLBS #-}
+<span class="lineno">  195 </span>
+<span class="lineno">  196 </span>
+<span class="lineno">  197 </span>------------------------------------------------------------------------------
+<span class="lineno">  198 </span>skipToEof :: (Monad m) =&gt; Iteratee a m ()
+<span class="lineno">  199 </span><span class="decl"><span class="istickedoff">skipToEof = continue k</span>
+<span class="lineno">  200 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  201 </span><span class="spaces">    </span><span class="istickedoff">k EOF = return <span class="nottickedoff">()</span></span>
+<span class="lineno">  202 </span><span class="spaces">    </span><span class="istickedoff">k _   = skipToEof</span></span>
 <span class="lineno">  203 </span>
-<span class="lineno">  204 </span>------------------------------------------------------------------------------
-<span class="lineno">  205 </span>bUFSIZ :: Int
-<span class="lineno">  206 </span><span class="decl"><span class="istickedoff">bUFSIZ = 8192</span></span>
-<span class="lineno">  207 </span>
-<span class="lineno">  208 </span>
-<span class="lineno">  209 </span>------------------------------------------------------------------------------
-<span class="lineno">  210 </span>-- | Creates a buffer to be passed into 'unsafeBufferIterateeWithBuffer'.
-<span class="lineno">  211 </span>mkIterateeBuffer :: IO (ForeignPtr CChar)
-<span class="lineno">  212 </span><span class="decl"><span class="istickedoff">mkIterateeBuffer = mallocPlainForeignPtrBytes bUFSIZ</span></span>
-<span class="lineno">  213 </span>
-<span class="lineno">  214 </span>
-<span class="lineno">  215 </span>------------------------------------------------------------------------------
-<span class="lineno">  216 </span>-- | Buffers an iteratee, \&quot;unsafely\&quot;. Here we use a fixed binary buffer
-<span class="lineno">  217 </span>-- which we'll re-use, meaning that if you hold on to any of the bytestring
-<span class="lineno">  218 </span>-- data passed into your iteratee (instead of, let's say, shoving it right out
-<span class="lineno">  219 </span>-- a socket) it'll get changed out from underneath you, breaking referential
-<span class="lineno">  220 </span>-- transparency. Use with caution!
-<span class="lineno">  221 </span>unsafeBufferIteratee :: Iteratee ByteString IO a
-<span class="lineno">  222 </span>                     -&gt; IO (Iteratee ByteString IO a)
-<span class="lineno">  223 </span><span class="decl"><span class="istickedoff">unsafeBufferIteratee step = do</span>
-<span class="lineno">  224 </span><span class="spaces">    </span><span class="istickedoff">buf &lt;- mkIterateeBuffer</span>
-<span class="lineno">  225 </span><span class="spaces">    </span><span class="istickedoff">return $ unsafeBufferIterateeWithBuffer buf step</span></span>
+<span class="lineno">  204 </span>
+<span class="lineno">  205 </span>------------------------------------------------------------------------------
+<span class="lineno">  206 </span>-- | Wraps an 'Iteratee', counting the number of bytes consumed by it.
+<span class="lineno">  207 </span>countBytes :: (Monad m) =&gt; forall a .
+<span class="lineno">  208 </span>              Iteratee ByteString m a
+<span class="lineno">  209 </span>           -&gt; Iteratee ByteString m (a, Int64)
+<span class="lineno">  210 </span><span class="decl"><span class="istickedoff">countBytes i = Iteratee $ do</span>
+<span class="lineno">  211 </span><span class="spaces">    </span><span class="istickedoff">step &lt;- runIteratee i</span>
+<span class="lineno">  212 </span><span class="spaces">    </span><span class="istickedoff">case step of</span>
+<span class="lineno">  213 </span><span class="spaces">      </span><span class="istickedoff">(Continue k) -&gt; return (Continue $ go 0 k)</span>
+<span class="lineno">  214 </span><span class="spaces">      </span><span class="istickedoff">(Yield x s)  -&gt; return $ Yield (x,0) <span class="nottickedoff">s</span></span>
+<span class="lineno">  215 </span><span class="spaces">      </span><span class="istickedoff">(Error e)    -&gt; return $ Error e</span>
+<span class="lineno">  216 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  217 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  218 </span><span class="spaces">    </span><span class="istickedoff">go !n k str = Iteratee $ do</span>
+<span class="lineno">  219 </span><span class="spaces">        </span><span class="istickedoff">let len = toEnum $ streamLength str</span>
+<span class="lineno">  220 </span><span class="spaces">        </span><span class="istickedoff">step &lt;- runIteratee (k str)</span>
+<span class="lineno">  221 </span><span class="spaces">        </span><span class="istickedoff">case step of</span>
+<span class="lineno">  222 </span><span class="spaces">          </span><span class="istickedoff">(Continue k') -&gt; return (Continue $ go (n + len) k')</span>
+<span class="lineno">  223 </span><span class="spaces">          </span><span class="istickedoff">(Yield x s)   -&gt; let len' = n + len - (toEnum $ streamLength s)</span>
+<span class="lineno">  224 </span><span class="spaces">                           </span><span class="istickedoff">in return (Yield (x, len') s)</span>
+<span class="lineno">  225 </span><span class="spaces">          </span><span class="istickedoff">(Error e)     -&gt; <span class="nottickedoff">return (Error e)</span></span></span>
 <span class="lineno">  226 </span>
 <span class="lineno">  227 </span>
 <span class="lineno">  228 </span>------------------------------------------------------------------------------
-<span class="lineno">  229 </span>-- | Buffers an iteratee, \&quot;unsafely\&quot;. Here we use a fixed binary buffer
-<span class="lineno">  230 </span>-- which we'll re-use, meaning that if you hold on to any of the bytestring
-<span class="lineno">  231 </span>-- data passed into your iteratee (instead of, let's say, shoving it right out
-<span class="lineno">  232 </span>-- a socket) it'll get changed out from underneath you, breaking referential
-<span class="lineno">  233 </span>-- transparency. Use with caution!
-<span class="lineno">  234 </span>--
-<span class="lineno">  235 </span>-- This version accepts a buffer created by 'mkIterateeBuffer'.
-<span class="lineno">  236 </span>--
-<span class="lineno">  237 </span>unsafeBufferIterateeWithBuffer :: ForeignPtr CChar
-<span class="lineno">  238 </span>                               -&gt; Iteratee ByteString IO a
-<span class="lineno">  239 </span>                               -&gt; Iteratee ByteString IO a
-<span class="lineno">  240 </span><span class="decl"><span class="istickedoff">unsafeBufferIterateeWithBuffer buf iter = Iteratee $ do</span>
-<span class="lineno">  241 </span><span class="spaces">    </span><span class="istickedoff">step &lt;- runIteratee iter</span>
-<span class="lineno">  242 </span><span class="spaces">    </span><span class="istickedoff">start step</span>
-<span class="lineno">  243 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  244 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  245 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  246 </span><span class="spaces">    </span><span class="istickedoff">start :: Step ByteString IO a -&gt; IO (Step ByteString IO a)</span>
-<span class="lineno">  247 </span><span class="spaces">    </span><span class="istickedoff">start (Continue k) = return $ Continue $ go 0 k</span>
-<span class="lineno">  248 </span><span class="spaces">    </span><span class="istickedoff">start s@_          = return s</span>
-<span class="lineno">  249 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  250 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  251 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  252 </span><span class="spaces">    </span><span class="istickedoff">sendBuf :: Int</span>
-<span class="lineno">  253 </span><span class="spaces">            </span><span class="istickedoff">-&gt; (Stream ByteString -&gt; Iteratee ByteString IO a)</span>
-<span class="lineno">  254 </span><span class="spaces">            </span><span class="istickedoff">-&gt; IO (Step ByteString IO a)</span>
-<span class="lineno">  255 </span><span class="spaces">    </span><span class="istickedoff">sendBuf n k =</span>
-<span class="lineno">  256 </span><span class="spaces">      </span><span class="istickedoff">{-# SCC &quot;unsafeBufferIteratee/sendBuf&quot; #-} do</span>
-<span class="lineno">  257 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &gt; 0)</span>       (return <span class="nottickedoff">()</span>)</span>
-<span class="lineno">  258 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &lt;= bUFSIZ)</span> (return <span class="nottickedoff">()</span>)</span>
-<span class="lineno">  259 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  260 </span><span class="spaces">        </span><span class="istickedoff">withForeignPtr buf $ \ptr -&gt; do</span>
-<span class="lineno">  261 </span><span class="spaces">            </span><span class="istickedoff">!s &lt;- S.unsafePackCStringLen (ptr, n)</span>
-<span class="lineno">  262 </span><span class="spaces">            </span><span class="istickedoff">runIteratee $ k $ Chunks [s]</span>
-<span class="lineno">  263 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  264 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  265 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  266 </span><span class="spaces">    </span><span class="istickedoff">copy EOF         = EOF</span>
-<span class="lineno">  267 </span><span class="spaces">    </span><span class="istickedoff">copy (Chunks xs) = <span class="nottickedoff">zs `deepseq` Chunks ys</span></span>
-<span class="lineno">  268 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  269 </span><span class="spaces">        </span><span class="istickedoff">!ys  = <span class="nottickedoff">Prelude.map S.copy xs</span></span>
-<span class="lineno">  270 </span><span class="spaces">        </span><span class="istickedoff">!zs  = <span class="nottickedoff">Prelude.map (`seq` ()) ys</span></span>
-<span class="lineno">  271 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  272 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  273 </span><span class="spaces">    </span><span class="istickedoff">go :: Int</span>
-<span class="lineno">  274 </span><span class="spaces">       </span><span class="istickedoff">-&gt; (Stream ByteString -&gt; Iteratee ByteString IO a)</span>
-<span class="lineno">  275 </span><span class="spaces">       </span><span class="istickedoff">-&gt; (Stream ByteString -&gt; Iteratee ByteString IO a)</span>
-<span class="lineno">  276 </span><span class="spaces">    </span><span class="istickedoff">go !n !k EOF = Iteratee $ do</span>
-<span class="lineno">  277 </span><span class="spaces">        </span><span class="istickedoff">if n == 0</span>
-<span class="lineno">  278 </span><span class="spaces">          </span><span class="istickedoff">then runIteratee $ k EOF</span>
-<span class="lineno">  279 </span><span class="spaces">          </span><span class="istickedoff">else do</span>
-<span class="lineno">  280 </span><span class="spaces">              </span><span class="istickedoff">assert <span class="nottickedoff">(n &gt; 0)</span>       (return <span class="nottickedoff">()</span>)</span>
-<span class="lineno">  281 </span><span class="spaces">              </span><span class="istickedoff">assert <span class="nottickedoff">(n &lt;= bUFSIZ)</span> (return <span class="nottickedoff">()</span>)</span>
-<span class="lineno">  282 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  283 </span><span class="spaces">              </span><span class="istickedoff">step  &lt;- sendBuf n k</span>
-<span class="lineno">  284 </span><span class="spaces">              </span><span class="istickedoff">step2 &lt;- runIteratee $ enumEOF step</span>
-<span class="lineno">  285 </span><span class="spaces">              </span><span class="istickedoff">return $ copyStep step2</span>
-<span class="lineno">  286 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  229 </span>bUFSIZ :: Int
+<span class="lineno">  230 </span><span class="decl"><span class="istickedoff">bUFSIZ = 8192</span></span>
+<span class="lineno">  231 </span>
+<span class="lineno">  232 </span>
+<span class="lineno">  233 </span>------------------------------------------------------------------------------
+<span class="lineno">  234 </span>-- | Creates a buffer to be passed into 'unsafeBufferIterateeWithBuffer'.
+<span class="lineno">  235 </span>mkIterateeBuffer :: IO (ForeignPtr CChar)
+<span class="lineno">  236 </span><span class="decl"><span class="istickedoff">mkIterateeBuffer = mallocPlainForeignPtrBytes bUFSIZ</span></span>
+<span class="lineno">  237 </span>
+<span class="lineno">  238 </span>
+<span class="lineno">  239 </span>------------------------------------------------------------------------------
+<span class="lineno">  240 </span>-- | Buffers an iteratee, \&quot;unsafely\&quot;. Here we use a fixed binary buffer
+<span class="lineno">  241 </span>-- which we'll re-use, meaning that if you hold on to any of the bytestring
+<span class="lineno">  242 </span>-- data passed into your iteratee (instead of, let's say, shoving it right out
+<span class="lineno">  243 </span>-- a socket) it'll get changed out from underneath you, breaking referential
+<span class="lineno">  244 </span>-- transparency. Use with caution!
+<span class="lineno">  245 </span>unsafeBufferIteratee :: Iteratee ByteString IO a
+<span class="lineno">  246 </span>                     -&gt; IO (Iteratee ByteString IO a)
+<span class="lineno">  247 </span><span class="decl"><span class="istickedoff">unsafeBufferIteratee step = do</span>
+<span class="lineno">  248 </span><span class="spaces">    </span><span class="istickedoff">buf &lt;- mkIterateeBuffer</span>
+<span class="lineno">  249 </span><span class="spaces">    </span><span class="istickedoff">return $ unsafeBufferIterateeWithBuffer buf step</span></span>
+<span class="lineno">  250 </span>
+<span class="lineno">  251 </span>
+<span class="lineno">  252 </span>------------------------------------------------------------------------------
+<span class="lineno">  253 </span>-- | Buffers an iteratee, \&quot;unsafely\&quot;. Here we use a fixed binary buffer
+<span class="lineno">  254 </span>-- which we'll re-use, meaning that if you hold on to any of the bytestring
+<span class="lineno">  255 </span>-- data passed into your iteratee (instead of, let's say, shoving it right out
+<span class="lineno">  256 </span>-- a socket) it'll get changed out from underneath you, breaking referential
+<span class="lineno">  257 </span>-- transparency. Use with caution!
+<span class="lineno">  258 </span>--
+<span class="lineno">  259 </span>-- This version accepts a buffer created by 'mkIterateeBuffer'.
+<span class="lineno">  260 </span>--
+<span class="lineno">  261 </span>unsafeBufferIterateeWithBuffer :: ForeignPtr CChar
+<span class="lineno">  262 </span>                               -&gt; Iteratee ByteString IO a
+<span class="lineno">  263 </span>                               -&gt; Iteratee ByteString IO a
+<span class="lineno">  264 </span><span class="decl"><span class="istickedoff">unsafeBufferIterateeWithBuffer buf iter = Iteratee $ do</span>
+<span class="lineno">  265 </span><span class="spaces">    </span><span class="istickedoff">step &lt;- runIteratee iter</span>
+<span class="lineno">  266 </span><span class="spaces">    </span><span class="istickedoff">start step</span>
+<span class="lineno">  267 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  268 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  269 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  270 </span><span class="spaces">    </span><span class="istickedoff">start :: Step ByteString IO a -&gt; IO (Step ByteString IO a)</span>
+<span class="lineno">  271 </span><span class="spaces">    </span><span class="istickedoff">start (Continue k) = return $ Continue $ go 0 k</span>
+<span class="lineno">  272 </span><span class="spaces">    </span><span class="istickedoff">start s@_          = return s</span>
+<span class="lineno">  273 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  274 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  275 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  276 </span><span class="spaces">    </span><span class="istickedoff">sendBuf :: Int</span>
+<span class="lineno">  277 </span><span class="spaces">            </span><span class="istickedoff">-&gt; (Stream ByteString -&gt; Iteratee ByteString IO a)</span>
+<span class="lineno">  278 </span><span class="spaces">            </span><span class="istickedoff">-&gt; IO (Step ByteString IO a)</span>
+<span class="lineno">  279 </span><span class="spaces">    </span><span class="istickedoff">sendBuf n k =</span>
+<span class="lineno">  280 </span><span class="spaces">      </span><span class="istickedoff">{-# SCC &quot;unsafeBufferIteratee/sendBuf&quot; #-} do</span>
+<span class="lineno">  281 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &gt; 0)</span>       (return <span class="nottickedoff">()</span>)</span>
+<span class="lineno">  282 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &lt;= bUFSIZ)</span> (return <span class="nottickedoff">()</span>)</span>
+<span class="lineno">  283 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  284 </span><span class="spaces">        </span><span class="istickedoff">withForeignPtr buf $ \ptr -&gt; do</span>
+<span class="lineno">  285 </span><span class="spaces">            </span><span class="istickedoff">!s &lt;- S.unsafePackCStringLen (ptr, n)</span>
+<span class="lineno">  286 </span><span class="spaces">            </span><span class="istickedoff">runIteratee $ k $ Chunks [s]</span>
 <span class="lineno">  287 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  288 </span><span class="spaces">    </span><span class="istickedoff">go !n !k (Chunks xs) = Iteratee $ do</span>
-<span class="lineno">  289 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &gt;= 0)</span>      (return <span class="nottickedoff">()</span>)</span>
-<span class="lineno">  290 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &lt;= bUFSIZ)</span> (return <span class="nottickedoff">()</span>)</span>
-<span class="lineno">  291 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  292 </span><span class="spaces">        </span><span class="istickedoff">let s = S.concat xs</span>
-<span class="lineno">  293 </span><span class="spaces">        </span><span class="istickedoff">let m = S.length s</span>
-<span class="lineno">  294 </span><span class="spaces">        </span><span class="istickedoff">if m+n &gt;= bUFSIZ</span>
-<span class="lineno">  295 </span><span class="spaces">          </span><span class="istickedoff">then overflow    n k s m</span>
-<span class="lineno">  296 </span><span class="spaces">          </span><span class="istickedoff">else copyAndCont n k s m</span>
-<span class="lineno">  297 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  298 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  299 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  300 </span><span class="spaces">    </span><span class="istickedoff">copyStep (Yield x r) = let !z = copy r in Yield x <span class="nottickedoff">z</span></span>
-<span class="lineno">  301 </span><span class="spaces">    </span><span class="istickedoff">copyStep x           = x</span>
-<span class="lineno">  302 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  303 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  304 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  305 </span><span class="spaces">    </span><span class="istickedoff">copyAndCont :: Int</span>
-<span class="lineno">  306 </span><span class="spaces">                </span><span class="istickedoff">-&gt; (Stream ByteString -&gt; Iteratee ByteString IO a)</span>
-<span class="lineno">  307 </span><span class="spaces">                </span><span class="istickedoff">-&gt; ByteString</span>
-<span class="lineno">  308 </span><span class="spaces">                </span><span class="istickedoff">-&gt; Int</span>
-<span class="lineno">  309 </span><span class="spaces">                </span><span class="istickedoff">-&gt; IO (Step ByteString IO a)</span>
-<span class="lineno">  310 </span><span class="spaces">    </span><span class="istickedoff">copyAndCont !n k !s !m =</span>
-<span class="lineno">  311 </span><span class="spaces">      </span><span class="istickedoff">{-# SCC &quot;unsafeBufferIteratee/copyAndCont&quot; #-} do</span>
-<span class="lineno">  312 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &gt;= 0)</span> (return <span class="nottickedoff">()</span>)</span>
-<span class="lineno">  313 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n+m &lt; bUFSIZ)</span> (return <span class="nottickedoff">()</span>)</span>
-<span class="lineno">  314 </span><span class="spaces">        </span><span class="istickedoff">S.unsafeUseAsCStringLen s $ \(p,sz) -&gt; do</span>
-<span class="lineno">  315 </span><span class="spaces">          </span><span class="istickedoff">assert <span class="nottickedoff">(m == sz)</span> (return <span class="nottickedoff">()</span>)</span>
-<span class="lineno">  316 </span><span class="spaces">          </span><span class="istickedoff">withForeignPtr buf $ \bufp -&gt; do</span>
-<span class="lineno">  317 </span><span class="spaces">            </span><span class="istickedoff">let b' = plusPtr bufp n</span>
-<span class="lineno">  318 </span><span class="spaces">            </span><span class="istickedoff">copyBytes b' p sz</span>
-<span class="lineno">  319 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  320 </span><span class="spaces">        </span><span class="istickedoff">return $ Continue $ go (n+m) k</span>
+<span class="lineno">  288 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  289 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  290 </span><span class="spaces">    </span><span class="istickedoff">copy EOF         = EOF</span>
+<span class="lineno">  291 </span><span class="spaces">    </span><span class="istickedoff">copy (Chunks xs) = <span class="nottickedoff">zs `deepseq` Chunks ys</span></span>
+<span class="lineno">  292 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  293 </span><span class="spaces">        </span><span class="istickedoff">!ys  = <span class="nottickedoff">Prelude.map S.copy xs</span></span>
+<span class="lineno">  294 </span><span class="spaces">        </span><span class="istickedoff">!zs  = <span class="nottickedoff">Prelude.map (`seq` ()) ys</span></span>
+<span class="lineno">  295 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  296 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  297 </span><span class="spaces">    </span><span class="istickedoff">go :: Int</span>
+<span class="lineno">  298 </span><span class="spaces">       </span><span class="istickedoff">-&gt; (Stream ByteString -&gt; Iteratee ByteString IO a)</span>
+<span class="lineno">  299 </span><span class="spaces">       </span><span class="istickedoff">-&gt; (Stream ByteString -&gt; Iteratee ByteString IO a)</span>
+<span class="lineno">  300 </span><span class="spaces">    </span><span class="istickedoff">go !n !k EOF = Iteratee $ do</span>
+<span class="lineno">  301 </span><span class="spaces">        </span><span class="istickedoff">if n == 0</span>
+<span class="lineno">  302 </span><span class="spaces">          </span><span class="istickedoff">then runIteratee $ k EOF</span>
+<span class="lineno">  303 </span><span class="spaces">          </span><span class="istickedoff">else do</span>
+<span class="lineno">  304 </span><span class="spaces">              </span><span class="istickedoff">assert <span class="nottickedoff">(n &gt; 0)</span>       (return <span class="nottickedoff">()</span>)</span>
+<span class="lineno">  305 </span><span class="spaces">              </span><span class="istickedoff">assert <span class="nottickedoff">(n &lt;= bUFSIZ)</span> (return <span class="nottickedoff">()</span>)</span>
+<span class="lineno">  306 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  307 </span><span class="spaces">              </span><span class="istickedoff">step  &lt;- sendBuf n k</span>
+<span class="lineno">  308 </span><span class="spaces">              </span><span class="istickedoff">step2 &lt;- runIteratee $ enumEOF step</span>
+<span class="lineno">  309 </span><span class="spaces">              </span><span class="istickedoff">return $ copyStep step2</span>
+<span class="lineno">  310 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  311 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  312 </span><span class="spaces">    </span><span class="istickedoff">go !n !k (Chunks xs) = Iteratee $ do</span>
+<span class="lineno">  313 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &gt;= 0)</span>      (return <span class="nottickedoff">()</span>)</span>
+<span class="lineno">  314 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &lt;= bUFSIZ)</span> (return <span class="nottickedoff">()</span>)</span>
+<span class="lineno">  315 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  316 </span><span class="spaces">        </span><span class="istickedoff">let s = S.concat xs</span>
+<span class="lineno">  317 </span><span class="spaces">        </span><span class="istickedoff">let m = S.length s</span>
+<span class="lineno">  318 </span><span class="spaces">        </span><span class="istickedoff">if m+n &gt;= bUFSIZ</span>
+<span class="lineno">  319 </span><span class="spaces">          </span><span class="istickedoff">then overflow    n k s m</span>
+<span class="lineno">  320 </span><span class="spaces">          </span><span class="istickedoff">else copyAndCont n k s m</span>
 <span class="lineno">  321 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  322 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  323 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  324 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
-<span class="lineno">  325 </span><span class="spaces">    </span><span class="istickedoff">overflow :: Int</span>
-<span class="lineno">  326 </span><span class="spaces">             </span><span class="istickedoff">-&gt; (Stream ByteString -&gt; Iteratee ByteString IO a)</span>
-<span class="lineno">  327 </span><span class="spaces">             </span><span class="istickedoff">-&gt; ByteString</span>
-<span class="lineno">  328 </span><span class="spaces">             </span><span class="istickedoff">-&gt; Int</span>
-<span class="lineno">  329 </span><span class="spaces">             </span><span class="istickedoff">-&gt; IO (Step ByteString IO a)</span>
-<span class="lineno">  330 </span><span class="spaces">    </span><span class="istickedoff">overflow !n k !s !m =</span>
-<span class="lineno">  331 </span><span class="spaces">      </span><span class="istickedoff">{-# SCC &quot;unsafeBufferIteratee/overflow&quot; #-} do</span>
-<span class="lineno">  332 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n+m &gt;= bUFSIZ)</span> (return <span class="nottickedoff">()</span>)</span>
-<span class="lineno">  333 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &lt; bUFSIZ)</span>    (return <span class="nottickedoff">()</span>)</span>
-<span class="lineno">  334 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  335 </span><span class="spaces">        </span><span class="istickedoff">let rest    = bUFSIZ - n</span>
-<span class="lineno">  336 </span><span class="spaces">        </span><span class="istickedoff">let m2      = m - rest</span>
-<span class="lineno">  337 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  338 </span><span class="spaces">        </span><span class="istickedoff">let (s1,s2) = S.splitAt rest s</span>
-<span class="lineno">  339 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  340 </span><span class="spaces">        </span><span class="istickedoff">S.unsafeUseAsCStringLen s1 $ \(p,_) -&gt;</span>
-<span class="lineno">  341 </span><span class="spaces">          </span><span class="istickedoff">withForeignPtr buf $ \bufp -&gt; do</span>
-<span class="lineno">  342 </span><span class="spaces">            </span><span class="istickedoff">let b' = plusPtr bufp n</span>
-<span class="lineno">  343 </span><span class="spaces">            </span><span class="istickedoff">copyBytes b' p rest</span>
-<span class="lineno">  344 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  345 </span><span class="spaces">            </span><span class="istickedoff">iv &lt;- sendBuf bUFSIZ k</span>
-<span class="lineno">  346 </span><span class="spaces">            </span><span class="istickedoff">case iv of</span>
-<span class="lineno">  347 </span><span class="spaces">              </span><span class="istickedoff">(Yield x r)   -&gt; <span class="nottickedoff">let !z = copy r</span></span>
-<span class="lineno">  348 </span><span class="spaces">                               </span><span class="istickedoff"><span class="nottickedoff">in return $ Yield x $ (z `mappend` Chunks [s2])</span></span>
-<span class="lineno">  349 </span><span class="spaces">              </span><span class="istickedoff">(Error e)     -&gt; <span class="nottickedoff">return $ Error e</span></span>
-<span class="lineno">  350 </span><span class="spaces">              </span><span class="istickedoff">(Continue k') -&gt; do</span>
-<span class="lineno">  351 </span><span class="spaces">                  </span><span class="istickedoff">-- check the size of the remainder; if it's bigger than the</span>
-<span class="lineno">  352 </span><span class="spaces">                  </span><span class="istickedoff">-- buffer size then just send it</span>
-<span class="lineno">  353 </span><span class="spaces">                  </span><span class="istickedoff">if <span class="tickonlyfalse">m2 &gt;= bUFSIZ</span></span>
-<span class="lineno">  354 </span><span class="spaces">                    </span><span class="istickedoff">then <span class="nottickedoff">do</span></span>
-<span class="lineno">  355 </span><span class="spaces">                        </span><span class="istickedoff"><span class="nottickedoff">step &lt;- runIteratee $ k' $ Chunks [s2]</span></span>
-<span class="lineno">  356 </span><span class="spaces">                        </span><span class="istickedoff"><span class="nottickedoff">case step of</span></span>
-<span class="lineno">  357 </span><span class="spaces">                          </span><span class="istickedoff"><span class="nottickedoff">(Yield x r)    -&gt; let !z = copy r</span></span>
-<span class="lineno">  358 </span><span class="spaces">                                            </span><span class="istickedoff"><span class="nottickedoff">in return $! Yield x z</span></span>
-<span class="lineno">  359 </span><span class="spaces">                          </span><span class="istickedoff"><span class="nottickedoff">(Error e)      -&gt; return $ Error e</span></span>
-<span class="lineno">  360 </span><span class="spaces">                          </span><span class="istickedoff"><span class="nottickedoff">(Continue k'') -&gt; return $ Continue $ go 0 k''</span></span>
+<span class="lineno">  323 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  324 </span><span class="spaces">    </span><span class="istickedoff">copyStep (Yield x r) = let !z = copy r in Yield x <span class="nottickedoff">z</span></span>
+<span class="lineno">  325 </span><span class="spaces">    </span><span class="istickedoff">copyStep x           = x</span>
+<span class="lineno">  326 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  327 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  328 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  329 </span><span class="spaces">    </span><span class="istickedoff">copyAndCont :: Int</span>
+<span class="lineno">  330 </span><span class="spaces">                </span><span class="istickedoff">-&gt; (Stream ByteString -&gt; Iteratee ByteString IO a)</span>
+<span class="lineno">  331 </span><span class="spaces">                </span><span class="istickedoff">-&gt; ByteString</span>
+<span class="lineno">  332 </span><span class="spaces">                </span><span class="istickedoff">-&gt; Int</span>
+<span class="lineno">  333 </span><span class="spaces">                </span><span class="istickedoff">-&gt; IO (Step ByteString IO a)</span>
+<span class="lineno">  334 </span><span class="spaces">    </span><span class="istickedoff">copyAndCont !n k !s !m =</span>
+<span class="lineno">  335 </span><span class="spaces">      </span><span class="istickedoff">{-# SCC &quot;unsafeBufferIteratee/copyAndCont&quot; #-} do</span>
+<span class="lineno">  336 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &gt;= 0)</span> (return <span class="nottickedoff">()</span>)</span>
+<span class="lineno">  337 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n+m &lt; bUFSIZ)</span> (return <span class="nottickedoff">()</span>)</span>
+<span class="lineno">  338 </span><span class="spaces">        </span><span class="istickedoff">S.unsafeUseAsCStringLen s $ \(p,sz) -&gt; do</span>
+<span class="lineno">  339 </span><span class="spaces">          </span><span class="istickedoff">assert <span class="nottickedoff">(m == sz)</span> (return <span class="nottickedoff">()</span>)</span>
+<span class="lineno">  340 </span><span class="spaces">          </span><span class="istickedoff">withForeignPtr buf $ \bufp -&gt; do</span>
+<span class="lineno">  341 </span><span class="spaces">            </span><span class="istickedoff">let b' = plusPtr bufp n</span>
+<span class="lineno">  342 </span><span class="spaces">            </span><span class="istickedoff">copyBytes b' p sz</span>
+<span class="lineno">  343 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  344 </span><span class="spaces">        </span><span class="istickedoff">return $ Continue $ go (n+m) k</span>
+<span class="lineno">  345 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  346 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  347 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  348 </span><span class="spaces">    </span><span class="istickedoff">--------------------------------------------------------------------------</span>
+<span class="lineno">  349 </span><span class="spaces">    </span><span class="istickedoff">overflow :: Int</span>
+<span class="lineno">  350 </span><span class="spaces">             </span><span class="istickedoff">-&gt; (Stream ByteString -&gt; Iteratee ByteString IO a)</span>
+<span class="lineno">  351 </span><span class="spaces">             </span><span class="istickedoff">-&gt; ByteString</span>
+<span class="lineno">  352 </span><span class="spaces">             </span><span class="istickedoff">-&gt; Int</span>
+<span class="lineno">  353 </span><span class="spaces">             </span><span class="istickedoff">-&gt; IO (Step ByteString IO a)</span>
+<span class="lineno">  354 </span><span class="spaces">    </span><span class="istickedoff">overflow !n k !s !m =</span>
+<span class="lineno">  355 </span><span class="spaces">      </span><span class="istickedoff">{-# SCC &quot;unsafeBufferIteratee/overflow&quot; #-} do</span>
+<span class="lineno">  356 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n+m &gt;= bUFSIZ)</span> (return <span class="nottickedoff">()</span>)</span>
+<span class="lineno">  357 </span><span class="spaces">        </span><span class="istickedoff">assert <span class="nottickedoff">(n &lt; bUFSIZ)</span>    (return <span class="nottickedoff">()</span>)</span>
+<span class="lineno">  358 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  359 </span><span class="spaces">        </span><span class="istickedoff">let rest    = bUFSIZ - n</span>
+<span class="lineno">  360 </span><span class="spaces">        </span><span class="istickedoff">let m2      = m - rest</span>
 <span class="lineno">  361 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  362 </span><span class="spaces">                    </span><span class="istickedoff">else copyAndCont 0 k' s2 m2</span></span>
-<span class="lineno">  363 </span>
-<span class="lineno">  364 </span>
-<span class="lineno">  365 </span>------------------------------------------------------------------------------
-<span class="lineno">  366 </span>-- | Skip n elements of the stream, if there are that many
-<span class="lineno">  367 </span>drop :: (Monad m) =&gt; Int -&gt; Iteratee ByteString m ()
-<span class="lineno">  368 </span><span class="decl"><span class="istickedoff">drop k = drop' (toEnum k)</span></span>
-<span class="lineno">  369 </span>
-<span class="lineno">  370 </span>------------------------------------------------------------------------------
-<span class="lineno">  371 </span>-- | Skip n elements of the stream, if there are that many
-<span class="lineno">  372 </span>drop' :: (Monad m) =&gt; Int64 -&gt; Iteratee ByteString m ()
-<span class="lineno">  373 </span><span class="decl"><span class="istickedoff">drop' 0  = return ()</span>
-<span class="lineno">  374 </span><span class="spaces"></span><span class="istickedoff">drop' !n = continue k</span>
-<span class="lineno">  375 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  376 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  377 </span><span class="spaces">    </span><span class="istickedoff">k EOF         = <span class="nottickedoff">return ()</span></span>
-<span class="lineno">  378 </span><span class="spaces">    </span><span class="istickedoff">k (Chunks xs) = chunks n xs</span>
-<span class="lineno">  379 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  380 </span><span class="spaces">    </span><span class="istickedoff">chunks !m []     = drop' m</span>
-<span class="lineno">  381 </span><span class="spaces">    </span><span class="istickedoff">chunks !m (x:xs) = do</span>
-<span class="lineno">  382 </span><span class="spaces">        </span><span class="istickedoff">let strlen = toEnum $ S.length x</span>
-<span class="lineno">  383 </span><span class="spaces">        </span><span class="istickedoff">if strlen &lt;= m</span>
-<span class="lineno">  384 </span><span class="spaces">          </span><span class="istickedoff">then chunks (m-strlen) xs</span>
-<span class="lineno">  385 </span><span class="spaces">          </span><span class="istickedoff">else yield () $ Chunks ((S.drop (fromEnum m) x):xs)</span></span>
-<span class="lineno">  386 </span>
+<span class="lineno">  362 </span><span class="spaces">        </span><span class="istickedoff">let (s1,s2) = S.splitAt rest s</span>
+<span class="lineno">  363 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  364 </span><span class="spaces">        </span><span class="istickedoff">S.unsafeUseAsCStringLen s1 $ \(p,_) -&gt;</span>
+<span class="lineno">  365 </span><span class="spaces">          </span><span class="istickedoff">withForeignPtr buf $ \bufp -&gt; do</span>
+<span class="lineno">  366 </span><span class="spaces">            </span><span class="istickedoff">let b' = plusPtr bufp n</span>
+<span class="lineno">  367 </span><span class="spaces">            </span><span class="istickedoff">copyBytes b' p rest</span>
+<span class="lineno">  368 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  369 </span><span class="spaces">            </span><span class="istickedoff">iv &lt;- sendBuf bUFSIZ k</span>
+<span class="lineno">  370 </span><span class="spaces">            </span><span class="istickedoff">case iv of</span>
+<span class="lineno">  371 </span><span class="spaces">              </span><span class="istickedoff">(Yield x r)   -&gt; <span class="nottickedoff">let !z = copy r</span></span>
+<span class="lineno">  372 </span><span class="spaces">                               </span><span class="istickedoff"><span class="nottickedoff">in return $ Yield x $ (z `mappend` Chunks [s2])</span></span>
+<span class="lineno">  373 </span><span class="spaces">              </span><span class="istickedoff">(Error e)     -&gt; <span class="nottickedoff">return $ Error e</span></span>
+<span class="lineno">  374 </span><span class="spaces">              </span><span class="istickedoff">(Continue k') -&gt; do</span>
+<span class="lineno">  375 </span><span class="spaces">                  </span><span class="istickedoff">-- check the size of the remainder; if it's bigger than the</span>
+<span class="lineno">  376 </span><span class="spaces">                  </span><span class="istickedoff">-- buffer size then just send it</span>
+<span class="lineno">  377 </span><span class="spaces">                  </span><span class="istickedoff">if <span class="tickonlyfalse">m2 &gt;= bUFSIZ</span></span>
+<span class="lineno">  378 </span><span class="spaces">                    </span><span class="istickedoff">then <span class="nottickedoff">do</span></span>
+<span class="lineno">  379 </span><span class="spaces">                        </span><span class="istickedoff"><span class="nottickedoff">step &lt;- runIteratee $ k' $ Chunks [s2]</span></span>
+<span class="lineno">  380 </span><span class="spaces">                        </span><span class="istickedoff"><span class="nottickedoff">case step of</span></span>
+<span class="lineno">  381 </span><span class="spaces">                          </span><span class="istickedoff"><span class="nottickedoff">(Yield x r)    -&gt; let !z = copy r</span></span>
+<span class="lineno">  382 </span><span class="spaces">                                            </span><span class="istickedoff"><span class="nottickedoff">in return $! Yield x z</span></span>
+<span class="lineno">  383 </span><span class="spaces">                          </span><span class="istickedoff"><span class="nottickedoff">(Error e)      -&gt; return $ Error e</span></span>
+<span class="lineno">  384 </span><span class="spaces">                          </span><span class="istickedoff"><span class="nottickedoff">(Continue k'') -&gt; return $ Continue $ go 0 k''</span></span>
+<span class="lineno">  385 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  386 </span><span class="spaces">                    </span><span class="istickedoff">else copyAndCont 0 k' s2 m2</span></span>
 <span class="lineno">  387 </span>
-<span class="lineno">  388 </span>------------------------------------------------------------------------------
-<span class="lineno">  389 </span>data ShortWriteException = ShortWriteException
-<span class="lineno">  390 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
-<span class="lineno">  391 </span>
-<span class="lineno">  392 </span>
-<span class="lineno">  393 </span>------------------------------------------------------------------------------
-<span class="lineno">  394 </span>instance Show ShortWriteException where
-<span class="lineno">  395 </span>    <span class="decl"><span class="istickedoff">show ShortWriteException = &quot;Short write&quot;</span></span>
-<span class="lineno">  396 </span>
-<span class="lineno">  397 </span>
-<span class="lineno">  398 </span>------------------------------------------------------------------------------
-<span class="lineno">  399 </span>instance Exception ShortWriteException
-<span class="lineno">  400 </span>
-<span class="lineno">  401 </span>
-<span class="lineno">  402 </span>------------------------------------------------------------------------------
-<span class="lineno">  403 </span>data TooManyBytesReadException = TooManyBytesReadException
-<span class="lineno">  404 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
-<span class="lineno">  405 </span>
-<span class="lineno">  406 </span>
-<span class="lineno">  407 </span>------------------------------------------------------------------------------
-<span class="lineno">  408 </span>instance Show TooManyBytesReadException where
-<span class="lineno">  409 </span>    <span class="decl"><span class="istickedoff">show TooManyBytesReadException = &quot;Too many bytes read&quot;</span></span>
+<span class="lineno">  388 </span>
+<span class="lineno">  389 </span>------------------------------------------------------------------------------
+<span class="lineno">  390 </span>-- | Skip n elements of the stream, if there are that many
+<span class="lineno">  391 </span>drop :: (Monad m) =&gt; Int -&gt; Iteratee ByteString m ()
+<span class="lineno">  392 </span><span class="decl"><span class="istickedoff">drop k = drop' (toEnum k)</span></span>
+<span class="lineno">  393 </span>
+<span class="lineno">  394 </span>------------------------------------------------------------------------------
+<span class="lineno">  395 </span>-- | Skip n elements of the stream, if there are that many
+<span class="lineno">  396 </span>drop' :: (Monad m) =&gt; Int64 -&gt; Iteratee ByteString m ()
+<span class="lineno">  397 </span><span class="decl"><span class="istickedoff">drop' 0  = return ()</span>
+<span class="lineno">  398 </span><span class="spaces"></span><span class="istickedoff">drop' !n = continue k</span>
+<span class="lineno">  399 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  400 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  401 </span><span class="spaces">    </span><span class="istickedoff">k EOF         = <span class="nottickedoff">return ()</span></span>
+<span class="lineno">  402 </span><span class="spaces">    </span><span class="istickedoff">k (Chunks xs) = chunks n xs</span>
+<span class="lineno">  403 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  404 </span><span class="spaces">    </span><span class="istickedoff">chunks !m []     = drop' m</span>
+<span class="lineno">  405 </span><span class="spaces">    </span><span class="istickedoff">chunks !m (x:xs) = do</span>
+<span class="lineno">  406 </span><span class="spaces">        </span><span class="istickedoff">let strlen = toEnum $ S.length x</span>
+<span class="lineno">  407 </span><span class="spaces">        </span><span class="istickedoff">if strlen &lt;= m</span>
+<span class="lineno">  408 </span><span class="spaces">          </span><span class="istickedoff">then chunks (m-strlen) xs</span>
+<span class="lineno">  409 </span><span class="spaces">          </span><span class="istickedoff">else yield () $ Chunks ((S.drop (fromEnum m) x):xs)</span></span>
 <span class="lineno">  410 </span>
 <span class="lineno">  411 </span>
 <span class="lineno">  412 </span>------------------------------------------------------------------------------
-<span class="lineno">  413 </span>instance Exception TooManyBytesReadException
-<span class="lineno">  414 </span>
-<span class="lineno">  415 </span>
+<span class="lineno">  413 </span>data ShortWriteException = ShortWriteException deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
+<span class="lineno">  414 </span>data RateTooSlowException = RateTooSlowException deriving (<span class="decl"><span class="istickedoff">Typeable</span></span>)
+<span class="lineno">  415 </span>data TooManyBytesReadException = TooManyBytesReadException deriving (<span class="decl"><span class="istickedoff">Typeable</span></span>)
 <span class="lineno">  416 </span>
-<span class="lineno">  417 </span>------------------------------------------------------------------------------
-<span class="lineno">  418 </span>take :: (Monad m) =&gt; Int -&gt; Enumeratee ByteString ByteString m a
-<span class="lineno">  419 </span><span class="decl"><span class="istickedoff">take k = take' (toEnum k)</span></span>
-<span class="lineno">  420 </span>
-<span class="lineno">  421 </span>
-<span class="lineno">  422 </span>------------------------------------------------------------------------------
-<span class="lineno">  423 </span>take' :: (Monad m) =&gt; Int64 -&gt; Enumeratee ByteString ByteString m a
-<span class="lineno">  424 </span><span class="decl"><span class="istickedoff">take' _ y@(Yield _ _   ) = <span class="nottickedoff">return y</span></span>
-<span class="lineno">  425 </span><span class="spaces"></span><span class="istickedoff">take' _   (Error e     ) = <span class="nottickedoff">throwError e</span></span>
-<span class="lineno">  426 </span><span class="spaces"></span><span class="istickedoff">take' !n st@(Continue k) = do</span>
-<span class="lineno">  427 </span><span class="spaces">    </span><span class="istickedoff">if n == 0</span>
-<span class="lineno">  428 </span><span class="spaces">      </span><span class="istickedoff">then lift $ runIteratee $ k EOF</span>
-<span class="lineno">  429 </span><span class="spaces">      </span><span class="istickedoff">else do</span>
-<span class="lineno">  430 </span><span class="spaces">        </span><span class="istickedoff">mbX &lt;- head</span>
-<span class="lineno">  431 </span><span class="spaces">        </span><span class="istickedoff">maybe <span class="nottickedoff">(lift $ runIteratee $ k EOF)</span></span>
-<span class="lineno">  432 </span><span class="spaces">              </span><span class="istickedoff">check</span>
-<span class="lineno">  433 </span><span class="spaces">              </span><span class="istickedoff">mbX</span>
-<span class="lineno">  434 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  435 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  436 </span><span class="spaces">    </span><span class="istickedoff">check x | <span class="tickonlyfalse">S.null x</span>    = <span class="nottickedoff">take' n st</span></span>
-<span class="lineno">  437 </span><span class="spaces">            </span><span class="istickedoff">| strlen &lt;= n = do</span>
-<span class="lineno">  438 </span><span class="spaces">                  </span><span class="istickedoff">newStep &lt;- lift $ runIteratee $ k $ Chunks [x]</span>
-<span class="lineno">  439 </span><span class="spaces">                  </span><span class="istickedoff">take' (n-strlen) newStep</span>
-<span class="lineno">  440 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
-<span class="lineno">  441 </span><span class="spaces">                  </span><span class="istickedoff">step1 &lt;- lift $ runIteratee $ k $ Chunks [s1]</span>
-<span class="lineno">  442 </span><span class="spaces">                  </span><span class="istickedoff">step2 &lt;- lift $ runIteratee $ enumEOF step1</span>
-<span class="lineno">  443 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  444 </span><span class="spaces">                  </span><span class="istickedoff">case step2 of</span>
-<span class="lineno">  445 </span><span class="spaces">                    </span><span class="istickedoff">(Yield v _)    -&gt; yield (Yield v <span class="nottickedoff">EOF</span>) (Chunks [s2])</span>
-<span class="lineno">  446 </span><span class="spaces">                    </span><span class="istickedoff">(Error e)      -&gt; <span class="nottickedoff">throwError e</span></span>
-<span class="lineno">  447 </span><span class="spaces">                    </span><span class="istickedoff">(Continue _)   -&gt; <span class="nottickedoff">error &quot;divergent iteratee&quot;</span></span>
-<span class="lineno">  448 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  449 </span><span class="spaces">        </span><span class="istickedoff">strlen  = toEnum $ S.length x</span>
-<span class="lineno">  450 </span><span class="spaces">        </span><span class="istickedoff">(s1,s2) = S.splitAt (fromEnum n) x</span></span>
-<span class="lineno">  451 </span>
-<span class="lineno">  452 </span>
-<span class="lineno">  453 </span>------------------------------------------------------------------------------
-<span class="lineno">  454 </span>-- | Reads n bytes from a stream and applies the given iteratee to the stream
-<span class="lineno">  455 </span>-- of the read elements. Reads exactly n bytes, and if the stream is short
-<span class="lineno">  456 </span>-- propagates an error.
-<span class="lineno">  457 </span>takeExactly :: (Monad m)
-<span class="lineno">  458 </span>            =&gt; Int64
-<span class="lineno">  459 </span>            -&gt; Enumeratee ByteString ByteString m a
-<span class="lineno">  460 </span><span class="decl"><span class="istickedoff">takeExactly 0   s = do</span>
-<span class="lineno">  461 </span><span class="spaces">    </span><span class="istickedoff">s' &lt;- lift $ runIteratee $ enumEOF s</span>
-<span class="lineno">  462 </span><span class="spaces">    </span><span class="istickedoff">case s' of</span>
-<span class="lineno">  463 </span><span class="spaces">      </span><span class="istickedoff">(Continue _) -&gt; <span class="nottickedoff">error &quot;divergent iteratee&quot;</span></span>
-<span class="lineno">  464 </span><span class="spaces">      </span><span class="istickedoff">(Error e)    -&gt; <span class="nottickedoff">throwError e</span></span>
-<span class="lineno">  465 </span><span class="spaces">      </span><span class="istickedoff">(Yield v _)  -&gt; yield (Yield v <span class="nottickedoff">EOF</span>) EOF</span>
-<span class="lineno">  466 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  467 </span><span class="spaces"></span><span class="istickedoff">takeExactly !n  y@(Yield _ _ ) = <span class="nottickedoff">drop' n &gt;&gt; return y</span></span>
-<span class="lineno">  468 </span><span class="spaces"></span><span class="istickedoff">takeExactly _     (Error e   ) = <span class="nottickedoff">throwError e</span></span>
-<span class="lineno">  469 </span><span class="spaces"></span><span class="istickedoff">takeExactly !n st@(Continue k) = do</span>
-<span class="lineno">  470 </span><span class="spaces">    </span><span class="istickedoff">if <span class="tickonlyfalse">n == 0</span></span>
-<span class="lineno">  471 </span><span class="spaces">      </span><span class="istickedoff">then <span class="nottickedoff">lift $ runIteratee $ k EOF</span></span>
-<span class="lineno">  472 </span><span class="spaces">      </span><span class="istickedoff">else do</span>
-<span class="lineno">  473 </span><span class="spaces">        </span><span class="istickedoff">mbX &lt;- head</span>
-<span class="lineno">  474 </span><span class="spaces">        </span><span class="istickedoff">maybe (throwError ShortWriteException)</span>
-<span class="lineno">  475 </span><span class="spaces">              </span><span class="istickedoff">check</span>
-<span class="lineno">  476 </span><span class="spaces">              </span><span class="istickedoff">mbX</span>
-<span class="lineno">  477 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  478 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  479 </span><span class="spaces">    </span><span class="istickedoff">check x | <span class="tickonlyfalse">S.null x</span>   = <span class="nottickedoff">takeExactly n st</span></span>
-<span class="lineno">  480 </span><span class="spaces">            </span><span class="istickedoff">| strlen &lt; n = do</span>
-<span class="lineno">  481 </span><span class="spaces">                  </span><span class="istickedoff">newStep &lt;- lift $ runIteratee $ k $ Chunks [x]</span>
-<span class="lineno">  482 </span><span class="spaces">                  </span><span class="istickedoff">takeExactly (n-strlen) newStep</span>
-<span class="lineno">  483 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
-<span class="lineno">  484 </span><span class="spaces">                  </span><span class="istickedoff">step1 &lt;- lift $ runIteratee $ k $ Chunks [s1]</span>
-<span class="lineno">  485 </span><span class="spaces">                  </span><span class="istickedoff">step2 &lt;- lift $ runIteratee $ enumEOF step1</span>
-<span class="lineno">  486 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  487 </span><span class="spaces">                  </span><span class="istickedoff">case step2 of</span>
-<span class="lineno">  488 </span><span class="spaces">                    </span><span class="istickedoff">(Continue _) -&gt; <span class="nottickedoff">error &quot;divergent iteratee&quot;</span></span>
-<span class="lineno">  489 </span><span class="spaces">                    </span><span class="istickedoff">(Error e)    -&gt; <span class="nottickedoff">throwError e</span></span>
-<span class="lineno">  490 </span><span class="spaces">                    </span><span class="istickedoff">(Yield v _)  -&gt; yield (Yield v <span class="nottickedoff">EOF</span>) (Chunks [<span class="nottickedoff">s2</span>])</span>
-<span class="lineno">  491 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  492 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  493 </span><span class="spaces">        </span><span class="istickedoff">strlen  = toEnum $ S.length x</span>
-<span class="lineno">  494 </span><span class="spaces">        </span><span class="istickedoff">(s1,s2) = S.splitAt (fromEnum n) x</span></span>
-<span class="lineno">  495 </span>
-<span class="lineno">  496 </span>
-<span class="lineno">  497 </span>------------------------------------------------------------------------------
-<span class="lineno">  498 </span>takeNoMoreThan :: (Monad m) =&gt;
-<span class="lineno">  499 </span>                  Int64 -&gt; Enumeratee ByteString ByteString m a
-<span class="lineno">  500 </span><span class="decl"><span class="istickedoff">takeNoMoreThan _   y@(Yield _ _)  = <span class="nottickedoff">return y</span></span>
-<span class="lineno">  501 </span><span class="spaces"></span><span class="istickedoff">takeNoMoreThan _     (Error e  )  = <span class="nottickedoff">throwError e</span></span>
-<span class="lineno">  502 </span><span class="spaces"></span><span class="istickedoff">takeNoMoreThan !n st@(Continue k) = do</span>
-<span class="lineno">  503 </span><span class="spaces">    </span><span class="istickedoff">mbX &lt;- head</span>
-<span class="lineno">  504 </span><span class="spaces">    </span><span class="istickedoff">maybe (lift $ runIteratee $ k EOF)</span>
-<span class="lineno">  505 </span><span class="spaces">          </span><span class="istickedoff">check</span>
-<span class="lineno">  506 </span><span class="spaces">          </span><span class="istickedoff">mbX</span>
-<span class="lineno">  507 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  508 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  509 </span><span class="spaces">    </span><span class="istickedoff">check x | <span class="tickonlyfalse">S.null x</span>    = <span class="nottickedoff">takeNoMoreThan n st</span></span>
-<span class="lineno">  510 </span><span class="spaces">            </span><span class="istickedoff">| strlen &lt;= n = do</span>
-<span class="lineno">  511 </span><span class="spaces">                  </span><span class="istickedoff">newStep &lt;- lift $ runIteratee $ k $ Chunks [x]</span>
-<span class="lineno">  512 </span><span class="spaces">                  </span><span class="istickedoff">takeNoMoreThan (n-strlen) newStep</span>
-<span class="lineno">  513 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
-<span class="lineno">  514 </span><span class="spaces">                  </span><span class="istickedoff">step1 &lt;- lift $ runIteratee $ k $ Chunks [<span class="nottickedoff">s1</span>]</span>
-<span class="lineno">  515 </span><span class="spaces">                  </span><span class="istickedoff">case step1 of</span>
-<span class="lineno">  516 </span><span class="spaces">                    </span><span class="istickedoff">(Yield v rest) -&gt; <span class="nottickedoff">yield (Yield v EOF)</span></span>
-<span class="lineno">  517 </span><span class="spaces">                                            </span><span class="istickedoff"><span class="nottickedoff">(rest `mappend` Chunks [s2])</span></span>
-<span class="lineno">  518 </span><span class="spaces">                    </span><span class="istickedoff">(Error e)      -&gt; <span class="nottickedoff">throwError e</span></span>
-<span class="lineno">  519 </span><span class="spaces">                    </span><span class="istickedoff">(Continue _)   -&gt; throwError TooManyBytesReadException</span>
-<span class="lineno">  520 </span><span class="spaces">      </span><span class="istickedoff">where</span>
-<span class="lineno">  521 </span><span class="spaces">        </span><span class="istickedoff">strlen  = toEnum $ S.length x</span>
-<span class="lineno">  522 </span><span class="spaces">        </span><span class="istickedoff">(s1,s2) = <span class="nottickedoff">S.splitAt (fromEnum n) x</span></span></span>
-<span class="lineno">  523 </span>
-<span class="lineno">  524 </span>
-<span class="lineno">  525 </span>------------------------------------------------------------------------------
-<span class="lineno">  526 </span>{-# INLINE _enumFile #-}
-<span class="lineno">  527 </span>_enumFile :: FilePath
-<span class="lineno">  528 </span>          -&gt; Enumerator ByteString IO a
-<span class="lineno">  529 </span><span class="decl"><span class="nottickedoff">_enumFile fp iter = do</span>
-<span class="lineno">  530 </span><span class="spaces">    </span><span class="nottickedoff">h  &lt;- liftIO $ openBinaryFile fp ReadMode</span>
-<span class="lineno">  531 </span><span class="spaces">    </span><span class="nottickedoff">enumHandle 32678 h iter `finally` (liftIO $ hClose h)</span></span>
-<span class="lineno">  532 </span>
-<span class="lineno">  533 </span>
-<span class="lineno">  534 </span>------------------------------------------------------------------------------
-<span class="lineno">  535 </span>data InvalidRangeException = InvalidRangeException
-<span class="lineno">  536 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
-<span class="lineno">  537 </span>
-<span class="lineno">  538 </span>
-<span class="lineno">  539 </span>------------------------------------------------------------------------------
-<span class="lineno">  540 </span>instance Show InvalidRangeException where
-<span class="lineno">  541 </span>    <span class="decl"><span class="nottickedoff">show InvalidRangeException = &quot;Invalid range&quot;</span></span>
-<span class="lineno">  542 </span>
-<span class="lineno">  543 </span>
-<span class="lineno">  544 </span>------------------------------------------------------------------------------
-<span class="lineno">  545 </span>instance Exception InvalidRangeException
-<span class="lineno">  546 </span>
-<span class="lineno">  547 </span>
-<span class="lineno">  548 </span>------------------------------------------------------------------------------
-<span class="lineno">  549 </span>{-# INLINE _enumFilePartial #-}
-<span class="lineno">  550 </span>_enumFilePartial :: FilePath
-<span class="lineno">  551 </span>                 -&gt; (Int64,Int64)
-<span class="lineno">  552 </span>                 -&gt; Enumerator ByteString IO a
-<span class="lineno">  553 </span><span class="decl"><span class="nottickedoff">_enumFilePartial fp (start,end) iter = do</span>
-<span class="lineno">  554 </span><span class="spaces">    </span><span class="nottickedoff">let len = end - start</span>
-<span class="lineno">  555 </span><span class="spaces"></span><span class="nottickedoff"></span>
-<span class="lineno">  556 </span><span class="spaces">    </span><span class="nottickedoff">bracket (liftIO $ openBinaryFile fp ReadMode)</span>
-<span class="lineno">  557 </span><span class="spaces">            </span><span class="nottickedoff">(liftIO . hClose)</span>
-<span class="lineno">  558 </span><span class="spaces">            </span><span class="nottickedoff">(\h -&gt; do</span>
-<span class="lineno">  559 </span><span class="spaces">                 </span><span class="nottickedoff">unless (start == 0) $ liftIO $</span>
-<span class="lineno">  560 </span><span class="spaces">                        </span><span class="nottickedoff">hSeek h AbsoluteSeek $ toInteger start</span>
-<span class="lineno">  561 </span><span class="spaces">                 </span><span class="nottickedoff">step &lt;- lift $ runIteratee $ joinI $ takeExactly len iter</span>
-<span class="lineno">  562 </span><span class="spaces">                 </span><span class="nottickedoff">enumHandle 32678 h step)</span></span>
-<span class="lineno">  563 </span>
-<span class="lineno">  564 </span>
-<span class="lineno">  565 </span>------------------------------------------------------------------------------
-<span class="lineno">  566 </span>enumFile :: FilePath -&gt; Enumerator ByteString IO a
-<span class="lineno">  567 </span>enumFilePartial :: FilePath
-<span class="lineno">  568 </span>                -&gt; (Int64,Int64)
-<span class="lineno">  569 </span>                -&gt; Enumerator ByteString IO a
+<span class="lineno">  417 </span>instance Show ShortWriteException where
+<span class="lineno">  418 </span>    <span class="decl"><span class="istickedoff">show ShortWriteException = &quot;Short write&quot;</span></span>
+<span class="lineno">  419 </span>
+<span class="lineno">  420 </span>instance Show RateTooSlowException where
+<span class="lineno">  421 </span>    <span class="decl"><span class="istickedoff">show RateTooSlowException = &quot;Input rate too slow&quot;</span></span>
+<span class="lineno">  422 </span>
+<span class="lineno">  423 </span>instance Show TooManyBytesReadException where
+<span class="lineno">  424 </span>    <span class="decl"><span class="istickedoff">show TooManyBytesReadException = &quot;Too many bytes read&quot;</span></span>
+<span class="lineno">  425 </span>
+<span class="lineno">  426 </span>instance Exception ShortWriteException
+<span class="lineno">  427 </span>instance Exception RateTooSlowException
+<span class="lineno">  428 </span>instance Exception TooManyBytesReadException
+<span class="lineno">  429 </span>
+<span class="lineno">  430 </span>
+<span class="lineno">  431 </span>------------------------------------------------------------------------------
+<span class="lineno">  432 </span>take :: (Monad m) =&gt; Int -&gt; Enumeratee ByteString ByteString m a
+<span class="lineno">  433 </span><span class="decl"><span class="istickedoff">take k = take' (toEnum k)</span></span>
+<span class="lineno">  434 </span>
+<span class="lineno">  435 </span>
+<span class="lineno">  436 </span>------------------------------------------------------------------------------
+<span class="lineno">  437 </span>take' :: (Monad m) =&gt; Int64 -&gt; Enumeratee ByteString ByteString m a
+<span class="lineno">  438 </span><span class="decl"><span class="istickedoff">take' _ y@(Yield _ _   ) = <span class="nottickedoff">return y</span></span>
+<span class="lineno">  439 </span><span class="spaces"></span><span class="istickedoff">take' _   (Error e     ) = <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  440 </span><span class="spaces"></span><span class="istickedoff">take' !n st@(Continue k) = do</span>
+<span class="lineno">  441 </span><span class="spaces">    </span><span class="istickedoff">if n == 0</span>
+<span class="lineno">  442 </span><span class="spaces">      </span><span class="istickedoff">then lift $ runIteratee $ k EOF</span>
+<span class="lineno">  443 </span><span class="spaces">      </span><span class="istickedoff">else do</span>
+<span class="lineno">  444 </span><span class="spaces">        </span><span class="istickedoff">mbX &lt;- head</span>
+<span class="lineno">  445 </span><span class="spaces">        </span><span class="istickedoff">maybe <span class="nottickedoff">(lift $ runIteratee $ k EOF)</span></span>
+<span class="lineno">  446 </span><span class="spaces">              </span><span class="istickedoff">check</span>
+<span class="lineno">  447 </span><span class="spaces">              </span><span class="istickedoff">mbX</span>
+<span class="lineno">  448 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  449 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  450 </span><span class="spaces">    </span><span class="istickedoff">check x | <span class="tickonlyfalse">S.null x</span>    = <span class="nottickedoff">take' n st</span></span>
+<span class="lineno">  451 </span><span class="spaces">            </span><span class="istickedoff">| strlen &lt;= n = do</span>
+<span class="lineno">  452 </span><span class="spaces">                  </span><span class="istickedoff">newStep &lt;- lift $ runIteratee $ k $ Chunks [x]</span>
+<span class="lineno">  453 </span><span class="spaces">                  </span><span class="istickedoff">take' (n-strlen) newStep</span>
+<span class="lineno">  454 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
+<span class="lineno">  455 </span><span class="spaces">                  </span><span class="istickedoff">step1 &lt;- lift $ runIteratee $ k $ Chunks [s1]</span>
+<span class="lineno">  456 </span><span class="spaces">                  </span><span class="istickedoff">step2 &lt;- lift $ runIteratee $ enumEOF step1</span>
+<span class="lineno">  457 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  458 </span><span class="spaces">                  </span><span class="istickedoff">case step2 of</span>
+<span class="lineno">  459 </span><span class="spaces">                    </span><span class="istickedoff">(Yield v _)    -&gt; yield (Yield v <span class="nottickedoff">EOF</span>) (Chunks [s2])</span>
+<span class="lineno">  460 </span><span class="spaces">                    </span><span class="istickedoff">(Error e)      -&gt; <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  461 </span><span class="spaces">                    </span><span class="istickedoff">(Continue _)   -&gt; <span class="nottickedoff">error &quot;divergent iteratee&quot;</span></span>
+<span class="lineno">  462 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  463 </span><span class="spaces">        </span><span class="istickedoff">strlen  = toEnum $ S.length x</span>
+<span class="lineno">  464 </span><span class="spaces">        </span><span class="istickedoff">(s1,s2) = S.splitAt (fromEnum n) x</span></span>
+<span class="lineno">  465 </span>
+<span class="lineno">  466 </span>
+<span class="lineno">  467 </span>------------------------------------------------------------------------------
+<span class="lineno">  468 </span>-- | Reads n bytes from a stream and applies the given iteratee to the stream
+<span class="lineno">  469 </span>-- of the read elements. Reads exactly n bytes, and if the stream is short
+<span class="lineno">  470 </span>-- propagates an error.
+<span class="lineno">  471 </span>takeExactly :: (Monad m)
+<span class="lineno">  472 </span>            =&gt; Int64
+<span class="lineno">  473 </span>            -&gt; Enumeratee ByteString ByteString m a
+<span class="lineno">  474 </span><span class="decl"><span class="istickedoff">takeExactly !n  y@(Yield _ _ ) = <span class="nottickedoff">drop' n &gt;&gt; return y</span></span>
+<span class="lineno">  475 </span><span class="spaces"></span><span class="istickedoff">takeExactly _     (Error e   ) = <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  476 </span><span class="spaces"></span><span class="istickedoff">takeExactly !n st@(Continue !k) = do</span>
+<span class="lineno">  477 </span><span class="spaces">    </span><span class="istickedoff">if n == 0</span>
+<span class="lineno">  478 </span><span class="spaces">      </span><span class="istickedoff">then lift $ runIteratee $ k EOF</span>
+<span class="lineno">  479 </span><span class="spaces">      </span><span class="istickedoff">else do</span>
+<span class="lineno">  480 </span><span class="spaces">        </span><span class="istickedoff">mbX &lt;- head</span>
+<span class="lineno">  481 </span><span class="spaces">        </span><span class="istickedoff">maybe (throwError ShortWriteException)</span>
+<span class="lineno">  482 </span><span class="spaces">              </span><span class="istickedoff">check</span>
+<span class="lineno">  483 </span><span class="spaces">              </span><span class="istickedoff">mbX</span>
+<span class="lineno">  484 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  485 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  486 </span><span class="spaces">    </span><span class="istickedoff">check !x | <span class="tickonlyfalse">S.null x</span>   = <span class="nottickedoff">takeExactly n st</span></span>
+<span class="lineno">  487 </span><span class="spaces">             </span><span class="istickedoff">| strlen &lt; n = do</span>
+<span class="lineno">  488 </span><span class="spaces">                   </span><span class="istickedoff">newStep &lt;- lift $ runIteratee $ k $ Chunks [x]</span>
+<span class="lineno">  489 </span><span class="spaces">                   </span><span class="istickedoff">takeExactly (n-strlen) newStep</span>
+<span class="lineno">  490 </span><span class="spaces">             </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
+<span class="lineno">  491 </span><span class="spaces">                   </span><span class="istickedoff">let (s1,s2) = S.splitAt (fromEnum n) x</span>
+<span class="lineno">  492 </span><span class="spaces">                   </span><span class="istickedoff">!step1 &lt;- lift $ runIteratee $ k $ Chunks [s1]</span>
+<span class="lineno">  493 </span><span class="spaces">                   </span><span class="istickedoff">!step2 &lt;- lift $ runIteratee $ enumEOF step1</span>
+<span class="lineno">  494 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  495 </span><span class="spaces">                   </span><span class="istickedoff">case step2 of</span>
+<span class="lineno">  496 </span><span class="spaces">                     </span><span class="istickedoff">(Continue _) -&gt; <span class="nottickedoff">error &quot;divergent iteratee&quot;</span></span>
+<span class="lineno">  497 </span><span class="spaces">                     </span><span class="istickedoff">(Error e)    -&gt; <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  498 </span><span class="spaces">                     </span><span class="istickedoff">(Yield v _)  -&gt; yield (Yield v <span class="nottickedoff">EOF</span>) (Chunks [<span class="nottickedoff">s2</span>])</span>
+<span class="lineno">  499 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  500 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  501 </span><span class="spaces">        </span><span class="istickedoff">!strlen  = toEnum $ S.length x</span></span>
+<span class="lineno">  502 </span>
+<span class="lineno">  503 </span>
+<span class="lineno">  504 </span>------------------------------------------------------------------------------
+<span class="lineno">  505 </span>takeNoMoreThan :: (Monad m) =&gt;
+<span class="lineno">  506 </span>                  Int64 -&gt; Enumeratee ByteString ByteString m a
+<span class="lineno">  507 </span><span class="decl"><span class="istickedoff">takeNoMoreThan _   y@(Yield _ _)  = return y</span>
+<span class="lineno">  508 </span><span class="spaces"></span><span class="istickedoff">takeNoMoreThan _     (Error e  )  = <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  509 </span><span class="spaces"></span><span class="istickedoff">takeNoMoreThan !n st@(Continue k) = do</span>
+<span class="lineno">  510 </span><span class="spaces">    </span><span class="istickedoff">mbX &lt;- head</span>
+<span class="lineno">  511 </span><span class="spaces">    </span><span class="istickedoff">maybe (lift $ runIteratee $ k EOF)</span>
+<span class="lineno">  512 </span><span class="spaces">          </span><span class="istickedoff">check</span>
+<span class="lineno">  513 </span><span class="spaces">          </span><span class="istickedoff">mbX</span>
+<span class="lineno">  514 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  515 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  516 </span><span class="spaces">    </span><span class="istickedoff">check x | <span class="tickonlyfalse">S.null x</span>    = <span class="nottickedoff">takeNoMoreThan n st</span></span>
+<span class="lineno">  517 </span><span class="spaces">            </span><span class="istickedoff">| strlen &lt;= n = do</span>
+<span class="lineno">  518 </span><span class="spaces">                  </span><span class="istickedoff">newStep &lt;- lift $ runIteratee $ k $ Chunks [x]</span>
+<span class="lineno">  519 </span><span class="spaces">                  </span><span class="istickedoff">takeNoMoreThan (n-strlen) newStep</span>
+<span class="lineno">  520 </span><span class="spaces">            </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = do</span>
+<span class="lineno">  521 </span><span class="spaces">                  </span><span class="istickedoff">step1 &lt;- lift $ runIteratee $ k $ Chunks [s1]</span>
+<span class="lineno">  522 </span><span class="spaces">                  </span><span class="istickedoff">case step1 of</span>
+<span class="lineno">  523 </span><span class="spaces">                    </span><span class="istickedoff">(Yield v rest) -&gt; <span class="nottickedoff">yield (Yield v EOF)</span></span>
+<span class="lineno">  524 </span><span class="spaces">                                            </span><span class="istickedoff"><span class="nottickedoff">(rest `mappend` Chunks [s2])</span></span>
+<span class="lineno">  525 </span><span class="spaces">                    </span><span class="istickedoff">(Error e)      -&gt; <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  526 </span><span class="spaces">                    </span><span class="istickedoff">(Continue _)   -&gt; throwError TooManyBytesReadException</span>
+<span class="lineno">  527 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  528 </span><span class="spaces">        </span><span class="istickedoff">strlen  = toEnum $ S.length x</span>
+<span class="lineno">  529 </span><span class="spaces">        </span><span class="istickedoff">(s1,s2) = S.splitAt (fromEnum n) x</span></span>
+<span class="lineno">  530 </span>
+<span class="lineno">  531 </span>
+<span class="lineno">  532 </span>------------------------------------------------------------------------------
+<span class="lineno">  533 </span>{-# INLINE _enumFile #-}
+<span class="lineno">  534 </span>_enumFile :: FilePath
+<span class="lineno">  535 </span>          -&gt; Enumerator ByteString IO a
+<span class="lineno">  536 </span><span class="decl"><span class="nottickedoff">_enumFile fp iter = do</span>
+<span class="lineno">  537 </span><span class="spaces">    </span><span class="nottickedoff">h  &lt;- liftIO $ openBinaryFile fp ReadMode</span>
+<span class="lineno">  538 </span><span class="spaces">    </span><span class="nottickedoff">enumHandle 32678 h iter `finally` (liftIO $ hClose h)</span></span>
+<span class="lineno">  539 </span>
+<span class="lineno">  540 </span>
+<span class="lineno">  541 </span>------------------------------------------------------------------------------
+<span class="lineno">  542 </span>data InvalidRangeException = InvalidRangeException
+<span class="lineno">  543 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
+<span class="lineno">  544 </span>
+<span class="lineno">  545 </span>
+<span class="lineno">  546 </span>------------------------------------------------------------------------------
+<span class="lineno">  547 </span>instance Show InvalidRangeException where
+<span class="lineno">  548 </span>    <span class="decl"><span class="nottickedoff">show InvalidRangeException = &quot;Invalid range&quot;</span></span>
+<span class="lineno">  549 </span>
+<span class="lineno">  550 </span>
+<span class="lineno">  551 </span>------------------------------------------------------------------------------
+<span class="lineno">  552 </span>instance Exception InvalidRangeException
+<span class="lineno">  553 </span>
+<span class="lineno">  554 </span>
+<span class="lineno">  555 </span>------------------------------------------------------------------------------
+<span class="lineno">  556 </span>{-# INLINE _enumFilePartial #-}
+<span class="lineno">  557 </span>_enumFilePartial :: FilePath
+<span class="lineno">  558 </span>                 -&gt; (Int64,Int64)
+<span class="lineno">  559 </span>                 -&gt; Enumerator ByteString IO a
+<span class="lineno">  560 </span><span class="decl"><span class="nottickedoff">_enumFilePartial fp (start,end) iter = do</span>
+<span class="lineno">  561 </span><span class="spaces">    </span><span class="nottickedoff">let len = end - start</span>
+<span class="lineno">  562 </span><span class="spaces"></span><span class="nottickedoff"></span>
+<span class="lineno">  563 </span><span class="spaces">    </span><span class="nottickedoff">bracket (liftIO $ openBinaryFile fp ReadMode)</span>
+<span class="lineno">  564 </span><span class="spaces">            </span><span class="nottickedoff">(liftIO . hClose)</span>
+<span class="lineno">  565 </span><span class="spaces">            </span><span class="nottickedoff">(\h -&gt; do</span>
+<span class="lineno">  566 </span><span class="spaces">                 </span><span class="nottickedoff">unless (start == 0) $ liftIO $</span>
+<span class="lineno">  567 </span><span class="spaces">                        </span><span class="nottickedoff">hSeek h AbsoluteSeek $ toInteger start</span>
+<span class="lineno">  568 </span><span class="spaces">                 </span><span class="nottickedoff">step &lt;- lift $ runIteratee $ joinI $ takeExactly len iter</span>
+<span class="lineno">  569 </span><span class="spaces">                 </span><span class="nottickedoff">enumHandle 32678 h step)</span></span>
 <span class="lineno">  570 </span>
 <span class="lineno">  571 </span>
-<span class="lineno">  572 </span>#ifdef PORTABLE
-<span class="lineno">  573 </span>
-<span class="lineno">  574 </span>enumFile = _enumFile
-<span class="lineno">  575 </span>enumFilePartial fp rng@(start,end) iter = do
-<span class="lineno">  576 </span>    when (end &lt; start) $ throw InvalidRangeException
-<span class="lineno">  577 </span>    _enumFilePartial fp rng iter
+<span class="lineno">  572 </span>------------------------------------------------------------------------------
+<span class="lineno">  573 </span>enumFile :: FilePath -&gt; Enumerator ByteString IO a
+<span class="lineno">  574 </span>enumFilePartial :: FilePath
+<span class="lineno">  575 </span>                -&gt; (Int64,Int64)
+<span class="lineno">  576 </span>                -&gt; Enumerator ByteString IO a
+<span class="lineno">  577 </span>
 <span class="lineno">  578 </span>
-<span class="lineno">  579 </span>#else
+<span class="lineno">  579 </span>#ifdef PORTABLE
 <span class="lineno">  580 </span>
-<span class="lineno">  581 </span>-- 40MB limit
-<span class="lineno">  582 </span>maxMMapFileSize :: FileOffset
-<span class="lineno">  583 </span><span class="decl"><span class="istickedoff">maxMMapFileSize = 41943040</span></span>
-<span class="lineno">  584 </span>
+<span class="lineno">  581 </span>enumFile = _enumFile
+<span class="lineno">  582 </span>enumFilePartial fp rng@(start,end) iter = do
+<span class="lineno">  583 </span>    when (end &lt; start) $ throwError InvalidRangeException
+<span class="lineno">  584 </span>    _enumFilePartial fp rng iter
 <span class="lineno">  585 </span>
-<span class="lineno">  586 </span>------------------------------------------------------------------------------
-<span class="lineno">  587 </span>tooBigForMMap :: FilePath -&gt; IO Bool
-<span class="lineno">  588 </span><span class="decl"><span class="istickedoff">tooBigForMMap fp = do</span>
-<span class="lineno">  589 </span><span class="spaces">    </span><span class="istickedoff">stat &lt;- getFileStatus fp</span>
-<span class="lineno">  590 </span><span class="spaces">    </span><span class="istickedoff">return $ fileSize stat &gt; maxMMapFileSize</span></span>
+<span class="lineno">  586 </span>#else
+<span class="lineno">  587 </span>
+<span class="lineno">  588 </span>-- 40MB limit
+<span class="lineno">  589 </span>maxMMapFileSize :: FileOffset
+<span class="lineno">  590 </span><span class="decl"><span class="istickedoff">maxMMapFileSize = 41943040</span></span>
 <span class="lineno">  591 </span>
 <span class="lineno">  592 </span>
 <span class="lineno">  593 </span>------------------------------------------------------------------------------
-<span class="lineno">  594 </span><span class="decl"><span class="istickedoff">enumFile _  (Error e)    = <span class="nottickedoff">throwError e</span></span>
-<span class="lineno">  595 </span><span class="spaces"></span><span class="istickedoff">enumFile _  (Yield x _)  = <span class="nottickedoff">yield x EOF</span></span>
-<span class="lineno">  596 </span><span class="spaces"></span><span class="istickedoff">enumFile fp st@(Continue k) = do</span>
-<span class="lineno">  597 </span><span class="spaces">    </span><span class="istickedoff">-- for small files we'll use mmap to save ourselves a copy, otherwise</span>
-<span class="lineno">  598 </span><span class="spaces">    </span><span class="istickedoff">-- we'll stream it</span>
-<span class="lineno">  599 </span><span class="spaces">    </span><span class="istickedoff">tooBig &lt;- lift $ tooBigForMMap fp</span>
-<span class="lineno">  600 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  601 </span><span class="spaces">    </span><span class="istickedoff">if <span class="tickonlyfalse">tooBig</span></span>
-<span class="lineno">  602 </span><span class="spaces">      </span><span class="istickedoff">then <span class="nottickedoff">_enumFile fp st</span></span>
-<span class="lineno">  603 </span><span class="spaces">      </span><span class="istickedoff">else do</span>
-<span class="lineno">  604 </span><span class="spaces">        </span><span class="istickedoff">es &lt;- try $ lift $ unsafeMMapFile fp</span>
-<span class="lineno">  605 </span><span class="spaces">        </span><span class="istickedoff">case es of</span>
-<span class="lineno">  606 </span><span class="spaces">          </span><span class="istickedoff">(Left (e :: SomeException)) -&gt; <span class="nottickedoff">throwError e</span></span>
-<span class="lineno">  607 </span><span class="spaces">          </span><span class="istickedoff">(Right s) -&gt; k $ Chunks [s]</span></span>
-<span class="lineno">  608 </span>
-<span class="lineno">  609 </span>
-<span class="lineno">  610 </span>------------------------------------------------------------------------------
-<span class="lineno">  611 </span><span class="decl"><span class="istickedoff">enumFilePartial _ _ (Error e)   = <span class="nottickedoff">throwError e</span></span>
-<span class="lineno">  612 </span><span class="spaces"></span><span class="istickedoff">enumFilePartial _ _ (Yield x _) = <span class="nottickedoff">yield x EOF</span></span>
-<span class="lineno">  613 </span><span class="spaces"></span><span class="istickedoff">enumFilePartial fp rng@(start,end) st@(Continue k) = do</span>
-<span class="lineno">  614 </span><span class="spaces">    </span><span class="istickedoff">when (end &lt; start) $ <span class="nottickedoff">throwError InvalidRangeException</span></span>
-<span class="lineno">  615 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  616 </span><span class="spaces">    </span><span class="istickedoff">let len = end - start</span>
-<span class="lineno">  617 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  618 </span><span class="spaces">    </span><span class="istickedoff">tooBig &lt;- lift $ tooBigForMMap fp</span>
-<span class="lineno">  619 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  620 </span><span class="spaces">    </span><span class="istickedoff">if <span class="tickonlyfalse">tooBig</span></span>
-<span class="lineno">  621 </span><span class="spaces">      </span><span class="istickedoff">then <span class="nottickedoff">_enumFilePartial fp rng st</span></span>
-<span class="lineno">  622 </span><span class="spaces">      </span><span class="istickedoff">else do</span>
-<span class="lineno">  623 </span><span class="spaces">        </span><span class="istickedoff">es &lt;- try $ lift $ unsafeMMapFile fp</span>
+<span class="lineno">  594 </span>tooBigForMMap :: FilePath -&gt; IO Bool
+<span class="lineno">  595 </span><span class="decl"><span class="istickedoff">tooBigForMMap fp = do</span>
+<span class="lineno">  596 </span><span class="spaces">    </span><span class="istickedoff">stat &lt;- getFileStatus fp</span>
+<span class="lineno">  597 </span><span class="spaces">    </span><span class="istickedoff">return $ fileSize stat &gt; maxMMapFileSize</span></span>
+<span class="lineno">  598 </span>
+<span class="lineno">  599 </span>
+<span class="lineno">  600 </span>------------------------------------------------------------------------------
+<span class="lineno">  601 </span><span class="decl"><span class="istickedoff">enumFile _  (Error e)    = <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  602 </span><span class="spaces"></span><span class="istickedoff">enumFile _  (Yield x _)  = <span class="nottickedoff">yield x EOF</span></span>
+<span class="lineno">  603 </span><span class="spaces"></span><span class="istickedoff">enumFile fp st@(Continue k) = do</span>
+<span class="lineno">  604 </span><span class="spaces">    </span><span class="istickedoff">-- for small files we'll use mmap to save ourselves a copy, otherwise</span>
+<span class="lineno">  605 </span><span class="spaces">    </span><span class="istickedoff">-- we'll stream it</span>
+<span class="lineno">  606 </span><span class="spaces">    </span><span class="istickedoff">tooBig &lt;- lift $ tooBigForMMap fp</span>
+<span class="lineno">  607 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  608 </span><span class="spaces">    </span><span class="istickedoff">if <span class="tickonlyfalse">tooBig</span></span>
+<span class="lineno">  609 </span><span class="spaces">      </span><span class="istickedoff">then <span class="nottickedoff">_enumFile fp st</span></span>
+<span class="lineno">  610 </span><span class="spaces">      </span><span class="istickedoff">else do</span>
+<span class="lineno">  611 </span><span class="spaces">        </span><span class="istickedoff">es &lt;- try $ lift $ unsafeMMapFile fp</span>
+<span class="lineno">  612 </span><span class="spaces">        </span><span class="istickedoff">case es of</span>
+<span class="lineno">  613 </span><span class="spaces">          </span><span class="istickedoff">(Left (e :: SomeException)) -&gt; <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  614 </span><span class="spaces">          </span><span class="istickedoff">(Right s) -&gt; k $ Chunks [s]</span></span>
+<span class="lineno">  615 </span>
+<span class="lineno">  616 </span>
+<span class="lineno">  617 </span>------------------------------------------------------------------------------
+<span class="lineno">  618 </span><span class="decl"><span class="istickedoff">enumFilePartial _ _ (Error e)   = <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  619 </span><span class="spaces"></span><span class="istickedoff">enumFilePartial _ _ (Yield x _) = <span class="nottickedoff">yield x EOF</span></span>
+<span class="lineno">  620 </span><span class="spaces"></span><span class="istickedoff">enumFilePartial fp rng@(start,end) st@(Continue k) = do</span>
+<span class="lineno">  621 </span><span class="spaces">    </span><span class="istickedoff">when (end &lt; start) $ <span class="nottickedoff">throwError InvalidRangeException</span></span>
+<span class="lineno">  622 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  623 </span><span class="spaces">    </span><span class="istickedoff">let len = end - start</span>
 <span class="lineno">  624 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  625 </span><span class="spaces">        </span><span class="istickedoff">case es of</span>
-<span class="lineno">  626 </span><span class="spaces">          </span><span class="istickedoff">(Left (e::SomeException)) -&gt; <span class="nottickedoff">throwError e</span></span>
-<span class="lineno">  627 </span><span class="spaces">          </span><span class="istickedoff">(Right s) -&gt; k $ Chunks [ S.take (fromEnum len) $</span>
-<span class="lineno">  628 </span><span class="spaces">                                    </span><span class="istickedoff">S.drop (fromEnum start) s ]</span></span>
-<span class="lineno">  629 </span>
-<span class="lineno">  630 </span>#endif
+<span class="lineno">  625 </span><span class="spaces">    </span><span class="istickedoff">tooBig &lt;- lift $ tooBigForMMap fp</span>
+<span class="lineno">  626 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  627 </span><span class="spaces">    </span><span class="istickedoff">if <span class="tickonlyfalse">tooBig</span></span>
+<span class="lineno">  628 </span><span class="spaces">      </span><span class="istickedoff">then <span class="nottickedoff">_enumFilePartial fp rng st</span></span>
+<span class="lineno">  629 </span><span class="spaces">      </span><span class="istickedoff">else do</span>
+<span class="lineno">  630 </span><span class="spaces">        </span><span class="istickedoff">es &lt;- try $ lift $ unsafeMMapFile fp</span>
+<span class="lineno">  631 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  632 </span><span class="spaces">        </span><span class="istickedoff">case es of</span>
+<span class="lineno">  633 </span><span class="spaces">          </span><span class="istickedoff">(Left (e::SomeException)) -&gt; <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  634 </span><span class="spaces">          </span><span class="istickedoff">(Right s) -&gt; k $ Chunks [ S.take (fromEnum len) $</span>
+<span class="lineno">  635 </span><span class="spaces">                                    </span><span class="istickedoff">S.drop (fromEnum start) s ]</span></span>
+<span class="lineno">  636 </span>
+<span class="lineno">  637 </span>#endif
+<span class="lineno">  638 </span>
+<span class="lineno">  639 </span>
+<span class="lineno">  640 </span>------------------------------------------------------------------------------
+<span class="lineno">  641 </span>mapEnum :: (Monad m) =&gt;
+<span class="lineno">  642 </span>           (aOut -&gt; aIn)
+<span class="lineno">  643 </span>        -&gt; (aIn -&gt; aOut)
+<span class="lineno">  644 </span>        -&gt; Enumerator aIn m a
+<span class="lineno">  645 </span>        -&gt; Enumerator aOut m a
+<span class="lineno">  646 </span><span class="decl"><span class="istickedoff">mapEnum f g enum outStep = do</span>
+<span class="lineno">  647 </span><span class="spaces">    </span><span class="istickedoff">let z = IL.map g outStep</span>
+<span class="lineno">  648 </span><span class="spaces">    </span><span class="istickedoff">let p = joinI z</span>
+<span class="lineno">  649 </span><span class="spaces">    </span><span class="istickedoff">let q = enum $$ p</span>
+<span class="lineno">  650 </span><span class="spaces">    </span><span class="istickedoff">(I.joinI . IL.map <span class="nottickedoff">f</span>) $$ q</span></span>
+<span class="lineno">  651 </span>
+<span class="lineno">  652 </span>
+<span class="lineno">  653 </span>------------------------------------------------------------------------------
+<span class="lineno">  654 </span>mapIter :: (Monad m) =&gt;
+<span class="lineno">  655 </span>           (aOut -&gt; aIn)
+<span class="lineno">  656 </span>        -&gt; (aIn -&gt; aOut)
+<span class="lineno">  657 </span>        -&gt; Iteratee aIn m a
+<span class="lineno">  658 </span>        -&gt; Iteratee aOut m a
+<span class="lineno">  659 </span><span class="decl"><span class="istickedoff">mapIter f g iter = do</span>
+<span class="lineno">  660 </span><span class="spaces">    </span><span class="istickedoff">step &lt;- lift $ runIteratee iter</span>
+<span class="lineno">  661 </span><span class="spaces">    </span><span class="istickedoff">mapStep step</span>
+<span class="lineno">  662 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  663 </span><span class="spaces">    </span><span class="istickedoff">-- mapStep :: Step aIn m a -&gt; Iteratee aOut m a</span>
+<span class="lineno">  664 </span><span class="spaces">    </span><span class="istickedoff">mapStep (Continue k)   = continue $ wrapK k</span>
+<span class="lineno">  665 </span><span class="spaces">    </span><span class="istickedoff">mapStep (Yield x rest) = yield x <span class="nottickedoff">(fmap g rest)</span></span>
+<span class="lineno">  666 </span><span class="spaces">    </span><span class="istickedoff">mapStep (Error e)      = <span class="nottickedoff">throwError e</span></span>
+<span class="lineno">  667 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  668 </span><span class="spaces">    </span><span class="istickedoff">-- wrapK :: (Stream aIn  -&gt; Iteratee aIn m a)</span>
+<span class="lineno">  669 </span><span class="spaces">    </span><span class="istickedoff">--       -&gt; (Stream aOut -&gt; Iteratee aOut m a)</span>
+<span class="lineno">  670 </span><span class="spaces">    </span><span class="istickedoff">wrapK k streamOut = mapIter <span class="nottickedoff">f</span> <span class="nottickedoff">g</span> iterIn</span>
+<span class="lineno">  671 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  672 </span><span class="spaces">        </span><span class="istickedoff">streamIn = fmap <span class="nottickedoff">f</span> streamOut</span>
+<span class="lineno">  673 </span><span class="spaces">        </span><span class="istickedoff">iterIn   = k streamIn</span></span>
+<span class="lineno">  674 </span>
+<span class="lineno">  675 </span>
+<span class="lineno">  676 </span>------------------------------------------------------------------------------
+<span class="lineno">  677 </span>joinI' :: Monad m =&gt; Iteratee a m (Step a m b)
+<span class="lineno">  678 </span>       -&gt; Iteratee a m b
+<span class="lineno">  679 </span><span class="decl"><span class="istickedoff">joinI' outer = outer &gt;&gt;= check where</span>
+<span class="lineno">  680 </span><span class="spaces">    </span><span class="istickedoff">check (Continue k) = <span class="nottickedoff">k EOF &gt;&gt;== \s -&gt; case s of</span></span>
+<span class="lineno">  681 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">Continue _ -&gt; error &quot;joinI: divergent iteratee&quot;</span></span>
+<span class="lineno">  682 </span><span class="spaces">        </span><span class="istickedoff"><span class="nottickedoff">_ -&gt; check s</span></span>
+<span class="lineno">  683 </span><span class="spaces">    </span><span class="istickedoff">check (Yield x r) = yield x r</span>
+<span class="lineno">  684 </span><span class="spaces">    </span><span class="istickedoff">check (Error e) = <span class="nottickedoff">throwError e</span></span></span>
+<span class="lineno">  685 </span>
+<span class="lineno">  686 </span>
+<span class="lineno">  687 </span>------------------------------------------------------------------------------
+<span class="lineno">  688 </span>killIfTooSlow :: (MonadIO m) =&gt;
+<span class="lineno">  689 </span>                 m ()                     -- ^ action to bump timeout
+<span class="lineno">  690 </span>              -&gt; Double                   -- ^ minimum data rate, in bytes per
+<span class="lineno">  691 </span>                                          -- second
+<span class="lineno">  692 </span>              -&gt; Int                      -- ^ minimum amount of time to let
+<span class="lineno">  693 </span>                                          -- the iteratee run for
+<span class="lineno">  694 </span>              -&gt; Iteratee ByteString m a  -- ^ iteratee consumer to wrap
+<span class="lineno">  695 </span>              -&gt; Iteratee ByteString m a
+<span class="lineno">  696 </span><span class="decl"><span class="istickedoff">killIfTooSlow !bump !minRate !minSeconds' !inputIter = do</span>
+<span class="lineno">  697 </span><span class="spaces">    </span><span class="istickedoff">!_ &lt;- lift bump</span>
+<span class="lineno">  698 </span><span class="spaces">    </span><span class="istickedoff">startTime &lt;- liftIO getTime</span>
+<span class="lineno">  699 </span><span class="spaces">    </span><span class="istickedoff">step &lt;- lift $ runIteratee inputIter</span>
+<span class="lineno">  700 </span><span class="spaces">    </span><span class="istickedoff">wrap startTime (0::Int64) step</span>
+<span class="lineno">  701 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  702 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  703 </span><span class="spaces">    </span><span class="istickedoff">minSeconds = fromIntegral minSeconds'</span>
+<span class="lineno">  704 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  705 </span><span class="spaces">    </span><span class="istickedoff">wrap !startTime = proc</span>
+<span class="lineno">  706 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  707 </span><span class="spaces">        </span><span class="istickedoff">proc !nb (Continue !k) = continue $ cont nb k</span>
+<span class="lineno">  708 </span><span class="spaces">        </span><span class="istickedoff">proc _ !z              = <span class="nottickedoff">returnI z</span></span>
+<span class="lineno">  709 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  710 </span><span class="spaces">        </span><span class="istickedoff">cont _ !k EOF = k EOF</span>
+<span class="lineno">  711 </span><span class="spaces">        </span><span class="istickedoff">cont !nBytesRead !k !stream = do</span>
+<span class="lineno">  712 </span><span class="spaces">            </span><span class="istickedoff">let !slen = toEnum $ streamLength stream</span>
+<span class="lineno">  713 </span><span class="spaces">            </span><span class="istickedoff">now &lt;- liftIO getTime</span>
+<span class="lineno">  714 </span><span class="spaces">            </span><span class="istickedoff">let !delta = now - startTime</span>
+<span class="lineno">  715 </span><span class="spaces">            </span><span class="istickedoff">let !newBytes = nBytesRead + slen</span>
+<span class="lineno">  716 </span><span class="spaces">            </span><span class="istickedoff">when (delta &gt; minSeconds+1 &amp;&amp;</span>
+<span class="lineno">  717 </span><span class="spaces">                  </span><span class="istickedoff">fromIntegral newBytes / (delta-minSeconds) &lt; minRate) $</span>
+<span class="lineno">  718 </span><span class="spaces">              </span><span class="istickedoff">throwError RateTooSlowException</span>
+<span class="lineno">  719 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  720 </span><span class="spaces">            </span><span class="istickedoff">-- otherwise bump the timeout and continue running the iteratee</span>
+<span class="lineno">  721 </span><span class="spaces">            </span><span class="istickedoff">!_ &lt;- lift bump</span>
+<span class="lineno">  722 </span><span class="spaces">            </span><span class="istickedoff">lift (runIteratee $! k stream) &gt;&gt;= proc newBytes</span></span>
+<span class="lineno">  723 </span>
+<span class="lineno">  724 </span>
+<span class="lineno">  725 </span>------------------------------------------------------------------------------
+<span class="lineno">  726 </span>getTime :: IO Double
+<span class="lineno">  727 </span><span class="decl"><span class="istickedoff">getTime = (fromRational . toRational) `fmap` getPOSIXTime</span></span>
 
 </pre>
 </html>

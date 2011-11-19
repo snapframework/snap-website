@@ -113,7 +113,7 @@ span.spaces    { background: white }
 <span class="lineno">  102 </span>ensureFreshDate :: IO ()
 <span class="lineno">  103 </span><span class="decl"><span class="istickedoff">ensureFreshDate = block $ do</span>
 <span class="lineno">  104 </span><span class="spaces">    </span><span class="istickedoff">old &lt;- readIORef $ _valueIsOld dateState</span>
-<span class="lineno">  105 </span><span class="spaces">    </span><span class="istickedoff">tryPutMVar (_morePlease dateState) <span class="nottickedoff">()</span></span>
+<span class="lineno">  105 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- tryPutMVar (_morePlease dateState) <span class="nottickedoff">()</span></span>
 <span class="lineno">  106 </span><span class="spaces"></span><span class="istickedoff"></span>
 <span class="lineno">  107 </span><span class="spaces">    </span><span class="istickedoff">-- if the value is not fresh we will tickle the date thread but also fetch</span>
 <span class="lineno">  108 </span><span class="spaces">    </span><span class="istickedoff">-- the new value immediately; we used to block but we'll do a little extra</span>

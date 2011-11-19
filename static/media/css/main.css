@@ -5,7 +5,7 @@
  ------------------------------------------------------------------------*/
 body,html{
     font-size: 18px;
-    font-family: "Georgia", "Arial", "Helvetica", sans-serif;
+    font-family: "Georgia", serif;
     line-height: 29px;
     color:#0c1a30;
     padding:0;
@@ -198,7 +198,7 @@ td.title {
 td.summary {
     color: #222;
     font-size: 0.8em;
-    font-family: "Georgia", "Arial", "Helvetica", sans-serif;
+    font-family: "Georgia", serif;
     width:368px;
     padding-left: 12px;
     margin-bottom: 1em;
@@ -397,8 +397,7 @@ p.foundabug {
     font-size: 1.7em;
     width: 50%;
     line-height: 1.2em;
-    font-family: "PT Sans Italic";
-    letter-spacing: 0.05em;
+    font-family: "PT Sans Italic", "Gill Sans", "Arial", sans-serif;
     text-shadow: 1px 1px #DAE6F5;
     color: #1f4986;
 }
@@ -670,15 +669,6 @@ p.foundabug {
     letter-spacing: 2px;
 }
 
-#docdls dt {
-    height: 28px;
-    border-bottom: 1px dotted #C2D1E1;
-
-    font-family: "PT Sans", sans-serif;
-    letter-spacing: 2px;
-    padding: 0 5px;
-}
-
 #packages dd, #docdls dd {
     padding: 29px 0 ;
     font-size:1em;
@@ -688,6 +678,15 @@ p.foundabug {
 #packages dd{
     background: url(package.png) no-repeat center left;
     padding-left: 110px;
+}
+
+#docdls dt {
+    height: 28px;
+    border-bottom: 1px dotted #C2D1E1;
+
+    font-family: "PT Sans", sans-serif;
+    letter-spacing: 2px;
+    padding: 0 5px;
 }
 
 #docdls dd{
@@ -701,6 +700,27 @@ p.foundabug {
     margin-top: -5px;
     margin-right: 20px;
     height: 100px;
+}
+
+
+#snapletdls dd {
+    padding: 5px 10px 10px 10px;
+    font-size:1em;
+    line-height: 28px;
+    width: 100%;
+}
+
+#snapletdls dt {
+    height: 28px;
+    border-bottom: 1px dotted #C2D1E1;
+    font-family: "PT Sans", sans-serif;
+    letter-spacing: 2px;
+    padding: 0 5px;
+    color: #2c558a;
+}
+
+#snapletdls dt span {
+    float:right;
 }
 
 .small-logo{

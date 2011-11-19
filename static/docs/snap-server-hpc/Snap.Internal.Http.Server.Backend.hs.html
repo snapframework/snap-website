@@ -47,61 +47,65 @@ span.spaces    { background: white }
 <span class="lineno">   36 </span>    -&gt; Enumerator ByteString IO ()           -- ^ read end of socket
 <span class="lineno">   37 </span>    -&gt; Iteratee ByteString IO ()             -- ^ write end of socket
 <span class="lineno">   38 </span>    -&gt; (FilePath -&gt; Int64 -&gt; Int64 -&gt; IO ()) -- ^ sendfile end
-<span class="lineno">   39 </span>    -&gt; IO ()                                 -- ^ timeout tickler
+<span class="lineno">   39 </span>    -&gt; (Int -&gt; IO ())                        -- ^ timeout tickler
 <span class="lineno">   40 </span>    -&gt; IO ()
 <span class="lineno">   41 </span>
 <span class="lineno">   42 </span>
 <span class="lineno">   43 </span>------------------------------------------------------------------------------
-<span class="lineno">   44 </span>type EventLoop = [ListenSocket]                -- ^ list of ports
-<span class="lineno">   45 </span>               -&gt; Int                          -- ^ number of capabilities
-<span class="lineno">   46 </span>               -&gt; (ByteString -&gt; IO ())        -- ^ error log
-<span class="lineno">   47 </span>               -&gt; SessionHandler               -- ^ session handler
-<span class="lineno">   48 </span>               -&gt; IO ()
-<span class="lineno">   49 </span>
+<span class="lineno">   44 </span>type EventLoop = Int                       -- ^ default timeout
+<span class="lineno">   45 </span>              -&gt; [ListenSocket]            -- ^ list of ports
+<span class="lineno">   46 </span>              -&gt; Int                       -- ^ number of capabilities
+<span class="lineno">   47 </span>              -&gt; (ByteString -&gt; IO ())     -- ^ error log
+<span class="lineno">   48 </span>              -&gt; SessionHandler            -- ^ session handler
+<span class="lineno">   49 </span>              -&gt; IO ()
 <span class="lineno">   50 </span>
-<span class="lineno">   51 </span>{- For performance reasons, we do not implement this as a class
-<span class="lineno">   52 </span>class ListenSocket a where
-<span class="lineno">   53 </span>    data ListenSocketSession a :: *
-<span class="lineno">   54 </span>
-<span class="lineno">   55 </span>    listenSocket  :: a -&gt; Socket
-<span class="lineno">   56 </span>    isSecure      :: a -&gt; Bool
-<span class="lineno">   57 </span>
-<span class="lineno">   58 </span>    closePort     :: a -&gt; IO ()
-<span class="lineno">   59 </span>
-<span class="lineno">   60 </span>    createSession :: a
-<span class="lineno">   61 </span>                  -&gt; Int   -- ^ recv buffer size
-<span class="lineno">   62 </span>                  -&gt; CInt  -- ^ network socket
-<span class="lineno">   63 </span>                  -&gt; IO () -- ^ action to block waiting for handshake
-<span class="lineno">   64 </span>                  -&gt; IO (ListenSocketSession a)
-<span class="lineno">   65 </span>
-<span class="lineno">   66 </span>    endSession    :: a -&gt; ListenSocketSession a -&gt; IO ()
-<span class="lineno">   67 </span>
-<span class="lineno">   68 </span>    recv :: a
-<span class="lineno">   69 </span>         -&gt; IO ()                 -- ^ action to block waiting for data
-<span class="lineno">   70 </span>         -&gt; ListenSocketSession a  -- ^ session
-<span class="lineno">   71 </span>         -&gt; IO (Maybe ByteString)
-<span class="lineno">   72 </span>
-<span class="lineno">   73 </span>    send :: a
-<span class="lineno">   74 </span>         -&gt; IO ()                 -- ^ action to tickle the timeout
-<span class="lineno">   75 </span>         -&gt; IO ()                 -- ^ action to block waiting for data
-<span class="lineno">   76 </span>         -&gt; ListenSocketSession a  -- ^ session
-<span class="lineno">   77 </span>         -&gt; ByteString            -- ^ data to send
-<span class="lineno">   78 </span>         -&gt; IO ()
-<span class="lineno">   79 </span>-}
-<span class="lineno">   80 </span>
+<span class="lineno">   51 </span>
+<span class="lineno">   52 </span>{- For performance reasons, we do not implement this as a class
+<span class="lineno">   53 </span>class ListenSocket a where
+<span class="lineno">   54 </span>    data ListenSocketSession a :: *
+<span class="lineno">   55 </span>
+<span class="lineno">   56 </span>    listenSocket  :: a -&gt; Socket
+<span class="lineno">   57 </span>    isSecure      :: a -&gt; Bool
+<span class="lineno">   58 </span>
+<span class="lineno">   59 </span>    closePort     :: a -&gt; IO ()
+<span class="lineno">   60 </span>
+<span class="lineno">   61 </span>    createSession :: a
+<span class="lineno">   62 </span>                  -&gt; Int   -- ^ recv buffer size
+<span class="lineno">   63 </span>                  -&gt; CInt  -- ^ network socket
+<span class="lineno">   64 </span>                  -&gt; IO () -- ^ action to block waiting for handshake
+<span class="lineno">   65 </span>                  -&gt; IO (ListenSocketSession a)
+<span class="lineno">   66 </span>
+<span class="lineno">   67 </span>    endSession    :: a -&gt; ListenSocketSession a -&gt; IO ()
+<span class="lineno">   68 </span>
+<span class="lineno">   69 </span>    recv :: a
+<span class="lineno">   70 </span>         -&gt; IO ()                 -- ^ action to block waiting for data
+<span class="lineno">   71 </span>         -&gt; ListenSocketSession a  -- ^ session
+<span class="lineno">   72 </span>         -&gt; IO (Maybe ByteString)
+<span class="lineno">   73 </span>
+<span class="lineno">   74 </span>    send :: a
+<span class="lineno">   75 </span>         -&gt; IO ()                 -- ^ action to tickle the timeout
+<span class="lineno">   76 </span>         -&gt; IO ()                 -- ^ action to block waiting for data
+<span class="lineno">   77 </span>         -&gt; ListenSocketSession a  -- ^ session
+<span class="lineno">   78 </span>         -&gt; ByteString            -- ^ data to send
+<span class="lineno">   79 </span>         -&gt; IO ()
+<span class="lineno">   80 </span>-}
 <span class="lineno">   81 </span>
-<span class="lineno">   82 </span>------------------------------------------------------------------------------
-<span class="lineno">   83 </span>data ListenSocket = ListenHttp  Socket
-<span class="lineno">   84 </span>                  | ListenHttps Socket (Ptr Word) (Ptr Word)
-<span class="lineno">   85 </span>
+<span class="lineno">   82 </span>
+<span class="lineno">   83 </span>------------------------------------------------------------------------------
+<span class="lineno">   84 </span>data ListenSocket = ListenHttp  Socket
+<span class="lineno">   85 </span>                  | ListenHttps Socket (Ptr Word) (Ptr Word)
 <span class="lineno">   86 </span>
-<span class="lineno">   87 </span>------------------------------------------------------------------------------
-<span class="lineno">   88 </span>data <span class="istickedoff"><span class="nottickedoff">NetworkSession</span></span> = NetworkSession
-<span class="lineno">   89 </span>  { _socket     :: CInt
-<span class="lineno">   90 </span>  , _session    :: Ptr Word
-<span class="lineno">   91 </span>  , _recvBuffer :: Ptr CChar
-<span class="lineno">   92 </span>  , _recvLen    :: CSize
-<span class="lineno">   93 </span>  }
+<span class="lineno">   87 </span>instance Show ListenSocket where
+<span class="lineno">   88 </span>    <span class="decl"><span class="nottickedoff">show (ListenHttp s) = &quot;ListenHttp (&quot; ++ show s ++ &quot;)&quot;</span>
+<span class="lineno">   89 </span><span class="spaces">    </span><span class="nottickedoff">show (ListenHttps s _ _) = &quot;ListenHttps (&quot; ++ show s ++ &quot;)&quot;</span></span>
+<span class="lineno">   90 </span>
+<span class="lineno">   91 </span>
+<span class="lineno">   92 </span>------------------------------------------------------------------------------
+<span class="lineno">   93 </span>data <span class="nottickedoff">NetworkSession</span> = NetworkSession
+<span class="lineno">   94 </span>  { _socket     :: CInt
+<span class="lineno">   95 </span>  , _session    :: Ptr Word
+<span class="lineno">   96 </span>  , _recvLen    :: Int
+<span class="lineno">   97 </span>  }
 
 </pre>
 </html>

@@ -27,7 +27,21 @@
               <a class="book" href="docs/tutorials/heist">
                 <img src="/media/css/book.png" />
               </a>
-              A tutorial for the Heist xhtml templating library.</dd>
+              A tutorial for the Heist HTML templating library.</dd>
+
+            <dt><a href="docs/tutorials/snaplets-tutorial">Snaplets Tutorial</a></dt>
+            <dd>
+              <a class="book" href="docs/tutorials/snaplets-tutorial">
+                <img src="/media/css/book.png" />
+              </a>
+              Guide to using snaplets to build reusable web components.</dd>
+
+            <dt><a href="docs/tutorials/snaplets-design">Snaplets Design</a></dt>
+            <dd>
+              <a class="book" href="docs/tutorials/snaplets-design">
+                <img src="/media/css/book.png" />
+              </a>
+              Description of the snaplets internal design and motivation.</dd>
           </dl>
         </div>
       </div>
@@ -60,35 +74,42 @@
 
         <div id="docdls">
           <dl>
-            <dt><a href="docs/latest/snap-core/index.html">snap-core</a></dt>
+            <dt><a href="http://hackage.haskell.org/package/snap-core">snap-core</a></dt>
             <dd>
-              <a class="book" href="docs/latest/snap-core/index.html">
+              <a class="book" href="http://hackage.haskell.org/package/snap-core">
                 <img src="/media/css/book.png" />
               </a>
               Core type definitions (<tt>Snap</tt> monad, HTTP types, etc) and
               utilities for web handlers.</dd>
-            <dt><a href="docs/latest/snap-server/index.html">snap-server</a></dt>
+            <dt><a href="http://hackage.haskell.org/package/snap-server">snap-server</a></dt>
             <dd>
-              <a class="book" href="docs/latest/snap-server/index.html">
+              <a class="book" href="http://hackage.haskell.org/package/snap-server">
                 <img src="/media/css/book.png" />
               </a>
               An iteratee-based HTTP server library, which runs <tt>Snap</tt>
               web handlers.</dd>
-            <dt><a href="docs/latest/snap/index.html">snap</a></dt>
+            <dt><a href="http://hackage.haskell.org/package/snap">snap</a></dt>
             <dd>
-              <a class="book" href="docs/latest/snap/index.html">
+              <a class="book" href="http://hackage.haskell.org/package/snap">
                 <img src="/media/css/book.png" />
               </a>
               The <code>snap</code> library contains convenience functions and
               support code for the <code>snap</code> skeleton project
               generator.</dd>
-            <dt><a href="docs/latest/heist/index.html">heist</a></dt>
+            <dt><a href="http://hackage.haskell.org/package/heist">heist</a></dt>
             <dd>
-              <a class="book" href="docs/latest/heist/index.html">
+              <a class="book" href="http://hackage.haskell.org/package/heist">
                 <img src="/media/css/book.png" />
               </a>
-              An xhtml-based templating engine, allowing Haskell functions to
-              be bound to XML tags.</dd>
+              An HTML-based templating engine, allowing Haskell functions to
+              be bound to tags.</dd>
+            <dt><a href="http://hackage.haskell.org/package/xmlhtml">xmlhtml</a></dt>
+            <dd>
+              <a class="book" href="http://hackage.haskell.org/package/xmlhtml">
+                <img src="/media/css/book.png" />
+              </a>
+              A hybrid XML/HTML parsing and rendering library written
+              specifically for Heist.</dd>
           </dl>
         </div>
       </div>

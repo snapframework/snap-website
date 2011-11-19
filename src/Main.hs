@@ -1,53 +1,42 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE PackageImports #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Main where
 
-import             Data.ByteString.Char8 (ByteString)
-import qualified   Data.ByteString.Char8 as B
-import qualified   Data.Map as Map
-import             Data.Maybe
-import qualified   Data.Text as T
-import             Data.Time.Clock.POSIX
-import             Data.Typeable
-import             Control.Applicative
-import             Control.Concurrent
-import             Control.Exception (SomeException)
-import             Control.Monad
-import             Control.Monad.CatchIO
-import "monads-fd" Control.Monad.Trans
-import "monads-fd" Control.Monad.Reader
-import             Foreign.C.Types
-import             Prelude hiding (catch)
-import             Snap.Http.Server
-import             Snap.StaticPages
-import             Snap.Types
-import             Snap.Util.FileServe
-import             Snap.Util.GZip
-import             System
-import             System.Posix.Env
-import             Text.Templating.Heist
-import             Text.Templating.Heist.Splices.Static
-import qualified   Text.XHtmlCombinators.Escape as XH
-import             Text.XML.Expat.Tree hiding (Node)
+import           Control.Applicative
+import           Control.Exception (SomeException)
+import           Control.Monad
+import           Control.Monad.CatchIO
+import           Control.Monad.Trans
+import qualified Data.ByteString.Char8 as B
+import           Data.Lens.Template
+import           Data.Maybe
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.Encoding as T
+import           Data.Time.Clock.POSIX
+import           Foreign.C.Types
+import           Prelude hiding (catch)
+import           Snap.Http.Server
+import           Snap.StaticPages
+import           Snap.Core
+import           Snap.Snaplet
+import           Snap.Snaplet.Heist
+import           Snap.Util.FileServe
+import           Snap.Util.GZip
+import           Text.Templating.Heist
+import qualified Text.XHtmlCombinators.Escape as XH
 
+data App = App
+    { _heist     :: Snaplet (Heist App)
+    , _blog      :: Snaplet StaticPages
+    }
 
+makeLenses [''App]
 
-------------------------------------------------------------------------------
--- snapframework.com site state
-------------------------------------------------------------------------------
-data SiteState = SiteState {
-      _origTs         :: TemplateState Snap
-    , _currentTs      :: MVar (TemplateState Snap)
-    , _staticTagCache :: StaticTagState
-    , _blogState      :: MVar StaticPagesState
-}
-
-
-type Site a = ReaderT SiteState Snap a
-
+instance HasHeist App where heistLens = subSnaplet heist
 
 epochTime :: IO CTime
 epochTime = do
@@ -55,97 +44,35 @@ epochTime = do
     return $ fromInteger $ truncate t
 
 
-initSiteState :: IO SiteState
-initSiteState = do
-    setLocaleToUTF8
-
-    (origTs,staticState) <- bindStaticTag .
-                            bindSplice "snap-version" serverVersion
-                            $ emptyTemplateState "templates"
-
-    ets <- loadTemplates "templates" origTs
-    let ts = either error id ets
-    either (\s -> putStrLn (loadError s) >> exitFailure) (const $ return ()) ets
-    tsMVar <- newMVar $ ts
-
-    bs <- loadStaticPages' ts "blogdata"
-
-    return $ SiteState origTs tsMVar staticState bs
+description :: Text
+description = "The snapframework.com website"
 
 
-data ReloadException = ReloadException String
-  deriving (Show, Typeable)
-
-instance Exception ReloadException
-
-
-reloadSiteState :: SiteState -> IO ()
-reloadSiteState ss = do
-    clearStaticTagCache $ _staticTagCache ss
-    ts <- loadTemplates "templates" $ _origTs ss
-    tt <- either (\msg -> throw $ ReloadException $ loadError msg)
-                 (\t -> do
-                      modifyMVar_ (_currentTs ss) (const $ return t)
-                      return t)
-                 ts
-    reloadStaticPages' tt $ _blogState ss
+appInit :: SnapletInit App App
+appInit = makeSnaplet "snap-website" description Nothing $ do
+    hs <- nestSnaplet "" heist $ heistInit "templates"
+    bs <- nestSnaplet "blog" blog $ staticPagesInit "blogdata"
+    addSplices [ ("snap-version", serverVersion)
+               , ("feed-autodiscovery-link", liftHeist $ textSplice "")
+               ]
+    wrapHandlers (\h -> catch500 $ withCompression $
+                        h <|> setCache (serveDirectory "static"))
+    return $ App hs bs
 
 
-------------------------------------------------------------------------------
--- General purpose code.  This code will eventually get moved into Snap once
--- we have a good place to put it.
-------------------------------------------------------------------------------
-
-------------------------------------------------------------------------------
--- |
-renderTmpl :: MVar (TemplateState Snap)
-           -> ByteString
-           -> Snap ()
-renderTmpl tsMVar n = do
-    ts <- liftIO $ readMVar tsMVar
-    maybe pass writeBS =<< renderTemplate ts n
+setCache :: MonadSnap m => m a -> m ()
+setCache act = do
+    pinfo <- liftM rqPathInfo getRequest
+    act
+    when ("media" `B.isPrefixOf` pinfo) $ do
+       expTime <- liftM (+604800) $ liftIO epochTime
+       s       <- liftIO $ formatHttpTime expTime
+       modifyResponse $
+          setHeader "Cache-Control" "public, max-age=604800" .
+          setHeader "Expires" s
 
 
-templateServe :: MVar (TemplateState Snap)
-              -> Snap ()
-templateServe tsMVar = do
-    p
-    modifyResponse $ setContentType "text/html"
-
-  where
-    p = ifTop (renderTmpl tsMVar "index") <|>
-        (renderTmpl tsMVar . B.pack =<< getSafePath)
-
-
-loadError :: String -> String
-loadError str = "Error loading templates\n"++str
-
-
-
-------------------------------------------------------------------------------
--- handlers
-------------------------------------------------------------------------------
-site :: SiteState -> Snap ()
-site ss =
-    catch500 $ withCompression $
-        route [ ("docs/api", runReaderT apidoc ss)
-              , ("admin/reload", runReaderT reload ss)
-              , ("blog/", serveStaticPages (_blogState ss)) ] <|>
-        templateServe (_currentTs ss) <|>
-        (setCache $ fileServe "static")
-
-  where
-    setCache act = do
-        pi <- liftM rqPathInfo getRequest
-        act
-        when ("media" `B.isPrefixOf` pi) $ do
-           expTime <- liftM (+604800) $ liftIO epochTime
-           s       <- liftIO $ formatHttpTime expTime
-           modifyResponse $
-              setHeader "Cache-Control" "public, max-age=604800" .
-              setHeader "Expires" s
-
-catch500 :: Snap a -> Snap ()
+catch500 :: MonadSnap m => m a -> m ()
 catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
     let t = T.pack $ show e
     putResponse r
@@ -161,84 +88,11 @@ catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
     r = setContentType "text/html" $
         setResponseStatus 500 "Internal Server Error" emptyResponse
 
-reload :: Site ()
-reload = do
-    e <- try (ask >>= liftIO . reloadSiteState)
-    lift $ do
-        either bad good e
-        modifyResponse $ setContentType "text/plain; charset=utf-8"
 
-  where
-    bad :: SomeException -> Snap ()
-    bad msg = writeBS $ B.pack $ loadError (show msg) ++ "Keeping old templates."
-    good _ = writeBS "Templates loaded successfully"
+serverVersion :: SnapletSplice b v
+serverVersion = liftHeist $ textSplice $ T.decodeUtf8 snapServerVersion
 
 
-apidoc :: Site ()
-apidoc = do
-    ss <- ask
-
-    lift $ do
-        ts <- liftIO $ readMVar $ _currentTs ss
-        -- remainder of pathInfo is the doc to lookup
-        whichDoc <- liftM rqPathInfo getRequest
-
-        title <- maybe pass return $ Map.lookup whichDoc titles
-        let href = B.concat ["/docs/latest/", whichDoc, "/index.html"]
-
-        let ts' = bindSplice "docframe" (docframe href) $
-                  bindSplice "subtitle" (return [mkText title]) ts
-
-        modifyResponse $ setContentType "text/html"
-        maybe pass writeBS =<< renderTemplate ts' "docs/api"
-
-  where
-    titles = Map.fromList [ ("snap-core", ": snap-core APIs")
-                          , ("snap-server", ": snap-server APIs")
-                          , ("heist", ": heist APIs") ]
-
-    docframe :: ByteString -> Splice Snap
-    docframe src = return [ mkElement "frame" [ ("id" , "docframe")
-                                              , ("src", src       ) ] [] ]
-
-
-
-
-
-------------------------------------------------------------------------------
--- MISC UTILITIES
-------------------------------------------------------------------------------
-serverVersion :: Splice Snap
-serverVersion = return $ [Text snapServerVersion]
-
-
-setLocaleToUTF8 :: IO ()
-setLocaleToUTF8 = do
-    mapM_ (\k -> setEnv k "en_US.UTF-8" True)
-          [ "LANG"
-          , "LC_CTYPE"
-          , "LC_NUMERIC"
-          , "LC_TIME"
-          , "LC_COLLATE"
-          , "LC_MONETARY"
-          , "LC_MESSAGES"
-          , "LC_PAPER"
-          , "LC_NAME"
-          , "LC_ADDRESS"
-          , "LC_TELEPHONE"
-          , "LC_MEASUREMENT"
-          , "LC_IDENTIFICATION"
-          , "LC_ALL" ]
-
-
-------------------------------------------------------------------------------
--- main
-------------------------------------------------------------------------------
 main :: IO ()
-main = do
-    ss <- initSiteState
+main = serveSnaplet defaultConfig appInit
 
-    quickHttpServe (site ss)
-
-    putStrLn "exiting"
-    return ()

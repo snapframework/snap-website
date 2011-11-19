@@ -24,203 +24,200 @@ span.spaces    { background: white }
 <span class="lineno">   13 </span>
 <span class="lineno">   14 </span>
 <span class="lineno">   15 </span>------------------------------------------------------------------------------
-<span class="lineno">   16 </span>import           Control.Concurrent
-<span class="lineno">   17 </span>import           Control.Exception
-<span class="lineno">   18 </span>import           Control.Monad
-<span class="lineno">   19 </span>import           Data.ByteString.Char8 (ByteString)
-<span class="lineno">   20 </span>import qualified Data.ByteString.Char8 as S
+<span class="lineno">   16 </span>import           Blaze.ByteString.Builder
+<span class="lineno">   17 </span>import           Blaze.ByteString.Builder.Char.Utf8
+<span class="lineno">   18 </span>import           Control.Concurrent
+<span class="lineno">   19 </span>import           Control.Exception
+<span class="lineno">   20 </span>import           Data.ByteString.Char8 (ByteString)
 <span class="lineno">   21 </span>import qualified Data.ByteString.Lazy.Char8 as L
 <span class="lineno">   22 </span>import           Data.ByteString.Internal (c2w)
-<span class="lineno">   23 </span>import           Data.DList (DList)
-<span class="lineno">   24 </span>import qualified Data.DList as D
-<span class="lineno">   25 </span>import           Data.Int
-<span class="lineno">   26 </span>import           Data.IORef
-<span class="lineno">   27 </span>import           Data.Maybe
-<span class="lineno">   28 </span>import           Data.Serialize.Put
-<span class="lineno">   29 </span>import           Prelude hiding (catch, show)
-<span class="lineno">   30 </span>import qualified Prelude
-<span class="lineno">   31 </span>import           System.IO
-<span class="lineno">   32 </span>import           Text.Show.ByteString hiding (runPut)
-<span class="lineno">   33 </span>
-<span class="lineno">   34 </span>import           Snap.Internal.Http.Server.Date
-<span class="lineno">   35 </span>
-<span class="lineno">   36 </span>
-<span class="lineno">   37 </span>------------------------------------------------------------------------------
-<span class="lineno">   38 </span>-- | Holds the state for a logger.
-<span class="lineno">   39 </span>data <span class="istickedoff"><span class="nottickedoff"><span class="istickedoff">Logger</span></span></span> = Logger
-<span class="lineno">   40 </span>    { _queuedMessages :: !(IORef (DList ByteString))
-<span class="lineno">   41 </span>    , _dataWaiting    :: !(MVar ())
-<span class="lineno">   42 </span>    , _loggerPath     :: !(FilePath)
-<span class="lineno">   43 </span>    , _loggingThread  :: !(MVar ThreadId) }
-<span class="lineno">   44 </span>
-<span class="lineno">   45 </span>
-<span class="lineno">   46 </span>------------------------------------------------------------------------------
-<span class="lineno">   47 </span>-- | Creates a new logger, logging to the given file. If the file argument is
-<span class="lineno">   48 </span>-- \&quot;-\&quot;, then log to stdout; if it's \&quot;stderr\&quot; then we log to stderr,
-<span class="lineno">   49 </span>-- otherwise we log to a regular file in append mode. The file is closed and
-<span class="lineno">   50 </span>-- re-opened every 15 minutes to facilitate external log rotation.
-<span class="lineno">   51 </span>newLogger :: FilePath -&gt; IO Logger
-<span class="lineno">   52 </span><span class="decl"><span class="istickedoff">newLogger fp = do</span>
-<span class="lineno">   53 </span><span class="spaces">    </span><span class="istickedoff">q  &lt;- newIORef D.empty</span>
-<span class="lineno">   54 </span><span class="spaces">    </span><span class="istickedoff">dw &lt;- newEmptyMVar</span>
-<span class="lineno">   55 </span><span class="spaces">    </span><span class="istickedoff">th &lt;- newEmptyMVar</span>
-<span class="lineno">   56 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   57 </span><span class="spaces">    </span><span class="istickedoff">let lg = Logger q dw fp th</span>
-<span class="lineno">   58 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   59 </span><span class="spaces">    </span><span class="istickedoff">tid &lt;- forkIO $ loggingThread lg</span>
-<span class="lineno">   60 </span><span class="spaces">    </span><span class="istickedoff">putMVar th tid</span>
-<span class="lineno">   61 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   62 </span><span class="spaces">    </span><span class="istickedoff">return lg</span></span>
-<span class="lineno">   63 </span>
-<span class="lineno">   64 </span>
-<span class="lineno">   65 </span>------------------------------------------------------------------------------
-<span class="lineno">   66 </span>-- | Prepares a log message with the time prepended.
-<span class="lineno">   67 </span>timestampedLogEntry :: ByteString -&gt; IO ByteString
-<span class="lineno">   68 </span><span class="decl"><span class="istickedoff">timestampedLogEntry msg = do</span>
-<span class="lineno">   69 </span><span class="spaces">    </span><span class="istickedoff">timeStr &lt;- getLogDateString</span>
-<span class="lineno">   70 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   71 </span><span class="spaces">    </span><span class="istickedoff">return $! runPut $! do</span>
-<span class="lineno">   72 </span><span class="spaces">        </span><span class="istickedoff">putWord8 $ c2w '['</span>
-<span class="lineno">   73 </span><span class="spaces">        </span><span class="istickedoff">putByteString timeStr</span>
-<span class="lineno">   74 </span><span class="spaces">        </span><span class="istickedoff">putByteString &quot;] &quot;</span>
-<span class="lineno">   75 </span><span class="spaces">        </span><span class="istickedoff">putByteString msg</span></span>
-<span class="lineno">   76 </span>
-<span class="lineno">   77 </span>
-<span class="lineno">   78 </span>------------------------------------------------------------------------------
-<span class="lineno">   79 </span>-- | Prepares a log message in \&quot;combined\&quot; format.
-<span class="lineno">   80 </span>combinedLogEntry :: ByteString        -- ^ remote host
-<span class="lineno">   81 </span>                 -&gt; Maybe ByteString  -- ^ remote user
-<span class="lineno">   82 </span>                 -&gt; ByteString        -- ^ request line (up to you to ensure
+<span class="lineno">   23 </span>import           Data.Int
+<span class="lineno">   24 </span>import           Data.IORef
+<span class="lineno">   25 </span>import           Data.Monoid
+<span class="lineno">   26 </span>import           System.IO
+<span class="lineno">   27 </span>
+<span class="lineno">   28 </span>import           Snap.Internal.Http.Server.Date
+<span class="lineno">   29 </span>
+<span class="lineno">   30 </span>
+<span class="lineno">   31 </span>------------------------------------------------------------------------------
+<span class="lineno">   32 </span>-- | Holds the state for a logger.
+<span class="lineno">   33 </span>data <span class="istickedoff"><span class="nottickedoff"><span class="istickedoff">Logger</span></span></span> = Logger
+<span class="lineno">   34 </span>    { _queuedMessages :: !(IORef Builder)
+<span class="lineno">   35 </span>    , _dataWaiting    :: !(MVar ())
+<span class="lineno">   36 </span>    , _loggerPath     :: !(FilePath)
+<span class="lineno">   37 </span>    , _loggingThread  :: !(MVar ThreadId) }
+<span class="lineno">   38 </span>
+<span class="lineno">   39 </span>
+<span class="lineno">   40 </span>------------------------------------------------------------------------------
+<span class="lineno">   41 </span>-- | Creates a new logger, logging to the given file. If the file argument is
+<span class="lineno">   42 </span>-- \&quot;-\&quot;, then log to stdout; if it's \&quot;stderr\&quot; then we log to stderr,
+<span class="lineno">   43 </span>-- otherwise we log to a regular file in append mode. The file is closed and
+<span class="lineno">   44 </span>-- re-opened every 15 minutes to facilitate external log rotation.
+<span class="lineno">   45 </span>newLogger :: FilePath -&gt; IO Logger
+<span class="lineno">   46 </span><span class="decl"><span class="istickedoff">newLogger fp = do</span>
+<span class="lineno">   47 </span><span class="spaces">    </span><span class="istickedoff">q  &lt;- newIORef mempty</span>
+<span class="lineno">   48 </span><span class="spaces">    </span><span class="istickedoff">dw &lt;- newEmptyMVar</span>
+<span class="lineno">   49 </span><span class="spaces">    </span><span class="istickedoff">th &lt;- newEmptyMVar</span>
+<span class="lineno">   50 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   51 </span><span class="spaces">    </span><span class="istickedoff">let lg = Logger q dw fp th</span>
+<span class="lineno">   52 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   53 </span><span class="spaces">    </span><span class="istickedoff">tid &lt;- forkIO $ loggingThread lg</span>
+<span class="lineno">   54 </span><span class="spaces">    </span><span class="istickedoff">putMVar th tid</span>
+<span class="lineno">   55 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   56 </span><span class="spaces">    </span><span class="istickedoff">return lg</span></span>
+<span class="lineno">   57 </span>
+<span class="lineno">   58 </span>
+<span class="lineno">   59 </span>------------------------------------------------------------------------------
+<span class="lineno">   60 </span>-- | Prepares a log message with the time prepended.
+<span class="lineno">   61 </span>timestampedLogEntry :: ByteString -&gt; IO ByteString
+<span class="lineno">   62 </span><span class="decl"><span class="istickedoff">timestampedLogEntry msg = do</span>
+<span class="lineno">   63 </span><span class="spaces">    </span><span class="istickedoff">timeStr &lt;- getLogDateString</span>
+<span class="lineno">   64 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   65 </span><span class="spaces">    </span><span class="istickedoff">return $! toByteString</span>
+<span class="lineno">   66 </span><span class="spaces">           </span><span class="istickedoff">$! mconcat [ fromWord8 $ c2w '['</span>
+<span class="lineno">   67 </span><span class="spaces">                      </span><span class="istickedoff">, fromByteString timeStr</span>
+<span class="lineno">   68 </span><span class="spaces">                      </span><span class="istickedoff">, fromByteString &quot;] &quot;</span>
+<span class="lineno">   69 </span><span class="spaces">                      </span><span class="istickedoff">, fromByteString msg ]</span></span>
+<span class="lineno">   70 </span>
+<span class="lineno">   71 </span>
+<span class="lineno">   72 </span>------------------------------------------------------------------------------
+<span class="lineno">   73 </span>-- | Prepares a log message in \&quot;combined\&quot; format.
+<span class="lineno">   74 </span>combinedLogEntry :: ByteString        -- ^ remote host
+<span class="lineno">   75 </span>                 -&gt; Maybe ByteString  -- ^ remote user
+<span class="lineno">   76 </span>                 -&gt; ByteString        -- ^ request line (up to you to ensure
+<span class="lineno">   77 </span>                                      --   there are no quotes in here)
+<span class="lineno">   78 </span>                 -&gt; Int               -- ^ status code
+<span class="lineno">   79 </span>                 -&gt; Maybe Int64       -- ^ num bytes sent
+<span class="lineno">   80 </span>                 -&gt; Maybe ByteString  -- ^ referer (up to you to ensure
+<span class="lineno">   81 </span>                                      --   there are no quotes in here)
+<span class="lineno">   82 </span>                 -&gt; ByteString        -- ^ user agent (up to you to ensure
 <span class="lineno">   83 </span>                                      --   there are no quotes in here)
-<span class="lineno">   84 </span>                 -&gt; Int               -- ^ status code
-<span class="lineno">   85 </span>                 -&gt; Maybe Int64       -- ^ num bytes sent
-<span class="lineno">   86 </span>                 -&gt; Maybe ByteString  -- ^ referer (up to you to ensure
-<span class="lineno">   87 </span>                                      --   there are no quotes in here)
-<span class="lineno">   88 </span>                 -&gt; ByteString        -- ^ user agent (up to you to ensure
-<span class="lineno">   89 </span>                                      --   there are no quotes in here)
-<span class="lineno">   90 </span>                 -&gt; IO ByteString
-<span class="lineno">   91 </span><span class="decl"><span class="istickedoff">combinedLogEntry !host !mbUser !req !status !mbNumBytes !mbReferer !ua = do</span>
-<span class="lineno">   92 </span><span class="spaces">    </span><span class="istickedoff">let user = fromMaybe &quot;-&quot; mbUser</span>
-<span class="lineno">   93 </span><span class="spaces">    </span><span class="istickedoff">let numBytes = maybe &quot;-&quot; (\s -&gt; strict $ show s) mbNumBytes</span>
-<span class="lineno">   94 </span><span class="spaces">    </span><span class="istickedoff">let referer = maybe &quot;-&quot; <span class="nottickedoff">(\s -&gt; S.concat [&quot;\&quot;&quot;, s, &quot;\&quot;&quot;])</span> mbReferer</span>
-<span class="lineno">   95 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   96 </span><span class="spaces">    </span><span class="istickedoff">timeStr &lt;- getLogDateString</span>
-<span class="lineno">   97 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   98 </span><span class="spaces">    </span><span class="istickedoff">let !p = [ host</span>
-<span class="lineno">   99 </span><span class="spaces">             </span><span class="istickedoff">, &quot; - &quot;</span>
-<span class="lineno">  100 </span><span class="spaces">             </span><span class="istickedoff">, user</span>
-<span class="lineno">  101 </span><span class="spaces">             </span><span class="istickedoff">, &quot; [&quot;</span>
-<span class="lineno">  102 </span><span class="spaces">             </span><span class="istickedoff">, timeStr</span>
-<span class="lineno">  103 </span><span class="spaces">             </span><span class="istickedoff">, &quot;] \&quot;&quot;</span>
-<span class="lineno">  104 </span><span class="spaces">             </span><span class="istickedoff">, req</span>
-<span class="lineno">  105 </span><span class="spaces">             </span><span class="istickedoff">, &quot;\&quot; &quot;</span>
-<span class="lineno">  106 </span><span class="spaces">             </span><span class="istickedoff">, strict $ show status</span>
-<span class="lineno">  107 </span><span class="spaces">             </span><span class="istickedoff">, &quot; &quot;</span>
-<span class="lineno">  108 </span><span class="spaces">             </span><span class="istickedoff">, numBytes</span>
-<span class="lineno">  109 </span><span class="spaces">             </span><span class="istickedoff">, &quot; &quot;</span>
-<span class="lineno">  110 </span><span class="spaces">             </span><span class="istickedoff">, referer</span>
-<span class="lineno">  111 </span><span class="spaces">             </span><span class="istickedoff">, &quot; \&quot;&quot;</span>
-<span class="lineno">  112 </span><span class="spaces">             </span><span class="istickedoff">, ua</span>
-<span class="lineno">  113 </span><span class="spaces">             </span><span class="istickedoff">, &quot;\&quot;&quot; ]</span>
-<span class="lineno">  114 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  115 </span><span class="spaces">    </span><span class="istickedoff">let !output = S.concat p</span>
-<span class="lineno">  116 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  117 </span><span class="spaces">    </span><span class="istickedoff">return $! output</span>
-<span class="lineno">  118 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  119 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  120 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  121 </span><span class="spaces">    </span><span class="istickedoff">strict = S.concat . L.toChunks</span></span>
-<span class="lineno">  122 </span>
-<span class="lineno">  123 </span>
-<span class="lineno">  124 </span>------------------------------------------------------------------------------
-<span class="lineno">  125 </span>-- | Sends out a log message verbatim with a newline appended. Note:
-<span class="lineno">  126 </span>-- if you want a fancy log message you'll have to format it yourself
-<span class="lineno">  127 </span>-- (or use 'combinedLogEntry').
-<span class="lineno">  128 </span>logMsg :: Logger -&gt; ByteString -&gt; IO ()
-<span class="lineno">  129 </span><span class="decl"><span class="istickedoff">logMsg !lg !s = do</span>
-<span class="lineno">  130 </span><span class="spaces">    </span><span class="istickedoff">let !s' = S.snoc s '\n'</span>
-<span class="lineno">  131 </span><span class="spaces">    </span><span class="istickedoff">atomicModifyIORef (_queuedMessages lg) $ \d -&gt; (D.snoc d s',<span class="nottickedoff">()</span>)</span>
-<span class="lineno">  132 </span><span class="spaces">    </span><span class="istickedoff">tryPutMVar (_dataWaiting lg) <span class="nottickedoff">()</span> &gt;&gt; return <span class="nottickedoff">()</span></span></span>
-<span class="lineno">  133 </span>
-<span class="lineno">  134 </span>
-<span class="lineno">  135 </span>------------------------------------------------------------------------------
-<span class="lineno">  136 </span>loggingThread :: Logger -&gt; IO ()
-<span class="lineno">  137 </span><span class="decl"><span class="istickedoff">loggingThread (Logger queue notifier filePath _) = do</span>
-<span class="lineno">  138 </span><span class="spaces">    </span><span class="istickedoff">initialize &gt;&gt;= go</span>
-<span class="lineno">  139 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  140 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  141 </span><span class="spaces">    </span><span class="istickedoff">openIt = if <span class="tickonlyfalse">filePath == &quot;-&quot;</span></span>
-<span class="lineno">  142 </span><span class="spaces">               </span><span class="istickedoff">then <span class="nottickedoff">return stdout</span></span>
-<span class="lineno">  143 </span><span class="spaces">               </span><span class="istickedoff">else if <span class="tickonlyfalse">filePath == &quot;stderr&quot;</span></span>
-<span class="lineno">  144 </span><span class="spaces">                      </span><span class="istickedoff">then <span class="nottickedoff">return stderr</span></span>
-<span class="lineno">  145 </span><span class="spaces">                      </span><span class="istickedoff">else openFile filePath AppendMode</span>
-<span class="lineno">  146 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  147 </span><span class="spaces">    </span><span class="istickedoff">closeIt h = if <span class="tickonlyfalse">filePath == &quot;-&quot; || filePath == &quot;stderr&quot;</span></span>
-<span class="lineno">  148 </span><span class="spaces">                  </span><span class="istickedoff">then <span class="nottickedoff">return ()</span></span>
-<span class="lineno">  149 </span><span class="spaces">                  </span><span class="istickedoff">else hClose h</span>
-<span class="lineno">  150 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  151 </span><span class="spaces">    </span><span class="istickedoff">go (href, lastOpened) =</span>
-<span class="lineno">  152 </span><span class="spaces">        </span><span class="istickedoff">(loop (href, lastOpened))</span>
-<span class="lineno">  153 </span><span class="spaces">          </span><span class="istickedoff">`catches`</span>
-<span class="lineno">  154 </span><span class="spaces">          </span><span class="istickedoff">[ Handler $ \(_::AsyncException) -&gt; killit (href, lastOpened)</span>
-<span class="lineno">  155 </span><span class="spaces">          </span><span class="istickedoff">, <span class="nottickedoff">Handler $ \(e::SomeException)  -&gt; do</span></span>
-<span class="lineno">  156 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">hPutStrLn stderr $ &quot;logger got exception: &quot; ++ Prelude.show e</span></span>
-<span class="lineno">  157 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">threadDelay 20000000</span></span>
-<span class="lineno">  158 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">go (href, lastOpened)</span> ]</span>
-<span class="lineno">  159 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  160 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  161 </span><span class="spaces">    </span><span class="istickedoff">initialize = do</span>
-<span class="lineno">  162 </span><span class="spaces">        </span><span class="istickedoff">lh   &lt;- openIt</span>
-<span class="lineno">  163 </span><span class="spaces">        </span><span class="istickedoff">href &lt;- newIORef lh</span>
-<span class="lineno">  164 </span><span class="spaces">        </span><span class="istickedoff">t    &lt;- getCurrentDateTime</span>
-<span class="lineno">  165 </span><span class="spaces">        </span><span class="istickedoff">tref &lt;- newIORef t</span>
-<span class="lineno">  166 </span><span class="spaces">        </span><span class="istickedoff">return (href, tref)</span>
-<span class="lineno">  167 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  168 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  169 </span><span class="spaces">    </span><span class="istickedoff">killit (href, lastOpened) = do</span>
-<span class="lineno">  170 </span><span class="spaces">        </span><span class="istickedoff">flushIt (href, lastOpened)</span>
-<span class="lineno">  171 </span><span class="spaces">        </span><span class="istickedoff">h &lt;- readIORef href</span>
-<span class="lineno">  172 </span><span class="spaces">        </span><span class="istickedoff">closeIt h</span>
-<span class="lineno">  173 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  174 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  175 </span><span class="spaces">    </span><span class="istickedoff">flushIt (!href, !lastOpened) = do</span>
-<span class="lineno">  176 </span><span class="spaces">        </span><span class="istickedoff">dl &lt;- atomicModifyIORef queue $ \x -&gt; (D.empty,x)</span>
-<span class="lineno">  177 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  178 </span><span class="spaces">        </span><span class="istickedoff">let !msgs = D.toList dl</span>
-<span class="lineno">  179 </span><span class="spaces">        </span><span class="istickedoff">let !s = L.fromChunks msgs</span>
-<span class="lineno">  180 </span><span class="spaces">        </span><span class="istickedoff">h &lt;- readIORef href</span>
-<span class="lineno">  181 </span><span class="spaces">        </span><span class="istickedoff">L.hPut h s</span>
-<span class="lineno">  182 </span><span class="spaces">        </span><span class="istickedoff">hFlush h</span>
-<span class="lineno">  183 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  184 </span><span class="spaces">        </span><span class="istickedoff">-- close the file every 15 minutes (for log rotation)</span>
-<span class="lineno">  185 </span><span class="spaces">        </span><span class="istickedoff">t &lt;- getCurrentDateTime</span>
-<span class="lineno">  186 </span><span class="spaces">        </span><span class="istickedoff">old &lt;- readIORef lastOpened</span>
-<span class="lineno">  187 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  188 </span><span class="spaces">        </span><span class="istickedoff">if <span class="tickonlyfalse">t-old &gt; 900</span></span>
-<span class="lineno">  189 </span><span class="spaces">          </span><span class="istickedoff">then <span class="nottickedoff">do</span></span>
-<span class="lineno">  190 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">closeIt h</span></span>
-<span class="lineno">  191 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">openIt &gt;&gt;= writeIORef href</span></span>
-<span class="lineno">  192 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">writeIORef lastOpened t</span></span>
-<span class="lineno">  193 </span><span class="spaces">          </span><span class="istickedoff">else return <span class="nottickedoff">()</span></span>
-<span class="lineno">  194 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  195 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  196 </span><span class="spaces">    </span><span class="istickedoff">loop !d = do</span>
-<span class="lineno">  197 </span><span class="spaces">        </span><span class="istickedoff">-- wait on the notification mvar</span>
-<span class="lineno">  198 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- takeMVar notifier</span>
+<span class="lineno">   84 </span>                 -&gt; IO ByteString
+<span class="lineno">   85 </span><span class="decl"><span class="istickedoff">combinedLogEntry !host !mbUser !req !status !mbNumBytes !mbReferer !ua = do</span>
+<span class="lineno">   86 </span><span class="spaces">    </span><span class="istickedoff">timeStr &lt;- getLogDateString</span>
+<span class="lineno">   87 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   88 </span><span class="spaces">    </span><span class="istickedoff">let !l = [ fromByteString host</span>
+<span class="lineno">   89 </span><span class="spaces">             </span><span class="istickedoff">, fromByteString &quot; - &quot;</span>
+<span class="lineno">   90 </span><span class="spaces">             </span><span class="istickedoff">, user</span>
+<span class="lineno">   91 </span><span class="spaces">             </span><span class="istickedoff">, fromByteString &quot; [&quot;</span>
+<span class="lineno">   92 </span><span class="spaces">             </span><span class="istickedoff">, fromByteString timeStr</span>
+<span class="lineno">   93 </span><span class="spaces">             </span><span class="istickedoff">, fromByteString &quot;] \&quot;&quot;</span>
+<span class="lineno">   94 </span><span class="spaces">             </span><span class="istickedoff">, fromByteString req</span>
+<span class="lineno">   95 </span><span class="spaces">             </span><span class="istickedoff">, fromByteString &quot;\&quot; &quot;</span>
+<span class="lineno">   96 </span><span class="spaces">             </span><span class="istickedoff">, fromShow status</span>
+<span class="lineno">   97 </span><span class="spaces">             </span><span class="istickedoff">, space</span>
+<span class="lineno">   98 </span><span class="spaces">             </span><span class="istickedoff">, numBytes</span>
+<span class="lineno">   99 </span><span class="spaces">             </span><span class="istickedoff">, space</span>
+<span class="lineno">  100 </span><span class="spaces">             </span><span class="istickedoff">, referer</span>
+<span class="lineno">  101 </span><span class="spaces">             </span><span class="istickedoff">, fromByteString &quot; \&quot;&quot;</span>
+<span class="lineno">  102 </span><span class="spaces">             </span><span class="istickedoff">, fromByteString ua</span>
+<span class="lineno">  103 </span><span class="spaces">             </span><span class="istickedoff">, quote ]</span>
+<span class="lineno">  104 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  105 </span><span class="spaces">    </span><span class="istickedoff">let !output = toByteString $ mconcat l</span>
+<span class="lineno">  106 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  107 </span><span class="spaces">    </span><span class="istickedoff">return $! output</span>
+<span class="lineno">  108 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  109 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  110 </span><span class="spaces">    </span><span class="istickedoff">dash     = fromWord8 $ c2w '-'</span>
+<span class="lineno">  111 </span><span class="spaces">    </span><span class="istickedoff">quote    = fromWord8 $ c2w '\&quot;'</span>
+<span class="lineno">  112 </span><span class="spaces">    </span><span class="istickedoff">space    = fromWord8 $ c2w ' '</span>
+<span class="lineno">  113 </span><span class="spaces">    </span><span class="istickedoff">user     = maybe dash <span class="nottickedoff">fromByteString</span> mbUser</span>
+<span class="lineno">  114 </span><span class="spaces">    </span><span class="istickedoff">numBytes = maybe dash fromShow mbNumBytes</span>
+<span class="lineno">  115 </span><span class="spaces">    </span><span class="istickedoff">referer  = maybe dash</span>
+<span class="lineno">  116 </span><span class="spaces">                     </span><span class="istickedoff"><span class="nottickedoff">(\s -&gt; mconcat [ quote</span></span>
+<span class="lineno">  117 </span><span class="spaces">                                    </span><span class="istickedoff"><span class="nottickedoff">, fromByteString s</span></span>
+<span class="lineno">  118 </span><span class="spaces">                                    </span><span class="istickedoff"><span class="nottickedoff">, quote ])</span></span>
+<span class="lineno">  119 </span><span class="spaces">                     </span><span class="istickedoff">mbReferer</span></span>
+<span class="lineno">  120 </span>
+<span class="lineno">  121 </span>
+<span class="lineno">  122 </span>------------------------------------------------------------------------------
+<span class="lineno">  123 </span>-- | Sends out a log message verbatim with a newline appended. Note:
+<span class="lineno">  124 </span>-- if you want a fancy log message you'll have to format it yourself
+<span class="lineno">  125 </span>-- (or use 'combinedLogEntry').
+<span class="lineno">  126 </span>logMsg :: Logger -&gt; ByteString -&gt; IO ()
+<span class="lineno">  127 </span><span class="decl"><span class="istickedoff">logMsg !lg !s = do</span>
+<span class="lineno">  128 </span><span class="spaces">    </span><span class="istickedoff">let !s' = fromByteString s `mappend` (fromWord8 $ c2w '\n')</span>
+<span class="lineno">  129 </span><span class="spaces">    </span><span class="istickedoff">atomicModifyIORef (_queuedMessages lg) $ \d -&gt; (d `mappend` s',<span class="nottickedoff">()</span>)</span>
+<span class="lineno">  130 </span><span class="spaces">    </span><span class="istickedoff">tryPutMVar (_dataWaiting lg) <span class="nottickedoff">()</span> &gt;&gt; return <span class="nottickedoff">()</span></span></span>
+<span class="lineno">  131 </span>
+<span class="lineno">  132 </span>
+<span class="lineno">  133 </span>------------------------------------------------------------------------------
+<span class="lineno">  134 </span>loggingThread :: Logger -&gt; IO ()
+<span class="lineno">  135 </span><span class="decl"><span class="istickedoff">loggingThread (Logger queue notifier filePath _) = do</span>
+<span class="lineno">  136 </span><span class="spaces">    </span><span class="istickedoff">initialize &gt;&gt;= go</span>
+<span class="lineno">  137 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  138 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  139 </span><span class="spaces">    </span><span class="istickedoff">openIt = if <span class="tickonlyfalse">filePath == &quot;-&quot;</span></span>
+<span class="lineno">  140 </span><span class="spaces">               </span><span class="istickedoff">then <span class="nottickedoff">return stdout</span></span>
+<span class="lineno">  141 </span><span class="spaces">               </span><span class="istickedoff">else if <span class="tickonlyfalse">filePath == &quot;stderr&quot;</span></span>
+<span class="lineno">  142 </span><span class="spaces">                      </span><span class="istickedoff">then <span class="nottickedoff">return stderr</span></span>
+<span class="lineno">  143 </span><span class="spaces">                      </span><span class="istickedoff">else openFile filePath AppendMode</span>
+<span class="lineno">  144 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  145 </span><span class="spaces">    </span><span class="istickedoff">closeIt h = if <span class="tickonlyfalse">filePath == &quot;-&quot; || filePath == &quot;stderr&quot;</span></span>
+<span class="lineno">  146 </span><span class="spaces">                  </span><span class="istickedoff">then <span class="nottickedoff">return ()</span></span>
+<span class="lineno">  147 </span><span class="spaces">                  </span><span class="istickedoff">else hClose h</span>
+<span class="lineno">  148 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  149 </span><span class="spaces">    </span><span class="istickedoff">go (href, lastOpened) =</span>
+<span class="lineno">  150 </span><span class="spaces">        </span><span class="istickedoff">(loop (href, lastOpened))</span>
+<span class="lineno">  151 </span><span class="spaces">          </span><span class="istickedoff">`catches`</span>
+<span class="lineno">  152 </span><span class="spaces">          </span><span class="istickedoff">[ Handler $ \(_::AsyncException) -&gt; killit (href, lastOpened)</span>
+<span class="lineno">  153 </span><span class="spaces">          </span><span class="istickedoff">, <span class="nottickedoff">Handler $ \(e::SomeException)  -&gt; do</span></span>
+<span class="lineno">  154 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">hPutStrLn stderr $ &quot;logger got exception: &quot; ++ Prelude.show e</span></span>
+<span class="lineno">  155 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">threadDelay 20000000</span></span>
+<span class="lineno">  156 </span><span class="spaces">                </span><span class="istickedoff"><span class="nottickedoff">go (href, lastOpened)</span> ]</span>
+<span class="lineno">  157 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  158 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  159 </span><span class="spaces">    </span><span class="istickedoff">initialize = do</span>
+<span class="lineno">  160 </span><span class="spaces">        </span><span class="istickedoff">lh   &lt;- openIt</span>
+<span class="lineno">  161 </span><span class="spaces">        </span><span class="istickedoff">href &lt;- newIORef lh</span>
+<span class="lineno">  162 </span><span class="spaces">        </span><span class="istickedoff">t    &lt;- getCurrentDateTime</span>
+<span class="lineno">  163 </span><span class="spaces">        </span><span class="istickedoff">tref &lt;- newIORef t</span>
+<span class="lineno">  164 </span><span class="spaces">        </span><span class="istickedoff">return (href, tref)</span>
+<span class="lineno">  165 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  166 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  167 </span><span class="spaces">    </span><span class="istickedoff">killit (href, lastOpened) = do</span>
+<span class="lineno">  168 </span><span class="spaces">        </span><span class="istickedoff">flushIt (href, lastOpened)</span>
+<span class="lineno">  169 </span><span class="spaces">        </span><span class="istickedoff">h &lt;- readIORef href</span>
+<span class="lineno">  170 </span><span class="spaces">        </span><span class="istickedoff">closeIt h</span>
+<span class="lineno">  171 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  172 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  173 </span><span class="spaces">    </span><span class="istickedoff">flushIt (!href, !lastOpened) = do</span>
+<span class="lineno">  174 </span><span class="spaces">        </span><span class="istickedoff">dl &lt;- atomicModifyIORef queue $ \x -&gt; (mempty,x)</span>
+<span class="lineno">  175 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  176 </span><span class="spaces">        </span><span class="istickedoff">let !msgs = toLazyByteString dl</span>
+<span class="lineno">  177 </span><span class="spaces">        </span><span class="istickedoff">h &lt;- readIORef href</span>
+<span class="lineno">  178 </span><span class="spaces">        </span><span class="istickedoff">L.hPut h msgs</span>
+<span class="lineno">  179 </span><span class="spaces">        </span><span class="istickedoff">hFlush h</span>
+<span class="lineno">  180 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  181 </span><span class="spaces">        </span><span class="istickedoff">-- close the file every 15 minutes (for log rotation)</span>
+<span class="lineno">  182 </span><span class="spaces">        </span><span class="istickedoff">t &lt;- getCurrentDateTime</span>
+<span class="lineno">  183 </span><span class="spaces">        </span><span class="istickedoff">old &lt;- readIORef lastOpened</span>
+<span class="lineno">  184 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  185 </span><span class="spaces">        </span><span class="istickedoff">if <span class="tickonlyfalse">t-old &gt; 900</span></span>
+<span class="lineno">  186 </span><span class="spaces">          </span><span class="istickedoff">then <span class="nottickedoff">do</span></span>
+<span class="lineno">  187 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">closeIt h</span></span>
+<span class="lineno">  188 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">openIt &gt;&gt;= writeIORef href</span></span>
+<span class="lineno">  189 </span><span class="spaces">              </span><span class="istickedoff"><span class="nottickedoff">writeIORef lastOpened t</span></span>
+<span class="lineno">  190 </span><span class="spaces">          </span><span class="istickedoff">else return <span class="nottickedoff">()</span></span>
+<span class="lineno">  191 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  192 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  193 </span><span class="spaces">    </span><span class="istickedoff">loop !d = do</span>
+<span class="lineno">  194 </span><span class="spaces">        </span><span class="istickedoff">-- wait on the notification mvar</span>
+<span class="lineno">  195 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- takeMVar notifier</span>
+<span class="lineno">  196 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  197 </span><span class="spaces">        </span><span class="istickedoff">-- grab the queued messages and write them out</span>
+<span class="lineno">  198 </span><span class="spaces">        </span><span class="istickedoff">flushIt d</span>
 <span class="lineno">  199 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  200 </span><span class="spaces">        </span><span class="istickedoff">-- grab the queued messages and write them out</span>
-<span class="lineno">  201 </span><span class="spaces">        </span><span class="istickedoff">flushIt d</span>
-<span class="lineno">  202 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  203 </span><span class="spaces">        </span><span class="istickedoff">-- at least five seconds between log dumps</span>
-<span class="lineno">  204 </span><span class="spaces">        </span><span class="istickedoff">threadDelay 5000000</span>
-<span class="lineno">  205 </span><span class="spaces">        </span><span class="istickedoff">loop d</span></span>
-<span class="lineno">  206 </span>
-<span class="lineno">  207 </span>
-<span class="lineno">  208 </span>------------------------------------------------------------------------------
-<span class="lineno">  209 </span>-- | Kills a logger thread, causing any unwritten contents to be
-<span class="lineno">  210 </span>-- flushed out to disk
-<span class="lineno">  211 </span>stopLogger :: Logger -&gt; IO ()
-<span class="lineno">  212 </span><span class="decl"><span class="istickedoff">stopLogger lg = withMVar (_loggingThread lg) killThread</span></span>
+<span class="lineno">  200 </span><span class="spaces">        </span><span class="istickedoff">-- at least five seconds between log dumps</span>
+<span class="lineno">  201 </span><span class="spaces">        </span><span class="istickedoff">threadDelay 5000000</span>
+<span class="lineno">  202 </span><span class="spaces">        </span><span class="istickedoff">loop d</span></span>
+<span class="lineno">  203 </span>
+<span class="lineno">  204 </span>
+<span class="lineno">  205 </span>------------------------------------------------------------------------------
+<span class="lineno">  206 </span>-- | Kills a logger thread, causing any unwritten contents to be
+<span class="lineno">  207 </span>-- flushed out to disk
+<span class="lineno">  208 </span>stopLogger :: Logger -&gt; IO ()
+<span class="lineno">  209 </span><span class="decl"><span class="istickedoff">stopLogger lg = withMVar (_loggingThread lg) killThread</span></span>
 
 </pre>
 </html>

@@ -9,7 +9,7 @@ span.decl { font-weight: bold }
 span.spaces    { background: white }
 </style>
 <pre>
-<span class="lineno">    1 </span>{-# LANGUAGE OverloadedStrings, DeriveDataTypeable #-}
+<span class="lineno">    1 </span>{-# LANGUAGE DeriveDataTypeable #-}
 <span class="lineno">    2 </span>
 <span class="lineno">    3 </span>module Text.Templating.Heist.Splices.Markdown where
 <span class="lineno">    4 </span>
@@ -17,151 +17,170 @@ span.spaces    { background: white }
 <span class="lineno">    6 </span>import           Data.ByteString (ByteString)
 <span class="lineno">    7 </span>import qualified Data.ByteString as B
 <span class="lineno">    8 </span>import qualified Data.ByteString.Char8 as BC
-<span class="lineno">    9 </span>import           Data.Maybe
-<span class="lineno">   10 </span>import           Control.Concurrent
-<span class="lineno">   11 </span>import           Control.Exception (throwIO)
-<span class="lineno">   12 </span>import           Control.Monad
-<span class="lineno">   13 </span>import           Control.Monad.CatchIO
-<span class="lineno">   14 </span>import           Control.Monad.Trans
-<span class="lineno">   15 </span>import           Data.Typeable
-<span class="lineno">   16 </span>import           Prelude hiding (catch)
-<span class="lineno">   17 </span>import           System.Directory
-<span class="lineno">   18 </span>import           System.Exit
-<span class="lineno">   19 </span>import           System.FilePath.Posix
-<span class="lineno">   20 </span>import           System.IO
-<span class="lineno">   21 </span>import           System.Process
-<span class="lineno">   22 </span>import           Text.XML.Expat.Tree hiding (Node)
-<span class="lineno">   23 </span>
-<span class="lineno">   24 </span>------------------------------------------------------------------------------
-<span class="lineno">   25 </span>import           Text.Templating.Heist.Constants
-<span class="lineno">   26 </span>import           Text.Templating.Heist.Types
-<span class="lineno">   27 </span>
-<span class="lineno">   28 </span>data PandocMissingException = PandocMissingException
-<span class="lineno">   29 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
+<span class="lineno">    9 </span>import           Data.Text (Text)
+<span class="lineno">   10 </span>import qualified Data.Text as T
+<span class="lineno">   11 </span>import qualified Data.Text.Encoding as T
+<span class="lineno">   12 </span>import           Data.Maybe
+<span class="lineno">   13 </span>import           Control.Concurrent
+<span class="lineno">   14 </span>import           Control.Exception (throwIO)
+<span class="lineno">   15 </span>import           Control.Monad
+<span class="lineno">   16 </span>import           Control.Monad.CatchIO
+<span class="lineno">   17 </span>import           Control.Monad.Trans
+<span class="lineno">   18 </span>import           Data.Typeable
+<span class="lineno">   19 </span>import           Prelude hiding (catch)
+<span class="lineno">   20 </span>import           System.Directory
+<span class="lineno">   21 </span>import           System.Exit
+<span class="lineno">   22 </span>import           System.FilePath.Posix
+<span class="lineno">   23 </span>import           System.IO
+<span class="lineno">   24 </span>import           System.Process
+<span class="lineno">   25 </span>import           Text.XmlHtml
+<span class="lineno">   26 </span>
+<span class="lineno">   27 </span>------------------------------------------------------------------------------
+<span class="lineno">   28 </span>import           Text.Templating.Heist.Internal
+<span class="lineno">   29 </span>import           Text.Templating.Heist.Types
 <span class="lineno">   30 </span>
-<span class="lineno">   31 </span>instance Show PandocMissingException where
-<span class="lineno">   32 </span>    <span class="decl"><span class="nottickedoff">show PandocMissingException =</span>
-<span class="lineno">   33 </span><span class="spaces">        </span><span class="nottickedoff">&quot;Cannot find the \&quot;pandoc\&quot; executable; is it on your $PATH?&quot;</span></span>
-<span class="lineno">   34 </span>
-<span class="lineno">   35 </span>instance Exception PandocMissingException
-<span class="lineno">   36 </span>
+<span class="lineno">   31 </span>data PandocMissingException = PandocMissingException
+<span class="lineno">   32 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
+<span class="lineno">   33 </span>
+<span class="lineno">   34 </span>instance Show PandocMissingException where
+<span class="lineno">   35 </span>    <span class="decl"><span class="nottickedoff">show PandocMissingException =</span>
+<span class="lineno">   36 </span><span class="spaces">        </span><span class="nottickedoff">&quot;Cannot find the \&quot;pandoc\&quot; executable; is it on your $PATH?&quot;</span></span>
 <span class="lineno">   37 </span>
-<span class="lineno">   38 </span>data MarkdownException = MarkdownException ByteString
-<span class="lineno">   39 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
+<span class="lineno">   38 </span>instance Exception PandocMissingException
+<span class="lineno">   39 </span>
 <span class="lineno">   40 </span>
-<span class="lineno">   41 </span>instance Show MarkdownException where
-<span class="lineno">   42 </span>    <span class="decl"><span class="nottickedoff">show (MarkdownException e) =</span>
-<span class="lineno">   43 </span><span class="spaces">        </span><span class="nottickedoff">&quot;Markdown error: pandoc replied:\n\n&quot; ++ BC.unpack e</span></span>
-<span class="lineno">   44 </span>
-<span class="lineno">   45 </span>instance Exception MarkdownException
-<span class="lineno">   46 </span>
+<span class="lineno">   41 </span>data MarkdownException = MarkdownException ByteString
+<span class="lineno">   42 </span>   deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
+<span class="lineno">   43 </span>
+<span class="lineno">   44 </span>instance Show MarkdownException where
+<span class="lineno">   45 </span>    <span class="decl"><span class="nottickedoff">show (MarkdownException e) =</span>
+<span class="lineno">   46 </span><span class="spaces">        </span><span class="nottickedoff">&quot;Markdown error: pandoc replied:\n\n&quot; ++ BC.unpack e</span></span>
 <span class="lineno">   47 </span>
-<span class="lineno">   48 </span>------------------------------------------------------------------------------
-<span class="lineno">   49 </span>-- | Default name for the markdown splice.
-<span class="lineno">   50 </span>markdownTag :: ByteString
-<span class="lineno">   51 </span><span class="decl"><span class="istickedoff">markdownTag = &quot;markdown&quot;</span></span>
-<span class="lineno">   52 </span>
-<span class="lineno">   53 </span>------------------------------------------------------------------------------
-<span class="lineno">   54 </span>-- | Implementation of the markdown splice.
-<span class="lineno">   55 </span>markdownSplice :: MonadIO m =&gt; FilePath -&gt; Splice m
-<span class="lineno">   56 </span><span class="istickedoff"><span class="decl"><span class="istickedoff">markdownSplice templatePath = do</span>
-<span class="lineno">   57 </span><span class="spaces">    </span><span class="istickedoff">pdMD &lt;- liftIO $ findExecutable &quot;pandoc&quot;</span>
-<span class="lineno">   58 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   59 </span><span class="spaces">    </span><span class="istickedoff">when (isNothing pdMD) $ <span class="nottickedoff">liftIO $ throwIO PandocMissingException</span></span>
-<span class="lineno">   60 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   61 </span><span class="spaces">    </span><span class="istickedoff">tree &lt;- getParamNode</span>
-<span class="lineno">   62 </span><span class="spaces">    </span><span class="istickedoff">markup &lt;- liftIO $</span>
-<span class="lineno">   63 </span><span class="spaces">        </span><span class="istickedoff">case getAttribute tree &quot;file&quot; of</span>
-<span class="lineno">   64 </span><span class="spaces">            </span><span class="istickedoff">Just f  -&gt; pandoc (fromJust pdMD) templatePath $ BC.unpack f</span>
-<span class="lineno">   65 </span><span class="spaces">            </span><span class="istickedoff">Nothing -&gt; pandocBS (fromJust pdMD) $ textContent tree</span>
-<span class="lineno">   66 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   67 </span><span class="spaces">    </span><span class="istickedoff">let ee = parse' heistExpatOptions markup</span>
-<span class="lineno">   68 </span><span class="spaces">    </span><span class="istickedoff">case ee of</span>
-<span class="lineno">   69 </span><span class="spaces">      </span><span class="istickedoff">(Left e) -&gt; <span class="nottickedoff">throw $ MarkdownException</span></span>
-<span class="lineno">   70 </span><span class="spaces">                        </span><span class="istickedoff"><span class="nottickedoff">$ BC.pack (&quot;Error parsing markdown output: &quot; ++ show e)</span></span>
-<span class="lineno">   71 </span><span class="spaces">      </span><span class="istickedoff">(Right n) -&gt; return [n]</span></span></span>
-<span class="lineno">   72 </span>
-<span class="lineno">   73 </span>
-<span class="lineno">   74 </span>pandoc :: FilePath -&gt; FilePath -&gt; FilePath -&gt; IO ByteString
-<span class="lineno">   75 </span><span class="decl"><span class="istickedoff">pandoc pandocPath templatePath inputFile = do</span>
-<span class="lineno">   76 </span><span class="spaces">    </span><span class="istickedoff">(ex, sout, serr) &lt;- readProcessWithExitCode' pandocPath args &quot;&quot;</span>
-<span class="lineno">   77 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   78 </span><span class="spaces">    </span><span class="istickedoff">when (isFail ex) $ <span class="nottickedoff">throw $ MarkdownException serr</span></span>
-<span class="lineno">   79 </span><span class="spaces">    </span><span class="istickedoff">return $ BC.concat [ &quot;&lt;div class=\&quot;markdown\&quot;&gt;\n&quot;</span>
-<span class="lineno">   80 </span><span class="spaces">                       </span><span class="istickedoff">, sout</span>
-<span class="lineno">   81 </span><span class="spaces">                       </span><span class="istickedoff">, &quot;\n&lt;/div&gt;&quot; ]</span>
-<span class="lineno">   82 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   83 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">   84 </span><span class="spaces">    </span><span class="istickedoff">isFail ExitSuccess = False</span>
-<span class="lineno">   85 </span><span class="spaces">    </span><span class="istickedoff">isFail _           = <span class="nottickedoff">True</span></span>
-<span class="lineno">   86 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   87 </span><span class="spaces">    </span><span class="istickedoff">args = [ &quot;-S&quot;, &quot;--no-wrap&quot;, templatePath &lt;/&gt; inputFile ]</span></span>
-<span class="lineno">   88 </span>
-<span class="lineno">   89 </span>
-<span class="lineno">   90 </span>pandocBS :: FilePath -&gt; ByteString -&gt; IO ByteString
-<span class="lineno">   91 </span><span class="decl"><span class="istickedoff">pandocBS pandocPath s = do</span>
-<span class="lineno">   92 </span><span class="spaces">    </span><span class="istickedoff">-- using the crummy string functions for convenience here</span>
-<span class="lineno">   93 </span><span class="spaces">    </span><span class="istickedoff">(ex, sout, serr) &lt;- readProcessWithExitCode' pandocPath args s</span>
-<span class="lineno">   94 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   95 </span><span class="spaces">    </span><span class="istickedoff">when (isFail ex) $ <span class="nottickedoff">throw $ MarkdownException serr</span></span>
-<span class="lineno">   96 </span><span class="spaces">    </span><span class="istickedoff">return $ BC.concat [ &quot;&lt;div class=\&quot;markdown\&quot;&gt;\n&quot;</span>
-<span class="lineno">   97 </span><span class="spaces">                       </span><span class="istickedoff">, sout</span>
-<span class="lineno">   98 </span><span class="spaces">                       </span><span class="istickedoff">, &quot;\n&lt;/div&gt;&quot; ]</span>
-<span class="lineno">   99 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  100 </span><span class="spaces">  </span><span class="istickedoff">where</span>
-<span class="lineno">  101 </span><span class="spaces">    </span><span class="istickedoff">isFail ExitSuccess = False</span>
-<span class="lineno">  102 </span><span class="spaces">    </span><span class="istickedoff">isFail _           = <span class="nottickedoff">True</span></span>
-<span class="lineno">  103 </span><span class="spaces">    </span><span class="istickedoff">args = [ &quot;-S&quot;, &quot;--no-wrap&quot; ]</span></span>
-<span class="lineno">  104 </span>
-<span class="lineno">  105 </span>
-<span class="lineno">  106 </span>-- a version of readProcessWithExitCode that does I/O properly
-<span class="lineno">  107 </span>readProcessWithExitCode'
-<span class="lineno">  108 </span>    :: FilePath                 -- ^ command to run
-<span class="lineno">  109 </span>    -&gt; [String]                 -- ^ any arguments
-<span class="lineno">  110 </span>    -&gt; ByteString               -- ^ standard input
-<span class="lineno">  111 </span>    -&gt; IO (ExitCode,ByteString,ByteString) -- ^ exitcode, stdout, stderr
-<span class="lineno">  112 </span><span class="decl"><span class="istickedoff">readProcessWithExitCode' cmd args input = do</span>
-<span class="lineno">  113 </span><span class="spaces">    </span><span class="istickedoff">(Just inh, Just outh, Just errh, pid) &lt;-</span>
-<span class="lineno">  114 </span><span class="spaces">        </span><span class="istickedoff">createProcess (proc cmd args){ std_in  = CreatePipe,</span>
-<span class="lineno">  115 </span><span class="spaces">                                       </span><span class="istickedoff">std_out = CreatePipe,</span>
-<span class="lineno">  116 </span><span class="spaces">                                       </span><span class="istickedoff">std_err = CreatePipe }</span>
-<span class="lineno">  117 </span><span class="spaces">    </span><span class="istickedoff">outMVar &lt;- newEmptyMVar</span>
+<span class="lineno">   48 </span>instance Exception MarkdownException
+<span class="lineno">   49 </span>
+<span class="lineno">   50 </span>
+<span class="lineno">   51 </span>data NoMarkdownFileException = NoMarkdownFileException
+<span class="lineno">   52 </span>    deriving (<span class="decl"><span class="nottickedoff">Typeable</span></span>)
+<span class="lineno">   53 </span>
+<span class="lineno">   54 </span>instance Show NoMarkdownFileException where
+<span class="lineno">   55 </span>    <span class="decl"><span class="nottickedoff">show NoMarkdownFileException =</span>
+<span class="lineno">   56 </span><span class="spaces">        </span><span class="nottickedoff">&quot;Markdown error: no file or template in context during processing of markdown tag&quot;</span></span>
+<span class="lineno">   57 </span>
+<span class="lineno">   58 </span>instance Exception NoMarkdownFileException where
+<span class="lineno">   59 </span>
+<span class="lineno">   60 </span>------------------------------------------------------------------------------
+<span class="lineno">   61 </span>-- | Default name for the markdown splice.
+<span class="lineno">   62 </span>markdownTag :: Text
+<span class="lineno">   63 </span><span class="decl"><span class="istickedoff">markdownTag = &quot;markdown&quot;</span></span>
+<span class="lineno">   64 </span>
+<span class="lineno">   65 </span>------------------------------------------------------------------------------
+<span class="lineno">   66 </span>-- | Implementation of the markdown splice.
+<span class="lineno">   67 </span>markdownSplice :: MonadIO m =&gt; Splice m
+<span class="lineno">   68 </span><span class="decl"><span class="istickedoff">markdownSplice = do</span>
+<span class="lineno">   69 </span><span class="spaces">    </span><span class="istickedoff">templateDir &lt;- liftM (fmap takeDirectory) getTemplateFilePath</span>
+<span class="lineno">   70 </span><span class="spaces">    </span><span class="istickedoff">pdMD &lt;- liftIO $ findExecutable &quot;pandoc&quot;</span>
+<span class="lineno">   71 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   72 </span><span class="spaces">    </span><span class="istickedoff">when (isNothing pdMD) $ <span class="nottickedoff">liftIO $ throwIO PandocMissingException</span></span>
+<span class="lineno">   73 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   74 </span><span class="spaces">    </span><span class="istickedoff">tree &lt;- getParamNode</span>
+<span class="lineno">   75 </span><span class="spaces">    </span><span class="istickedoff">(source,markup) &lt;- liftIO $</span>
+<span class="lineno">   76 </span><span class="spaces">        </span><span class="istickedoff">case getAttribute &quot;file&quot; tree of</span>
+<span class="lineno">   77 </span><span class="spaces">            </span><span class="istickedoff">Just f  -&gt; do</span>
+<span class="lineno">   78 </span><span class="spaces">                </span><span class="istickedoff">m &lt;- maybe <span class="nottickedoff">(liftIO $ throwIO NoMarkdownFileException )</span></span>
+<span class="lineno">   79 </span><span class="spaces">                           </span><span class="istickedoff">(\tp -&gt; pandoc (fromJust pdMD) tp $ T.unpack f)</span>
+<span class="lineno">   80 </span><span class="spaces">                           </span><span class="istickedoff">templateDir</span>
+<span class="lineno">   81 </span><span class="spaces">                </span><span class="istickedoff">return (<span class="nottickedoff">T.unpack f</span>,m)</span>
+<span class="lineno">   82 </span><span class="spaces">            </span><span class="istickedoff">Nothing -&gt; do</span>
+<span class="lineno">   83 </span><span class="spaces">                </span><span class="istickedoff">m &lt;- pandocBS (fromJust pdMD) $ T.encodeUtf8 $ nodeText tree</span>
+<span class="lineno">   84 </span><span class="spaces">                </span><span class="istickedoff">return (<span class="nottickedoff">&quot;inline_splice&quot;</span>,m)</span>
+<span class="lineno">   85 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   86 </span><span class="spaces">    </span><span class="istickedoff">let ee = parseHTML <span class="nottickedoff">source</span> markup</span>
+<span class="lineno">   87 </span><span class="spaces">    </span><span class="istickedoff">case ee of</span>
+<span class="lineno">   88 </span><span class="spaces">      </span><span class="istickedoff">Left e  -&gt; <span class="nottickedoff">throw $ MarkdownException</span></span>
+<span class="lineno">   89 </span><span class="spaces">                       </span><span class="istickedoff"><span class="nottickedoff">$ BC.pack (&quot;Error parsing markdown output: &quot; ++ e)</span></span>
+<span class="lineno">   90 </span><span class="spaces">      </span><span class="istickedoff">Right d -&gt; return (docContent d)</span></span>
+<span class="lineno">   91 </span>
+<span class="lineno">   92 </span>
+<span class="lineno">   93 </span>pandoc :: FilePath -&gt; FilePath -&gt; FilePath -&gt; IO ByteString
+<span class="lineno">   94 </span><span class="decl"><span class="istickedoff">pandoc pandocPath templateDir inputFile = do</span>
+<span class="lineno">   95 </span><span class="spaces">    </span><span class="istickedoff">(ex, sout, serr) &lt;- readProcessWithExitCode' pandocPath args &quot;&quot;</span>
+<span class="lineno">   96 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   97 </span><span class="spaces">    </span><span class="istickedoff">when (isFail ex) $ <span class="nottickedoff">throw $ MarkdownException serr</span></span>
+<span class="lineno">   98 </span><span class="spaces">    </span><span class="istickedoff">return $ BC.concat [ &quot;&lt;div class=\&quot;markdown\&quot;&gt;\n&quot;</span>
+<span class="lineno">   99 </span><span class="spaces">                         </span><span class="istickedoff">, sout</span>
+<span class="lineno">  100 </span><span class="spaces">                         </span><span class="istickedoff">, &quot;\n&lt;/div&gt;&quot; ]</span>
+<span class="lineno">  101 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  102 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  103 </span><span class="spaces">    </span><span class="istickedoff">isFail ExitSuccess = False</span>
+<span class="lineno">  104 </span><span class="spaces">    </span><span class="istickedoff">isFail _           = <span class="nottickedoff">True</span></span>
+<span class="lineno">  105 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  106 </span><span class="spaces">    </span><span class="istickedoff">args = [ &quot;-S&quot;, &quot;--no-wrap&quot;, templateDir &lt;/&gt; inputFile ]</span></span>
+<span class="lineno">  107 </span>
+<span class="lineno">  108 </span>
+<span class="lineno">  109 </span>pandocBS :: FilePath -&gt; ByteString -&gt; IO ByteString
+<span class="lineno">  110 </span><span class="decl"><span class="istickedoff">pandocBS pandocPath s = do</span>
+<span class="lineno">  111 </span><span class="spaces">    </span><span class="istickedoff">-- using the crummy string functions for convenience here</span>
+<span class="lineno">  112 </span><span class="spaces">    </span><span class="istickedoff">(ex, sout, serr) &lt;- readProcessWithExitCode' pandocPath args s</span>
+<span class="lineno">  113 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  114 </span><span class="spaces">    </span><span class="istickedoff">when (isFail ex) $ <span class="nottickedoff">throw $ MarkdownException serr</span></span>
+<span class="lineno">  115 </span><span class="spaces">    </span><span class="istickedoff">return $ BC.concat [ &quot;&lt;div class=\&quot;markdown\&quot;&gt;\n&quot;</span>
+<span class="lineno">  116 </span><span class="spaces">                       </span><span class="istickedoff">, sout</span>
+<span class="lineno">  117 </span><span class="spaces">                       </span><span class="istickedoff">, &quot;\n&lt;/div&gt;&quot; ]</span>
 <span class="lineno">  118 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  119 </span><span class="spaces">    </span><span class="istickedoff">outM &lt;- newEmptyMVar</span>
-<span class="lineno">  120 </span><span class="spaces">    </span><span class="istickedoff">errM &lt;- newEmptyMVar</span>
-<span class="lineno">  121 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  122 </span><span class="spaces">    </span><span class="istickedoff">-- fork off a thread to start consuming stdout</span>
-<span class="lineno">  123 </span><span class="spaces">    </span><span class="istickedoff">forkIO $ do</span>
-<span class="lineno">  124 </span><span class="spaces">        </span><span class="istickedoff">out &lt;- B.hGetContents outh</span>
-<span class="lineno">  125 </span><span class="spaces">        </span><span class="istickedoff">putMVar outM out</span>
-<span class="lineno">  126 </span><span class="spaces">        </span><span class="istickedoff">putMVar outMVar <span class="nottickedoff">()</span></span>
-<span class="lineno">  127 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  128 </span><span class="spaces">    </span><span class="istickedoff">-- fork off a thread to start consuming stderr</span>
-<span class="lineno">  129 </span><span class="spaces">    </span><span class="istickedoff">forkIO $ do</span>
-<span class="lineno">  130 </span><span class="spaces">        </span><span class="istickedoff">err  &lt;- B.hGetContents errh</span>
-<span class="lineno">  131 </span><span class="spaces">        </span><span class="istickedoff">putMVar errM <span class="nottickedoff">err</span></span>
-<span class="lineno">  132 </span><span class="spaces">        </span><span class="istickedoff">putMVar outMVar <span class="nottickedoff">()</span></span>
-<span class="lineno">  133 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  134 </span><span class="spaces">    </span><span class="istickedoff">-- now write and flush any input</span>
-<span class="lineno">  135 </span><span class="spaces">    </span><span class="istickedoff">when (not (B.null input)) $ do B.hPutStr inh input; hFlush inh</span>
-<span class="lineno">  136 </span><span class="spaces">    </span><span class="istickedoff">hClose inh -- done with stdin</span>
+<span class="lineno">  119 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  120 </span><span class="spaces">    </span><span class="istickedoff">isFail ExitSuccess = False</span>
+<span class="lineno">  121 </span><span class="spaces">    </span><span class="istickedoff">isFail _           = <span class="nottickedoff">True</span></span>
+<span class="lineno">  122 </span><span class="spaces">    </span><span class="istickedoff">args = [ &quot;-S&quot;, &quot;--no-wrap&quot; ]</span></span>
+<span class="lineno">  123 </span>
+<span class="lineno">  124 </span>
+<span class="lineno">  125 </span>-- a version of readProcessWithExitCode that does I/O properly
+<span class="lineno">  126 </span>readProcessWithExitCode'
+<span class="lineno">  127 </span>    :: FilePath                 -- ^ command to run
+<span class="lineno">  128 </span>    -&gt; [String]                 -- ^ any arguments
+<span class="lineno">  129 </span>    -&gt; ByteString               -- ^ standard input
+<span class="lineno">  130 </span>    -&gt; IO (ExitCode,ByteString,ByteString) -- ^ exitcode, stdout, stderr
+<span class="lineno">  131 </span><span class="decl"><span class="istickedoff">readProcessWithExitCode' cmd args input = do</span>
+<span class="lineno">  132 </span><span class="spaces">    </span><span class="istickedoff">(Just inh, Just outh, Just errh, pid) &lt;-</span>
+<span class="lineno">  133 </span><span class="spaces">        </span><span class="istickedoff">createProcess (proc cmd args){ std_in  = CreatePipe,</span>
+<span class="lineno">  134 </span><span class="spaces">                                       </span><span class="istickedoff">std_out = CreatePipe,</span>
+<span class="lineno">  135 </span><span class="spaces">                                       </span><span class="istickedoff">std_err = CreatePipe }</span>
+<span class="lineno">  136 </span><span class="spaces">    </span><span class="istickedoff">outMVar &lt;- newEmptyMVar</span>
 <span class="lineno">  137 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  138 </span><span class="spaces">    </span><span class="istickedoff">-- wait on the output</span>
-<span class="lineno">  139 </span><span class="spaces">    </span><span class="istickedoff">takeMVar outMVar</span>
-<span class="lineno">  140 </span><span class="spaces">    </span><span class="istickedoff">takeMVar outMVar</span>
-<span class="lineno">  141 </span><span class="spaces">    </span><span class="istickedoff">hClose outh</span>
-<span class="lineno">  142 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  143 </span><span class="spaces">    </span><span class="istickedoff">-- wait on the process</span>
-<span class="lineno">  144 </span><span class="spaces">    </span><span class="istickedoff">ex &lt;- waitForProcess pid</span>
-<span class="lineno">  145 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  146 </span><span class="spaces">    </span><span class="istickedoff">out &lt;- readMVar outM</span>
-<span class="lineno">  147 </span><span class="spaces">    </span><span class="istickedoff">err &lt;- readMVar errM</span>
-<span class="lineno">  148 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">  149 </span><span class="spaces">    </span><span class="istickedoff">return (ex, out, <span class="nottickedoff">err</span>)</span></span>
-<span class="lineno">  150 </span>
-<span class="lineno">  151 </span>
-<span class="lineno">  152 </span>
-<span class="lineno">  153 </span>
+<span class="lineno">  138 </span><span class="spaces">    </span><span class="istickedoff">outM &lt;- newEmptyMVar</span>
+<span class="lineno">  139 </span><span class="spaces">    </span><span class="istickedoff">errM &lt;- newEmptyMVar</span>
+<span class="lineno">  140 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  141 </span><span class="spaces">    </span><span class="istickedoff">-- fork off a thread to start consuming stdout</span>
+<span class="lineno">  142 </span><span class="spaces">    </span><span class="istickedoff">forkIO $ do</span>
+<span class="lineno">  143 </span><span class="spaces">        </span><span class="istickedoff">out &lt;- B.hGetContents outh</span>
+<span class="lineno">  144 </span><span class="spaces">        </span><span class="istickedoff">putMVar outM out</span>
+<span class="lineno">  145 </span><span class="spaces">        </span><span class="istickedoff">putMVar outMVar <span class="nottickedoff">()</span></span>
+<span class="lineno">  146 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  147 </span><span class="spaces">    </span><span class="istickedoff">-- fork off a thread to start consuming stderr</span>
+<span class="lineno">  148 </span><span class="spaces">    </span><span class="istickedoff">forkIO $ do</span>
+<span class="lineno">  149 </span><span class="spaces">        </span><span class="istickedoff">err  &lt;- B.hGetContents errh</span>
+<span class="lineno">  150 </span><span class="spaces">        </span><span class="istickedoff">putMVar errM <span class="nottickedoff">err</span></span>
+<span class="lineno">  151 </span><span class="spaces">        </span><span class="istickedoff">putMVar outMVar <span class="nottickedoff">()</span></span>
+<span class="lineno">  152 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  153 </span><span class="spaces">    </span><span class="istickedoff">-- now write and flush any input</span>
+<span class="lineno">  154 </span><span class="spaces">    </span><span class="istickedoff">when (not (B.null input)) $ do B.hPutStr inh input; hFlush inh</span>
+<span class="lineno">  155 </span><span class="spaces">    </span><span class="istickedoff">hClose inh -- done with stdin</span>
+<span class="lineno">  156 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  157 </span><span class="spaces">    </span><span class="istickedoff">-- wait on the output</span>
+<span class="lineno">  158 </span><span class="spaces">    </span><span class="istickedoff">takeMVar outMVar</span>
+<span class="lineno">  159 </span><span class="spaces">    </span><span class="istickedoff">takeMVar outMVar</span>
+<span class="lineno">  160 </span><span class="spaces">    </span><span class="istickedoff">hClose outh</span>
+<span class="lineno">  161 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  162 </span><span class="spaces">    </span><span class="istickedoff">-- wait on the process</span>
+<span class="lineno">  163 </span><span class="spaces">    </span><span class="istickedoff">ex &lt;- waitForProcess pid</span>
+<span class="lineno">  164 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  165 </span><span class="spaces">    </span><span class="istickedoff">out &lt;- readMVar outM</span>
+<span class="lineno">  166 </span><span class="spaces">    </span><span class="istickedoff">err &lt;- readMVar errM</span>
+<span class="lineno">  167 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">  168 </span><span class="spaces">    </span><span class="istickedoff">return (ex, out, <span class="nottickedoff">err</span>)</span></span>
+<span class="lineno">  169 </span>
+<span class="lineno">  170 </span>
+<span class="lineno">  171 </span>
+<span class="lineno">  172 </span>
 
 </pre>
 </html>

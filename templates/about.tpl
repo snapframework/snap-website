@@ -13,14 +13,15 @@
         <p>
           <strong>Snap</strong> aims to be the <i>de facto</i> web toolkit
           for Haskell, on the basis of:
-          <ul>
-            <li>High performance</li>
-            <li>High design standards</li>
-            <li>Simplicity and ease of use, even for Haskell beginners</li>
-            <li>Excellent documentation</li>
-            <li>Robustness and high test coverage</li>
-          </ul>
         </p>
+
+        <ul>
+          <li>High performance</li>
+          <li>High design standards</li>
+          <li>Simplicity and ease of use, even for Haskell beginners</li>
+          <li>Excellent documentation</li>
+          <li>Robustness and high test coverage</li>
+        </ul>
 
         <p class="foundabug"><b>Found a bug in Snap? Please visit our <a
         href="http://github.com/snapframework/snap-core/issues">issue
@@ -30,34 +31,37 @@
         <p>
           The first developer prerelease of the Snap framework is available
           now. It contains only the Snap core system, namely:
-          <ul>
-            <li>A fast HTTP server library with an optional high-concurrency
-                backend using
-                the <a href="http://software.schmorp.de/pkg/libev.html">libev</a>
-                event loop library.</li>
-            <li>A sensible and clean monad for web programming.</li>
-            <li>an XML-based templating system for generating HTML that allows
-                you to bind Haskell functionality to XML tags without getting
-                PHP-style tag soup all over your pants</li>
-          </ul>
         </p>
+
+        <ul>
+          <li>A fast HTTP server library with an optional high-concurrency
+              backend using
+              the <a href="http://software.schmorp.de/pkg/libev.html">libev</a>
+              event loop library.</li>
+          <li>A sensible and clean monad for web programming.</li>
+          <li>an HTML-based templating system for generating pages that allows
+              you to bind Haskell functionality to tags without getting
+              PHP-style tag soup all over your pants</li>
+        </ul>
 
         <p>
           Higher-level facilities for building web applications (like
           user/session management, component interfaces, data modeling, etc.)
           are planned but not yet implemented, so this release will mostly be
           of interest to those who:
-          <ul>
-            <li>
-              need a fast and minimal HTTP API at roughly the same level of
-              abstraction as Java servlets, or
-            </li>
-            <li>
-              are interested in contributing to the Snap Framework
-              project.
-            </li>
-          </ul>
         </p>
+
+        <ul>
+          <li>
+            need a fast and minimal HTTP API at roughly the same level of
+            abstraction as Java servlets, or
+          </li>
+          <li>
+            are interested in contributing to the Snap Framework
+            project.
+          </li>
+        </ul>
+
         <p>
           Snap runs on *nix platforms; it has been tested on Linux and Mac OSX
           Snow Leopard.  Windows support was added more recently, but it not
@@ -80,9 +84,10 @@
           </p>
           <p>
             <strong><a href="http://softwaresimply.blogspot.com/">Doug
-            Beardsley</a></strong> loves Haskell and has been playing with
-            Haskell web development since 2008.  He currently works for a
-            finance company doing Haskell development.
+            Beardsley</a></strong> has been programming since 1990, doing
+            web development in Haskell since 2008, and laments that those
+            two dates are so far apart.  He currently works for a finance
+            company doing Haskell development.
           </p>
           <p>
             <strong><a href="http://rfrn.org/~shu">Shu-yu Guo</a></strong>
@@ -96,7 +101,7 @@
             Sanders</a></strong> is a self-taught software developer living
             and working in the great American South.  He works as the resident
             Star Trek expert at <a href="http://thisismedium.com/">Medium</a>.
-            His interest include music, mathematics and classic european cars.
+            His interests include music, mathematics and classic european cars.
           </p>
           <p>
             <strong>Carl Howells</strong> is a veteran of web app
@@ -120,6 +125,21 @@
             running interest in web technologies, data mining, computational
             science and modeling. He uses Haskell at work to help companies
             make sound business decisions.
+          </p>
+          <p>
+            <strong><a href="http://github.com/cdsmith">Chris Smith</a>
+            </strong> is a software developer and co-owner of the eLearning
+            company <a href="http://www.brindlewaye.com">Brindle Waye</a>.
+            He has been developing web applications for about ten years, and
+            free software for about fifteen.  He is also an amateur algebraist,
+            doing research in ring theory.
+          </p>
+          <p>
+            <strong><a href="https://github.com/norm2782">Jurri&euml;n
+            Stutterheim</a></strong> is an MSc student at Utrecht University in
+            Utrecht, The Netherlands. From the moment he set foot in Utrecht
+            University, he has been in love with Haskell. In his free time he
+            can be found in the gym, or enjoying a good glass of wine.
           </p>
         </div><!--end developers-->
         <div>

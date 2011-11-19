@@ -2,7 +2,7 @@
 <static>
   <apply template="page">
     <div class="singlecolumn">
-      <markdown file="docs/quickstart.md"/>
+      <markdown file="quickstart.md"/>
     </div>
   </apply>
 </static>

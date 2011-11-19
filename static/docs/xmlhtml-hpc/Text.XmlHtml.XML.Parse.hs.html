@@ -1,0 +1,614 @@
+<html><style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+<pre>
+<span class="lineno">    1 </span>{-# LANGUAGE OverloadedStrings #-}
+<span class="lineno">    2 </span>
+<span class="lineno">    3 </span>module Text.XmlHtml.XML.Parse where
+<span class="lineno">    4 </span>
+<span class="lineno">    5 </span>import           Control.Applicative
+<span class="lineno">    6 </span>import           Control.Monad
+<span class="lineno">    7 </span>import           Data.Char
+<span class="lineno">    8 </span>import           Data.List
+<span class="lineno">    9 </span>import           Data.Maybe
+<span class="lineno">   10 </span>import           Text.XmlHtml.Common
+<span class="lineno">   11 </span>import           Text.XmlHtml.TextParser
+<span class="lineno">   12 </span>
+<span class="lineno">   13 </span>import qualified Text.Parsec as P
+<span class="lineno">   14 </span>
+<span class="lineno">   15 </span>import           Data.Map (Map)
+<span class="lineno">   16 </span>import qualified Data.Map as M
+<span class="lineno">   17 </span>
+<span class="lineno">   18 </span>import           Data.Text (Text)
+<span class="lineno">   19 </span>import qualified Data.Text as T
+<span class="lineno">   20 </span>
+<span class="lineno">   21 </span>
+<span class="lineno">   22 </span>------------------------------------------------------------------------------
+<span class="lineno">   23 </span>-- | This is my best guess as to the best rule for handling document fragments
+<span class="lineno">   24 </span>-- for processing.  It is essentially modeled after document, but allowing
+<span class="lineno">   25 </span>-- multiple nodes.
+<span class="lineno">   26 </span>docFragment :: Encoding -&gt; Parser Document
+<span class="lineno">   27 </span><span class="decl"><span class="istickedoff">docFragment e = do</span>
+<span class="lineno">   28 </span><span class="spaces">    </span><span class="istickedoff">(dt, nodes1) &lt;- prolog</span>
+<span class="lineno">   29 </span><span class="spaces">    </span><span class="istickedoff">nodes2       &lt;- content</span>
+<span class="lineno">   30 </span><span class="spaces">    </span><span class="istickedoff">return $ XmlDocument e dt (nodes1 ++ nodes2)</span></span>
+<span class="lineno">   31 </span>
+<span class="lineno">   32 </span>
+<span class="lineno">   33 </span>------------------------------------------------------------------------------
+<span class="lineno">   34 </span>-- Everything from here forward is translated from the XML specification.   --
+<span class="lineno">   35 </span>------------------------------------------------------------------------------
+<span class="lineno">   36 </span>
+<span class="lineno">   37 </span>{-
+<span class="lineno">   38 </span>    Map from numbered productions in the XML specification to symbols here:
+<span class="lineno">   39 </span>
+<span class="lineno">   40 </span>    PROD  SPEC NAME          PARSER NAME           NOTES
+<span class="lineno">   41 </span>    -----|------------------|---------------------|-------
+<span class="lineno">   42 </span>    [1]   document           document
+<span class="lineno">   43 </span>    [2]   Char                                     {2}
+<span class="lineno">   44 </span>    [3]   S                  whiteSpace
+<span class="lineno">   45 </span>    [4]   NameStartChar      isNameStartChar       {1}
+<span class="lineno">   46 </span>    [4a]  NameChar           isNameChar            {1}
+<span class="lineno">   47 </span>    [5]   Name               name
+<span class="lineno">   48 </span>    [6]   Names              names
+<span class="lineno">   49 </span>    [7]   Nmtoken            nmtoken
+<span class="lineno">   50 </span>    [8]   Nmtokens           nmtokens
+<span class="lineno">   51 </span>    [9]   EntityValue                              {4}
+<span class="lineno">   52 </span>    [10]  AttValue           attrValue
+<span class="lineno">   53 </span>    [11]  SystemLiteral      systemLiteral
+<span class="lineno">   54 </span>    [12]  PubidLiteral       pubIdLiteral
+<span class="lineno">   55 </span>    [13]  PubidChar          isPubIdChar           {1}
+<span class="lineno">   56 </span>    [14]  CharData           charData
+<span class="lineno">   57 </span>    [15]  Comment            comment
+<span class="lineno">   58 </span>    [16]  PI                 processingInstruction
+<span class="lineno">   59 </span>    [17]  PITarget           piTarget
+<span class="lineno">   60 </span>    [18]  CDSect             cdSect
+<span class="lineno">   61 </span>    [19]  CDStart            cdSect                {3}
+<span class="lineno">   62 </span>    [20]  CData              cdSect                {3}
+<span class="lineno">   63 </span>    [21]  CDEnd              cdSect                {3}
+<span class="lineno">   64 </span>    [22]  prolog             prolog
+<span class="lineno">   65 </span>    [23]  XMLDecl            xmlDecl
+<span class="lineno">   66 </span>    [24]  VersionInfo        versionInfo
+<span class="lineno">   67 </span>    [25]  Eq                 eq
+<span class="lineno">   68 </span>    [26]  VersionNum         versionInfo           {3}
+<span class="lineno">   69 </span>    [27]  Misc               misc
+<span class="lineno">   70 </span>    [28]  doctypedecl        docTypeDecl
+<span class="lineno">   71 </span>    [28a] DeclSep                                  {4}
+<span class="lineno">   72 </span>    [28b] intSubset                                {4}
+<span class="lineno">   73 </span>    [29]  markupdecl                               {4}
+<span class="lineno">   74 </span>    [30]  extSubset                                {4}
+<span class="lineno">   75 </span>    [31]  extSubsetDecl                            {4}
+<span class="lineno">   76 </span>    [32]  SDDecl             sdDecl
+<span class="lineno">   77 </span>    [39]  element            element
+<span class="lineno">   78 </span>    [40]  STag               emptyOrStartTag
+<span class="lineno">   79 </span>    [41]  Attribute          attribute
+<span class="lineno">   80 </span>    [42]  ETag               endTag
+<span class="lineno">   81 </span>    [43]  content            content
+<span class="lineno">   82 </span>    [44]  EmptyElemTag       emptyOrStartTag
+<span class="lineno">   83 </span>    [45]  elementDecl                              {4}
+<span class="lineno">   84 </span>    [46]  contentSpec                              {4}
+<span class="lineno">   85 </span>    [47]  children                                 {4}
+<span class="lineno">   86 </span>    [48]  cp                                       {4}
+<span class="lineno">   87 </span>    [49]  choice                                   {4}
+<span class="lineno">   88 </span>    [50]  seq                                      {4}
+<span class="lineno">   89 </span>    [51]  Mixed                                    {4}
+<span class="lineno">   90 </span>    [52]  AttlistDecl                              {4}
+<span class="lineno">   91 </span>    [53]  AttDef                                   {4}
+<span class="lineno">   92 </span>    [54]  AttType                                  {4}
+<span class="lineno">   93 </span>    [55]  StringType                               {4}
+<span class="lineno">   94 </span>    [56]  TokenizedType                            {4}
+<span class="lineno">   95 </span>    [57]  EnumeratedType                           {4}
+<span class="lineno">   96 </span>    [58]  NotationType                             {4}
+<span class="lineno">   97 </span>    [59]  Enumeration                              {4}
+<span class="lineno">   98 </span>    [60]  DefaultDecl                              {4}
+<span class="lineno">   99 </span>    [61]  conditionalSect                          {4}
+<span class="lineno">  100 </span>    [62]  includeSect                              {4}
+<span class="lineno">  101 </span>    [63]  ignoreSect                               {4}
+<span class="lineno">  102 </span>    [64]  ignoreSectContents                       {4}
+<span class="lineno">  103 </span>    [65]  Ignore                                   {4}
+<span class="lineno">  104 </span>    [66]  CharRef            charRef
+<span class="lineno">  105 </span>    [67]  Reference          reference
+<span class="lineno">  106 </span>    [68]  EntityRef          entityRef
+<span class="lineno">  107 </span>    [69]  PEReference                              {4}
+<span class="lineno">  108 </span>    [70]  EntityDecl                               {4}
+<span class="lineno">  109 </span>    [71]  GEDecl                                   {4}
+<span class="lineno">  110 </span>    [72]  PEDecl                                   {4}
+<span class="lineno">  111 </span>    [73]  EntityDef                                {4}
+<span class="lineno">  112 </span>    [74]  PEDef                                    {4}
+<span class="lineno">  113 </span>    [75]  ExternalID         externalID
+<span class="lineno">  114 </span>    [76]  NDataDecl                                {4}
+<span class="lineno">  115 </span>    [77]  TextDecl           textDecl
+<span class="lineno">  116 </span>    [78]  extParsedEnt       extParsedEnt
+<span class="lineno">  117 </span>    [80]  EncodingDecl       encodingDecl
+<span class="lineno">  118 </span>    [81]  EncName            encodingDecl          {3}
+<span class="lineno">  119 </span>    [82]  NotationDecl                             {4}
+<span class="lineno">  120 </span>    [83]  PublicID                                 {4}
+<span class="lineno">  121 </span>    [84]  Letter                                   {5}
+<span class="lineno">  122 </span>    [85]  BaseChar                                 {5}
+<span class="lineno">  123 </span>    [86]  Ideographic                              {5}
+<span class="lineno">  124 </span>    [87]  CombiningChar                            {5}
+<span class="lineno">  125 </span>    [88]  Digit                                    {5}
+<span class="lineno">  126 </span>    [89]  Extender                                 {5}
+<span class="lineno">  127 </span>
+<span class="lineno">  128 </span>    Notes:
+<span class="lineno">  129 </span>        {1} - These productions match single characters, and so are
+<span class="lineno">  130 </span>              implemented as predicates instead of parsers.
+<span class="lineno">  131 </span>        {3} - Denotes a production which is not exposed as a top-level symbol
+<span class="lineno">  132 </span>              because it is trivial and included in another definition.
+<span class="lineno">  133 </span>        {4} - This module does not contain a parser for the DTD subsets, so
+<span class="lineno">  134 </span>              grammar that occurs only in DTD subsets is not defined.
+<span class="lineno">  135 </span>        {5} - These are orphaned productions for character classes.
+<span class="lineno">  136 </span>-}
+<span class="lineno">  137 </span>
+<span class="lineno">  138 </span>
+<span class="lineno">  139 </span>------------------------------------------------------------------------------
+<span class="lineno">  140 </span>whiteSpace :: Parser ()
+<span class="lineno">  141 </span><span class="decl"><span class="istickedoff">whiteSpace = some (P.satisfy (`elem` &quot; \t\r\n&quot;)) *&gt; return <span class="nottickedoff">()</span></span></span>
+<span class="lineno">  142 </span>
+<span class="lineno">  143 </span>
+<span class="lineno">  144 </span>------------------------------------------------------------------------------
+<span class="lineno">  145 </span>isNameStartChar :: Char -&gt; Bool
+<span class="lineno">  146 </span><span class="decl"><span class="istickedoff">isNameStartChar c | c == ':'                         = True</span>
+<span class="lineno">  147 </span><span class="spaces">                  </span><span class="istickedoff">| c == '_'                         = True</span>
+<span class="lineno">  148 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= 'a'       &amp;&amp; c &lt;= 'z'       = True</span>
+<span class="lineno">  149 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= 'A'       &amp;&amp; c &lt;= 'Z'       = True</span>
+<span class="lineno">  150 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\xc0'    &amp;&amp; c &lt;= '\xd6'    = True</span>
+<span class="lineno">  151 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\xd8'    &amp;&amp; c &lt;= '\xf6'    = True</span>
+<span class="lineno">  152 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\xf8'    &amp;&amp; c &lt;= '\x2ff'   = True</span>
+<span class="lineno">  153 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\x370'   &amp;&amp; c &lt;= '\x37d'   = True</span>
+<span class="lineno">  154 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\x37f'   &amp;&amp; c &lt;= '\x1fff'  = True</span>
+<span class="lineno">  155 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\x200c'  &amp;&amp; c &lt;= '\x200d'  = True</span>
+<span class="lineno">  156 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\x2070'  &amp;&amp; c &lt;= '\x218f'  = True</span>
+<span class="lineno">  157 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\x2c00'  &amp;&amp; c &lt;= '\x2fef'  = True</span>
+<span class="lineno">  158 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\x3001'  &amp;&amp; c &lt;= '\xd7ff'  = True</span>
+<span class="lineno">  159 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\xf900'  &amp;&amp; c &lt;= '\xfdcf'  = True</span>
+<span class="lineno">  160 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\xfdf0'  &amp;&amp; c &lt;= '\xfffd'  = True</span>
+<span class="lineno">  161 </span><span class="spaces">                  </span><span class="istickedoff">| c &gt;= '\x10000' &amp;&amp; c &lt;= '\xeffff' = True</span>
+<span class="lineno">  162 </span><span class="spaces">                  </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span>                        = False</span></span>
+<span class="lineno">  163 </span>
+<span class="lineno">  164 </span>
+<span class="lineno">  165 </span>------------------------------------------------------------------------------
+<span class="lineno">  166 </span>isNameChar :: Char -&gt; Bool
+<span class="lineno">  167 </span><span class="decl"><span class="istickedoff">isNameChar c | isNameStartChar c                = True</span>
+<span class="lineno">  168 </span><span class="spaces">             </span><span class="istickedoff">| c == '-'                         = True</span>
+<span class="lineno">  169 </span><span class="spaces">             </span><span class="istickedoff">| c == '.'                         = True</span>
+<span class="lineno">  170 </span><span class="spaces">             </span><span class="istickedoff">| c == '\xb7'                      = True</span>
+<span class="lineno">  171 </span><span class="spaces">             </span><span class="istickedoff">| c &gt;= '0'       &amp;&amp; c &lt;= '9'       = True</span>
+<span class="lineno">  172 </span><span class="spaces">             </span><span class="istickedoff">| c &gt;= '\x300'   &amp;&amp; c &lt;= '\x36f'   = True</span>
+<span class="lineno">  173 </span><span class="spaces">             </span><span class="istickedoff">| c &gt;= '\x203f'  &amp;&amp; c &lt;= '\x2040'  = True</span>
+<span class="lineno">  174 </span><span class="spaces">             </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span>                        = False</span></span>
+<span class="lineno">  175 </span>
+<span class="lineno">  176 </span>
+<span class="lineno">  177 </span>------------------------------------------------------------------------------
+<span class="lineno">  178 </span>name :: Parser Text
+<span class="lineno">  179 </span><span class="decl"><span class="istickedoff">name = do</span>
+<span class="lineno">  180 </span><span class="spaces">    </span><span class="istickedoff">c &lt;- P.satisfy isNameStartChar</span>
+<span class="lineno">  181 </span><span class="spaces">    </span><span class="istickedoff">r &lt;- takeWhile0 isNameChar</span>
+<span class="lineno">  182 </span><span class="spaces">    </span><span class="istickedoff">return $ T.cons c r</span></span>
+<span class="lineno">  183 </span>
+<span class="lineno">  184 </span>
+<span class="lineno">  185 </span>------------------------------------------------------------------------------
+<span class="lineno">  186 </span>attrValue :: Parser Text
+<span class="lineno">  187 </span><span class="decl"><span class="istickedoff">attrValue = fmap T.concat (singleQuoted &lt;|&gt; doubleQuoted)</span>
+<span class="lineno">  188 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  189 </span><span class="spaces">    </span><span class="istickedoff">singleQuoted = P.char '\'' *&gt; refTill &quot;&lt;&amp;\'&quot; &lt;* P.char '\''</span>
+<span class="lineno">  190 </span><span class="spaces">    </span><span class="istickedoff">doubleQuoted = P.char '\&quot;' *&gt; refTill &quot;&lt;&amp;\&quot;&quot; &lt;* P.char '\&quot;'</span>
+<span class="lineno">  191 </span><span class="spaces">    </span><span class="istickedoff">refTill end = many (takeWhile1 (not . (`elem` end)) &lt;|&gt; reference)</span></span>
+<span class="lineno">  192 </span>
+<span class="lineno">  193 </span>
+<span class="lineno">  194 </span>------------------------------------------------------------------------------
+<span class="lineno">  195 </span>systemLiteral :: Parser Text
+<span class="lineno">  196 </span><span class="decl"><span class="istickedoff">systemLiteral = singleQuoted &lt;|&gt; doubleQuoted</span>
+<span class="lineno">  197 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  198 </span><span class="spaces">    </span><span class="istickedoff">singleQuoted = do</span>
+<span class="lineno">  199 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- P.char '\''</span>
+<span class="lineno">  200 </span><span class="spaces">        </span><span class="istickedoff">x &lt;- takeWhile0 (not . (== '\''))</span>
+<span class="lineno">  201 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- P.char '\''</span>
+<span class="lineno">  202 </span><span class="spaces">        </span><span class="istickedoff">return x</span>
+<span class="lineno">  203 </span><span class="spaces">    </span><span class="istickedoff">doubleQuoted = do</span>
+<span class="lineno">  204 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- P.char '\&quot;'</span>
+<span class="lineno">  205 </span><span class="spaces">        </span><span class="istickedoff">x &lt;- takeWhile0 (not . (== '\&quot;'))</span>
+<span class="lineno">  206 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- P.char '\&quot;'</span>
+<span class="lineno">  207 </span><span class="spaces">        </span><span class="istickedoff">return x</span></span>
+<span class="lineno">  208 </span>
+<span class="lineno">  209 </span>
+<span class="lineno">  210 </span>------------------------------------------------------------------------------
+<span class="lineno">  211 </span>pubIdLiteral :: Parser Text
+<span class="lineno">  212 </span><span class="decl"><span class="istickedoff">pubIdLiteral = singleQuoted &lt;|&gt; doubleQuoted</span>
+<span class="lineno">  213 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  214 </span><span class="spaces">    </span><span class="istickedoff">singleQuoted = do</span>
+<span class="lineno">  215 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- P.char '\''</span>
+<span class="lineno">  216 </span><span class="spaces">        </span><span class="istickedoff">x &lt;- takeWhile0 (\c -&gt; isPubIdChar c &amp;&amp; c /= '\'')</span>
+<span class="lineno">  217 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- P.char '\''</span>
+<span class="lineno">  218 </span><span class="spaces">        </span><span class="istickedoff">return x</span>
+<span class="lineno">  219 </span><span class="spaces">    </span><span class="istickedoff">doubleQuoted = do</span>
+<span class="lineno">  220 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- P.char '\&quot;'</span>
+<span class="lineno">  221 </span><span class="spaces">        </span><span class="istickedoff">x &lt;- takeWhile0 isPubIdChar</span>
+<span class="lineno">  222 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- P.char '\&quot;'</span>
+<span class="lineno">  223 </span><span class="spaces">        </span><span class="istickedoff">return x</span></span>
+<span class="lineno">  224 </span>
+<span class="lineno">  225 </span>
+<span class="lineno">  226 </span>------------------------------------------------------------------------------
+<span class="lineno">  227 </span>isPubIdChar :: Char -&gt; Bool
+<span class="lineno">  228 </span><span class="decl"><span class="istickedoff">isPubIdChar c | c &gt;= 'a' &amp;&amp; c &lt;= 'z'                 = True</span>
+<span class="lineno">  229 </span><span class="spaces">              </span><span class="istickedoff">| c &gt;= 'A' &amp;&amp; c &lt;= 'Z'                 = True</span>
+<span class="lineno">  230 </span><span class="spaces">              </span><span class="istickedoff">| c &gt;= '0' &amp;&amp; c &lt;= '9'                 = True</span>
+<span class="lineno">  231 </span><span class="spaces">              </span><span class="istickedoff">| c `elem` &quot; \r\n-\'()+,./:=?;!*#@$_%&quot; = True</span>
+<span class="lineno">  232 </span><span class="spaces">              </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span>                            = False</span></span>
+<span class="lineno">  233 </span>
+<span class="lineno">  234 </span>
+<span class="lineno">  235 </span>------------------------------------------------------------------------------
+<span class="lineno">  236 </span>-- | The requirement to not contain &quot;]]&gt;&quot; is for SGML compatibility.  We
+<span class="lineno">  237 </span>-- deliberately choose to not enforce it.  This makes the parser accept
+<span class="lineno">  238 </span>-- strictly more documents than a standards-compliant parser.
+<span class="lineno">  239 </span>charData :: Parser Node
+<span class="lineno">  240 </span><span class="decl"><span class="istickedoff">charData = TextNode &lt;$&gt; takeWhile1 (not . (`elem` &quot;&lt;&amp;&quot;))</span></span>
+<span class="lineno">  241 </span>
+<span class="lineno">  242 </span>
+<span class="lineno">  243 </span>------------------------------------------------------------------------------
+<span class="lineno">  244 </span>comment :: Parser (Maybe Node)
+<span class="lineno">  245 </span><span class="decl"><span class="istickedoff">comment = text &quot;&lt;!--&quot; *&gt; (Just &lt;$&gt; Comment &lt;$&gt; commentText) &lt;* text &quot;--&gt;&quot;</span>
+<span class="lineno">  246 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  247 </span><span class="spaces">    </span><span class="istickedoff">commentText = fmap T.concat $ many $</span>
+<span class="lineno">  248 </span><span class="spaces">        </span><span class="istickedoff">nonDash &lt;|&gt; P.try (T.cons &lt;$&gt; P.char '-' &lt;*&gt; nonDash)</span>
+<span class="lineno">  249 </span><span class="spaces">    </span><span class="istickedoff">nonDash = takeWhile1 (not . (== '-'))</span></span>
+<span class="lineno">  250 </span>
+<span class="lineno">  251 </span>
+<span class="lineno">  252 </span>------------------------------------------------------------------------------
+<span class="lineno">  253 </span>-- | Always returns Nothing since there's no representation for a PI in the
+<span class="lineno">  254 </span>-- document tree.
+<span class="lineno">  255 </span>processingInstruction :: Parser (Maybe Node)
+<span class="lineno">  256 </span><span class="decl"><span class="istickedoff">processingInstruction = do</span>
+<span class="lineno">  257 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- text &quot;&lt;?&quot;</span>
+<span class="lineno">  258 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- piTarget</span>
+<span class="lineno">  259 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- emptyEnd &lt;|&gt; contentEnd</span>
+<span class="lineno">  260 </span><span class="spaces">    </span><span class="istickedoff">return Nothing</span>
+<span class="lineno">  261 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  262 </span><span class="spaces">    </span><span class="istickedoff">emptyEnd   = P.try (P.string &quot;?&gt;&quot;)</span>
+<span class="lineno">  263 </span><span class="spaces">    </span><span class="istickedoff">contentEnd = P.try $ do</span>
+<span class="lineno">  264 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- whiteSpace</span>
+<span class="lineno">  265 </span><span class="spaces">        </span><span class="istickedoff">P.manyTill P.anyChar (P.try $ text &quot;?&gt;&quot;)</span></span>
+<span class="lineno">  266 </span>
+<span class="lineno">  267 </span>------------------------------------------------------------------------------
+<span class="lineno">  268 </span>piTarget :: Parser ()
+<span class="lineno">  269 </span><span class="decl"><span class="istickedoff">piTarget = do</span>
+<span class="lineno">  270 </span><span class="spaces">    </span><span class="istickedoff">n &lt;- name</span>
+<span class="lineno">  271 </span><span class="spaces">    </span><span class="istickedoff">when (T.map toLower n == &quot;xml&quot;) $ fail <span class="nottickedoff">&quot;xml declaration can't occur here&quot;</span></span></span>
+<span class="lineno">  272 </span>
+<span class="lineno">  273 </span>
+<span class="lineno">  274 </span>------------------------------------------------------------------------------
+<span class="lineno">  275 </span>cdata :: [Char] -&gt; Parser a -&gt; Parser Node
+<span class="lineno">  276 </span><span class="decl"><span class="istickedoff">cdata cs end = TextNode &lt;$&gt; T.concat &lt;$&gt; P.manyTill part end</span>
+<span class="lineno">  277 </span><span class="spaces">  </span><span class="istickedoff">where part = takeWhile1 (not . (`elem` cs))</span>
+<span class="lineno">  278 </span><span class="spaces">             </span><span class="istickedoff">&lt;|&gt; T.singleton &lt;$&gt; P.anyChar</span></span>
+<span class="lineno">  279 </span>
+<span class="lineno">  280 </span>
+<span class="lineno">  281 </span>------------------------------------------------------------------------------
+<span class="lineno">  282 </span>cdSect :: Parser (Maybe Node)
+<span class="lineno">  283 </span><span class="decl"><span class="istickedoff">cdSect = Just &lt;$&gt; do</span>
+<span class="lineno">  284 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- text &quot;&lt;![CDATA[&quot;</span>
+<span class="lineno">  285 </span><span class="spaces">    </span><span class="istickedoff">cdata &quot;]&quot; (text &quot;]]&gt;&quot;)</span></span>
+<span class="lineno">  286 </span>
+<span class="lineno">  287 </span>
+<span class="lineno">  288 </span>------------------------------------------------------------------------------
+<span class="lineno">  289 </span>prolog :: Parser (Maybe DocType, [Node])
+<span class="lineno">  290 </span><span class="decl"><span class="istickedoff">prolog = do</span>
+<span class="lineno">  291 </span><span class="spaces">    </span><span class="istickedoff">_      &lt;- optional xmlDecl</span>
+<span class="lineno">  292 </span><span class="spaces">    </span><span class="istickedoff">nodes1 &lt;- many misc</span>
+<span class="lineno">  293 </span><span class="spaces">    </span><span class="istickedoff">rest   &lt;- optional $ do</span>
+<span class="lineno">  294 </span><span class="spaces">        </span><span class="istickedoff">dt     &lt;- docTypeDecl</span>
+<span class="lineno">  295 </span><span class="spaces">        </span><span class="istickedoff">nodes2 &lt;- many misc</span>
+<span class="lineno">  296 </span><span class="spaces">        </span><span class="istickedoff">return (dt, nodes2)</span>
+<span class="lineno">  297 </span><span class="spaces">    </span><span class="istickedoff">case rest of</span>
+<span class="lineno">  298 </span><span class="spaces">        </span><span class="istickedoff">Nothing           -&gt; return (Nothing, catMaybes nodes1)</span>
+<span class="lineno">  299 </span><span class="spaces">        </span><span class="istickedoff">Just (dt, nodes2) -&gt; return (Just dt, catMaybes (nodes1 ++ nodes2))</span></span>
+<span class="lineno">  300 </span>
+<span class="lineno">  301 </span>
+<span class="lineno">  302 </span>------------------------------------------------------------------------------
+<span class="lineno">  303 </span>-- | Return value is the encoding, if present.
+<span class="lineno">  304 </span>xmlDecl :: Parser (Maybe Text)
+<span class="lineno">  305 </span><span class="decl"><span class="istickedoff">xmlDecl = do</span>
+<span class="lineno">  306 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- text &quot;&lt;?xml&quot;</span>
+<span class="lineno">  307 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- versionInfo</span>
+<span class="lineno">  308 </span><span class="spaces">    </span><span class="istickedoff">e &lt;- optional encodingDecl</span>
+<span class="lineno">  309 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- optional sdDecl</span>
+<span class="lineno">  310 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- optional whiteSpace</span>
+<span class="lineno">  311 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- text &quot;?&gt;&quot;</span>
+<span class="lineno">  312 </span><span class="spaces">    </span><span class="istickedoff">return <span class="nottickedoff">e</span></span></span>
+<span class="lineno">  313 </span>
+<span class="lineno">  314 </span>
+<span class="lineno">  315 </span>------------------------------------------------------------------------------
+<span class="lineno">  316 </span>versionInfo :: Parser ()
+<span class="lineno">  317 </span><span class="decl"><span class="istickedoff">versionInfo = do</span>
+<span class="lineno">  318 </span><span class="spaces">    </span><span class="istickedoff">whiteSpace *&gt; text &quot;version&quot; *&gt; eq *&gt; (singleQuoted &lt;|&gt; doubleQuoted)</span>
+<span class="lineno">  319 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  320 </span><span class="spaces">    </span><span class="istickedoff">singleQuoted = P.char '\'' *&gt; versionNum &lt;* P.char '\''</span>
+<span class="lineno">  321 </span><span class="spaces">    </span><span class="istickedoff">doubleQuoted = P.char '\&quot;' *&gt; versionNum &lt;* P.char '\&quot;'</span>
+<span class="lineno">  322 </span><span class="spaces">    </span><span class="istickedoff">versionNum   = do</span>
+<span class="lineno">  323 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- text &quot;1.&quot;</span>
+<span class="lineno">  324 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- some (P.satisfy (\c -&gt; c &gt;= '0' &amp;&amp; c &lt;= '9'))</span>
+<span class="lineno">  325 </span><span class="spaces">        </span><span class="istickedoff">return <span class="nottickedoff">()</span></span></span>
+<span class="lineno">  326 </span>
+<span class="lineno">  327 </span>
+<span class="lineno">  328 </span>------------------------------------------------------------------------------
+<span class="lineno">  329 </span>eq :: Parser ()
+<span class="lineno">  330 </span><span class="decl"><span class="istickedoff">eq = optional whiteSpace *&gt; P.char '=' *&gt; optional whiteSpace *&gt; return <span class="nottickedoff">()</span></span></span>
+<span class="lineno">  331 </span>
+<span class="lineno">  332 </span>
+<span class="lineno">  333 </span>------------------------------------------------------------------------------
+<span class="lineno">  334 </span>misc :: Parser (Maybe Node)
+<span class="lineno">  335 </span><span class="decl"><span class="istickedoff">misc = comment &lt;|&gt; processingInstruction &lt;|&gt; (whiteSpace *&gt; return Nothing)</span></span>
+<span class="lineno">  336 </span>
+<span class="lineno">  337 </span>
+<span class="lineno">  338 </span>------------------------------------------------------------------------------
+<span class="lineno">  339 </span>-- | Internal subset is parsed, but ignored since we don't have data types to
+<span class="lineno">  340 </span>-- store it.
+<span class="lineno">  341 </span>docTypeDecl :: Parser DocType
+<span class="lineno">  342 </span><span class="decl"><span class="istickedoff">docTypeDecl = do</span>
+<span class="lineno">  343 </span><span class="spaces">    </span><span class="istickedoff">_      &lt;- text &quot;&lt;!DOCTYPE&quot;</span>
+<span class="lineno">  344 </span><span class="spaces">    </span><span class="istickedoff">whiteSpace</span>
+<span class="lineno">  345 </span><span class="spaces">    </span><span class="istickedoff">tag    &lt;- name</span>
+<span class="lineno">  346 </span><span class="spaces">    </span><span class="istickedoff">_      &lt;- optional whiteSpace</span>
+<span class="lineno">  347 </span><span class="spaces">    </span><span class="istickedoff">extid  &lt;- externalID</span>
+<span class="lineno">  348 </span><span class="spaces">    </span><span class="istickedoff">_      &lt;- optional whiteSpace</span>
+<span class="lineno">  349 </span><span class="spaces">    </span><span class="istickedoff">intsub &lt;- internalDoctype</span>
+<span class="lineno">  350 </span><span class="spaces">    </span><span class="istickedoff">_      &lt;- P.char '&gt;'</span>
+<span class="lineno">  351 </span><span class="spaces">    </span><span class="istickedoff">return (DocType tag extid intsub)</span></span>
+<span class="lineno">  352 </span>
+<span class="lineno">  353 </span>
+<span class="lineno">  354 </span>------------------------------------------------------------------------------
+<span class="lineno">  355 </span>-- | States for the DOCTYPE internal subset state machine.
+<span class="lineno">  356 </span>data InternalDoctypeState = IDSStart
+<span class="lineno">  357 </span>                          | IDSScanning Int
+<span class="lineno">  358 </span>                          | IDSInQuote Int Char
+<span class="lineno">  359 </span>                          | IDSCommentS1 Int
+<span class="lineno">  360 </span>                          | IDSCommentS2 Int
+<span class="lineno">  361 </span>                          | IDSCommentS3 Int
+<span class="lineno">  362 </span>                          | IDSComment Int
+<span class="lineno">  363 </span>                          | IDSCommentD1 Int
+<span class="lineno">  364 </span>                          | IDSCommentE1 Int
+<span class="lineno">  365 </span>
+<span class="lineno">  366 </span>
+<span class="lineno">  367 </span>------------------------------------------------------------------------------
+<span class="lineno">  368 </span>-- | Internal DOCTYPE subset.  We don't actually parse this; just scan through
+<span class="lineno">  369 </span>-- and look for the end, and store it in a block of text.
+<span class="lineno">  370 </span>internalDoctype :: Parser InternalSubset
+<span class="lineno">  371 </span><span class="decl"><span class="istickedoff">internalDoctype = InternalText &lt;$&gt; T.pack &lt;$&gt; scanText (dfa IDSStart)</span>
+<span class="lineno">  372 </span><span class="spaces">              </span><span class="istickedoff">&lt;|&gt; return NoInternalSubset</span>
+<span class="lineno">  373 </span><span class="spaces">  </span><span class="istickedoff">where dfa IDSStart '[' = ScanNext (dfa (IDSScanning 0))</span>
+<span class="lineno">  374 </span><span class="spaces">        </span><span class="istickedoff">dfa IDSStart _   = ScanFail <span class="nottickedoff">&quot;Not a DOCTYPE internal subset&quot;</span></span>
+<span class="lineno">  375 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSInQuote n c) d</span>
+<span class="lineno">  376 </span><span class="spaces">          </span><span class="istickedoff">| c == d                = ScanNext (dfa (IDSScanning n))</span>
+<span class="lineno">  377 </span><span class="spaces">          </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span>             = ScanNext (dfa (IDSInQuote n c))</span>
+<span class="lineno">  378 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSScanning n) '['   = ScanNext (dfa (IDSScanning (n+1)))</span>
+<span class="lineno">  379 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSScanning 0) ']'   = ScanFinish</span>
+<span class="lineno">  380 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSScanning n) ']'   = ScanNext (dfa (IDSScanning (n-1)))</span>
+<span class="lineno">  381 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSScanning n) '\''  = ScanNext (dfa (IDSInQuote n '\''))</span>
+<span class="lineno">  382 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSScanning n) '\&quot;'  = ScanNext (dfa (IDSInQuote n '\&quot;'))</span>
+<span class="lineno">  383 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSScanning n) '&lt;'   = ScanNext (dfa (IDSCommentS1 n))</span>
+<span class="lineno">  384 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSScanning n) _     = ScanNext (dfa (IDSScanning n))</span>
+<span class="lineno">  385 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS1 n) '['  = ScanNext (dfa (IDSScanning (n+1)))</span>
+<span class="lineno">  386 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS1 0) ']'  = ScanFinish</span>
+<span class="lineno">  387 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS1 n) ']'  = ScanNext (dfa (IDSScanning (n-1)))</span>
+<span class="lineno">  388 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS1 n) '\'' = ScanNext (dfa (IDSInQuote n '\''))</span>
+<span class="lineno">  389 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS1 n) '\&quot;' = ScanNext (dfa (IDSInQuote n '\&quot;'))</span>
+<span class="lineno">  390 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS1 n) '!'  = ScanNext (dfa (IDSCommentS2 n))</span>
+<span class="lineno">  391 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS1 n) _    = ScanNext (dfa (IDSScanning n))</span>
+<span class="lineno">  392 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS2 n) '['  = ScanNext (dfa (IDSScanning (n+1)))</span>
+<span class="lineno">  393 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS2 0) ']'  = ScanFinish</span>
+<span class="lineno">  394 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS2 n) ']'  = ScanNext (dfa (IDSScanning (n-1)))</span>
+<span class="lineno">  395 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS2 n) '\'' = ScanNext (dfa (IDSInQuote n '\''))</span>
+<span class="lineno">  396 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS2 n) '\&quot;' = ScanNext (dfa (IDSInQuote n '\&quot;'))</span>
+<span class="lineno">  397 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS2 n) '-'  = ScanNext (dfa (IDSCommentS3 n))</span>
+<span class="lineno">  398 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS2 n) _    = ScanNext (dfa (IDSScanning n))</span>
+<span class="lineno">  399 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS3 n) '['  = ScanNext (dfa (IDSScanning (n+1)))</span>
+<span class="lineno">  400 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS3 0) ']'  = ScanFinish</span>
+<span class="lineno">  401 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS3 n) ']'  = ScanNext (dfa (IDSScanning (n-1)))</span>
+<span class="lineno">  402 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS3 n) '\'' = ScanNext (dfa (IDSInQuote n '\''))</span>
+<span class="lineno">  403 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS3 n) '\&quot;' = ScanNext (dfa (IDSInQuote n '\&quot;'))</span>
+<span class="lineno">  404 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS3 n) '-'  = ScanNext (dfa (IDSComment n))</span>
+<span class="lineno">  405 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentS3 n) _    = ScanNext (dfa (IDSScanning n))</span>
+<span class="lineno">  406 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSComment n) '-'    = ScanNext (dfa (IDSCommentD1 n))</span>
+<span class="lineno">  407 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSComment n) _      = ScanNext (dfa (IDSComment n))</span>
+<span class="lineno">  408 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentD1 n) '-'  = ScanNext (dfa (IDSCommentE1 n))</span>
+<span class="lineno">  409 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentD1 n) _    = ScanNext (dfa (IDSComment n))</span>
+<span class="lineno">  410 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentE1 n) '&gt;'  = ScanNext (dfa (IDSScanning n))</span>
+<span class="lineno">  411 </span><span class="spaces">        </span><span class="istickedoff">dfa (IDSCommentE1 _) _    = ScanFail <span class="nottickedoff">&quot;Poorly formatted comment&quot;</span></span></span>
+<span class="lineno">  412 </span>
+<span class="lineno">  413 </span>
+<span class="lineno">  414 </span>------------------------------------------------------------------------------
+<span class="lineno">  415 </span>sdDecl :: Parser ()
+<span class="lineno">  416 </span><span class="decl"><span class="istickedoff">sdDecl = do</span>
+<span class="lineno">  417 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- P.try $ whiteSpace *&gt; text &quot;standalone&quot;</span>
+<span class="lineno">  418 </span><span class="spaces">    </span><span class="istickedoff">eq</span>
+<span class="lineno">  419 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- single &lt;|&gt; double</span>
+<span class="lineno">  420 </span><span class="spaces">    </span><span class="istickedoff">return <span class="nottickedoff">()</span></span>
+<span class="lineno">  421 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  422 </span><span class="spaces">    </span><span class="istickedoff">single = P.char '\'' *&gt; yesno &lt;* P.char '\''</span>
+<span class="lineno">  423 </span><span class="spaces">    </span><span class="istickedoff">double = P.char '\&quot;' *&gt; yesno &lt;* P.char '\&quot;'</span>
+<span class="lineno">  424 </span><span class="spaces">    </span><span class="istickedoff">yesno  = text &quot;yes&quot; &lt;|&gt; text &quot;no&quot;</span></span>
+<span class="lineno">  425 </span>
+<span class="lineno">  426 </span>
+<span class="lineno">  427 </span>------------------------------------------------------------------------------
+<span class="lineno">  428 </span>element :: Parser Node
+<span class="lineno">  429 </span><span class="decl"><span class="istickedoff">element = do</span>
+<span class="lineno">  430 </span><span class="spaces">    </span><span class="istickedoff">(t,a,b) &lt;- emptyOrStartTag</span>
+<span class="lineno">  431 </span><span class="spaces">    </span><span class="istickedoff">if b then return (Element t a [])</span>
+<span class="lineno">  432 </span><span class="spaces">         </span><span class="istickedoff">else nonEmptyElem t a</span>
+<span class="lineno">  433 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  434 </span><span class="spaces">    </span><span class="istickedoff">nonEmptyElem t a = do</span>
+<span class="lineno">  435 </span><span class="spaces">        </span><span class="istickedoff">c &lt;- content</span>
+<span class="lineno">  436 </span><span class="spaces">        </span><span class="istickedoff">endTag t</span>
+<span class="lineno">  437 </span><span class="spaces">        </span><span class="istickedoff">return (Element t a c)</span></span>
+<span class="lineno">  438 </span>
+<span class="lineno">  439 </span>
+<span class="lineno">  440 </span>------------------------------------------------------------------------------
+<span class="lineno">  441 </span>-- | Results are (tag name, attributes, isEmpty)
+<span class="lineno">  442 </span>emptyOrStartTag :: Parser (Text, [(Text, Text)], Bool)
+<span class="lineno">  443 </span><span class="decl"><span class="istickedoff">emptyOrStartTag = do</span>
+<span class="lineno">  444 </span><span class="spaces">    </span><span class="istickedoff">t &lt;- P.try $ P.char '&lt;' *&gt; name</span>
+<span class="lineno">  445 </span><span class="spaces">    </span><span class="istickedoff">a &lt;- many $ P.try $ do</span>
+<span class="lineno">  446 </span><span class="spaces">        </span><span class="istickedoff">whiteSpace</span>
+<span class="lineno">  447 </span><span class="spaces">        </span><span class="istickedoff">attribute</span>
+<span class="lineno">  448 </span><span class="spaces">    </span><span class="istickedoff">when (hasDups a) $ fail <span class="nottickedoff">&quot;Duplicate attribute names in element&quot;</span></span>
+<span class="lineno">  449 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- optional whiteSpace</span>
+<span class="lineno">  450 </span><span class="spaces">    </span><span class="istickedoff">e &lt;- optional (P.char '/')</span>
+<span class="lineno">  451 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- P.char '&gt;'</span>
+<span class="lineno">  452 </span><span class="spaces">    </span><span class="istickedoff">return (t, a, isJust e)</span>
+<span class="lineno">  453 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  454 </span><span class="spaces">    </span><span class="istickedoff">hasDups a = length (nub (map fst a)) &lt; length a</span></span>
+<span class="lineno">  455 </span>
+<span class="lineno">  456 </span>
+<span class="lineno">  457 </span>------------------------------------------------------------------------------
+<span class="lineno">  458 </span>attribute :: Parser (Text, Text)
+<span class="lineno">  459 </span><span class="decl"><span class="istickedoff">attribute = do</span>
+<span class="lineno">  460 </span><span class="spaces">    </span><span class="istickedoff">n &lt;- name</span>
+<span class="lineno">  461 </span><span class="spaces">    </span><span class="istickedoff">eq</span>
+<span class="lineno">  462 </span><span class="spaces">    </span><span class="istickedoff">v &lt;- attrValue</span>
+<span class="lineno">  463 </span><span class="spaces">    </span><span class="istickedoff">return (n,v)</span></span>
+<span class="lineno">  464 </span>
+<span class="lineno">  465 </span>
+<span class="lineno">  466 </span>------------------------------------------------------------------------------
+<span class="lineno">  467 </span>endTag :: Text -&gt; Parser ()
+<span class="lineno">  468 </span><span class="decl"><span class="istickedoff">endTag s = do</span>
+<span class="lineno">  469 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- text &quot;&lt;/&quot;</span>
+<span class="lineno">  470 </span><span class="spaces">    </span><span class="istickedoff">t &lt;- name</span>
+<span class="lineno">  471 </span><span class="spaces">    </span><span class="istickedoff">when (s /= t) $ fail $ <span class="nottickedoff">&quot;mismatched tags: &lt;/&quot; ++ T.unpack t ++</span></span>
+<span class="lineno">  472 </span><span class="spaces">                           </span><span class="istickedoff"><span class="nottickedoff">&quot;&gt; found inside &lt;&quot; ++ T.unpack s ++ &quot;&gt; tag&quot;</span></span>
+<span class="lineno">  473 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- optional whiteSpace</span>
+<span class="lineno">  474 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- text &quot;&gt;&quot;</span>
+<span class="lineno">  475 </span><span class="spaces">    </span><span class="istickedoff">return <span class="nottickedoff">()</span></span></span>
+<span class="lineno">  476 </span>
+<span class="lineno">  477 </span>
+<span class="lineno">  478 </span>------------------------------------------------------------------------------
+<span class="lineno">  479 </span>content :: Parser [Node]
+<span class="lineno">  480 </span><span class="decl"><span class="istickedoff">content = do</span>
+<span class="lineno">  481 </span><span class="spaces">    </span><span class="istickedoff">n  &lt;- optional charData</span>
+<span class="lineno">  482 </span><span class="spaces">    </span><span class="istickedoff">ns &lt;- fmap concat $ many $ do</span>
+<span class="lineno">  483 </span><span class="spaces">        </span><span class="istickedoff">s &lt;- ((Just &lt;$&gt; TextNode &lt;$&gt; reference)</span>
+<span class="lineno">  484 </span><span class="spaces">               </span><span class="istickedoff">&lt;|&gt; cdSect</span>
+<span class="lineno">  485 </span><span class="spaces">               </span><span class="istickedoff">&lt;|&gt; processingInstruction</span>
+<span class="lineno">  486 </span><span class="spaces">               </span><span class="istickedoff">&lt;|&gt; comment</span>
+<span class="lineno">  487 </span><span class="spaces">               </span><span class="istickedoff">&lt;|&gt; fmap Just element)</span>
+<span class="lineno">  488 </span><span class="spaces">        </span><span class="istickedoff">t &lt;- optional charData</span>
+<span class="lineno">  489 </span><span class="spaces">        </span><span class="istickedoff">return [s,t]</span>
+<span class="lineno">  490 </span><span class="spaces">    </span><span class="istickedoff">return $ coalesceText $ catMaybes (n:ns)</span>
+<span class="lineno">  491 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  492 </span><span class="spaces">    </span><span class="istickedoff">coalesceText (TextNode s : TextNode t : ns)</span>
+<span class="lineno">  493 </span><span class="spaces">        </span><span class="istickedoff">= coalesceText (TextNode (T.append s t) : ns)</span>
+<span class="lineno">  494 </span><span class="spaces">    </span><span class="istickedoff">coalesceText (n:ns)</span>
+<span class="lineno">  495 </span><span class="spaces">        </span><span class="istickedoff">= n : coalesceText ns</span>
+<span class="lineno">  496 </span><span class="spaces">    </span><span class="istickedoff">coalesceText []</span>
+<span class="lineno">  497 </span><span class="spaces">        </span><span class="istickedoff">= []</span></span>
+<span class="lineno">  498 </span>
+<span class="lineno">  499 </span>
+<span class="lineno">  500 </span>------------------------------------------------------------------------------
+<span class="lineno">  501 </span>charRef :: Parser Text
+<span class="lineno">  502 </span><span class="decl"><span class="istickedoff">charRef = hexCharRef &lt;|&gt; decCharRef</span>
+<span class="lineno">  503 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  504 </span><span class="spaces">    </span><span class="istickedoff">decCharRef = do</span>
+<span class="lineno">  505 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- text &quot;&amp;#&quot;</span>
+<span class="lineno">  506 </span><span class="spaces">        </span><span class="istickedoff">ds &lt;- some digit</span>
+<span class="lineno">  507 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- P.char ';'</span>
+<span class="lineno">  508 </span><span class="spaces">        </span><span class="istickedoff">let c = chr $ foldl' (\a b -&gt; 10 * a + b) 0 ds</span>
+<span class="lineno">  509 </span><span class="spaces">        </span><span class="istickedoff">when (not (isValidChar c)) $ fail $</span>
+<span class="lineno">  510 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">&quot;Reference is not a valid character&quot;</span></span>
+<span class="lineno">  511 </span><span class="spaces">        </span><span class="istickedoff">return $ T.singleton c</span>
+<span class="lineno">  512 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  513 </span><span class="spaces">        </span><span class="istickedoff">digit = do</span>
+<span class="lineno">  514 </span><span class="spaces">            </span><span class="istickedoff">d &lt;- P.satisfy (\c -&gt; c &gt;= '0' &amp;&amp; c &lt;= '9')</span>
+<span class="lineno">  515 </span><span class="spaces">            </span><span class="istickedoff">return (ord d - ord '0')</span>
+<span class="lineno">  516 </span><span class="spaces">    </span><span class="istickedoff">hexCharRef = do</span>
+<span class="lineno">  517 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- text &quot;&amp;#x&quot;</span>
+<span class="lineno">  518 </span><span class="spaces">        </span><span class="istickedoff">ds &lt;- some digit</span>
+<span class="lineno">  519 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- P.char ';'</span>
+<span class="lineno">  520 </span><span class="spaces">        </span><span class="istickedoff">let c = chr $ foldl' (\a b -&gt; 16 * a + b) 0 ds</span>
+<span class="lineno">  521 </span><span class="spaces">        </span><span class="istickedoff">when (not (isValidChar c)) $ fail $</span>
+<span class="lineno">  522 </span><span class="spaces">            </span><span class="istickedoff"><span class="nottickedoff">&quot;Reference is not a valid character&quot;</span></span>
+<span class="lineno">  523 </span><span class="spaces">        </span><span class="istickedoff">return $ T.singleton c</span>
+<span class="lineno">  524 </span><span class="spaces">      </span><span class="istickedoff">where</span>
+<span class="lineno">  525 </span><span class="spaces">        </span><span class="istickedoff">digit = num &lt;|&gt; upper &lt;|&gt; lower</span>
+<span class="lineno">  526 </span><span class="spaces">        </span><span class="istickedoff">num = do</span>
+<span class="lineno">  527 </span><span class="spaces">            </span><span class="istickedoff">d &lt;- P.satisfy (\c -&gt; c &gt;= '0' &amp;&amp; c &lt;= '9')</span>
+<span class="lineno">  528 </span><span class="spaces">            </span><span class="istickedoff">return (ord d - ord '0')</span>
+<span class="lineno">  529 </span><span class="spaces">        </span><span class="istickedoff">upper = do</span>
+<span class="lineno">  530 </span><span class="spaces">            </span><span class="istickedoff">d &lt;- P.satisfy (\c -&gt; c &gt;= 'A' &amp;&amp; c &lt;= 'F')</span>
+<span class="lineno">  531 </span><span class="spaces">            </span><span class="istickedoff">return (10 + ord d - ord 'A')</span>
+<span class="lineno">  532 </span><span class="spaces">        </span><span class="istickedoff">lower = do</span>
+<span class="lineno">  533 </span><span class="spaces">            </span><span class="istickedoff">d &lt;- P.satisfy (\c -&gt; c &gt;= 'a' &amp;&amp; c &lt;= 'f')</span>
+<span class="lineno">  534 </span><span class="spaces">            </span><span class="istickedoff">return (10 + ord d - ord 'a')</span></span>
+<span class="lineno">  535 </span>
+<span class="lineno">  536 </span>
+<span class="lineno">  537 </span>------------------------------------------------------------------------------
+<span class="lineno">  538 </span>reference :: Parser Text
+<span class="lineno">  539 </span><span class="decl"><span class="istickedoff">reference = charRef &lt;|&gt; entityRef</span></span>
+<span class="lineno">  540 </span>
+<span class="lineno">  541 </span>
+<span class="lineno">  542 </span>------------------------------------------------------------------------------
+<span class="lineno">  543 </span>entityRef :: Parser Text
+<span class="lineno">  544 </span><span class="decl"><span class="istickedoff">entityRef = do</span>
+<span class="lineno">  545 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- P.char '&amp;'</span>
+<span class="lineno">  546 </span><span class="spaces">    </span><span class="istickedoff">n &lt;- name</span>
+<span class="lineno">  547 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- P.char ';'</span>
+<span class="lineno">  548 </span><span class="spaces">    </span><span class="istickedoff">case M.lookup n entityRefLookup of</span>
+<span class="lineno">  549 </span><span class="spaces">        </span><span class="istickedoff">Nothing -&gt; fail $ <span class="nottickedoff">&quot;Unknown entity reference: &quot; ++ T.unpack n</span></span>
+<span class="lineno">  550 </span><span class="spaces">        </span><span class="istickedoff">Just t  -&gt; return t</span>
+<span class="lineno">  551 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  552 </span><span class="spaces">    </span><span class="istickedoff">entityRefLookup :: Map Text Text</span>
+<span class="lineno">  553 </span><span class="spaces">    </span><span class="istickedoff">entityRefLookup = M.fromList [</span>
+<span class="lineno">  554 </span><span class="spaces">        </span><span class="istickedoff">(&quot;amp&quot;, &quot;&amp;&quot;),</span>
+<span class="lineno">  555 </span><span class="spaces">        </span><span class="istickedoff">(&quot;lt&quot;, &quot;&lt;&quot;),</span>
+<span class="lineno">  556 </span><span class="spaces">        </span><span class="istickedoff">(&quot;gt&quot;, &quot;&gt;&quot;),</span>
+<span class="lineno">  557 </span><span class="spaces">        </span><span class="istickedoff">(&quot;apos&quot;, &quot;\'&quot;),</span>
+<span class="lineno">  558 </span><span class="spaces">        </span><span class="istickedoff">(&quot;quot&quot;, &quot;\&quot;&quot;)</span>
+<span class="lineno">  559 </span><span class="spaces">        </span><span class="istickedoff">]</span></span>
+<span class="lineno">  560 </span>
+<span class="lineno">  561 </span>
+<span class="lineno">  562 </span>------------------------------------------------------------------------------
+<span class="lineno">  563 </span>externalID :: Parser ExternalID
+<span class="lineno">  564 </span><span class="decl"><span class="istickedoff">externalID = systemID &lt;|&gt; publicID &lt;|&gt; return NoExternalID</span>
+<span class="lineno">  565 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  566 </span><span class="spaces">    </span><span class="istickedoff">systemID = do</span>
+<span class="lineno">  567 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- text &quot;SYSTEM&quot;</span>
+<span class="lineno">  568 </span><span class="spaces">        </span><span class="istickedoff">whiteSpace</span>
+<span class="lineno">  569 </span><span class="spaces">        </span><span class="istickedoff">fmap System systemLiteral</span>
+<span class="lineno">  570 </span><span class="spaces">    </span><span class="istickedoff">publicID = do</span>
+<span class="lineno">  571 </span><span class="spaces">        </span><span class="istickedoff">_ &lt;- text &quot;PUBLIC&quot;</span>
+<span class="lineno">  572 </span><span class="spaces">        </span><span class="istickedoff">whiteSpace</span>
+<span class="lineno">  573 </span><span class="spaces">        </span><span class="istickedoff">pid &lt;- pubIdLiteral</span>
+<span class="lineno">  574 </span><span class="spaces">        </span><span class="istickedoff">whiteSpace</span>
+<span class="lineno">  575 </span><span class="spaces">        </span><span class="istickedoff">sid &lt;- systemLiteral</span>
+<span class="lineno">  576 </span><span class="spaces">        </span><span class="istickedoff">return (Public pid sid)</span></span>
+<span class="lineno">  577 </span>
+<span class="lineno">  578 </span>
+<span class="lineno">  579 </span>------------------------------------------------------------------------------
+<span class="lineno">  580 </span>encodingDecl :: Parser Text
+<span class="lineno">  581 </span><span class="decl"><span class="istickedoff">encodingDecl = do</span>
+<span class="lineno">  582 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- P.try $ whiteSpace *&gt; text &quot;encoding&quot;</span>
+<span class="lineno">  583 </span><span class="spaces">    </span><span class="istickedoff">_ &lt;- eq</span>
+<span class="lineno">  584 </span><span class="spaces">    </span><span class="istickedoff">singleQuoted &lt;|&gt; doubleQuoted</span>
+<span class="lineno">  585 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">  586 </span><span class="spaces">    </span><span class="istickedoff">singleQuoted = P.char '\'' *&gt; encName &lt;* P.char '\''</span>
+<span class="lineno">  587 </span><span class="spaces">    </span><span class="istickedoff">doubleQuoted = P.char '\&quot;' *&gt; encName &lt;* P.char '\&quot;'</span>
+<span class="lineno">  588 </span><span class="spaces">    </span><span class="istickedoff">encName      = do</span>
+<span class="lineno">  589 </span><span class="spaces">        </span><span class="istickedoff">c  &lt;- P.satisfy isEncStart</span>
+<span class="lineno">  590 </span><span class="spaces">        </span><span class="istickedoff">cs &lt;- takeWhile0 isEnc</span>
+<span class="lineno">  591 </span><span class="spaces">        </span><span class="istickedoff">return <span class="nottickedoff">(T.cons c cs)</span></span>
+<span class="lineno">  592 </span><span class="spaces">    </span><span class="istickedoff">isEncStart c | c &gt;= 'A' &amp;&amp; c &lt;= 'Z' = True</span>
+<span class="lineno">  593 </span><span class="spaces">                 </span><span class="istickedoff">| c &gt;= 'a' &amp;&amp; c &lt;= 'z' = True</span>
+<span class="lineno">  594 </span><span class="spaces">                 </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = False</span>
+<span class="lineno">  595 </span><span class="spaces">    </span><span class="istickedoff">isEnc      c | c &gt;= 'A' &amp;&amp; c &lt;= 'Z' = True</span>
+<span class="lineno">  596 </span><span class="spaces">                 </span><span class="istickedoff">| c &gt;= 'a' &amp;&amp; c &lt;= 'z' = True</span>
+<span class="lineno">  597 </span><span class="spaces">                 </span><span class="istickedoff">| c &gt;= '0' &amp;&amp; c &lt;= '9' = True</span>
+<span class="lineno">  598 </span><span class="spaces">                 </span><span class="istickedoff">| c `elem` &quot;._-&quot;       = True</span>
+<span class="lineno">  599 </span><span class="spaces">                 </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = False</span></span>
+<span class="lineno">  600 </span>
+
+</pre>
+</html>
