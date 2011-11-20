@@ -1,26 +1,25 @@
+
 <bind tag="subtitle">: Blog</bind>
 <bind tag="feed-autodiscovery-link"><link rel="alternate" type="application/atom+xml" href="/blog/feed.xml"/></bind>
 
 <apply template="page">
 
   <div id="blog-index">
-    <h2>
+
       <span itemscope="itemscope" itemtype="http://data-vocabulary.org/Breadcrumb">
-        <a itemprop="url" href="/blog"><span itemprop="title">Snap Framework Blog</span></a>
+        <h2 class="top-title"><a href="/blog/feed.xml"><img src="/media/img/rss.png" /></a>Blog</h2>
       </span>
-      <a href="/blog/feed.xml"><img src="/blog/i/feed.png"/></a>
-    </h2>
-    <table>
+
+
       <posts:reverseChronological>
-        <tr class="post">
-          <td class="date"><post:date/></td>
-          <td class="title">
-            <a href="$(post:url)"><post:title/></a>
-          </td>
-          <td class="summary"><post:summary/></td>
-        </tr>
+        <div class="post">
+          <div class="title">
+            <h3><a href="$(post:url)"><post:title/></a> <span class="date"><post:date/></span></h3>
+          </div>
+            <p class="summary"><post:summary/> <a class="readmore" href="$(post:url)">Read Post...</a></p>
+        </div>
       </posts:reverseChronological>
-    </table>
+
 
     <div class="clear"/>
   </div>

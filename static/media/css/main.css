@@ -30,6 +30,10 @@ h2{
     font-size: 22px;
 }
 
+h3 a:link, h3 a:visited, h2 a:link, h2 a:visited {
+ color: #2C558A;
+}
+
 h3 {
     font-size: 19px;
 }
@@ -135,8 +139,61 @@ pre.code, pre.sourceCode, pre.shell, .faqs {
     margin-bottom: 29px;
 }
 
+#blog-index .left, #blog-index .right {
+    margin: 0px;
+    padding: 0px;
+    float: left;
+    width: 50%;
+}
+
+#blog-index h2.top-title {
+    width: 100%;
+    overflow: hidden;
+
+}
+#blog-index h2.top-title img {
+    float: right;
+    margin-top: 10px;
+}
+
 #blog-index h2 a {
     vertical-align: middle;
+}
+
+#blog-index .post {
+   margin-bottom: 20px;
+   background: #ebf7e1;
+   background: #e1ebf7;
+}
+
+#blog-index h3 {
+    padding: 15px;
+    background: #d0e0f2;
+    text-shadow: none;
+    margin: 0px;
+}
+
+#blog-index .readmore {
+    font-size: 60%;
+    position: absolute;
+    bottom: 0px;
+    right: 10px;
+}
+
+#blog-index h3 span.date {
+    font-size: 14px;
+    display: block;
+    margin-top: -12px;
+    font-family: "PT Sans", "Arial", sans-serif;    
+}
+
+#blog-index p.summary {
+    margin: 0px;
+    position: relative;
+   padding: 15px;
+   background: #e8f2ff;
+    font-family: "PT Sans", "Arial", sans-serif;    
+
 }
 
 #blog-post .post-content {
