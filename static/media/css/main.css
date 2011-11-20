@@ -403,6 +403,7 @@ p.foundabug {
 }
 #splash .slideshow{
     margin: 0px auto;
+    margin-bottom: -8px;
 }
 
 #splash #pager{

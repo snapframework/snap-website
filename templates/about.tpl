@@ -97,11 +97,11 @@
             enthusiast.
           </p>
           <p>
-            <strong><a href="http://james-sanders.com">James
-            Sanders</a></strong> is a self-taught software developer living
-            and working in the great American South.  He works as the resident
-            Star Trek expert at <a href="http://thisismedium.com/">Medium</a>.
-            His interests include music, mathematics and classic european cars.
+            <strong><a href="http://james-sanders.com">James Sanders</a></strong> 
+            is a software developer and Haskell enthusiast.
+            He works at <a href="http://yahoo.com">Yahoo!</a> in Atlanta, Georgia.
+            In his free time he enjoys music, mathematics and watching Star Trek 
+            repeats.
           </p>
           <p>
             <strong>Carl Howells</strong> is a veteran of web app
