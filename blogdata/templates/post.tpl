@@ -2,11 +2,12 @@
 <apply template="page">
 
   <div id="blog-post">
-    <h2>
+
+    <h2 class="crumb-title">
       <span itemscope="itemscope" itemtype="http://data-vocabulary.org/Breadcrumb">
         <a itemprop="url" href="/blog"><span itemprop="title">Blog</span></a>
       </span>
-      <span style="color: #ccc;">&raquo;</span>
+      <span class="crumb-divider" >&raquo;</span>
       <span itemscope="itemscope" itemtype="http://data-vocabulary.org/Breadcrumb">
         <a itemprop="url" href="#"><span itemprop="title"><post:title/></span></a>
       </span>
