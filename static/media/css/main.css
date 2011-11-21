@@ -72,7 +72,7 @@ ul {
 
 ul li{
     list-style-type: none;
-    margin-bottom: 1em;
+    margin-bottom: 29px;
 }
 
 ul li p:first-child { display: inline; }
