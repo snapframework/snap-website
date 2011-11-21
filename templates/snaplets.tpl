@@ -3,15 +3,15 @@
   <static>
     <div id="about" class="section left">
       <div class="inner">
-        <h2>Snaplet Directory</h2>
-        <p><a href="docs/tutorials/snaplets-tutorial">Snaplets</a> are self
+        <h2>About Snaplets</h2>
+        <p><img src="/media/img/snaplet.png" align="left" style="display: inline; padding: 0 14px 14px 14px;" /><strong><a href="docs/tutorials/snaplets-tutorial">Snaplets</a></strong> are self
         contained pieces of functionality that you can include in your web
-        apps.  You can develop your own snaplets and publish them as a
+        apps.</p>  <p>You can develop your own snaplets and publish them as a
         standalone project on hackage completely independant of the Snap team.
         For convenience we're going to keep this page updated with all the
         snaplets we know about.
         </p>
-        <h3>Snaplets that come with Snap</h3>
+        <h2>Snaplets that come with Snap</h2>
         <div id="snapletdls">
           <dl>
             <dt>heist
