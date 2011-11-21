@@ -3,6 +3,6 @@
       <meta name="author" content="The Snap Framework Team"/>
       <meta name="description" content="Snap Framework: a web framework for Haskell"/>
       <meta charset="UTF-8" />
-      <link href="/media/css/main.css" rel="stylesheet" />
+      <link href="/media/css/main.css?v=1" rel="stylesheet" />
       <feed-autodiscovery-link/>
     </head>
