@@ -15,7 +15,7 @@
           for Haskell, on the basis of:
         </p>
 
-        <ul>
+        <ul class="compact">
           <li>High performance</li>
           <li>High design standards</li>
           <li>Simplicity and ease of use, even for Haskell beginners</li>

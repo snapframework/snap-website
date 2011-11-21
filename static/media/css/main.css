@@ -74,6 +74,9 @@ ul li{
     list-style-type: none;
     margin-bottom: 29px;
 }
+ul.compact li {
+    margin-bottom: 0px;
+}
 
 ul li p:first-child { display: inline; }
 
