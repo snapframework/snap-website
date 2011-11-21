@@ -41,7 +41,7 @@
     </div>
     <div id="about" class="section left">
       <div class="inner">
-        <h3>Third-Party Snaplets</h3>
+        <h2>Third-Party Snaplets</h2>
         <div id="snapletdls">
           <dl>
             <dt>hdbc
