@@ -2,7 +2,7 @@
 <static>
   <apply template="page">
     <div class="singlecolumn">
-      <markdown file="snap-api-0.4.md"/>
+      <markdown file="snap-api.md"/>
     </div>
   </apply>
 </static>

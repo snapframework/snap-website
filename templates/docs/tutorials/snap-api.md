@@ -1,41 +1,49 @@
-## Overview and Installation
+## Installation
 
-The exposed Snap API is on the same level abstraction as Java Servlets. If you
-understand servlets, most of the rest of the tutorial should be very
-self-explanatory. Even if you don't, have no fear!  The following tutorial
-only expects that you know Haskell.
+The exposed Snap API is on the same level of abstraction as Java Servlets. If
+you understand servlets, most of the rest of the tutorial should be very
+self-explanatory. Even if you don't, have no fear!  The following tutorial only
+expects that you know a little bit of Haskell.
 
 Before we dive into writing our first Snap web application, let's do a quick
 overview of the parts of the Snap framework. Currently Snap is divided into
-three components:
+four components:
 
-- `snap-core` is the core of Snap. It includes type definitions and all code that
-  is server-agnostic.
-- `snap-server` is an HTTP server library built on top of `snap-core`. It
+
+  - `snap-core` is the core of Snap. It includes type definitions and all code
+  that is server-agnostic.
+
+  - `snap-server` is an HTTP server library built on top of `snap-core`. It
   currently includes a backend using stock Haskell socket I/O and a backend
-  which uses the [libev](http://software.schmorp.de/pkg/libev.html) O(1)
-  event loop library.
-- `heist` is the X(HT)ML templating library. You do not need it to use Snap,
+  which uses the [libev](http://software.schmorp.de/pkg/libev.html) O(1) event
+  loop library.
+
+  - `heist` is the HTML templating library. You do not need it to use Snap,
   but you are certainly welcome to.
 
-To install Snap, simply use `cabal`. It's up to you whether or not you want to
-use the Heist templating library. It is not required if you just want to use
-the rest of Snap.
+  - `snap` is a library which contains the extension framework for organizing
+  pieces of Snap sites.  It also contains a `snap` executable which generates
+  a skeleton project to get you started.
+
+To install Snap, simply use `cabal`.
 
 ~~~~~~ {.shell}
-$ cabal install snap-server
-$ cabal install heist
+$ cabal install snap
 ~~~~~~
 
-## Hello Snap
+It's up to you whether or not you want to use the Heist templating library.
+However, heist is a dependency for the snap project starter, and our example
+below does use it.
 
-To generate a skeleton Snap web application, the `snap-core` package
-installs an executable `snap` into `$HOME/.cabal/bin`. We can use that to
-create our "Hello Snap" application.
+## Hello, Snap!
 
-(If you did not install `heist`, you should execute `snap init barebones`
-instead of `snap init` for a bare-bones skeleton that does not depend on
-`heist`.)
+To generate a skeleton Snap web application, the `snap` package installs an
+executable `snap` into `$HOME/.cabal/bin`. We can use that to create our "Hello
+Snap" application.
+
+(Normally, snap builds an example using Heist and a custom extension to get
+your project started.  Use `snap init barebones` instead of `snap init` for a
+bare-bones skeleton.)
 
 ~~~~~~ {.shell}
 $ mkdir hello-snap
@@ -44,340 +52,127 @@ $ snap init
 ~~~~~~
 
 We now have a skeleton Snap project with a `.cabal` file and a source
-directory. Install it, run it, and check that it responds with "hello
-world":
+directory. Install and run it:
 
 ~~~~~~ {.shell}
 $ cabal install
-$ hello-snap 8000 &
+$ hello-snap -p 8000
+Initializing Heist/Impl... done.
+Initializing Timer/Timer... done.
+Listening on http://0.0.0.0:8000/
+~~~~~~
+
+Then see what your browser thinks of it.
+
+~~~~~~ {.shell}
 $ curl 'http://localhost:8000/'; echo
-hello world
+<html>
+  <head>
+    <title>Snap web server</title>
+...
 ~~~~~~
 
-When you are satisfied, we can kill the server.
-
-~~~~~~ {.shell}
-$ fg
-hello-snap 8000
-^C
-~~~~~~
-
-We'll be extending our toy application to do more useless things, like echoing
-a part of the request URL.
+Make sure to try some of the echo examples. When you are satisfied, we can kill
+the server by hitting `CTRL-C`.
 
 
-### The `Snap` Monad
+### Under the Hood
 
-All the actions that we want the web application to perform are written inside
-the [`Snap`](/docs/latest/snap-core/Snap-Types.html#t%3ASnap) monad. Basically,
-the `Snap` monad is a state transformer that lugs around a request from the
-server and a response that it should give back to the server. The programmer
-(that's you) modifies the response according to the request, and after your web
-handler finishes, the server writes the response back to the end-user over
-HTTP.
+Peeking in the `src` directory, we find the haskell files responsible for the
+simple demo page we start with.  
 
-You can get the request out of `Snap` monad by calling the function
-[`getRequest`](/docs/latest/snap-core/Snap-Types.html#v%3AgetRequest). For the
-specific functions on getting fields out of the request, please refer to the
-[API documentation](/docs/latest/snap-core/Snap-Types.html#8).
+~~~~~ {.shell}
+$ cd src
+$ ls
+Site.hs  Main.hs  Application.hs
+~~~~~
 
-The writing of certain parts of responses is also standard fare. Like for
-requests, you can get the response by calling
-[`getResponse`](/docs/latest/snap-core/Snap-Types.html#v%3AgetResponse). You
-can also put a new response into the state with
-[`putResponse`](/docs/latest/snap-core/Snap-Types.html#v%3AputResponse), and
-modify the existing one with
-[`modifyResponse`](/docs/latest/snap-core/Snap-Types.html#v%3AmodifyResponse). These
-are also documented in the [API
-documentation](/docs/latest/snap-core/Snap-Types.html#9).
-
-Writing the response body, however, is a little tricky and requires some
-explanation of things called "iteratees" and "enumerators", which we will get
-to in a bit.
-
-The [`Snap`](/docs/latest/snap-core/Snap-Types.html#t%3ASnap) monad provides
-type class instances for
-[`MonadPlus`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#t%3AMonadPlus)
-and
-[`Alternative`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#t%3AAlternative). For
-those unfamiliar with these Haskell type classes, we recommend taking a look at
-Brent Yorgey's outstanding
-[Typeclassopedia](http://haskell.org/sitewiki/images/8/85/TMR-Issue13.pdf).
-Having an `Alternative` instance means that `Snap` monad actions can "fail";
-here failure translates to "we decided not to handle this request, and you can
-skip further processing". The
-[`empty`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3Aempty)
-or
-[`mzero`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Monad.html#v%3Amzero)
-values in the `Snap` monad cause the computation to fail -- for any `a`, `empty
->> a` is the same as `empty`.
-
-Given a failure mode, we can combine actions in the `Snap` monad in an
-intuitive way using the
-[`<|>`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3A%3C%7C%3E)
-infix operator. Two actions `<|>`'d together means something like "try the
-first action, and if it fails, then do the second one".
-
-Before we continue, let us explain iteratees and enumerators.  You do not need
-to read the following intermezzo to understand the rest of the tutorial.  If
-you choose to skip it, the take-home lesson is that the convenience functions
-like [`writeBS`](/docs/latest/snap-core/Snap-Types.html#v%3AwriteBS) do not
-immediately write out to the socket. Instead, you are composing functions
-behind the scenes into one big function that will write your output out at the
-end of the computation.
-
-
-#### Intermezzo: Iteratee I/O
-
-The Snap framework uses a style of I/O called "iteratee I/O". We have opted for
-iteratees over handle-based and lazy I/O because iteratee I/O offers better
-resource management, error reporting, and composability.  Iteratees underlie
-the entire system, so if you want to use Snap proficiently it certainly helps
-to understand iteratees. The following explanation is cursory at best, but we
-hope the analogies help.
-
-So what are iteratees? Iteratees are things (functions) that are "iterated
-over" a stream. I like to compare iteratees to the video game character Kirby,
-who changes his state depending on what he consumes. Iteratees are kind of
-like that. You feed an iteratee some input from the stream, it does something
-with it, and the iteratee is either "done" and gives you back some computed
-value (refusing to consume anymore), or gives you back _another_ iteratee
-that's ready for more input (changes into another iteratee, if you will). That
-is, iteratees consume data a chunk at a time, and if it's expecting more, it
-encodes the intermediate state of the computation using all that closure
-goodness into a continuation iteratee.
-
-Iteratees are the consumers of data, and their incremental nature
-unsurprisingly gives us incremental processing. This is a very useful property
-to have in an HTTP server! In the Snap framework, we fix the "stream" to be
-strict
-[`ByteString`](http://hackage.haskell.org/packages/archive/bytestring/latest/doc/html/Data-ByteString.html#t%3AByteString)s,
-and iteratees are used to consume many kinds of `ByteString`s. They can take a
-raw HTTP request and give back a parsed result.  They are also the ones that
-send your response body, the stuff that you told the `Snap` monad to write out
-using `writeBS` and the like, over the socket.
-
-That's the story for iteratees, but who's in charge of the caring and feeding
-the iteratees? Those are the enumerators.  Enumerators take an iteratee `f` and
-returns another iteratee, which when "run" (by feeding it with EOF, because
-iteratees are forced to go into the "Done" state when they receive EOF), causes
-a series of data chunks to be written to `f`. These functions are the producers
-of data, they take some iteratee as input and keep feeding it data until the
-iteratee says it is done or the enumerator runs out of data to feed the
-iteratee. In this sense enumerators may be more naturally thought of as
-_iteratee transformers_.
-
-Since we are Haskell programmers, it is not surprising that iteratees and
-enumerators are monads and compose nicely (using the
-"[`>.`](http://hackage.haskell.org/packages/archive/iteratee/latest/doc/html/Data-Iteratee-Base.html#v%3A%3E.)"
-operator). In Snap, enumerators are prominently used for the response
-body. When you write `writeBS`, we are actually making an enumerator that will
-feed your string to the output iteratee and composing it with the enumerator
-that was already in the response. In other words:
+`Main.hs` contains the `main` entry point to the application. The default
+skeleton project contains some C preprocessor statements for optionally
+configuring the server to use [hint](http://hackage.haskell.org/package/hint)
+to dynamically load the site in "development" mode. If we ignore this for now,
+we see that `main` just starts up `snap-server` using our site's initialization
+and web handling routines:
 
 ~~~~~~ {.haskell}
-foo :: Snap ()
-foo = do
-    writeBS "foo"
-    writeBS "bar"
-    writeBS "baz"
+main :: IO ()
+main = quickHttpServe applicationInitializer site
 ~~~~~~
 
-Is the same as
+The `Application.hs` file defines the `Application` type, which is the type of
+our site's web handlers. `Application` extends the default `Snap` handler type
+with some application-specific state, also defined in `Application.hs`.
+
+A handler (informally, for now) is a function, run by the Snap server, which
+takes an HTTP request and generates the server's Response, with a lot of the
+complexity sort of nudged away under the rug. The handlers currently being used
+by your sample app are defined in `Site.hs`.
+
+For example, here's the top-level Handler used by your sample app:
 
 ~~~~~~ {.haskell}
-foo :: Snap ()
-foo = modifyResponse $ setResponseBody $
-      (enumBS "foo" >. enumBS "bar" >. enumBS "baz")
+site :: Application ()
+site = route [ ("/",            index)
+             , ("/echo/:stuff", echo)
+             ]
+       <|> serveDirectory "resources/static"
 ~~~~~~
 
-This is kind of weird for people who are not used to it because it's an
-inversion of control. You as the programmer are not actually sending anything
-out to a socket; you're actually assembling a "program", that when given an
-iteratee, feeds that data to the iteratee. What actually happens is that we
-give the response body enumerator an iteratee that sends data out over the
-socket, potentially with a `transfer-encoding` applied.
+This sets up a routing table for the site's URLs: requests for the "`/`" URL
+get routed to the "`index`" handler, and requests for "`/echo/foo`" get routed
+to the "`echo`" handler after we set "`stuff=foo`" in the request's parameter
+mapping.
 
-For other convenience functions that manipulate the response body enumerator,
-consult the [API
-documentation](/docs/latest/snap-core/Snap-Types.html#10).
-
-We hope this quick and dirty introduction to iteratee I/O has shed some light
-on using Snap. Some further discussion, the original talk and other iteratee
-resources may be found on [Oleg's site](http://okmij.org/ftp/Streams.html). You
-can also consult the [iteratee package API
-docs](http://hackage.haskell.org/package/iteratee), and the [Haskell
-Wiki page on iteratees](http://www.haskell.org/haskellwiki/Iteratee).
-
-### Routing
-
-Our goal is to get our toy application to spit back a portion of the request
-URL. That is, I want the following behavior:
-
-~~~~~~ {.shell}
-$ curl localhost:8000/echo/ohsnap; echo
-ohsnap
-~~~~~~
-
-So first, we need to tackle how to route URLs. Snap provides two types of
-routing functions: combinators and
-[`route`](/docs/latest/snap-core/Snap-Types.html#v%3Aroute). Some combinators
-are as follows:
-
-- [`<|>`](http://hackage.haskell.org/packages/archive/base/latest/doc/html/Control-Applicative.html#v%3A%3C%7C%3E) `:: Snap a -> Snap a -> Snap a`
-- [`ifTop`](/docs/latest/snap-core/Snap-Types.html#v%3AifTop) `:: Snap a -> Snap a`
-- [`dir`](/docs/latest/snap-core/Snap-Types.html#v%3Adir) `:: ByteString -> Snap a -> Snap a`
-- [`method`](/docs/latest/snap-core/Snap-Types.html#v%3Amethod) `:: Method -> Snap a -> Snap a`
-
-These do exactly what you might think they do. Calling `ifTop`:
-
-~~~~~~ {.haskell}
-foo :: Snap ()
-foo = ifTop $ do ...
-~~~~~~
-
-takes an action in the Snap monad and transforms it to only run if the request
-path is at the "top level" (specifically, when
-[`rqPathInfo`](/docs/latest/snap-core/Snap-Types.html#v%3ArqPathInfo) is
-empty). The `dir` combinator transforms the action to run if the request path
-starts with the specified directory. The `method` combinator matches on
-specific HTTP methods.
-
-The astute reader will no doubt now see that these functions can be used in
-conjunction with `Alternative` semantics of the `Snap` monad to do routing.
-However, this kind of routing is expensive in that it can be O(n) in the number
-of handlers. To remedy this, Snap also provides you with a function that routes
-requests based on the request path in `O(log n)` time:
-
-- `route :: [(ByteString, Snap a)] -> Snap a`
-
-This function takes an associative list of paths and actions and combines it
-all together into one action that does the routing. It also supports capturing
-parts of the path into parameters.
-
-Let's see this in action to route the path `echo/` to some echo action. Open
-up `Main.hs` in your favorite editor and edit `site` to look like the
-following.
-
-~~~~~~~~~~~~~~~ {.haskell}
-site :: Snap ()
-site = route [ (""        , ifTop (writeBS "hello world"))
-             , ("echo/:s" , echoHandler) ]
-          <|> fileServe "."
-~~~~~~~~~~~~~~~
-
-The above code routes the top level empty path to the original "hello world"
-action, and the path `echo/` to `echoHandler` (which we haven't written yet).
-More importantly, when it routes `echo/`, it captures the next immediate path
-component (not the rest of the path) into a parameter named `s`. We can access
-`s`, or any other request parameter, with the function
-[`getParam`](/docs/latest/snap-core/Snap-Types.html#v%3AgetParam). If the
-request was neither to the top level nor to `echo/`, we try to find a file in
-the current directory with the same name as the request path and serve that.
-
-Moving on, let's write `echoHandler`, which should just spit back `s`.
-
-~~~~~~~~~~~~~~~ {.haskell}
-echoHandler :: Snap ()
-echoHandler = do
-    s <- getParam "s"
-    writeBS $ maybe "" id s
-~~~~~~~~~~~~~~~
-
-Let's build our toy application and run it again. Now we have a perfectly
-useless server that echos paths that start with `echo/`.
-
-~~~~~~ {.shell}
-$ curl localhost:8000/echo/foo; echo
-foo
-~~~~~~
+The second half of the site handler, after the main routing table, handles
+serving any files from the disk. The `a <|> b` syntax means: "try `a`, and if
+it fails, try `b`". In this case, if the user requests an URL that doesn't
+match any of the entries in the routing table --- like "`/screen.css`", for
+example --- the `fileServe` function will attempt to find the file under the
+"`resources/static`" directory, and will serve it back to the user if it is
+found. If the file is *not* found, the "serveDirectory" handler will fail,
+causing the `site` handler to fail, which will cause Snap to produce a
+"404 Not Found" response.
 
 
-### Error Handling
+Next, let's take a look at the `echo` handler:
 
-Pretend that we wrote this echo server for an elementary school, and the PTA
-has requested that profanities be censored and unechoable. The parents of PTA
-also happen to be not very bright and have taken the euphemism "4-letter word"
-too literally. They have requested that we block all 4-letter words. For
-arbitrary reasons, we've decided to respond to echo requests of 4-letter words
-by sending a `403 Forbidden` error.
-
-We'll need `ByteString` utility functions for this, so be sure to add the
-following line somewhere in your list of `import`s.
-
-~~~~~~~~~~~~~~~ {.haskell}
-import qualified Data.ByteString as B
-~~~~~~~~~~~~~~~
-
-Let's rewrite our `echoHandler` as follows.
-
-~~~~~~~~~~~~~~~ {.haskell}
-echoHandler :: Snap ()
-echoHandler = do
-    s <- getParam "s"
-    case s of
-        Just s' -> if (B.length s' == 4) then badWord else (writeBS s')
-        _       -> writeBS ""
+~~~~~ {.haskell}
+echo :: Application ()
+echo = do
+    message <- decodedParam "stuff"
+    heistLocal (bindString "message" message) $ render "echo"
   where
-    badWord = do
-        putResponse $
-          setResponseStatus 403 "Forbidden" emptyResponse
-        writeBS "Forbidden: four-letter word"
-        r <- getResponse
-        finishWith r
-~~~~~~~~~~~~~~~
+    decodedParam p = fromMaybe "" <$> getParam p
+~~~~~
 
-The `badWord` action sets the response status code to be 403 using a
-combination of the
-[`putResponse`](/docs/latest/snap-core/Snap-Types.html#v%3AputResponse) and
-[`setResponseStatus`](/docs/latest/snap-core/Snap-Types.html#v%3AsetResponseStatus)
-functions, writes out the body of the response, and calls the function
-[`finishWith`](/docs/latest/snap-core/Snap-Types.html#v%3AfinishWith) on that
-response.
+The `echo` handler takes the `stuff` parameter out of the parameters mapping
+(remember, "`stuff`" was bound using `route` above), binds its value to a
+`heist` tag, and then renders the "echo" template.
 
-The `finishWith` combinator is a function you can call to short-circuit the
-monad processing so that no further `Snap` actions will be run; use it when
-you're really, really sure about what you want to return and you don't want
-your response to be mucked with.
+A [lengthier Heist tutorial](/docs/tutorials/heist/) is available, but here's
+what you need to know for now: `heist` serves HTML templates, but with a
+twist: a tag element can be rebound to a Haskell function which replaces it
+with some programmatically-generated markup. In our case, the `echo` template
+lives in `resources/templates/echo.tpl`, and the "`<message>`" tag has been
+redefined to be substituted for the text that was entered by the user. The
+template looks like this:
 
-Let's test this with some childish language to see that it works.
-
-~~~~~~ {.shell}
-$ curl -i localhost:8000/echo/poop
-HTTP/1.1 403 Forbidden
-Date: Mon, 10 May 2010 07:08:32 GMT
-Server: Snap/0.pre-1
-Transfer-Encoding: chunked
-
-Forbidden: four-letter word
-~~~~~~
-
-
-### Serving It Up
-
-So we've written our handler, how do we actually serve it and run the server?
-Luckily you don't need to write any code as the generated `Main.hs` has the
-glue code already. The relevant portion is reproduced below.
-
-~~~~~~~~~~~~~~~ {.haskell}
-    httpServe "*" port "myserver"
-        (Just "access.log")
-        (Just "error.log")
-        site
-~~~~~~~~~~~~~~~
-
-There is no external server to plug into and no complicated directory
-structure to manage. Everything is done programmatically. To embed the Snap
-server inside your program, all you need to do is to pass
-[`httpServe`](/docs/latest/snap-server/Snap-Http-Server.html#v%3AhttpServe)
-some configuration parameters and your handler. Note that access and error
-logging are optional, should you wish to forego them for performance reasons.
+~~~~~ {.html}
+<body>
+  <div id="content">
+    <h1>Is there an echo in here?</h1>
+  </div>
+  <p>You wanted me to say this?</p>
+  <p>"<message/>"</p>
+  <p><a href="/">Return</a></p>
+</body>
+~~~~~
 
 
 ## What Now?
 
 We hope we've whetted your appetite for using Snap. From here on out you should
-take a look at the [API documentation](/docs/latest/snap-core/index.html),
+take a look at the [API documentation](http://hackage.haskell.org/package/snap-core),
 which explains many of the concepts and functions here in further detail.
 
 You can also come hang out in
