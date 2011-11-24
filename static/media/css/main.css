@@ -4,7 +4,7 @@
  * tag definitions
  ------------------------------------------------------------------------*/
 body,html{
-    font-size: 18px;
+    font-size: 16px;
     font-family: "Georgia", serif;
     line-height: 29px;
     color:#0c1a30;
@@ -20,7 +20,10 @@ tt, code, pre {
 }
 
 /*a:link,a:visited{ color: #ad104f; text-decoration: none; }*/
-a:link,a:visited{ color: #2B7EA1; text-decoration: none; }
+a:link,a:visited{ 
+    color: #2B7EA1; 
+    text-decoration: none; 
+}
 
 h1{
     font-size: 22px;
@@ -28,6 +31,10 @@ h1{
 
 h2{
     font-size: 22px;
+}
+
+h3 a:link, h3 a:visited, h2 a:link, h2 a:visited {
+ color: #2C558A;
 }
 
 h3 {
@@ -65,6 +72,10 @@ ul {
 
 ul li{
     list-style-type: none;
+    margin-bottom: 29px;
+}
+ul.compact li {
+    margin-bottom: 0px;
 }
 
 ul li p:first-child { display: inline; }
@@ -76,6 +87,9 @@ ul li p {
 
 ul li:before {
     content: "» ";
+    font-size: 120%;
+    color: #666;
+
 }
 
 img {
@@ -129,42 +143,106 @@ pre.code, pre.sourceCode, pre.shell, .faqs {
     color: #FFFAEB;
 }
 
-#blog-index table {
-    border-collapse:collapse;
-    border-spacing:0;
+#blog-post .crumb-title {
+    font-size: 30px;
+}
+
+#blog-post .crumb-divider {
+    color:#d0e0f2;
+    font-size: 42px;
+}
+
+#blog-post .post-meta {
+    width: 180px;
+    float: left;
+    padding-top: 0px;
+    color: #456999;
+}
+
+
+#blog-post .post-date {
+    font-family: "Gill Sans", "PT Sans", "Arial", sans-serif;
+    font-size: 24px;
+    text-transform: uppercase;
+    text-align: right;
+}
+
+#blog-post .post-summary {
+   font-family: "PT Sans", "Arial", sans-serif;   
+   text-align: right;
+
+   font-size: 14px;
+   line-height: 1.6em;
+}
+
+#blog-post .post-content {
     margin-bottom: 29px;
+    margin-left: 20px;
+    border-left: 1px solid #c2d1e1;
+    padding-left: 20px;
+    width: 700px;
+    padding-right: 8px;
+    float: left;
+}
+
+
+#blog-index .left, #blog-index .right {
+    margin: 0px;
+    padding: 0px;
+    float: left;
+    width: 50%;
+}
+
+#blog-index h2.top-title {
+    width: 100%;
+    overflow: hidden;
+
+}
+#blog-index h2.top-title img {
+    float: right;
+    margin-top: 10px;
 }
 
 #blog-index h2 a {
     vertical-align: middle;
 }
 
-#blog-post .post-content {
-    margin-bottom: 29px;
+#blog-index .post {
+   margin-bottom: 20px;
+   background: #ebf7e1;
+   background: #e1ebf7;
 }
 
-#blog-post .post-meta {
-    width: 226px;
-    padding: 0 22px 0 0;
-    float: left;
+#blog-index h3 {
+    padding: 15px;
+    background: #d0e0f2;
+    text-shadow: none;
+    margin: 0px;
 }
 
-#blog-post .post-date {
-    line-height: 29px;
-    font-size: 70%;
-    margin-bottom: 29px;
+#blog-index .readmore {
+    font-size: 60%;
+    position: absolute;
+    bottom: 0px;
+    right: 10px;
 }
 
-#blog-post .post-summary {
-    line-height: 29px;
-    color: #666;
+#blog-index h3 span.date {
+    font-size: 14px;
+    display: block;
+    margin-top: -12px;
+    font-family: "PT Sans", "Arial", sans-serif;    
 }
 
-#blog-post .post-content {
-    width: 680px;
-    padding-right: 8px;
-    float: left;
+#blog-index p.summary {
+    margin: 0px;
+    position: relative;
+   padding: 15px;
+   background: #e8f2ff;
+    font-family: "PT Sans", "Arial", sans-serif;    
+
 }
+
 
 #blog-post .post-content hr {
     width: 66%;
@@ -403,6 +481,7 @@ p.foundabug {
 }
 #splash .slideshow{
     margin: 0px auto;
+    margin-bottom: -8px;
 }
 
 #splash #pager{
@@ -727,10 +806,13 @@ p.foundabug {
     float:left;
     margin-right: 10px;
 }
+
 .photo{
     float: left;
     margin-right: 10px;
 }
+
+
 
 #footer{
     position: relative;

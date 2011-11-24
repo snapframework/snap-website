@@ -71,7 +71,7 @@ $ mkdir foo; cd foo; snap init</pre>
 
                 </p>
 
-                <ul>
+                <ul class="compact">
                   <li>A fast HTTP server library with an optional
                     high-concurrency backend using
                     the <a href="http://software.schmorp.de/pkg/libev.html">libev</a>
@@ -87,14 +87,14 @@ $ mkdir foo; cd foo; snap init</pre>
               <div class="inner">
                 <h2>New: Snap 0.6</h2>
                 <p>
-                  Snap 0.6 is an exciting new release which offers a completely
+                  <strong>Snap 0.6</strong> is an exciting new release which offers a completely
                   redesigned extension system called
-                  <a href="/docs/tutorials/snaplets-tutorial">"snaplets"</a>.
+                  <strong><a href="/docs/tutorials/snaplets-tutorial">&#8220;snaplets&#8221;</a></strong>.
                   It is now easier then ever before to write, share, reuse
                   code, and get your applications up and running in no time.
                 </p>
                 <p>
-                  <a href="/download">Install</a> Snap 0.6 now, check out the
+                  <strong><a href="/download">Install</a></strong> Snap 0.6 now, check out the
                   <a href="/snaplets">available snaplets</a>, and
                   start <a href="/docs/tutorials/snaplets-tutorial">writing</a>
                   your own!
