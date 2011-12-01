@@ -9,25 +9,29 @@ Framework.
 
 ## New features / improvements
 
-  - We realized that the \$() syntax Heist uses for accessing splices inside
-    of HTML attributes conflicts with the jQuery '$' function.  We changed the
-    syntax to ${} to fix this.  This is a major breaking change, so we added a
-    temporary compatibility mode to Heist that you can enable by using the
-    `useOldAttributeSyntax` function to modify your TemplateState.  We will
-    remove this compatibility mode in the next major release, so update your
-    templates ASAP!
+  - Heist: We realized that the `$()` syntax Heist uses for accessing splices
+    inside of HTML attributes conflicts with the jQuery '$' function. We
+    changed the syntax to ${} to fix this. This is a major breaking change, so
+    we added a temporary compatibility mode to Heist that you can enable by
+    using the `useOldAttributeSyntax` function to modify your TemplateState. We
+    will remove this compatibility mode in the next major release, so update
+    your templates ASAP!
 
-  - Added `getRoutePattern` (and `setRoutePattern`) which allows you to find
-    out the actual route string that matched the currently running handler.
+  - Snaplets: added `getRoutePattern` (and `setRoutePattern`) which allows you
+    to find out the actual route string that matched the currently running
+    handler.
 
-  - Added `heistInit'` to make it possible to use Heist's onLoad hooks.
+  - Heist Snaplet: added `heistInit'` to make it possible to use Heist's onLoad
+    hooks.
 
-  - Added the convenience functions getsRequest and getsResponse to the core
-    web server API.
+  - Added the convenience functions `getsRequest` and `getsResponse` to
+    `Snap.Core`.
 
-  - Fixed bug in how the route function handled url-encoded path segments.
+  - Fixed [a bug](https://github.com/snapframework/snap-core/issues/107) in how
+    the `route` function handled url-encoded path segments.
 
-  - Properly catch EscapeHttpException.
+  - `snap-server`: added primitives escape the http session in order to support
+    websockets.
 
 
 ## API Changes
