@@ -14,9 +14,9 @@
       <posts:reverseChronological>
         <div class="post">
           <div class="title">
-            <h3><a href="$(post:url)"><post:title/></a> <span class="date"><post:date/></span></h3>
+            <h3><a href="${post:url}"><post:title/></a> <span class="date"><post:date/></span></h3>
           </div>
-            <p class="summary"><post:summary/> <a class="readmore" href="$(post:url)">Read Post...</a></p>
+            <p class="summary"><post:summary/> <a class="readmore" href="${post:url}">Read Post...</a></p>
         </div>
       </posts:reverseChronological>
 

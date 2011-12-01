@@ -64,11 +64,11 @@ make changes.
 Heist also provides attribute string substitution using the same mechanism as
 tag substitution.  The syntax is different for attributes since angle bracket
 tag syntax is not generally found there.  Within the value of an attribute, use
-the delimiter `$(...)` for variable substitution.
+the delimiter `${...}` for variable substitution.
 
 ~~~~~~~~~~~~~~~ {.html}
   <bind tag="foo">dynamic_name</bind>
-  <p name="$(foo)">A paragraph</p>
+  <p name="${foo}">A paragraph</p>
 ~~~~~~~~~~~~~~~
 
 The foo identifier is substituted into the name attribute of the paragraph
@@ -426,7 +426,7 @@ function: `bindSplice "fact" factSplice templateState`.  This returns a
 new `TemplateState` with factSplice bound to the `<fact>` tag.  Now, in
 any of your templates the snippet `<fact>5</fact>` will render as `120`.
 
-The contents of splices can also be used in attributes using the `$()` syntax
+The contents of splices can also be used in attributes using the `${}` syntax
 mentioned above.  As above, any markup is ignored, and just the text is
 included.  This works because a `<bind>` tag is really just a splice that
 returns a constant node list.
