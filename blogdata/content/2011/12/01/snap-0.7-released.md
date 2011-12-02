@@ -5,7 +5,8 @@
 | summary: Release notes for Snap 0.7
 
 The Snap team would like to announce the release of version 0.7 of the Snap
-Framework.  
+Framework.  There are some major changes in this release that are not
+backwards compatible, so be sure to read these release notes before upgrading.
 
 ## New features / improvements
 
