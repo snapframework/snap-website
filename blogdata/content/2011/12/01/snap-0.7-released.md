@@ -1,7 +1,7 @@
 | title: Announcing: Snap Framework v0.7
 | author: Doug Beardsley <mightybyte@gmail.com>
-| published: 2011-12-01T01:13:00-0500
-| updated: 2011-12-01T01:13:00-0500
+| published: 2011-12-01T20:35:00-0500
+| updated: 2011-12-01T20:35:00-0500
 | summary: Release notes for Snap 0.7
 
 The Snap team would like to announce the release of version 0.7 of the Snap
