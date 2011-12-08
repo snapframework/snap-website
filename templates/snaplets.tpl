@@ -43,9 +43,9 @@
       <div class="inner">
         <h2>Third-Party Snaplets</h2>
         <div id="snapletdls">
-          <p>These snaplets are not developed by the Snap team, so we make
-          no guarantees about quality.  If you know of a snaplet not listed
-          here, please <a href="mailto:snap@snapframework.com">let us know</a>.
+          <p>These snaplets are not maintained by the Snap Framework team.  If
+          you know of a snaplet not listed here, please <a
+          href="mailto:snap@snapframework.com">let us know</a>.
           </p>
           <dl>
             <dt>snaplet-hdbc
