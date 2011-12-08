@@ -29,8 +29,8 @@
 
         <h2>What is the project's status?</h2>
         <p>
-          The first developer prerelease of the Snap framework is available
-          now. It contains only the Snap core system, namely:
+          Snap launched to the public in May, 2010.  The core framework
+          contains:
         </p>
 
         <ul>
@@ -39,27 +39,13 @@
               the <a href="http://software.schmorp.de/pkg/libev.html">libev</a>
               event loop library.</li>
           <li>A sensible and clean monad for web programming.</li>
-          <li>an HTML-based templating system for generating pages that allows
+          <li>An HTML-based templating system for generating pages that allows
               you to bind Haskell functionality to tags without getting
               PHP-style tag soup all over your pants</li>
-        </ul>
-
-        <p>
-          Higher-level facilities for building web applications (like
-          user/session management, component interfaces, data modeling, etc.)
-          are planned but not yet implemented, so this release will mostly be
-          of interest to those who:
-        </p>
-
-        <ul>
-          <li>
-            need a fast and minimal HTTP API at roughly the same level of
-            abstraction as Java servlets, or
-          </li>
-          <li>
-            are interested in contributing to the Snap Framework
-            project.
-          </li>
+          <li>A high-level system called Snaplets for building modular web
+              applications.</li>
+          <li>Built-in snaplets for templating, session management, and
+              authentication.</li>
         </ul>
 
         <p>

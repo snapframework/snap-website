@@ -85,16 +85,15 @@ $ mkdir foo; cd foo; snap init</pre>
 
             <div id="project-status" class="section right">
               <div class="inner">
-                <h2>New: Snap 0.6</h2>
+                <h2>New: Snaplets</h2>
                 <p>
-                  <strong>Snap 0.6</strong> is an exciting new release which offers a completely
-                  redesigned extension system called
+                  In Snap 0.6 we released an exciting new extension system called
                   <strong><a href="/docs/tutorials/snaplets-tutorial">&#8220;snaplets&#8221;</a></strong>.
                   It is now easier then ever before to write, share, reuse
                   code, and get your applications up and running in no time.
                 </p>
                 <p>
-                  <strong><a href="/download">Install</a></strong> Snap 0.6 now, check out the
+                  <strong><a href="/download">Install</a></strong> Snap now, check out the
                   <a href="/snaplets">available snaplets</a>, and
                   start <a href="/docs/tutorials/snaplets-tutorial">writing</a>
                   your own!
