@@ -43,8 +43,12 @@
       <div class="inner">
         <h2>Third-Party Snaplets</h2>
         <div id="snapletdls">
+          <p>These snaplets are not developed by the Snap team, so we make
+          no guarantees about quality.  If you know of a snaplet not listed
+          here, please <a href="mailto:snap@snapframework.com">let us know</a>.
+          </p>
           <dl>
-            <dt>hdbc
+            <dt>snaplet-hdbc
                 <span class="linklist">
                   [ <a href="https://github.com/norm2782/snaplet-hdbc/wiki/HDBC-Snaplet-Tutorial"
                    >tutorial</a>
@@ -55,6 +59,24 @@
                 </span>
             </dt>
             <dd>HDBC database support</dd>
+
+            <dt>snaplet-mongoDB
+                <span class="linklist">
+                  [ <a href="https://bitbucket.org/kamilc/snaplet-mongodb"
+                   >bitbucket</a> ]
+                </span>
+            </dt>
+            <dd>MongoDB support</dd>
+
+            <dt>snaplet-sedna
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-sedna"
+                   > hackage </a>
+                  | <a href="https://github.com/ExternalReality/snaplet-sedna"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Support for the Sedna XML database.</dd>
 
           </dl>
         </div>
