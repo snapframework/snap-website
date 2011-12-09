@@ -14,7 +14,7 @@ body,html{
 }
 
 tt, code, pre {
-    font-family: "Liberation Mono", "monospace";
+    font-family: "Liberation Mono", monospace;
     font-size: 90%;
     line-height: 29px;
 }
