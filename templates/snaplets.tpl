@@ -62,7 +62,9 @@
 
             <dt>snaplet-mongoDB
                 <span class="linklist">
-                  [ <a href="https://bitbucket.org/kamilc/snaplet-mongodb"
+                  [ <a href="http://hackage.haskell.org/package/snaplet-mongoDB"
+                   > hackage </a>
+                  | <a href="https://bitbucket.org/kamilc/snaplet-mongodb"
                    >bitbucket</a> ]
                 </span>
             </dt>
