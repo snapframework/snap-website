@@ -80,6 +80,17 @@
             </dt>
             <dd>Support for the Sedna XML database.</dd>
 
+            <dt>snaplet-tasks
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-tasks"
+                   > hackage </a>
+                  | <a href="https://bitbucket.org/kamilc/snaplet-tasks"
+                   >bitbucket</a> ]
+                </span>
+            </dt>
+            <dd>Allows the creation of command line tasks akin to "rake tasks"
+            from Ruby on Rails.</dd>
+
           </dl>
         </div>
       </div>
