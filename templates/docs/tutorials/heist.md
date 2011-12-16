@@ -397,8 +397,8 @@ the presentation layer.
 
 Splices that you write must have the type `mySplice :: Splice m` where
 m is the monad of your choice (usually Snap).  `Splice m` is a type
-synonym for `TemplateMonad m Template`.  The `getParamNode` function
-is a TemplateMonad computation that lets you get the contents of the
+synonym for `HeistT m Template`.  The `getParamNode` function
+is a HeistT computation that lets you get the contents of the
 splice node.  You can then do any processing you want using
 functionality provided by
 [xmlhtml](http://hackage.haskell.org/package/xmlhtml).
@@ -423,7 +423,7 @@ factSplice = do
 
 You must tell Heist to bind the splice to a tag using the `bindSplice`
 function: `bindSplice "fact" factSplice templateState`.  This returns a
-new `TemplateState` with factSplice bound to the `<fact>` tag.  Now, in
+new `HeistState` with factSplice bound to the `<fact>` tag.  Now, in
 any of your templates the snippet `<fact>5</fact>` will render as `120`.
 
 The contents of splices can also be used in attributes using the `${}` syntax
@@ -442,21 +442,19 @@ once for every template immediately after it is loaded from disk.
 template is rendered.  
 
 
-### Setting up TemplateState
+### Setting up HeistState
 
-All of Heist's splices, templates, and hooks are stored in
-`TemplateState`.  Heist provides `TemplateState` modifier functions
-for configuration.  `emptyTemplateState` gives you reasonable defaults
-that you build on to suit your needs.  It takes one argument: the path
-to the root of the directory tree where templates are stored.  Let's
-look at an example to illustrate.
+All of Heist's splices, templates, and hooks are stored in `HeistState`.
+Heist provides `HeistState` modifier functions for configuration.
+`defaultHeistState` gives you reasonable defaults that you build on to suit
+your needs.  Let's look at an example to illustrate.
 
 ~~~~~~~~~~~~~~~ {.haskell}
 myHeistState =
     addOnLoadHook onLoad $
     addPreRunHook preRun $
     addPostRunHook postRun $
-    bindSplice "fact" factSplice (emptyTemplateState "templates")
+    bindSplice "fact" factSplice defaultHeistState
 
 main = do
     ets <- loadTemplates "templates" myHeistState
@@ -468,13 +466,19 @@ section to the default set of splices as well as our own hooks.  Then
 we called loadTemplates to add templates from the `templates`
 directory in the filesystem to our template state.
 
-The three addXYZHook functions above add hooks to the TemplateState.
+The three addXYZHook functions above add hooks to the HeistState.
 Previous hooks are not overwritten--the new hooks are appended to any
 other hooks that have already been added.  
 
+Different web frameworks will have different infrastructure for managing the
+`HeistState`.  Some may expose a mechanism that allows you to use the above
+functions directly.  Others may completely wrap the above functions with other
+functions specific to that framework or library.  Just be aware that your end
+use may not look exactly like the example here.
+
 ### Generating Pages with Heist
 
-Once you have built a `TemplateState`, you are ready to generate pages
+Once you have built a `HeistState`, you are ready to generate pages
 with Heist.  The two functions you will use most frequently are
 `renderTemplate` and `callTemplate`.  `renderTemplate` renders a
 template by name and returns it as a `Maybe (Builder, MIMEType)`.  The
