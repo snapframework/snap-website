@@ -6,7 +6,7 @@ find out how to install Snap.  The installation generates an executable called
 `cabal` will install executables to "`$HOME/.cabal/bin`".  To add `cabal` to your `$PATH`, add 
 
 ~~~~~~ {.shell}
-PATH=$PATH:$HOME/.cabal/bin
+PATH=$HOME/.cabal/bin:$PATH
 ~~~~~~
 
 to your `~/.bashrc` and run `source ~/.bashrc`. The following
