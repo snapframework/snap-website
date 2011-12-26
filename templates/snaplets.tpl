@@ -48,6 +48,16 @@
           href="mailto:snap@snapframework.com">let us know</a>.
           </p>
           <dl>
+            <dt>snaplet-acid-state
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-acid-state"
+                   > hackage </a>
+                  | <a href="https://github.com/mightybyte/snaplet-acid-state"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Persist native Haskell data structures with acid-state.</dd>
+
             <dt>snaplet-hdbc
                 <span class="linklist">
                   [ <a href="https://github.com/norm2782/snaplet-hdbc/wiki/HDBC-Snaplet-Tutorial"
