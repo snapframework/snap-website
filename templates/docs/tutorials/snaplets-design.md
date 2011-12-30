@@ -125,5 +125,5 @@ look something like this:
 
 The call to subSnaplet is required because HasHeist needs a `Lens
 (Snaplet v) (Snaplet (Heist b))` instead of the lens `Lens v (Snaplet (Heist
-b))` that you willll get from mkLabels.
+b))` that you will get from mkLabels.
 
