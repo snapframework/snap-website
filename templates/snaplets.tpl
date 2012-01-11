@@ -60,7 +60,7 @@
 
             <dt>snaplet-hdbc
                 <span class="linklist">
-                  [ <a href="https://github.com/norm2782/snaplet-hdbc/wiki/HDBC-Snaplet-Tutorial"
+                  [ <a href="http://norm2782.github.com/snaplet-hdbc.html"
                    >tutorial</a>
                   | <a href="http://hackage.haskell.org/package/snaplet-hdbc"
                    > hackage </a>
