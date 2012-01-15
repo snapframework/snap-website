@@ -80,6 +80,16 @@
             </dt>
             <dd>MongoDB support</dd>
 
+            <dt>snaplet-mongodb-minimalistic
+                <span class="linklist">
+                  [ <a href="http://http://hackage.haskell.org/package/snaplet-mongodb-minimalistic"
+                   > hackage </a>
+                  | <a href="https://github.com/Palmik/snaplet-mongodb-minimalistic"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>MongoDB support</dd>
+
             <dt>snaplet-sedna
                 <span class="linklist">
                   [ <a href="http://hackage.haskell.org/package/snaplet-sedna"
