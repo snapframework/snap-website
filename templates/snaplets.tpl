@@ -58,6 +58,17 @@
             </dt>
             <dd>Persist native Haskell data structures with acid-state.</dd>
 
+            <dt>snaplet-environments
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-environments"
+                   > hackage </a>
+                  | <a href="https://github.com/kamilc/Snaplet-Environments"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Lets you run your app with different configurations such as
+            development, production, test, etc.</dd>
+
             <dt>snaplet-hdbc
                 <span class="linklist">
                   [ <a href="http://norm2782.github.com/snaplet-hdbc.html"
