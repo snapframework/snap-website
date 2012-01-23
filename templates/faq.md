@@ -34,7 +34,15 @@ Found a bug in Snap? Please create a ticket on our
 Yes!  Here is a list of sites that we know of that use Snap.  Let us know if
 you know of others:
 
-  -  [housetab.org](http://housetab.org) - a webapp for sharing expenses (source code [here](http://darcsden.com/position/housetab/))
+  -  [Janrain](http://www.janrain.com/) uses Snap to serve their user
+     management platform which is used by a number of popular
+     [websites](http://www.janrain.com/customers).
+
+  -  [Silk](http://www.silkapp.com/) uses Snap for some of their back end
+     services.
+
+  -  [housetab.org](http://housetab.org) - a webapp for sharing expenses
+     (source code [here](http://darcsden.com/position/housetab/))
 
   -  [JCU](https://github.com/norm2782/JCU) a web-based Prolog environment.
 

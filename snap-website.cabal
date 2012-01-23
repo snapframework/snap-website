@@ -17,12 +17,13 @@ Executable snap-website
   
   Build-depends:
     base >= 4 && < 5,
+    blaze-html,
     bytestring,
     containers,
     data-lens-template >= 2.1 && < 2.2,
     directory,
     filepath,
-    heist >= 0.7 && < 0.8,
+    heist >= 0.7 && < 0.9,
     MonadCatchIO-transformers >= 0.2 && < 0.3,
     mtl >= 2 && <3,
     process,
@@ -35,16 +36,16 @@ Executable snap-website
     transformers,
     utf8-string,
     xhtml-combinators >= 0.2.2 && < 0.3,
-    xmlhtml ==0.1.*
+    xmlhtml >= 0.1 && < 0.3
 
   ghc-prof-options: -prof -auto-all
   
   if impl(ghc >= 6.12.0)
     ghc-options: -O2 -Wall -fwarn-tabs -funbox-strict-fields
-                 -threaded -fno-warn-unused-do-bind
+                 -threaded -fno-warn-unused-do-bind -rtsopts
   else
     ghc-options: -O2 -Wall -fwarn-tabs -funbox-strict-fields
-                 -threaded
+                 -threaded -rtsopts
   
   Extensions: OverloadedStrings
 
