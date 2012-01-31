@@ -310,7 +310,7 @@ directory that should be installed.  That argument has the type `Maybe (IO
 FilePath)`.  In this case we used `Nothing` because our simple example doesn't
 have any filesystem data.  As an example, let's say you are creating a snaplet
 called killerapp that will be distributed as a hackage project called
-snaplet-killerapp.  Your project directory structure will look something like
+snaplet-killerapp.  Your project directory structure might look something like
 this:
 
     snaplet-killerapp/
@@ -318,8 +318,10 @@ this:
       |-- snaplet-killerapp.cabal
       |-- src/
 
-All of the files and directories listed above under foosnaplet/ will be in
-resources/.  Somewhere in the code you will define an initializer for the
+In this example, all of the files and directories listed above under
+foosnaplet/ are in resources/.  This is not required.  It just makes it easier
+to see all the files that need to be included in the data-files cabal section
+described below.  Somewhere in the code you will define an initializer for the
 snaplet that will look like this:
 
     killerInit = makeSnaplet "killerapp" "42" (Just dataDir) $ do
@@ -331,7 +333,8 @@ what machine you're using, the third argument to `makeSnaplet` has to be `Maybe
 (IO FilePath)` instead of the more natural pure version.  To make things more
 organized, we use the convention of putting all your snaplet's data files in a
 subdirectory called resources.  So we need to create a small function that
-appends `/resources` to the result of `getDataDir`.
+appends `/resources` to the result of `getDataDir`.  (This also means that to
+test this snaplet, you'll need to run it from the resources directory.)
 
     import Paths_snaplet_killerapp
     dataDir = liftM (++"/resources") getDataDir
