@@ -55,7 +55,7 @@ you know of others:
 
   -  [snap-pastie](https://github.com/Palmik/snap-pastie) another pastebin.
 
-  -  [http://snapframework.com](http://snapframework.com) (this site)
+  -  [http://snapframework.com](https://github.com/snapframework/snap-website) (this site)
 
 
 ### Where's the high-level functionality?
