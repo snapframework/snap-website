@@ -95,7 +95,7 @@ If you are an OpenBSD user, check out the guide Jim Razmus wrote on [installing
 Snap](http://www.bonetruck.org/2010/10/quick-start-to-web-app-development-with-the-snap-framework-and-openbsd.html).
 
 If you're still having trouble, please email our [mailing
-list](http://mailman-mail5.webfaction.com/listinfo/snap) or contact us on our
+list](http://groups.google.com/group/snap_framework) or contact us on our
 [IRC channel](http://webchat.freenode.net/?channels=snapframework&uio=d4)
 (`#snapframework` on [freenode](http://freenode.net/)).
 

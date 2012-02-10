@@ -138,7 +138,7 @@
               channel on the <a href="http://freenode.net/">freenode</a> IRC
               network.</li>
             <li><b>Email:</b> join
-              our <a href="http://mailman-mail5.webfaction.com/listinfo/snap">mailing
+              our <a href="http://groups.google.com/group/snap_framework">mailing
               list.</a></li>
           </ul>
         </div><!--end mailing list -->
