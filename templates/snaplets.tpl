@@ -101,6 +101,16 @@
             </dt>
             <dd>MongoDB support</dd>
 
+            <dt>snaplet-redis
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-redis"
+                   > hackage </a>
+                  | <a href="https://github.com/dzhus/snaplet-redis/"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Support for the redis in-memory key-value store.</dd>
+
             <dt>snaplet-sedna
                 <span class="linklist">
                   [ <a href="http://hackage.haskell.org/package/snaplet-sedna"
