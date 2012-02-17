@@ -45,7 +45,7 @@
         <div id="snapletdls">
           <p>These snaplets are not maintained by the Snap Framework team.  If
           you know of a snaplet not listed here, please <a
-          href="mailto:snap@snapframework.com">let us know</a>.
+          href="mailto:snap_framework@googlegroups.com">let us know</a>.
           </p>
           <dl>
             <dt>snaplet-acid-state
