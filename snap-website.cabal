@@ -1,5 +1,5 @@
 Name:                snap-website
-Version:             0.3
+Version:             0.8
 Synopsis:            The Snap Framework Website
 Homepage:            http://snapframework.com
 License:             BSD3
@@ -14,7 +14,7 @@ Cabal-version:       >=1.2
 Executable snap-website
   hs-source-dirs: src
   main-is: Main.hs
-  
+
   Build-depends:
     base >= 4 && < 5,
     blaze-html,
@@ -39,13 +39,13 @@ Executable snap-website
     xmlhtml >= 0.1 && < 0.3
 
   ghc-prof-options: -prof -auto-all
-  
+
   if impl(ghc >= 6.12.0)
     ghc-options: -O2 -Wall -fwarn-tabs -funbox-strict-fields
                  -threaded -fno-warn-unused-do-bind -rtsopts
   else
     ghc-options: -O2 -Wall -fwarn-tabs -funbox-strict-fields
                  -threaded -rtsopts
-  
+
   Extensions: OverloadedStrings
 
