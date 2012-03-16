@@ -29,9 +29,6 @@ import           Snap.Util.GZip
 import           Text.Templating.Heist
 import qualified Text.XHtmlCombinators.Escape as XH
 
-import BlazeIndex
-import Text.Blaze.Renderer.Pretty (renderHtml)
-
 data App = App
     { _heist     :: Snaplet (Heist App)
     , _blog      :: Snaplet StaticPages
@@ -55,9 +52,6 @@ appInit :: SnapletInit App App
 appInit = makeSnaplet "snap-website" description Nothing $ do
     hs <- nestSnaplet "" heist $ heistInit "templates"
     bs <- nestSnaplet "blog" blog $ staticPagesInit "blogdata"
-    addRoutes [ ("ping", writeBS "PONG")
-              , ("bindex", writeText $ T.pack $ renderHtml blazeIndexPage)
-              ]
     addSplices [ ("snap-version", serverVersion)
                , ("feed-autodiscovery-link", liftHeist $ textSplice "")
                ]
