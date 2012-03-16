@@ -93,9 +93,5 @@ serverVersion :: SnapletSplice b v
 serverVersion = liftHeist $ textSplice $ T.decodeUtf8 snapServerVersion
 
 
---main :: IO ()
---main = serveSnaplet defaultConfig appInit
-
-main = quickHttpServe $
-       writeBS "The Snap Framework website is currently down for maintenance."
-
+main :: IO ()
+main = serveSnaplet defaultConfig appInit
