@@ -1,7 +1,7 @@
 | title: Announcing: Snap Framework v0.8
 | author: Gregory Collins <greg@gregorycollins.net>
-| published: 2012-03-16T20:00:00+0100
-| updated:   2012-03-16T20:00:00+0100
+| published: 2012-03-16T20:55:00+0100
+| updated:   2012-03-16T20:55:00+0100
 | summary: Release notes for Snap 0.8
 
 The Snap team would like to announce the release of version 0.8 of the Snap
