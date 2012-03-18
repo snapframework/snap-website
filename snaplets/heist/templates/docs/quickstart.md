@@ -17,12 +17,15 @@ To set up a new Snap project, run the following commands:
 ~~~~~~ {.shell}
 $ mkdir myproject
 $ cd myproject
-$ snap init
+$ snap init barebones
 ~~~~~~
 
 The `snap init` command creates a template Snap project in the current
-directory. The `Main` module for this project will be created in `src/Main.hs`.
-When you build this project with `cabal install`, an executable is created in
+directory.  You can also do `snap init -h` to see help about other project
+templates that are available.  For now we'll focus on the barebones project.
+
+The `Main` module for this project will be created in `src/Main.hs`.  When you
+build this project with `cabal install`, an executable is created in
 `$HOME/.cabal/bin` called `myproject`.  To build and run the example
 application, run the following commands:
 
@@ -33,7 +36,8 @@ $ myproject -p 8000
 
 Now point your web browser to [http://localhost:8000/](http://localhost:8000/);
 you should see a simple response string.  To activate dynamic recompilation in
-your project, build with "cabal install -fdevelopment".
+your project, first build snap with "cabal install snap -fhint" and then
+rebuild your application with "cabal clean; cabal install -fdevelopment".
 
 For more information, continue on to the [Snap API
 tutorial](tutorials/snap-api) or take a look at the [Snap

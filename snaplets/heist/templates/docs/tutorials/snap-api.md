@@ -1,180 +1,135 @@
-## Installation
-
-The exposed Snap API is on the same level of abstraction as Java Servlets. If
-you understand servlets, most of the rest of the tutorial should be very
-self-explanatory. Even if you don't, have no fear!  The following tutorial only
-expects that you know a little bit of Haskell.
+## Examining Hello World
 
 Before we dive into writing our first Snap web application, let's do a quick
 overview of the parts of the Snap framework. Currently Snap is divided into
 four components:
 
+  - `snap-core` is the core of Snap.  It defines an API for interfacing with
+  web servers and includes type definitions and all code that is
+  server-agnostic.  This API is on the same level of abstraction as Java
+  Servlets and is the focus of this tutorial.
 
-  - `snap-core` is the core of Snap. It includes type definitions and all code
-  that is server-agnostic.
+  - `snap-server` is an HTTP server library that supports the interface
+  defined in `snap-core`. It currently includes a backend using stock
+  Haskell socket I/O and a backend which uses the
+  [libev](http://software.schmorp.de/pkg/libev.html) O(1) event loop
+  library.
 
-  - `snap-server` is an HTTP server library built on top of `snap-core`. It
-  currently includes a backend using stock Haskell socket I/O and a backend
-  which uses the [libev](http://software.schmorp.de/pkg/libev.html) O(1) event
-  loop library.
+  - `heist` is the HTML templating library. You do not need it to use the
+  above two libraries but you are certainly welcome to.
 
-  - `heist` is the HTML templating library. You do not need it to use Snap,
-  but you are certainly welcome to.
+  - `snap` is a library that builds on the above three prackages and provides
+  higher-level abstractions for building complex websites.  It also contains
+  a `snap` executable which can generate several different skeleton projects
+  to get you started.
 
-  - `snap` is a library which contains the extension framework for organizing
-  pieces of Snap sites.  It also contains a `snap` executable which generates
-  a skeleton project to get you started.
+In the [Quick Start Guide](/docs/quickstart), we installed Snap and created a
+template "hello world" application.  Here we'll look at what's inside the
+application and describe basic use of Snap's web server API.
 
-To install Snap, simply use `cabal`.
-
-~~~~~~ {.shell}
-$ cabal install snap
-~~~~~~
-
-It's up to you whether or not you want to use the Heist templating library.
-However, heist is a dependency for the snap project starter, and our example
-below does use it.
+If you understand servlets and Haskell, most of the rest of the tutorial
+should be very self-explanatory. Even if you don't, have no fear!  The
+following tutorial only expects that you know a little bit of Haskell.
 
 ## Hello, Snap!
 
-To generate a skeleton Snap web application, the `snap` package installs an
-executable `snap` into `$HOME/.cabal/bin`. We can use that to create our "Hello
-Snap" application.
-
-(Normally, snap builds an example using Heist and a custom extension to get
-your project started.  Use `snap init barebones` instead of `snap init` for a
-bare-bones skeleton.)
-
-~~~~~~ {.shell}
-$ mkdir hello-snap
-$ cd hello-snap
-$ snap init
-~~~~~~
-
-We now have a skeleton Snap project with a `.cabal` file and a source
-directory. Install and run it:
-
-~~~~~~ {.shell}
-$ cabal install
-$ hello-snap -p 8000
-Initializing Heist/Impl... done.
-Initializing Timer/Timer... done.
-Listening on http://0.0.0.0:8000/
-~~~~~~
-
-Then see what your browser thinks of it.
-
-~~~~~~ {.shell}
-$ curl 'http://localhost:8000/'; echo
-<html>
-  <head>
-    <title>Snap web server</title>
-...
-~~~~~~
-
-Make sure to try some of the echo examples. When you are satisfied, we can kill
-the server by hitting `CTRL-C`.
-
-
-### Under the Hood
-
-Peeking in the `src` directory, we find the haskell files responsible for the
-simple demo page we start with.  
-
-~~~~~ {.shell}
-$ cd src
-$ ls
-Site.hs  Main.hs  Application.hs
-~~~~~
-
-`Main.hs` contains the `main` entry point to the application. The default
-skeleton project contains some C preprocessor statements for optionally
-configuring the server to use [hint](http://hackage.haskell.org/package/hint)
-to dynamically load the site in "development" mode. If we ignore this for now,
-we see that `main` just starts up `snap-server` using our site's initialization
-and web handling routines:
+`snap init barebones` creates a single file in the `src` directory, Main.hs.
+Here's the important code in Main.hs:
 
 ~~~~~~ {.haskell}
 main :: IO ()
-main = quickHttpServe applicationInitializer site
+main = quickHttpServe site
+
+site :: Snap ()
+site =
+    ifTop (writeBS "hello world") <|>
+    route [ ("foo", writeBS "bar")
+          , ("echo/:echoparam", echoHandler)
+          ] <|>
+    dir "static" (serveDirectory ".")
+
+echoHandler :: Snap ()
+echoHandler = do
+    param <- getParam "echoparam"
+    maybe (writeBS "must specify echo/param in URL")
+          writeBS param
 ~~~~~~
 
-The `Application.hs` file defines the `Application` type, which is the type of
-our site's web handlers. `Application` extends the default `Snap` handler type
-with some application-specific state, also defined in `Application.hs`.
+The behavior of this code can be summarized with the following rules:
 
-A handler (informally, for now) is a function, run by the Snap server, which
-takes an HTTP request and generates the server's Response, with a lot of the
-complexity sort of nudged away under the rug. The handlers currently being used
-by your sample app are defined in `Site.hs`.
+1. If the user requested the site's root page (http://mysite.com/), then
+return a page containing the string "hello world".
+2. If the user requested /foo, then return "bar".
+3. If the user requested /echo/xyz, then return "xyz".
+4. If the request URL begins with /static/, then look for files on disk
+matching the rest of the path and serve them.
+5. If none of these match, then Snap returns a 404 page.
 
-For example, here's the top-level Handler used by your sample app:
+Let's go over each of the Snap API functions used here.
 
-~~~~~~ {.haskell}
-site :: Application ()
-site = route [ ("/",            index)
-             , ("/echo/:stuff", echo)
-             ]
-       <|> serveDirectory "resources/static"
-~~~~~~
+##### [`dir`](http://hackage.haskell.org/packages/archive/snap-core/0.8.0/doc/html/Snap-Core.html#v:dir)
 
-This sets up a routing table for the site's URLs: requests for the "`/`" URL
-get routed to the "`index`" handler, and requests for "`/echo/foo`" get routed
-to the "`echo`" handler after we set "`stuff=foo`" in the request's parameter
-mapping.
+`dir` runs its action only if the request path starts with the specified
+directory.  You can combine successive dir calls to match more than one
+subdirectory into the path.
 
-The second half of the site handler, after the main routing table, handles
-serving any files from the disk. The `a <|> b` syntax means: "try `a`, and if
-it fails, try `b`". In this case, if the user requests an URL that doesn't
-match any of the entries in the routing table --- like "`/screen.css`", for
-example --- the `fileServe` function will attempt to find the file under the
-"`resources/static`" directory, and will serve it back to the user if it is
-found. If the file is *not* found, the "serveDirectory" handler will fail,
-causing the `site` handler to fail, which will cause Snap to produce a
-"404 Not Found" response.
+##### [`ifTop`](http://hackage.haskell.org/packages/archive/snap-core/0.8.0/doc/html/Snap-Core.html#v:ifTop)
 
+`ifTop` only executes its argument if the client requested the root URL.  Use
+this for your home page.  It can also be combined with the `dir` function to
+define your index handler for a certain URL directory.
 
-Next, let's take a look at the `echo` handler:
+##### [`writeBS`](http://hackage.haskell.org/packages/archive/snap-core/0.8.0/doc/html/Snap-Core.html#v:writeBS)
 
-~~~~~ {.haskell}
-echo :: Application ()
-echo = do
-    message <- decodedParam "stuff"
-    heistLocal (bindString "message" message) $ render "echo"
-  where
-    decodedParam p = fromMaybe "" <$> getParam p
-~~~~~
+`writeBS` appends a strict ByteString to the response being constructed.  Snap
+also provides an analogous function `writeLBS` for lazy ByteStrings.  You can
+also use the functions `writeText` and `writeLazyText` if you use Data.Text
+instead of ByteString.
 
-The `echo` handler takes the `stuff` parameter out of the parameters mapping
-(remember, "`stuff`" was bound using `route` above), binds its value to a
-`heist` tag, and then renders the "echo" template.
+If you're not familiar with Haskell, you may be wondering about the `<|>`.  It
+is simply a binary operator that evaluates its first argument, and if it
+failed, evaluates the second.  If the first argument succeeded, then it stops
+without evaluating the second argument.
 
-A [lengthier Heist tutorial](/docs/tutorials/heist/) is available, but here's
-what you need to know for now: `heist` serves HTML templates, but with a
-twist: a tag element can be rebound to a Haskell function which replaces it
-with some programmatically-generated markup. In our case, the `echo` template
-lives in `resources/templates/echo.tpl`, and the "`<message>`" tag has been
-redefined to be substituted for the text that was entered by the user. The
-template looks like this:
+The `site` function uses `<|>` to connect three different functions that guard
+what page gets rendered.  First, the `ifTop` function runs.  This function
+succeeds if the requested URL is `http://site.com/`.  If that happens, then
+Snap sends a response of "hello world".  Otherwise the `route` function is
+executed.
 
-~~~~~ {.html}
-<body>
-  <div id="content">
-    <h1>Is there an echo in here?</h1>
-  </div>
-  <p>You wanted me to say this?</p>
-  <p>"<message/>"</p>
-  <p><a href="/">Return</a></p>
-</body>
-~~~~~
+You could build your whole site using `<|>` to connect different handlers
+together, but this kind of routing is expensive because the amount of time it
+takes to construct a request scales linearly with the number of handlers in
+your site.  For large sites, this could be quite noticeable.  To remedy this,
+Snap also provides you with the `route` function that routes requests based on the
+request path in `O(log n)` time:
+
+##### [`route`](http://hackage.haskell.org/packages/archive/snap-core/0.8.0/doc/html/Snap-Core.html#v:route)
+
+`route` takes a list of (route, handler) tuples and succeeds returning the
+result of the associated handler of the route that matches.  If no route
+matches, then `route` fails and execution is passed on to `serveDirectory`.  
+
+In a real application, you will want to use `route` for almost everything.
+We didn't do it that way in this example because we wanted to demonstrate
+more of the API.
+
+##### [`getParam`](http://hackage.haskell.org/packages/archive/snap-core/0.8.0/doc/html/Snap-Core.html#v:getParam)
+
+`getParam` retrieves a GET or POST parameter from the request.  In this
+example, the `route` function binds a captured portion of the URL to the
+parameter `echoParam` so the associated handler can make easy use of it. 
+`echoHandler` checks to see whether a parameter was passed and returns the
+value or an error message if it didn't exist.
 
 
 ## What Now?
 
 We hope we've whetted your appetite for using Snap. From here on out you should
-take a look at the [API documentation](http://hackage.haskell.org/package/snap-core),
+take a look at the [API
+documentation](http://hackage.haskell.org/package/snap-core),
 which explains many of the concepts and functions here in further detail.
 
 You can also come hang out in
 [`#snapframework`](http://webchat.freenode.net/?channels=snapframework&uio=d4)
-on [`freenode`](http://freenode.net/).
+on [`freenode`](http://freenode.net/) IRC.
