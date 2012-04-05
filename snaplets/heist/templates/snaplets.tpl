@@ -111,6 +111,16 @@
             </dt>
             <dd>Support for the redis in-memory key-value store.</dd>
 
+            <dt>snaplet-redson
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-redson"
+                   > hackage </a>
+                  | <a href="https://github.com/dzhus/snaplet-redson/"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>CRUD for JSON data with Redis storage.</dd>
+
             <dt>snaplet-sedna
                 <span class="linklist">
                   [ <a href="http://hackage.haskell.org/package/snaplet-sedna"
