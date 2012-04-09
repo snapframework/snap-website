@@ -101,6 +101,16 @@
             </dt>
             <dd>MongoDB support</dd>
 
+            <dt>snaplet-recaptcha
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-recaptcha"
+                   > hackage </a>
+                  | <a href="https://github.com/lpeterse/snaplet-recaptcha/"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>A ReCAPTCHA verification snaplet with connection sharing.</dd>
+
             <dt>snaplet-redis
                 <span class="linklist">
                   [ <a href="http://hackage.haskell.org/package/snaplet-redis"
