@@ -7,6 +7,9 @@
 The Snap team would like to announce the release of version 0.8 of the Snap
 Framework.
 
+NOTE: If you use the heist snaplet, then 0.8 will break your application.  It
+will still compile, but it won't work.  See below for details.
+
 
 ## New features / improvements
 
