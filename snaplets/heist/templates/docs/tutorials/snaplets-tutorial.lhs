@@ -54,8 +54,11 @@ generates a single response.  From now on, when we talk about state this is
 what we are talking about.  If you need global application state, you have to
 use a thread-safe construct such as an MVar or IORef.
 
-This post is written in literate Haskell, so first we need to get imports out
-of the way.
+This post is written in literate Haskell.  It uses a small external module
+called Part2 that is [available
+here](https://github.com/snapframework/snap/blob/master/project_template/tutorial/src/Part2.lhs).
+You can alsa install the full code in the current directory with the command
+`snap init tutorial`.  First we need to get imports out of the way.
 
 > {-# LANGUAGE TemplateHaskell #-}
 > {-# LANGUAGE OverloadedStrings #-}
