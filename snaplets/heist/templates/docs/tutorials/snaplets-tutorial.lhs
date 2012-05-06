@@ -57,7 +57,7 @@ use a thread-safe construct such as an MVar or IORef.
 This post is written in literate Haskell.  It uses a small external module
 called Part2 that is [available
 here](https://github.com/snapframework/snap/blob/master/project_template/tutorial/src/Part2.lhs).
-You can alsa install the full code in the current directory with the command
+You can also install the full code in the current directory with the command
 `snap init tutorial`.  First we need to get imports out of the way.
 
 > {-# LANGUAGE TemplateHaskell #-}
