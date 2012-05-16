@@ -81,6 +81,16 @@
             </dt>
             <dd>HDBC database support</dd>
 
+            <dt>snaplet-i18n
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-i18n"
+                   > hackage </a>
+                  | <a href="https://github.com/HaskellCNOrg/snaplet-i18n"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>A light weight i18n snaplet</dd>
+
             <dt>snaplet-mongoDB
                 <span class="linklist">
                   [ <a href="http://hackage.haskell.org/package/snaplet-mongoDB"
