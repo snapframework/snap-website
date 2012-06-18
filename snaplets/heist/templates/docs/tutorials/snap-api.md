@@ -10,10 +10,7 @@ four components:
   Servlets and is the focus of this tutorial.
 
   - `snap-server` is an HTTP server library that supports the interface
-  defined in `snap-core`. It currently includes a backend using stock
-  Haskell socket I/O and a backend which uses the
-  [libev](http://software.schmorp.de/pkg/libev.html) O(1) event loop
-  library.
+  defined in `snap-core`.
 
   - `heist` is the HTML templating library. You do not need it to use the
   above two libraries but you are certainly welcome to.
