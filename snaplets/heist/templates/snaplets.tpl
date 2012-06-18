@@ -111,6 +111,18 @@
             </dt>
             <dd>MongoDB support</dd>
 
+            <dt>snaplet-postgresql-simple
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-postgresql-simple"
+                   > hackage </a>
+                  | <a href="https://github.com/mightybyte/snaplet-postgresql-simple/"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Support for the PostgreSQL database using the
+            <a href="http://hackage.haskell.org/package/postgresql-simple">postgresql-simple</a>
+            library</dd>
+
             <dt>snaplet-recaptcha
                 <span class="linklist">
                   [ <a href="http://hackage.haskell.org/package/snaplet-recaptcha"
