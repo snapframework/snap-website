@@ -13,12 +13,12 @@
 1. [Why doesn't Heist display templates?    ](#why-doesnt-heist-display-templates)
 1. [How do I do looping in Heist?           ](#how-do-i-do-looping-in-heist)
 1. [Why can't I nest a `div` in a `p` with Heist?](#why-cant-i-nest-a-div-in-a-p-with-heist)
-1. [How do I get the libev backend working? ](#how-do-i-get-the-libev-backend-working)
 1. [How can I get debugging output?         ](#how-can-i-get-debugging-output)
 1. [Why does throughput plummet when I run snap with multiple cores?](#why-does-throughput-plummet-when-i-run-snap-with-multiple-cores)
 1. [How do I fix the libstdc++ error?](#how-do-i-fix-the-libstdc-error)
 1. [Can I develop with Snap on Windows?](#can-i-develop-with-snap-on-windows)
 1. [How can I help?                         ](#how-can-i-help)
+1. [Where did the libev backend go?](#where-did-the-libev-backend-go)
 
 </div>
 
@@ -193,21 +193,6 @@ Remember that you can disable HTML 5 parsing by naming your templates with the
 suffix `.xtpl`, so if you don't want Heist to implicitly close paragraphs and
 follow other HTML 5 specific rules, you can follow XML document rules instead.
 
-### How do I get the libev backend working?
-
-To install Snap's [libev](http://software.schmorp.de/pkg/libev.html) backend,
-ensure you have the `libev` development libraries installed on your system and
-pass the `-flibev` flag to `cabal` when you install `snap-server`:
-
-~~~~~~ {.shell}
-$ cabal install snap-server -flibev
-~~~~~~
-
-If you get an undefined symbol "`EVFLAG_SIGNALFD`" then you'll need to
-install the latest [libev](http://software.schmorp.de/pkg/libev.html)
-from [source](http://dist.schmorp.de/libev/).
-
-
 ### Why does throughput plummet when I run snap with multiple cores?
 
 The parallel GC introduced in GHC 6.10 doesn't seem to play very well with
@@ -288,6 +273,16 @@ to the stability of the project.
 
 It's easy for documentation to get out of date.  We try to keep it up-to-date,
 but we can always use more eyes to catch things that slip through the cracks.
+
+
+### Where did the libev backend go?
+
+Before Snap 0.9, you could build `snap-server` with the `-flibev` backend to
+use the [libev](http://software.schmorp.de/pkg/libev.html) library for I/O
+multiplexing. However, now that all recent versions of GHC come with an I/O
+manager that uses `epoll()` on unix platforms, libev is no longer significantly
+faster than stock Haskell I/O and support was removed in version 0.9 in order
+to reduce our maintenance burden.
 
 
 </div>

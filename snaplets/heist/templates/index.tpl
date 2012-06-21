@@ -72,10 +72,7 @@ $ mkdir foo; cd foo; snap init</pre>
                 </p>
 
                 <ul class="compact">
-                  <li>A fast HTTP server library with an optional
-                    high-concurrency backend using
-                    the <a href="http://software.schmorp.de/pkg/libev.html">libev</a>
-                    event loop library</li>
+                  <li>A fast HTTP server library</li>
                   <li>A sensible and clean monad for web programming</li>
                   <li>An HTML-based templating system for generating pages</li>
                 </ul>
