@@ -8,6 +8,7 @@
 1. [Where's the high-level functionality?   ](#wheres-the-high-level-functionality)
 1. [Why can't I install Snap?               ](#why-cant-i-install-snap)
 1. [How do I run my app in development mode?](#how-do-i-run-my-app-in-development-mode)
+1. [How do I enable SSL?                    ](#how-do-i-enable-ssl)
 1. [Why do I get a "cannot find normal object file" error when building Snap?](#why-do-i-get-a-cannot-find-normal-object-file-error-when-building-snap)
 1. [Why doesn't Heist display templates?    ](#why-doesnt-heist-display-templates)
 1. [How do I do looping in Heist?           ](#how-do-i-do-looping-in-heist)
@@ -114,6 +115,17 @@ with `-fhint`:
 
 and then build your application with `-fdevelopment`.  If you
 don't do this, you'll get `Could not find module 'Snap.Loader.Devel'`.
+
+### How do I enable SSL?
+
+First, you need to install snap-server with `-fopenssl`.  If you have already
+installed snap-server, you might want to uninstall it first with `ghc-pkg
+unregister -f snap-server` to avoid potential version conflicts.
+
+Once you have done that, run your application as follows using values
+appropriate to your setup.
+
+    ./app --ssl-port=443 --ssl-cert=cert.pem --ssl-key=key.pem
 
 ### Why do I get a "cannot find normal object file" error when building Snap?
 
