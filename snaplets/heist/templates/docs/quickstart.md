@@ -37,11 +37,10 @@ $ myproject -p 8000
 Now point your web browser to [http://localhost:8000/](http://localhost:8000/);
 you should see a simple response string.
 
-To activate dynamic recompilation in your project, first build snap with
-"cabal install snap -fhint" and then rebuild your application with "cabal
-clean; cabal install -fdevelopment".  This won't work with the barebones
-project that we created above.  You have to create your project with "snap
-init" instead.
+To activate dynamic recompilation in your project, rebuild your application
+with "cabal clean; cabal install -fdevelopment".  This won't work with the
+barebones project that we created above.  You have to create your project with
+"snap init" instead.
 
 For more information, continue on to the [Snap API
 tutorial](tutorials/snap-api) or take a look at the [Snap
