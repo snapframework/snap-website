@@ -42,6 +42,8 @@ you know of others:
   -  [Silk](http://www.silkapp.com/) uses Snap for some of their back end
      services.
 
+  -  [szydelkowo.com.pl](http://szydelkowo.com.pl/) is a Polish web store.
+
   -  [housetab.org](http://housetab.org) - a webapp for sharing expenses
      (source code [here](http://darcsden.com/position/housetab/))
 
