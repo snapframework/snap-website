@@ -41,6 +41,10 @@ you know of others:
 
   -  [Silk](http://www.silkapp.com/) uses Snap for some of their back end
      services.
+     
+  -  [Soostone](http://www.soostone.com/) uses Snap for their entire
+     web stack across multiple products with applications ranging from
+     front-end UIs to high volume data/analytics APIs.
 
   -  [szydelkowo.com.pl](http://szydelkowo.com.pl/) is a Polish web store.
 
