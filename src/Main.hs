@@ -13,9 +13,8 @@ import           Control.Monad.Trans
 import qualified Data.ByteString.Char8 as B
 import           Data.Lens.Template
 import           Data.Maybe
-import           Data.Text (Text)
 import qualified Data.Text as T
-import qualified Data.Text.Encoding as T
+import           Data.Text.Encoding
 import           Data.Time.Clock.POSIX
 import           Foreign.C.Types
 import           Prelude hiding (catch)
@@ -44,8 +43,12 @@ epochTime = do
     return $ fromInteger $ truncate t
 
 
-description :: Text
-description = "The snapframework.com website"
+undirify :: MonadSnap m => m ()
+undirify = do
+    uri <- withRequest (return . rqURI)
+    if B.length uri > 1 && T.last (decodeUtf8 uri) == '/'
+      then redirect (B.init uri)
+      else return ()
 
 
 appInit :: SnapletInit App App
@@ -56,8 +59,10 @@ appInit = makeSnaplet "snap-website" description Nothing $ do
                , ("feed-autodiscovery-link", liftHeist $ textSplice "")
                ]
     wrapHandlers (\h -> catch500 $ withCompression $
-                        h <|> setCache (serveDirectory "static"))
+                        undirify >> h <|> setCache (serveDirectory "static"))
     return $ App hs bs
+  where
+    description = "The snapframework.com website"
 
 
 setCache :: MonadSnap m => m a -> m ()
@@ -90,7 +95,7 @@ catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
 
 
 serverVersion :: SnapletSplice b v
-serverVersion = liftHeist $ textSplice $ T.decodeUtf8 snapServerVersion
+serverVersion = liftHeist $ textSplice $ decodeUtf8 snapServerVersion
 
 
 main :: IO ()
