@@ -58,6 +58,15 @@
             </dt>
             <dd>Persist native Haskell data structures with acid-state.</dd>
 
+            <dt>snaplet-fay
+                <span class="linklist">
+                  [ <a href="https://github.com/bergmark/snaplet-fay"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Fay integration for Snap that provides automatic
+            (re)compilation during development.</dd>
+
             <dt>snaplet-hdbc
                 <span class="linklist">
                   [ <a href="http://norm2782.github.com/snaplet-hdbc.html"
@@ -162,6 +171,14 @@
             </dt>
             <dd>Allows the creation of command line tasks akin to "rake tasks"
             from Ruby on Rails.</dd>
+
+            <dt>snaplet-typed-sessions
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-typed-sessions"
+                   > hackage </a> ]
+                </span>
+            </dt>
+            <dd>Typed session snaplets and continuation-based programming</dd>
 
           </dl>
         </div>
