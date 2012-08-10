@@ -60,7 +60,7 @@
 
             <dt>snaplet-fay
                 <span class="linklist">
-                  [ <a href="https://github.com/bergmark/snaplet-fay"
+                  [ <a href="https://github.com/faylang/snaplet-fay"
                    >github</a> ]
                 </span>
             </dt>
