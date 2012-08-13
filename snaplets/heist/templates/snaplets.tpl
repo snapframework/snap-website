@@ -60,7 +60,9 @@
 
             <dt>snaplet-fay
                 <span class="linklist">
-                  [ <a href="https://github.com/faylang/snaplet-fay"
+                  [ <a href="http://hackage.haskell.org/package/snaplet-fay"
+                   > hackage </a>
+                  | <a href="https://github.com/faylang/snaplet-fay"
                    >github</a> ]
                 </span>
             </dt>
