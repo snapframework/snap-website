@@ -163,6 +163,16 @@
             </dt>
             <dd>Support for the Sedna XML database.</dd>
 
+            <dt>snaplet-sqlite-simple
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-sqlite-simple"
+                   > hackage </a>
+                  | <a href="https://github.com/nurpax/snaplet-sqlite-simple"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Support for sqlite.</dd>
+
             <dt>snaplet-tasks
                 <span class="linklist">
                   [ <a href="http://hackage.haskell.org/package/snaplet-tasks"
