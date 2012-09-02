@@ -91,6 +91,14 @@
             </dt>
             <dd>A light weight i18n snaplet</dd>
 
+            <dt>snaplet-liftajax
+                <span class="linklist">
+                  [ <a href="https://github.com/davidsd/snaplet-liftajax"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Provides splices for AJAX-enabled forms and buttons</dd>
+
             <dt>snaplet-mongoDB
                 <span class="linklist">
                   [ <a href="http://hackage.haskell.org/package/snaplet-mongoDB"
