@@ -20,13 +20,15 @@ import           Foreign.C.Types
 import           Prelude hiding (catch)
 import           Snap.Http.Server
 import           Snap.StaticPages
+import           Snap.Blaze (blaze)
 import           Snap.Core
 import           Snap.Snaplet
 import           Snap.Snaplet.Heist
 import           Snap.Util.FileServe
 import           Snap.Util.GZip
+import           Text.Blaze.Html5 (toHtml)
+import qualified Text.Blaze.Html5 as H
 import           Text.Templating.Heist
-import qualified Text.XHtmlCombinators.Escape as XH
 
 data App = App
     { _heist     :: Snaplet (Heist App)
@@ -81,12 +83,14 @@ catch500 :: MonadSnap m => m a -> m ()
 catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
     let t = T.pack $ show e
     putResponse r
-    writeBS "<html><head><title>Internal Server Error</title></head>"
-    writeBS "<body><h1>Internal Server Error</h1>"
-    writeBS "<p>A web handler threw an exception. Details:</p>"
-    writeBS "<pre>\n"
-    writeText $ XH.escape t
-    writeBS "\n</pre></body></html>"
+    blaze $ do
+      H.docType
+      H.html $ do
+        H.head $ H.title "Internal Server Error"
+        H.body $ do
+          H.h1 "Internal Server Error"
+          H.p "A web handler threw an exception. Details:"
+          H.pre $ "\n" >> (toHtml t) >> "\n"
 
     logError $ B.concat [ "caught exception: ", B.pack $ show e ]
   where
