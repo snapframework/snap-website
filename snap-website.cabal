@@ -1,5 +1,5 @@
 Name:                snap-website
-Version:             0.8
+Version:             0.10
 Synopsis:            The Snap Framework Website
 Homepage:            http://snapframework.com
 License:             BSD3
@@ -23,11 +23,11 @@ Executable snap-website
     data-lens-template >= 2.1 && < 2.2,
     directory,
     filepath,
-    heist >= 0.7 && < 0.9,
+    heist >= 0.10 && < 0.11,
     MonadCatchIO-transformers >= 0.2 && < 0.4,
     mtl >= 2 && <3,
     process,
-    snap        >= 0.9 && <0.10,
+    snap        >= 0.10 && <0.11,
     snap-core   >= 0.9 && <0.10,
     snap-blaze  >= 0.2.1 && <0.3,
     snap-server >= 0.9 && <0.10,

@@ -4,7 +4,7 @@
   <body>
     <div id="main">
       <apply template="nav"/>
-      <content />
+      <apply-content />
     </div><!--end main-->
     <div id="footer">
       <p class="part-1">Powered by <b>Snap <snap-version/></b></p> <p class="part-2">Snap is <a rel="license" href="http://creativecommons.org/licenses/BSD/">BSD

@@ -4,7 +4,7 @@
     <div class="inner-page">
       <div class="newspaper">
 
-        <content/>
+        <apply-content/>
 
       </div>
     </div>
