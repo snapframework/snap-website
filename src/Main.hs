@@ -57,7 +57,7 @@ undirify = do
 appInit :: SnapletInit App App
 appInit = makeSnaplet "snap-website" description Nothing $ do
     hs <- nestSnaplet "" heist $ heistInit "templates"
-    bs <- nestSnaplet "blog" blog $ staticPagesInit "blogdata"
+    bs <- nestSnaplet "blog" blog $ staticPagesInit hs "blogdata"
     addSplices [ ("snap-version", serverVersion)
                , ("feed-autodiscovery-link", textSplice "")
                ]
