@@ -69,6 +69,15 @@
             <dd>Fay integration for Snap that provides automatic
             (re)compilation during development.</dd>
 
+            <dt>snaplet-file-dialog
+                <span class="linklist">
+                  [ <a href="http://patch-tag.com/r/mf/snaplet-file-dialog/"
+                   >patch-tag</a> ]
+                </span>
+            </dt>
+            <dd>Upload, download, browse, and delete files on a web server in
+            a private file transfer area.</dd>
+
             <dt>snaplet-hdbc
                 <span class="linklist">
                   [ <a href="http://norm2782.github.com/snaplet-hdbc.html"
