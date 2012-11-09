@@ -55,7 +55,7 @@ you know of others:
 
   -  [hpaste](http://hpaste.org/), a simple Haskell pastebin.  A blog post
      about it is [here](http://chrisdone.com/posts/2011-06-05-postgres-hpaste-edsls.html)
-     and the source code is hosted [here](https://github.com/chrisdone/amelie).
+     and the source code is hosted [here](https://github.com/chrisdone/hpaste).
 
   -  [Darcsden](http://darcsden.com) is a nifty github-like source
      code hosting site for darcs.
