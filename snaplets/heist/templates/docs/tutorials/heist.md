@@ -169,7 +169,7 @@ template:
 ~~~~~~~~~~~~~~~
 
 
-### The `<content>` tag
+### The `<apply-content>` tag
 
 Sometimes it is useful to pass information (usually in the form of HTML
 data) into the template when it is applied so the template can insert
@@ -179,7 +179,7 @@ not just static blocks of code.
 In our previous example, we did not pass any parameters to the `nav`
 template when it was applied, so the `<apply>` tag was empty.  If we
 include data inside the body of the `<apply>` tag, the template being
-called can access this data with the `<content>` tag.  The following
+called can access this data with the `<apply-content>` tag.  The following
 simple example illustrates this concept.  We create a site template
 called `default.tpl`:
 
@@ -193,7 +193,7 @@ called `default.tpl`:
       <h1>XYZ Inc.</h1>
     </div>
     <div id="content">
-      <content />
+      <apply-content />
     </div>
     <div id="footer">
       <p>Copyright XYZ Inc</p>
@@ -203,7 +203,7 @@ called `default.tpl`:
 ~~~~~~~~~~~~~~~
 
 
-The `<content>` tag "pulls in" the page content from the calling
+The `<apply-content>` tag "pulls in" the page content from the calling
 template and inserts it into the content `<div>`.
 
 Now we have a template for our home page called home.tpl:
@@ -253,9 +253,9 @@ illustrates the power of a simple concept like `apply`.
 What if, in the above example, we decided that the contents of the
 header div should be different for different pages?  To do this, we
 need a way to pass multiple parameters into a template.  Heist
-provides this capability with the `<bind>` tag.  Inside the body of a
+provides this capability with the `<bind-content>` tag.  Inside the body of a
 `<apply>` tag, you can have multiple bind tags surrounding data to be
-passed as separate parameters.  Each `<bind>` tag must have a `tag`
+passed as separate parameters.  Each `<bind-content>` tag must have a `tag`
 attribute that provides a name for its contents just as described
 above.  Then, inside the template, those tags will be substituted with
 the appropriate data.
@@ -283,33 +283,33 @@ to allow multiple parameters.
 ~~~~~~~~~~~~~~~
 
 
-And `home.tpl` uses the `<bind>` tag with a name attribute to define
+And `home.tpl` uses the `<bind-content>` tag with a name attribute to define
 values for the `<header/>` and `<main/>` tags:
 
 ~~~~~~~~~~~~~~~ {.html}
 <apply template="default">
-  <bind tag="header">
+  <bind-content tag="header">
     <h1>XYZ Inc.</h1>
-  </bind>
+  </bind-content>
   Some in-between text.
-  <bind tag="main">
+  <bind-content tag="main">
     <h1>Home Page</h1>
     <p>Welcome to XYZ Inc</p>
-  </bind>
+  </bind-content>
 </apply>
 ~~~~~~~~~~~~~~~
 
 The result template for this example is the same as the previous
 example.
 
-NOTE: In this example the `<content/>` tag is still bound as described
-above.  The `<content/>` tag is always bound to the complete contents
-of the calling `apply` tag.  However, any `bind` tags inside the apply
+NOTE: In this example the `<bind-content/>` tag is still bound as described
+above.  The `<bind-content/>` tag is always bound to the complete contents
+of the calling `apply` tag.  However, any `bind-content` tags inside the apply
 will disappear.  If we changed `default.tpl` to the following:
 
 ~~~~~~~~~~~~~~~ {.html}
 <foo>
-  <content/>
+  <bind-content/>
 </foo>
 ~~~~~~~~~~~~~~~
 
@@ -409,7 +409,8 @@ The following is code for a splice that calculates the factorial of a
 number.
 
 ~~~~~~~~~~~~~~~ {.haskell}
-import            Text.Templating.Heist
+import            Heist
+import            Heist.Interpreted
 import qualified  Data.Text as T
 import qualified  Text.XmlHtml as X
 

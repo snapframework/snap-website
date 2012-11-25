@@ -28,7 +28,8 @@ import           Snap.Util.FileServe
 import           Snap.Util.GZip
 import           Text.Blaze.Html5 (toHtml)
 import qualified Text.Blaze.Html5 as H
-import           Text.Templating.Heist
+import           Heist
+import           Heist.Interpreted
 
 data App = App
     { _heist     :: Snaplet (Heist App)
@@ -56,11 +57,11 @@ undirify = do
 appInit :: SnapletInit App App
 appInit = makeSnaplet "snap-website" description Nothing $ do
     hs <- nestSnaplet "" heist $ heistInit "templates"
-    bs <- nestSnaplet "blog" blog $ staticPagesInit "blogdata"
+    bs <- nestSnaplet "blog" blog $ staticPagesInit hs "blogdata"
     addSplices [ ("snap-version", serverVersion)
-               , ("feed-autodiscovery-link", liftHeist $ textSplice "")
+               , ("feed-autodiscovery-link", textSplice "")
                ]
-    wrapHandlers (\h -> catch500 $ withCompression $
+    wrapSite (\h -> catch500 $ withCompression $
                         undirify >> h <|> setCache (serveDirectory "static"))
     return $ App hs bs
   where
@@ -98,8 +99,8 @@ catch500 m = (m >> return ()) `catch` \(e::SomeException) -> do
         setResponseStatus 500 "Internal Server Error" emptyResponse
 
 
-serverVersion :: SnapletSplice b v
-serverVersion = liftHeist $ textSplice $ decodeUtf8 snapServerVersion
+serverVersion :: SnapletISplice b
+serverVersion = textSplice $ decodeUtf8 snapServerVersion
 
 
 main :: IO ()
