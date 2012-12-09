@@ -261,7 +261,7 @@ Note that in order to quit a running Snap app on Windows, you need to press `Ctr
 
 ### How can I help?
 
-##### Use Snap to build real websites.
+#### Use Snap to build real websites.
 
 This is perhaps the best way to help.  Let us know what issues you encounter
 and work on fixing the ones you care about most.  If you are unable to fix a
@@ -275,7 +275,7 @@ become more evident as we find code patterns common to real-world Snap
 websites.  Communicating real-world Snap development experiences to us is a
 great way to contribute to this effort.
 
-##### Develop automated memory leak and performance regression testing.
+#### Develop automated memory leak and performance regression testing.
 
 Currently our top priority is working out correctness and performance issues in
 the server.  We have a CI build server that automatically runs all our test
@@ -283,13 +283,13 @@ cases, but we don't have an automated system to test for performance and memory
 leaks.  This would be a very helpful addition.
 
 
-##### Improve test cases and code coverage.
+#### Improve test cases and code coverage.
 
 While not an exotic task, expanding our test suite can contribute significantly
 to the stability of the project.
 
 
-##### Improve documentation and tutorials.
+#### Improve documentation and tutorials.
 
 It's easy for documentation to get out of date.  We try to keep it up-to-date,
 but we can always use more eyes to catch things that slip through the cracks.
