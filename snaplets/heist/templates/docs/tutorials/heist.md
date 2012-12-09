@@ -203,8 +203,8 @@ called `default.tpl`:
 ~~~~~~~~~~~~~~~
 
 
-The `<apply-content>` tag "pulls in" the page content from the calling
-template and inserts it into the content `<div>`.
+The `<apply-content>` tag "pulls in" the page content from inside the apply
+tag in the calling template and inserts it into the content `<div>`.
 
 Now we have a template for our home page called home.tpl:
 
@@ -253,9 +253,9 @@ illustrates the power of a simple concept like `apply`.
 What if, in the above example, we decided that the contents of the
 header div should be different for different pages?  To do this, we
 need a way to pass multiple parameters into a template.  Heist
-provides this capability with the `<bind-content>` tag.  Inside the body of a
+provides this capability with the `<bind>` tag.  Inside the body of an
 `<apply>` tag, you can have multiple bind tags surrounding data to be
-passed as separate parameters.  Each `<bind-content>` tag must have a `tag`
+passed as separate parameters.  Each `<bind>` tag must have a `tag`
 attribute that provides a name for its contents just as described
 above.  Then, inside the template, those tags will be substituted with
 the appropriate data.
@@ -283,33 +283,33 @@ to allow multiple parameters.
 ~~~~~~~~~~~~~~~
 
 
-And `home.tpl` uses the `<bind-content>` tag with a name attribute to define
+And `home.tpl` uses the `<bind>` tag with a name attribute to define
 values for the `<header/>` and `<main/>` tags:
 
 ~~~~~~~~~~~~~~~ {.html}
 <apply template="default">
-  <bind-content tag="header">
+  <bind tag="header">
     <h1>XYZ Inc.</h1>
-  </bind-content>
+  </bind>
   Some in-between text.
-  <bind-content tag="main">
+  <bind tag="main">
     <h1>Home Page</h1>
     <p>Welcome to XYZ Inc</p>
-  </bind-content>
+  </bind>
 </apply>
 ~~~~~~~~~~~~~~~
 
 The result template for this example is the same as the previous
 example.
 
-NOTE: In this example the `<bind-content/>` tag is still bound as described
-above.  The `<bind-content/>` tag is always bound to the complete contents
-of the calling `apply` tag.  However, any `bind-content` tags inside the apply
+NOTE: In this example the `<bind/>` tag is still bound as described
+above.  The `<bind/>` tag is always bound to the complete contents
+of the calling `apply` tag.  However, any `bind` tags inside the apply
 will disappear.  If we changed `default.tpl` to the following:
 
 ~~~~~~~~~~~~~~~ {.html}
 <foo>
-  <bind-content/>
+  <bind/>
 </foo>
 ~~~~~~~~~~~~~~~
 

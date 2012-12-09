@@ -7,11 +7,11 @@ module Main where
 
 import           Control.Applicative
 import           Control.Exception (SomeException)
+import           Control.Lens
 import           Control.Monad
 import           Control.Monad.CatchIO
 import           Control.Monad.Trans
 import qualified Data.ByteString.Char8 as B
-import           Data.Lens.Template
 import           Data.Maybe
 import qualified Data.Text as T
 import           Data.Text.Encoding
@@ -28,7 +28,6 @@ import           Snap.Util.FileServe
 import           Snap.Util.GZip
 import           Text.Blaze.Html5 (toHtml)
 import qualified Text.Blaze.Html5 as H
-import           Heist
 import           Heist.Interpreted
 
 data App = App
@@ -36,7 +35,7 @@ data App = App
     , _blog      :: Snaplet StaticPages
     }
 
-makeLenses [''App]
+makeLenses ''App
 
 instance HasHeist App where heistLens = subSnaplet heist
 
@@ -69,9 +68,9 @@ appInit = makeSnaplet "snap-website" description Nothing $ do
 
 
 setCache :: MonadSnap m => m a -> m ()
-setCache act = do
+setCache action = do
     pinfo <- liftM rqPathInfo getRequest
-    act
+    action
     when ("media" `B.isPrefixOf` pinfo) $ do
        expTime <- liftM (+604800) $ liftIO epochTime
        s       <- liftIO $ formatHttpTime expTime

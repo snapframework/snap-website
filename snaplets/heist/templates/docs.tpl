@@ -3,64 +3,67 @@
   <static>
     <div id="about" class="section left">
       <div class="inner">
-        <h2>Tutorials</h2>
+        <h2 id="snap">Snap</h2>
         <div id="docdls">
           <dl>
             <dt><a href="docs/quickstart">Quick Start</a></dt>
             <dd>
-              <a class="book" href="docs/quickstart">
-                <img src="/media/css/book.png" />
-              </a>
+              <a class="book" href="docs/quickstart"><img src="/media/css/book.png" /></a>
               A guide to getting Snap installed.</dd>
 
             <dt><a href="docs/tutorials/snap-api">Snap API Introduction</a></dt>
             <dd>
-              <a class="book" href="docs/tutorials/snap-api">
-                <img src="/media/css/book.png" />
-              </a>
+              <a class="book" href="docs/tutorials/snap-api"><img src="/media/css/book.png" /></a>
               A quick tutorial on the Snap API. Covers installation, the
               &ldquo;snap&rdquo; command-line tool, and a walkthough of the
               Snap starter application.</dd>
 
-            <dt><a href="docs/tutorials/heist">Heist Template Tutorial</a></dt>
-            <dd>
-              <a class="book" href="docs/tutorials/heist">
-                <img src="/media/css/book.png" />
-              </a>
-              A tutorial for the Heist HTML templating library.</dd>
-
             <dt><a href="docs/tutorials/snaplets-tutorial">Snaplets Tutorial</a></dt>
             <dd>
-              <a class="book" href="docs/tutorials/snaplets-tutorial">
-                <img src="/media/css/book.png" />
-              </a>
+              <a class="book" href="docs/tutorials/snaplets-tutorial"><img src="/media/css/book.png" /></a>
               Guide to using snaplets to build reusable web components.</dd>
 
             <dt><a href="docs/tutorials/snaplets-design">Snaplets Design</a></dt>
             <dd>
-              <a class="book" href="docs/tutorials/snaplets-design">
-                <img src="/media/css/book.png" />
-              </a>
+              <a class="book" href="docs/tutorials/snaplets-design"><img src="/media/css/book.png" /></a>
               Description of the snaplets internal design and motivation.</dd>
+          </dl>
+        </div>
+
+        <h2 id="heist">Heist</h2>
+        <div id="docdls">
+          <dl>
+            <dt><a href="docs/tutorials/heist">Heist Template Tutorial</a></dt>
+            <dd>
+              <a class="book" href="docs/tutorials/heist"><img src="/media/css/book.png" /></a>
+              A tutorial for the Heist HTML templating library.  This tutorial
+              applies to Heist 0.8 and earlier.</dd>
+
+            <dt><a href="docs/tutorials/compiled-splices">Compiled Splices Tutorial</a></dt>
+            <dd>
+              <a class="book" href="docs/tutorials/compiled-splices"><img src="/media/css/book.png" /></a>
+              Discusses compiled splices, which were introduced in Heist 0.10.</dd>
+
+            <dt><a href="docs/tutorials/attribute-splices">Attribute Splices Tutorial</a></dt>
+            <dd>
+              <a class="book" href="docs/tutorials/attribute-splices"><img src="/media/css/book.png" /></a>
+              How to use attribute splices (also introduced in Heist 0.10).</dd>
+
           </dl>
         </div>
       </div>
 
       <div class="inner">
-        <h2>Resources</h2>
+        <h2 id="resources">Resources</h2>
         <div id="docdls">
           <dl>
             <dt><a href="docs/style-guide">Haskell Style Guide</a></dt>
             <dd>
-              <a class="book" href="docs/style-guide">
-                <img src="/media/css/book.png" />
-              </a>
+              <a class="book" href="docs/style-guide"><img src="/media/css/book.png" /></a>
               A guide to the Haskell source style we're using for the project.</dd>
             <dt><a href="/benchmarks">Benchmarks</a></dt>
             <dd>
-              <a class="book" href="/benchmarks">
-                <img src="/media/css/book.png" />
-              </a>
+              <a class="book" href="/benchmarks"><img src="/media/css/book.png" /></a>
               Some benchmark results comparing Snap to several other
               web frameworks.</dd>
           </dl>
@@ -70,7 +73,7 @@
 
     <div id="about" class="section left">
       <div class="inner">
-        <h2>API Documentation</h2>
+        <h2 id="api">API Documentation</h2>
 
         <div id="docdls">
           <dl>
