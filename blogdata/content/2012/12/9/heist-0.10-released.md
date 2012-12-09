@@ -40,7 +40,7 @@ chunks of data.  Therefore it should be no surprise that splicing is slow, as
 it allows for much more expressiveness and power.
 
 However, we realized that a lot of the transformations could be done at load
-time and be preprocessed to an intermediate representation.  This consists of
+time and preprocessed to an intermediate representation.  This consists of
 static ByteStrings interleaved with deferred dynamic computations that still
 give you the power of being able to access the web server's runtime monad.
 This "compiled splice" as we call it works quite a bit differently from the

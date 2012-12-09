@@ -36,8 +36,7 @@
             <dt><a href="docs/tutorials/heist">Heist Template Tutorial</a></dt>
             <dd>
               <a class="book" href="docs/tutorials/heist"><img src="/media/css/book.png" /></a>
-              A tutorial for the Heist HTML templating library.  This tutorial
-              applies to Heist 0.8 and earlier.</dd>
+              A tutorial for the Heist HTML templating library.</dd>
 
             <dt><a href="docs/tutorials/compiled-splices">Compiled Splices Tutorial</a></dt>
             <dd>
