@@ -2,7 +2,7 @@
 | author: Doug Beardsley <mightybyte@gmail.com>
 | published: 2012-12-10T09:20:00-0400
 | updated:   2012-12-10T09:20:00-0400
-| summary: Release notes for Snap 0.9
+| summary: Release notes for Snap 0.10
 
 The Snap team is happy to announce the release of version 0.10 of the Snap
 Framework.  This release updates the snap package to support Heist 0.10.  Our
