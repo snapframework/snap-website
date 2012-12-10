@@ -15,7 +15,7 @@
     </div><!--end footer-->
 
     <script type="text/javascript"
-            src="/media/js/site.js"> </script>
+            src="/media/js/site.js?v=1"> </script>
   </body>
 </html>
 
