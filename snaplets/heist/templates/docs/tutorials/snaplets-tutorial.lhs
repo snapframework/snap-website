@@ -65,6 +65,7 @@ You can also install the full code in the current directory with the command
 > 
 > module Main where
 > 
+> import           Control.Lens.TH
 > import           Data.IORef
 > import qualified Data.ByteString.Char8 as B
 > import           Data.Maybe
@@ -83,7 +84,7 @@ by our application as well as any other state we might want.
 >     , _companyName :: IORef B.ByteString
 >     }
 >
-> makeLenses [''App]
+> makeLenses ''App
 
 The field names begin with an underscore because of some more complicated
 things going on under the hood.  However, all you need to know right now is
