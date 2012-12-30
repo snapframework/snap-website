@@ -116,7 +116,7 @@ Running Snap in development depends on which version of Snap you are using:
 If you used `snap init` to create your project, you simply need to build your
 project with the `development` flag:
 
-    cabal clean; cabal build -fdevelopment
+    cabal clean; cabal install -f development
 
 If you've already built your application without development mode, it's
 important to run `cabal clean` first, as above.
