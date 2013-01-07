@@ -48,6 +48,9 @@ you know of others:
 
   -  [szydelkowo.com.pl](http://szydelkowo.com.pl/) is a Polish web store.
 
+  -  [zerobuzz](https://zerobuzz.net/) uses Snap for their website and other
+     products.
+
   -  [housetab.org](http://housetab.org) - a webapp for sharing expenses
      (source code [here](http://darcsden.com/position/housetab/))
 
