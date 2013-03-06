@@ -37,11 +37,11 @@ Stream composition leaves the original stream accessible:
 ~~~~~~~~~~ {.sourceCode}
 ghci> input <- Streams.fromByteString "long string"
 ghci> wrapped <- Streams.takeBytes 4 input
-ghci> read wrapped
+ghci> Streams.read wrapped
 Just "long"
-ghci> read wrapped
+ghci> Streams.read wrapped
 Nothing
-ghci> read input
+ghci> Streams.read input
 Just " string"
 ~~~~~~~~~~
 
