@@ -114,6 +114,19 @@
               specifically for Heist.</dd>
           </dl>
         </div>
+
+        <h2 id="talks">Talks</h2>
+        <div id="docdls">
+          <dl>
+            <dt><a href="http://vimeo.com/59109358">Build a Link Shortener</a></dt>
+            <dd style="height: auto">
+              <iframe src="http://player.vimeo.com/video/59109358"
+                      width="500" height="281" frameborder="0"
+                      webkitAllowFullScreen mozallowfullscreen allowFullScreen>
+              </iframe>
+            </dd>
+          </dl>
+        </div>
       </div>
     </div>
   </static>
