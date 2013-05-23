@@ -121,7 +121,7 @@
             <dt>
               <a href="http://vimeo.com/59109358">Building a Link Shortener with
               Snaplets</a><br />
-              Ryan Trinkle, Jan 2013
+              Ryan Trinkle, NY Haskell User Group, Jan 2013
             </dt>
             <dd style="height: auto">
               <iframe src="http://player.vimeo.com/video/59109358"
