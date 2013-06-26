@@ -432,50 +432,30 @@ mentioned above.  As above, any markup is ignored, and just the text is
 included.  This works because a `<bind>` tag is really just a splice that
 returns a constant node list.
 
-### Hooks
+### Initializing Heist
 
-Heist provides three hooks to give you more control over the template
-rendering process.  They are `onLoad`, `preRun`, and `postRun`.  They
-are monadic filter functions that you can use to read or transform
-templates at different points in time.  The `onLoad` hook is called
-once for every template immediately after it is loaded from disk.
-`preRun` and `postRun` are called immediately before and after each
-template is rendered.  
+To initialize Heist, you need to put all your splices and templates into a
+HeistConfig and pass it to initHeist.  Heist provides two sets of default
+splices: `defaultInterpretedSplices` and `defaultLoadTimeSplices`.  These
+contain Heist's built-in splices for running in interpreted and compiled modes
+respectively.
 
-
-### Setting up HeistState
-
-All of Heist's splices, templates, and hooks are stored in `HeistState`.
-Heist provides `HeistState` modifier functions for configuration.
-`defaultHeistState` gives you reasonable defaults that you build on to suit
-your needs.  Let's look at an example to illustrate.
+Here's an example to illustrate.
 
 ~~~~~~~~~~~~~~~ {.haskell}
-myHeistState =
-    addOnLoadHook onLoad $
-    addPreRunHook preRun $
-    addPostRunHook postRun $
-    bindSplice "fact" factSplice defaultHeistState
+myHeistConfig = mempty
+    { hcInterpretedSplices = ("fact", factSplice) : defaultInterpretedSplices
+    , hcTemplateLocations = loadTemplates "templates"
+    }
 
 main = do
-    ets <- loadTemplates "templates" myHeistState
-    let ts = either error id ets
+    ehs <- runEitherT $ initHeist myHeistConfig
+    let ts = either error id ehs
 ~~~~~~~~~~~~~~~
 
-In this example we added the custom factSplice function from the last
-section to the default set of splices as well as our own hooks.  Then
-we called loadTemplates to add templates from the `templates`
-directory in the filesystem to our template state.
-
-The three addXYZHook functions above add hooks to the HeistState.
-Previous hooks are not overwritten--the new hooks are appended to any
-other hooks that have already been added.  
-
-Different web frameworks will have different infrastructure for managing the
-`HeistState`.  Some may expose a mechanism that allows you to use the above
-functions directly.  Others may completely wrap the above functions with other
-functions specific to that framework or library.  Just be aware that your end
-use may not look exactly like the example here.
+In this example we added the custom factSplice function from the last section
+to the default set of splices.  We use loadTemplates to add templates from the
+`templates` directory in the filesystem to our template repository.
 
 ### Generating Pages with Heist
 
@@ -507,6 +487,4 @@ The code for these splices is in the Text.Templating.Heist.Splices module.
 
 NOTE: It should be emphasized that Heist is still in the early stages
 of development, and its interfaces are subject to change.  
-
-
 
