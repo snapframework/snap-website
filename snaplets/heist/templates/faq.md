@@ -48,6 +48,9 @@ you know of others:
 
   -  [szydelkowo.com.pl](http://szydelkowo.com.pl/) is a Polish web store.
 
+  -  [zerobuzz](https://zerobuzz.net/) uses Snap for their website and other
+     products.
+
   -  [housetab.org](http://housetab.org) - a webapp for sharing expenses
      (source code [here](http://darcsden.com/position/housetab/))
 
@@ -116,7 +119,7 @@ Running Snap in development depends on which version of Snap you are using:
 If you used `snap init` to create your project, you simply need to build your
 project with the `development` flag:
 
-    cabal clean; cabal build -fdevelopment
+    cabal clean; cabal install -f development
 
 If you've already built your application without development mode, it's
 important to run `cabal clean` first, as above.
