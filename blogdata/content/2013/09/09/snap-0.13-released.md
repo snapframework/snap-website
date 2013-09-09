@@ -5,8 +5,15 @@
 | summary: Release notes for Snap 0.13
 
 The Snap team is happy to announce the release of version 0.13 of the Snap
-Framework.  We would also like to thank Edward Kmett who helped with some of
-the broad design ideas incorporated in this release.
+Framework.  We would like to thank Edward Kmett who helped with some of the
+broad design ideas incorporated in this release.
+
+The Heist API changed significantly in this release.  If you are migrating an
+existing app to 0.13, check out the following diffs to see how the migration
+was done in some real packages.
+
+* [digestive-functors-heist](https://github.com/jaspervdj/digestive-functors/compare/cc2ae4e3ff94b335444d27fdc0533c102ba98e1a...5a9d3fb75be6db58145f00b06c763a06f7b50f6c)
+* [snap-extras](https://github.com/ozataman/snap-extras/compare/e44057dbe3d622883d1ea44bb3a97d5465e6049a...557ea1882a485f3509200db7d5733fef6f9cfc70)
 
 ## Major Changes
 
