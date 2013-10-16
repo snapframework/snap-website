@@ -197,6 +197,14 @@
                 </span>
             </dt>
             <dd>Support for sqlite.</dd>
+            
+            <dt>snaplet-stripe
+                <span class="linklist">
+                  [ <a href="https://github.com/LukeHoersten/snaplet-stripe"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Support for <a href="http://stripe.com">Stripe payments</a>.</dd>
 
             <dt>snaplet-tasks
                 <span class="linklist">
