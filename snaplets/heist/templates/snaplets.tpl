@@ -139,6 +139,14 @@
             <dd>Support for the PostgreSQL database using the
             <a href="http://hackage.haskell.org/package/postgresql-simple">postgresql-simple</a>
             library</dd>
+            
+            <dt>snaplet-postmark
+                <span class="linklist">
+                  [ <a href="https://github.com/LukeHoersten/snaplet-postmark"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Support for the <a href="http://postmarkapp.com">Postmark email system</a>.</dd>
 
             <dt>snaplet-recaptcha
                 <span class="linklist">
