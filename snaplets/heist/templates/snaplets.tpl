@@ -139,6 +139,14 @@
             <dd>Support for the PostgreSQL database using the
             <a href="http://hackage.haskell.org/package/postgresql-simple">postgresql-simple</a>
             library</dd>
+            
+            <dt>snaplet-postmark
+                <span class="linklist">
+                  [ <a href="https://github.com/LukeHoersten/snaplet-postmark"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Support for the <a href="http://postmarkapp.com">Postmark email system</a>.</dd>
 
             <dt>snaplet-recaptcha
                 <span class="linklist">
@@ -189,6 +197,14 @@
                 </span>
             </dt>
             <dd>Support for sqlite.</dd>
+            
+            <dt>snaplet-stripe
+                <span class="linklist">
+                  [ <a href="https://github.com/LukeHoersten/snaplet-stripe"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Support for <a href="http://stripe.com">Stripe payments</a>.</dd>
 
             <dt>snaplet-tasks
                 <span class="linklist">
