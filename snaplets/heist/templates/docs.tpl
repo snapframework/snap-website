@@ -41,12 +41,12 @@
             <dt><a href="docs/tutorials/compiled-splices">Compiled Splices Tutorial</a></dt>
             <dd>
               <a class="book" href="docs/tutorials/compiled-splices"><img src="/media/css/book.png" /></a>
-              Discusses compiled splices, which were introduced in Heist 0.10.</dd>
+              Discusses compiled splices, as of Heist 0.13.</dd>
 
             <dt><a href="docs/tutorials/attribute-splices">Attribute Splices Tutorial</a></dt>
             <dd>
               <a class="book" href="docs/tutorials/attribute-splices"><img src="/media/css/book.png" /></a>
-              How to use attribute splices (also introduced in Heist 0.10).</dd>
+              How to use attribute splices (introduced in Heist 0.10).</dd>
 
           </dl>
         </div>
