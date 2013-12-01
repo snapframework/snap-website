@@ -142,7 +142,9 @@
             
             <dt>snaplet-postmark
                 <span class="linklist">
-                  [ <a href="https://github.com/LukeHoersten/snaplet-postmark"
+                  [ <a href="http://hackage.haskell.org/package/snaplet-postmark"
+                   > hackage </a>
+                  | <a href="https://github.com/LukeHoersten/snaplet-postmark"
                    >github</a> ]
                 </span>
             </dt>
@@ -200,7 +202,9 @@
             
             <dt>snaplet-stripe
                 <span class="linklist">
-                  [ <a href="https://github.com/LukeHoersten/snaplet-stripe"
+                  [ <a href="http://hackage.haskell.org/package/snaplet-stripe"
+                   > hackage </a>
+                  | <a href="https://github.com/LukeHoersten/snaplet-stripe"
                    >github</a> ]
                 </span>
             </dt>
