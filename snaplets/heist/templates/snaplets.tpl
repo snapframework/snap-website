@@ -128,6 +128,18 @@
             </dt>
             <dd>MongoDB support</dd>
 
+            <dt>snaplet-mysql-simple
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-mysql-simple"
+                   > hackage </a>
+                  | <a href="https://github.com/ibotty/snaplet-mysql-simple"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Support for the MySQL database using the
+            <a href="http://hackage.haskell.org/package/mysql-simple">mysql-simple</a>
+            library</dd>
+
             <dt>snaplet-postgresql-simple
                 <span class="linklist">
                   [ <a href="http://hackage.haskell.org/package/snaplet-postgresql-simple"
@@ -139,7 +151,7 @@
             <dd>Support for the PostgreSQL database using the
             <a href="http://hackage.haskell.org/package/postgresql-simple">postgresql-simple</a>
             library</dd>
-            
+
             <dt>snaplet-postmark
                 <span class="linklist">
                   [ <a href="https://github.com/LukeHoersten/snaplet-postmark"
