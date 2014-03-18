@@ -225,6 +225,6 @@ abbreviation.  For example, write `HttpServer` instead of
 
 ### Warnings ###
 
-Code should be compilable with `-Wall -Werror -Wno-warn-unused-binds`.
+Code should be compilable with `-Wall -Werror -fno-warn-unused-binds`.
 There should be no warnings.
 
