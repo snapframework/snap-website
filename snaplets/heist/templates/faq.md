@@ -65,6 +65,8 @@ you know of others:
 
   -  [snap-pastie](https://github.com/Palmik/snap-pastie) another pastebin.
 
+  -  [howistart.org](http://howistart.org/) a tech tutorial resource.
+
   -  [http://snapframework.com](https://github.com/snapframework/snap-website) (this site)
 
 
