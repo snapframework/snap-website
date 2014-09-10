@@ -11,3 +11,5 @@ w2/builder.o
 .hpc
 Setup.hs
 dist
+cabal.sandbox.config
+.cabal-sandbox
