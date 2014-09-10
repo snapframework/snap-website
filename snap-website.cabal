@@ -49,4 +49,3 @@ Executable snap-website
                  -threaded -rtsopts
 
   Extensions: OverloadedStrings
-
