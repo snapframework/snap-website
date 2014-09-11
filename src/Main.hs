@@ -2,22 +2,24 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE CPP #-}
 
 module Main where
 
 import           Control.Applicative
-import           Control.Exception (SomeException)
+import           Control.Exception.Lifted (SomeException, catch)
 import           Control.Lens
 import           Control.Monad
-import           Control.Monad.CatchIO
 import           Control.Monad.Trans
 import qualified Data.ByteString.Char8 as B
-import           Data.Maybe
+import           Data.Map.Syntax
 import qualified Data.Text as T
 import           Data.Text.Encoding
 import           Data.Time.Clock.POSIX
 import           Foreign.C.Types
+#if !MIN_VERSION_base(4,6,0)
 import           Prelude hiding (catch)
+#endif
 import           Snap.Http.Server
 import           Snap.StaticPages
 import           Snap.Blaze (blaze)
@@ -57,9 +59,10 @@ appInit :: SnapletInit App App
 appInit = makeSnaplet "snap-website" description Nothing $ do
     hs <- nestSnaplet "" heist $ heistInit "templates"
     bs <- nestSnaplet "blog" blog $ staticPagesInit hs "blogdata"
-    addSplices [ ("snap-version", serverVersion)
-               , ("feed-autodiscovery-link", textSplice "")
-               ]
+    modifyHeistState $ bindSplices $ do
+      "snap-version"            ## serverVersion
+      "feed-autodiscovery-link" ## textSplice ""
+
     wrapSite (\h -> catch500 $ withCompression $
                         undirify >> h <|> setCache (serveDirectory "static"))
     return $ App hs bs
