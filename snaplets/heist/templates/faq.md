@@ -41,29 +41,25 @@ you know of others:
 
   -  [Silk](http://www.silkapp.com/) uses Snap for some of their back end
      services.
-     
+
   -  [Soostone](http://www.soostone.com/) uses Snap for their entire
      web stack across multiple products with applications ranging from
      front-end UIs to high volume data/analytics APIs.
 
-  -  [szydelkowo.com.pl](http://szydelkowo.com.pl/) is a Polish web store.
-
   -  [zerobuzz](https://zerobuzz.net/) uses Snap for their website and other
      products.
 
-  -  [housetab.org](http://housetab.org) - a webapp for sharing expenses
-     (source code [here](http://darcsden.com/position/housetab/))
+  -  [housetab.org](http://housetab.org) - a webapp for sharing expenses.
 
   -  [JCU](https://github.com/norm2782/JCU) a web-based Prolog environment.
 
-  -  [hpaste](http://hpaste.org/), a simple Haskell pastebin.  A blog post
-     about it is [here](http://chrisdone.com/posts/2011-06-05-postgres-hpaste-edsls.html)
-     and the source code is hosted [here](https://github.com/chrisdone/hpaste).
+  -  [lpaste](http://lpaste.net/), a simple Haskell pastebin.  A blog post
+     about it is [here](http://chrisdone.com/posts/2011-06-05-postgres-hpaste-edsls)
+     and the source code is hosted [here](https://github.com/chrisdone/lpaste).
 
-  -  [Darcsden](http://darcsden.com) is a nifty github-like source
-     code hosting site for darcs.
-
-  -  [snap-pastie](https://github.com/Palmik/snap-pastie) another pastebin.
+  - [Darcs Hub](http://hub.darcs.net) is a nifty GitHub-like source code hosting
+     site for [Darcs](http://darcs.net/) (source code
+     [here](http://hub.darcs.net/simon/darcsden)).
 
   -  [howistart.org](http://howistart.org/) a tech tutorial resource.
 
