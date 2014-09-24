@@ -1,7 +1,7 @@
 | title: Announcing: Heist v0.14
 | author: Doug Beardsley <mightybyte@gmail.com>
-| published: 2013-09-24T06:10:00-0400
-| updated:   2013-09-24T06:10:00-0400
+| published: 2014-09-24T06:10:00-0400
+| updated:   2014-09-24T06:10:00-0400
 | summary: Release notes for Heist 0.14
 
 The Snap team is happy to announce the release of version 0.14 of Heist.  
