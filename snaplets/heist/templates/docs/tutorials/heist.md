@@ -7,13 +7,9 @@ not required to have a single root element.
 
 Heist is being developed by the Snap Team in conjunction with Snap,
 but Heist is a completely standalone library with no dependencies on
-Snap.  Snap itself is also template-agnostic and does not depend on
-Heist.  In the future, we are planning to use Heist in higher-level
-Snap functionality, but the core Snap infrastructure and web server
-will remain free of Heist dependencies, leaving the choice of
-templating engine up to the user.  That said, we strongly encourage
-you to use Heist in your Snap applications so you can take full
-advantage of Snap's capabilities.
+Snap.  To get an example of using Heist with snap, run "snap init
+default" to generate the default project template that is a complete
+example of how to use Heist with Snap.
 
 Heist templates serve two primary design goals.  First, they
 facilitate the separation of the view from the other aspects of your
