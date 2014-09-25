@@ -440,23 +440,6 @@ splices: `defaultInterpretedSplices` and `defaultLoadTimeSplices`.  These
 contain Heist's built-in splices for running in interpreted and compiled modes
 respectively.
 
-Here's an example to illustrate.
-
-~~~~~~~~~~~~~~~ {.haskell}
-myHeistConfig = mempty
-    { hcInterpretedSplices = ("fact", factSplice) : defaultInterpretedSplices
-    , hcTemplateLocations = loadTemplates "templates"
-    }
-
-main = do
-    ehs <- runEitherT $ initHeist myHeistConfig
-    let ts = either error id ehs
-~~~~~~~~~~~~~~~
-
-In this example we added the custom factSplice function from the last section
-to the default set of splices.  We use loadTemplates to add templates from the
-`templates` directory in the filesystem to our template repository.
-
 ### Generating Pages with Heist
 
 Once you have built a `HeistState`, you are ready to generate pages
