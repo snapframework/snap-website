@@ -34,7 +34,7 @@ into another one.
 
 We're really excited about the possibilities available with snaplets.  In
 fact, Snap already ships with snaplets for sessions, authentication, and
-templating (with Heist),  This gives you useful functionality out of the box,
+templating (with Heist).  This gives you useful functionality out of the box,
 and jump starts your own snaplet development by demonstrating some useful
 design patterns.  So without further ado, let's get started.
 
