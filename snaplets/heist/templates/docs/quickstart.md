@@ -21,8 +21,11 @@ $ snap init barebones
 ~~~~~~
 
 The `snap init` command creates a template Snap project in the current
-directory.  You can also do `snap init -h` to see help about other project
-templates that are available.  For now we'll focus on the barebones project.
+directory.  If you run `snap init` with no extra argument, it will create a
+larger application demonstrating the use of Snap's higher-level features such
+as the auth snaplet, heist, etc.  You can also do `snap init -h` to see help
+about other project templates that are available.  For now we'll focus on the
+barebones project.
 
 The `Main` module for this project will be created in `src/Main.hs`.  When you
 build this project with `cabal install`, an executable is created in
