@@ -29,7 +29,7 @@ in January.
     <td>RoR</td>
     <td>Apache+PHP</td>
     <td>Happstack</td>
-    <td>Snap (loging)</td>
+    <td>Snap (logging)</td>
     <td>Node.js</td>
     <td>Snap (no logging)</td>
   </tr>
@@ -81,7 +81,7 @@ better.
     <td>RoR</td>
     <td>Apache+PHP</td>
     <td>Node.js</td>
-    <td>Snap (loging)</td>
+    <td>Snap (logging)</td>
     <td>Happstack</td>
     <td>Snap (no logging)</td>
   </tr>

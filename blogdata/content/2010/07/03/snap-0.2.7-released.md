@@ -9,7 +9,7 @@ Hi all,
 The Snap team is pleased to announce the release of Snap 0.2.7. This release
 contains **critical fixes for correctness bugs** and all Snap users should
 upgrade to the latest version (including `snap-server` 0.2.7.1, a point fix for
-an embarassing release issue) at their earliest convenience.
+an embarrassing release issue) at their earliest convenience.
 
 Changes since 0.2.6
 ===================
