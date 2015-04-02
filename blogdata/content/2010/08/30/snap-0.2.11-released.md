@@ -34,7 +34,7 @@ Changes since 0.2.9
 
  - We are now exporting a new function
    [`setResponseCode`](/docs/latest/snap-core/Snap-Types.html#v%3AsetResponseCode)
-   to set the reponse status code and message together using a lookup table,
+   to set the response status code and message together using a lookup table,
    rather than forcing you to input the status message yourself.
 
  - Added a 
