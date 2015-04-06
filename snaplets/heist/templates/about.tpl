@@ -47,7 +47,7 @@
 
         <p>
           Snap runs on *nix platforms; it has been tested on Linux and Mac OSX
-          Snow Leopard.  Windows support was added more recently, but it not
+          Snow Leopard.  Windows support was added more recently, but it is not
           as well-tested.
         </p>
 
