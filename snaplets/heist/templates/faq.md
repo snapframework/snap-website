@@ -35,6 +35,8 @@ Found a bug in Snap? Please create a ticket on our
 Yes!  Here is a list of sites that we know of that use Snap.  Let us know if
 you know of others:
 
+  -  Everything at [Fynder](https://fynder.io/) is powered by Snap.
+
   -  [Janrain](http://www.janrain.com/) uses Snap to serve their user
      management platform which is used by a number of popular
      [websites](http://www.janrain.com/customers).
