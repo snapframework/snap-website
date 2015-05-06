@@ -110,7 +110,7 @@ later.
 
 ### Turn TCP_NODELAY on for all of our sockets
 
-We do our own buffering, so the Nagle algorithm only serves to potenially delay
+We do our own buffering, so the Nagle algorithm only serves to potentially delay
 our packets.
 
 
@@ -182,7 +182,7 @@ handler = route [ ("foo/:id", fooHandler) ]
 ~~~~~~~~~~
 
 Users found that this violated the principle of least surprise (especially
-since the capture handler might supercede the handler for "`foo/`"), so the
+since the capture handler might supersede the handler for "`foo/`"), so the
 semantics have been changed.
 
 

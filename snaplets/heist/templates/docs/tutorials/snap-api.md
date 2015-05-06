@@ -15,7 +15,7 @@ four components:
   - `heist` is the HTML templating library. You do not need it to use the
   above two libraries but you are certainly welcome to.
 
-  - `snap` is a library that builds on the above three prackages and provides
+  - `snap` is a library that builds on the above three packages and provides
   higher-level abstractions for building complex websites.  It also contains
   a `snap` executable which can generate several different skeleton projects
   to get you started.

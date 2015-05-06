@@ -120,7 +120,7 @@ that have operations in some other monad lifted over `IO`; I'm more than happy
 with this compromise.
 
 
-## Acknowledgements
+## Acknowledgments
 
 We would like to acknowledge the financial assistance of
 [Erudify AG](https://erudify.ch/about/), who graciously funded some of the
