@@ -99,10 +99,10 @@ The next thing we need to do is define an initializer.
 >     hs <- nestSnaplet "heist" heist $ heistInit "templates"
 >     fs <- nestSnaplet "foo" foo $ fooInit
 >     bs <- nestSnaplet "" bar $ nameSnaplet "newname" $ barInit foo
->     addRoutes [ ("/hello", writeText "hello world")
->               , ("/fooname", with foo namePage)
->               , ("/barname", with bar namePage)
->               , ("/company", companyHandler)
+>     addRoutes [ ("hello", writeText "hello world")
+>               , ("fooname", with foo namePage)
+>               , ("barname", with bar namePage)
+>               , ("company", companyHandler)
 >               ]
 >     wrapSite (<|> heistServe)
 >     ref <- liftIO $ newIORef "fooCorp"
