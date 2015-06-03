@@ -28,6 +28,8 @@ buildbot.  So first we need to get some boilerplate and imports out of the way.
 > import           Heist.Tutorial.Imports
 
 > import           Control.Applicative
+> import           Control.Lens
+> import           Data.Map.Syntax
 > import qualified Data.Text as T
 > import           Data.Text.Encoding
 > import qualified Heist.Compiled.LowLevel as C
@@ -113,9 +115,12 @@ directory with compiled splices.
 >      -> IO (HeistState n)
 > load baseDir splices = do
 >     tmap <- runEitherT $ do
->         let hc = HeistConfig mempty defaultLoadTimeSplices splices mempty
->                              [loadTemplates baseDir]
->         initHeist hc
+>         let sc = mempty & scLoadTimeSplices .~ defaultLoadTimeSplices
+>                         & scCompiledSplices .~ splices
+>                         & scTemplateLocations .~ [loadTemplates baseDir]
+>         initHeist $ emptyHeistConfig & hcNamespace .~ ""
+>                                      & hcErrorNotBound .~ False
+>                                      & hcSpliceConfig .~ sc
 >     either (error . concat) return tmap
 
 Here's a function demonstrating all of this in action.
