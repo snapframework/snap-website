@@ -69,8 +69,8 @@
             <strong><a href="http://softwaresimply.blogspot.com/">Doug
             Beardsley</a></strong> has been programming since 1990, doing
             web development in Haskell since 2008, and laments that those
-            two dates are so far apart.  He currently works for Soostone Inc.
-            where he <a href="http://devblog.soostone.com">uses Snap heavily</a>.
+            two dates are so far apart.  He currently works as engineering
+            manager at <a href="http://vfiles.com">VFILES</a>.
           </p>
           <p>
             <strong><a href="http://rfrn.org/~shu">Shu-yu Guo</a></strong>
