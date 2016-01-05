@@ -62,8 +62,7 @@
             <strong><a href="http://gregorycollins.net/">Gregory
             Collins</a></strong> is a Canadian programmer living in Zurich,
             Switzerland. He holds an MSc in Computer Science from Yale
-            University and he works at <a href="http://www.google.ch/">Google
-            Switzerland</a>.
+            University and he works at <a href="http://www.google.ch/">Google</a>.
           </p>
           <p>
             <strong><a href="http://softwaresimply.blogspot.com/">Doug
