@@ -71,7 +71,7 @@
 
             <dt>snaplet-file-dialog
                 <span class="linklist">
-                  [ <a href="http://patch-tag.com/r/mf/snaplet-file-dialog/"
+                  [ <a href="http://hub.darcs.net/wlangstroth/snaplet-file-dialog"
                    >patch-tag</a> ]
                 </span>
             </dt>
