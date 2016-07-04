@@ -1,5 +1,5 @@
 Name:                snap-website
-Version:             0.10
+Version:             1.0
 Synopsis:            The Snap Framework Website
 Homepage:            http://snapframework.com
 License:             BSD3
@@ -30,7 +30,6 @@ Executable snap-website
     process,
     snap        >= 1.0 && <1.1,
     snap-core   >= 1.0 && <1.1,
-    snap-blaze  >= 0.2.1 && <0.3,
     snap-server >= 1.0 && <1.1,
     snap-static-pages >= 1.0 && < 1.1,
     text,

@@ -22,7 +22,6 @@ import           Prelude hiding (catch)
 #endif
 import           Snap.Http.Server
 import           Snap.StaticPages
-import           Snap.Blaze (blaze)
 import           Snap.Core
 import           Snap.Snaplet
 import           Snap.Snaplet.Heist
@@ -80,6 +79,12 @@ setCache action = do
        modifyResponse $
           setHeader "Cache-Control" "public, max-age=604800" .
           setHeader "Expires" s
+
+
+blaze :: MonadSnap m => Html -> m ()
+blaze response = do
+    modifyResponse $ addHeader "Content-Type" "text/html; charset=UTF-8"
+    writeLBS $ renderHtml response
 
 
 catch500 :: MonadSnap m => m a -> m ()
