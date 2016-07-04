@@ -27,8 +27,9 @@ import           Snap.Snaplet
 import           Snap.Snaplet.Heist
 import           Snap.Util.FileServe
 import           Snap.Util.GZip
-import           Text.Blaze.Html5 (toHtml)
+import           Text.Blaze.Html5 (Html, toHtml)
 import qualified Text.Blaze.Html5 as H
+import           Text.Blaze.Html.Renderer.Utf8 (renderHtml)
 import           Heist.Interpreted
 
 data App = App
