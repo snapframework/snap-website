@@ -14,7 +14,9 @@
           you already have Cabal set up, then getting Snap should be as simple
           as running two commands:</p>
         <pre class="code">$ cabal update
-$ cabal install snap</pre>
+$ cabal install snap snap-templates
+$ mkdir foo; cd foo; snap init
+</pre>
 
         <p>If you don't have <tt>GHC</tt> and <tt>cabal</tt> installed, the
           easiest way to get them is with
@@ -26,10 +28,40 @@ $ cabal install snap</pre>
 
         <h2>Buildbot</h2>
         <p>We have set up
-           a <a href="http://buildbot.snapframework.com/">continuous
-           integration server</a> to track the progress of our development. The
-           buildbot also builds an up-to-date version of the Snap haddocks if
-           you want to follow along with our git master branch.</p>
+           <a href="https://travis-ci.org/snapframework">continuous
+           integration</a> to track the progress of our development.</p>
+
+        <table class="travis">
+          <tr>
+            <th>Package</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td>Snap</td>
+            <td>
+              <a href="https://travis-ci.org/snapframework/snap"><img src="https://travis-ci.org/snapframework/snap.svg?branch=master"/></a></td>
+          </tr>
+          <tr>
+            <td>snap-server</td>
+            <td><a href="https://travis-ci.org/snapframework/snap-server"><img src="https://travis-ci.org/snapframework/snap-server.svg?branch=master"/></a></td>
+          </tr>
+          <tr>
+            <td>snap-core</td>
+            <td><a href="https://travis-ci.org/snapframework/snap-core"><img src="https://travis-ci.org/snapframework/snap-core.svg?branch=master"/></a></td>
+          </tr>
+          <tr>
+            <td>io-streams-haproxy</td>
+            <td><a href="https://travis-ci.org/snapframework/io-streams-haproxy"><img src="https://travis-ci.org/snapframework/io-streams-haproxy.svg?branch=master"/></a></td>
+          </tr>
+          <tr>
+            <td>heist</td>
+            <td><a href="https://travis-ci.org/snapframework/heist"><img src="https://travis-ci.org/snapframework/heist.svg?branch=master"/></a></td>
+          </tr>
+          <tr>
+            <td>xmlhtml</td>
+            <td><a href="https://travis-ci.org/snapframework/xmlhtml"><img src="https://travis-ci.org/snapframework/xmlhtml.svg?branch=master"/></a></td>
+          </tr>
+        </table>
 
       </div>
     </div>

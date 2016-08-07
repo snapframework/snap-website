@@ -129,7 +129,8 @@ important to run `cabal clean` first, as above.
 If you didn't use `snap init` to start your project, or are porting old code,
 the general idea is to build against the `snap-loader-dynamic` library and
 launch your server with the `loadSnapTH` function it provides. For more
-information, we recommend running `snap init` and looking at the generated code.
+information, we recommend running `snap init` from the `snap-templates`
+package and looking at the generated code.
 
 #### Earlier versions of Snap
 

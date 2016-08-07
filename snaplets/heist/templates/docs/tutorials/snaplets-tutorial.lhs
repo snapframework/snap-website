@@ -58,7 +58,8 @@ This post is written in literate Haskell.  It uses a small external module
 called Part2 that is [available
 here](https://github.com/snapframework/snap-templates/blob/master/project_template/tutorial/src/Part2.lhs).
 You can also install the full code in the current directory with the command
-`snap init tutorial`.  First we need to get imports out of the way.
+`snap init tutorial` from the `snap-templates` package.  First we need to get
+imports out of the way.
 
 > {-# LANGUAGE TemplateHaskell #-}
 > {-# LANGUAGE OverloadedStrings #-}

@@ -409,6 +409,22 @@ p.foundabug {
     padding-right: 0;
 }
 
+.newspaper .travis{
+  margin: auto;
+  width: 90%;
+  background-color: hsla(186,41%,38%,0.11);
+  padding: 20px;
+  border-radius: 20px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.newspaper .travis tr{
+  height: 35px;
+}
+
+.newspaper .travis th{
+  text-align: left;
+}
 
 .clear {
     padding:0;margin:0;

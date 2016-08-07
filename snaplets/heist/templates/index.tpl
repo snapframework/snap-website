@@ -11,7 +11,7 @@
               <img width="960" height="282"
                    src="/media/img/splash-img.png" title="Snap Framework" />
               <p class="blurb">
-                a web framework for the
+                A web framework for the
                 <a href="http://www.haskell.org"><strong>Haskell</strong></a> 
                 programming language.
               </p>
@@ -21,14 +21,13 @@
               <img width="960" height="282"
                    src="/media/img/splash-img-2.png" title="Snap Framework" />
               <p class="blurb">
-                Built for speed from the bottom up. Check out
-                some <a href="/benchmarks">benchmarks.</a>
+                Built for speed, simplicity and stability. Snap supports ghc versions from 7.4 through 8.0.
               </p>
             </div>
 
             <div class="content" style="display: none;">
               <pre class="code code-example">$ cabal update
-$ cabal install snap
+$ cabal install snap snap-templates
 $ mkdir foo; cd foo; snap init</pre>
               <img width="960" height="282"
                    src="/media/img/splash-img-3.png" title="Snap Framework" />
@@ -82,12 +81,12 @@ $ mkdir foo; cd foo; snap init</pre>
 
             <div id="project-status" class="section right">
               <div class="inner">
-                <h2>New: Snaplets</h2>
+                <h2>Snaplets</h2>
                 <p>
-                  In Snap 0.6 we released an exciting new extension system called
+                  Snap comes with pieces of composable web functionality called 
                   <strong><a href="/docs/tutorials/snaplets-tutorial">&#8220;snaplets&#8221;</a></strong>.
-                  It is now easier then ever before to write, share, reuse
-                  code, and get your applications up and running in no time.
+                  Snaplets make it easy to write, share, and reuse
+                  code. The default Snaplets let you get a full-featured web application up and running in no time.
                 </p>
                 <p>
                   <strong><a href="/download">Install</a></strong> Snap now, check out the
