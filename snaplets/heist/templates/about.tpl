@@ -72,6 +72,10 @@
             manager at <a href="http://vfiles.com">VFILES</a>.
           </p>
           <p>
+            <strong>Greg Hale</strong> is a biologist turned web developer. He
+            currently lives is Boston, Massachusets.
+          </p>
+          <p>
             <strong><a href="http://rfrn.org/~shu">Shu-yu Guo</a></strong>
             is a PhD student in programming languages and compilers
             at <a href="http://www.ucla.edu">UCLA</a>. He is also an
