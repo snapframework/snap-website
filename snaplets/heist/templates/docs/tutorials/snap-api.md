@@ -16,9 +16,10 @@ four components:
   above two libraries but you are certainly welcome to.
 
   - `snap` is a library that builds on the above three packages and provides
-  higher-level abstractions for building complex websites.  It also contains
-  a `snap` executable which can generate several different skeleton projects
-  to get you started.
+  higher-level abstractions for building complex websites.
+
+  - `snap-templates` is a package containing a `snap` executable which can
+  generate several different skeleton projects to get you started.
 
 In the [Quick Start Guide](/docs/quickstart), we installed Snap and created a
 template "hello world" application.  Here we'll look at what's inside the

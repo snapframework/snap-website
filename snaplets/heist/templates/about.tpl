@@ -29,8 +29,8 @@
 
         <h2>What is the project's status?</h2>
         <p>
-          Snap launched to the public in May, 2010.  The core framework
-          contains:
+          Snap launched to the public in May, 2010. The 1.0 milestone was
+          released in Auguest, 2016.  The core framework contains:
         </p>
 
         <ul>

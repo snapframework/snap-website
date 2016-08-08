@@ -65,9 +65,10 @@ $ mkdir foo; cd foo; snap init</pre>
                   <strong>Snap</strong> is a simple web development framework
                   for unix systems, written in the <a
                   href="http://www.haskell.org">Haskell</a> programming
-                  language. Snap has a [high level of test
-                  coverage](https://snapframework.github.io/snap-code-coverage/snap-server/hpc-ghc-8.0.1/hpc_index.html)
-                  and is well-documented. Features include:
+                  language. Snap has a <a
+                  href="https://snapframework.github.io/snap-code-coverage/snap-server/hpc-ghc-8.0.1/hpc_index.html">high
+                  level of test coverage</a> and is well-documented. Features
+                  include:
 
                 </p>
 

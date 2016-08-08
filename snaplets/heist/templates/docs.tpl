@@ -60,11 +60,6 @@
             <dd>
               <a class="book" href="docs/style-guide"><img src="/media/css/book.png" /></a>
               A guide to the Haskell source style we're using for the project.</dd>
-            <dt><a href="/benchmarks">Benchmarks</a></dt>
-            <dd>
-              <a class="book" href="/benchmarks"><img src="/media/css/book.png" /></a>
-              Some benchmark results comparing Snap to several other
-              web frameworks.</dd>
           </dl>
         </div>
       </div>

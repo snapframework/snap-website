@@ -82,24 +82,20 @@ $ mkdir foo; cd foo; snap init
               (<tt>Snap</tt> monad, HTTP types, etc) and utilities for web
               handlers. <br/><span class="linklist">
                 [ <a href="http://hackage.haskell.org/package/snap-core"
-                     >api docs</a> |
-                <a href="http://hackage.haskell.org/package/snap-core"
                    >hackage</a> |
                 <a href="http://github.com/snapframework/snap-core"
                    >github</a> |
-                <a href="/docs/snap-core-hpc/hpc_index.html"
+                <a href="https://snapframework.github.io/snap-code-coverage/snap-core/hpc-ghc-8.0.1/hpc_index.html"
                    >test coverage report</a> ]</span></dd>
 
             <dt>snap-server</dt>
             <dd>A web server based on io-streams, which runs <tt>Snap</tt> web
               handlers. <br/><span class="linklist">
                 [ <a href="http://hackage.haskell.org/package/snap-server"
-                     >api docs</a> |
-                <a href="http://hackage.haskell.org/package/snap-server"
                    >hackage</a> |
                 <a href="http://github.com/snapframework/snap-server"
                    >github</a> |
-                <a href="/docs/snap-server-hpc/hpc_index.html"
+                <a href="https://snapframework.github.io/snap-code-coverage/snap-server/hpc-ghc-8.0.1/hpc_index.html"
                    >test coverage report</a> ]</span></dd>
 
 
@@ -107,15 +103,13 @@ $ mkdir foo; cd foo; snap init
             <dd>Umbrella project pulling together Snap's component libraries
                 into a coherent framework.  <br/><span class="linklist">
                 [ <a href="http://hackage.haskell.org/package/snap"
-                     >api docs</a> |
-                <a href="http://hackage.haskell.org/package/snap"
                    >hackage</a> |
                 <a href="http://github.com/snapframework/snap"
                    >github</a> ]</span></dd>
 
 
             <dt>snap-templates</dt>
-            <dd>A package containing a project template generator and a few simple project 
+            <dd>A package containing a project generator and a few simple project 
                 templates.  <br/><span class="linklist">
                 [ <a href="http://hackage.haskell.org/package/snap-templates"
                    >hackage</a> |
@@ -126,29 +120,23 @@ $ mkdir foo; cd foo; snap init
             <dt>heist</dt>
             <dd>An HTML-based templating engine, allowing Haskell functions to be
               bound to tags. <br/><span class="linklist">
-                [ <a href="http://hackage.haskell.org/package/heist" >api docs</a> |
-                <a href="http://hackage.haskell.org/package/heist"
+                [ <a href="http://hackage.haskell.org/package/heist"
                    >hackage</a> |
                 <a href="http://github.com/snapframework/heist"
-                   >github</a> |
-                <a href="/docs/heist-hpc/hpc_index.html"
-                   >test coverage report</a> ]</span></dd>
+                   >github</a> ]</span></dd>
 
 
             <dt>xmlhtml</dt>
             <dd>A hybrid XML/HTML5 parsing and rendering library written
               specifically for Heist. <br/><span class="linklist">
-                [ <a href="http://hackage.haskell.org/package/xmlhtml" >api docs</a> |
-                <a href="http://hackage.haskell.org/package/xmlhtml"
+                [ <a href="http://hackage.haskell.org/package/xmlhtml"
                    >hackage</a> |
                 <a href="http://github.com/snapframework/xmlhtml"
-                   >github</a> |
-                <a href="/docs/xmlhtml-hpc/hpc_index.html"
-                   >test coverage report</a> ]</span></dd>
+                   >github</a> ]</span></dd>
 
 
             <dt>snap-website </dt>
-            <dd>The source code for this website is a good example of
+            <dd>The source code for this website is a small example of
               Snap in action. <br/><span class="linklist">
                 [ <a href="http://github.com/snapframework/snap-website"
                      >github</a> ]</span></dd>

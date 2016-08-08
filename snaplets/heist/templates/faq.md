@@ -5,7 +5,6 @@
 
 1. [How can I report a bug in Snap?         ](#how-can-i-report-a-bug-in-snap)
 1. [Is anyone using Snap in production?     ](#is-anyone-using-snap-in-production)
-1. [Where's the high-level functionality?   ](#wheres-the-high-level-functionality)
 1. [Why can't I install Snap?               ](#why-cant-i-install-snap)
 1. [How do I run my app in development mode?](#how-do-i-run-my-app-in-development-mode)
 1. [How do I enable SSL?                    ](#how-do-i-enable-ssl)
@@ -68,19 +67,6 @@ you know of others:
   -  [howistart.org](http://howistart.org/) a tech tutorial resource.
 
   -  [http://snapframework.com](https://github.com/snapframework/snap-website) (this site)
-
-
-### Where's the high-level functionality?
-
-Our goal is for Snap to be a very fast, stable, *high-level* web framework at
-or above the same level of abstraction as frameworks like Ruby on Rails,
-Django, etc.  During early planning and development we concluded that to
-accomplish this goal we needed to build our own web server and API to interface
-with it.  This was an unanticipated detour, and we will resume working on
-higher-level functionality when the core has stabilized.
-
-With the addition of snaplets in 0.6 we now have the infrastructure needed for
-high-level features.  New functionality will be coming soon.
 
 
 ### Why can't I install Snap?
