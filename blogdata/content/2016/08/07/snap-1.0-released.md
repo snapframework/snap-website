@@ -48,10 +48,15 @@ to do `cabal install snap-templates` first instead of `cabal install snap`.
   MonadCatchIO-transformers.
 
 * Instead of deriving the MonadCatchIO type class, you should now make
-  MonadBaseControl instances.  Depending on your monad, this may require
-  MonadBase and MonadTransControl instances as well.  For examples of how to
-  do that for common monad structures, grep the snap and heist packages for
-  MonadBaseControl.
+  MonadBaseControl instances. Depending on your monad, this may require
+  MonadBase and MonadTransControl instances as well. For examples of how to do
+  that for common monad structures, look at
+  [Heist](https://github.com/snapframework/heist/blob/master/src/Heist/Internal/Types/HeistState.hs#L362)
+  and snap
+  ([here](https://github.com/snapframework/snap/blob/master/src/Snap/Snaplet/Internal/Types.hs#L283),
+  [here](https://github.com/snapframework/snap/blob/master/src/Snap/Snaplet/Internal/Lensed.hs#L103),
+  and
+  [here](https://github.com/snapframework/snap/blob/master/src/Snap/Snaplet/Internal/RST.hs#L114)).
 
 * Any exception handling functions like `try`, `catch`, etc you were using
   from Control.Monad.CatchIO should now come from Control.Exception.Lifted
