@@ -62,11 +62,12 @@ $ mkdir foo; cd foo; snap init</pre>
 
                 <p>
 
-                  <strong>Snap</strong> is a simple web development framework for
-                  unix systems, written in the
-                  <a href="http://www.haskell.org">Haskell</a> programming
-                  language.  Snap has a high level of test coverage and is
-                  well-documented.  Features include:
+                  <strong>Snap</strong> is a simple web development framework
+                  for unix systems, written in the <a
+                  href="http://www.haskell.org">Haskell</a> programming
+                  language. Snap has a [high level of test
+                  coverage](https://snapframework.github.io/snap-code-coverage/snap-server/hpc-ghc-8.0.1/hpc_index.html)
+                  and is well-documented. Features include:
 
                 </p>
 
@@ -83,10 +84,12 @@ $ mkdir foo; cd foo; snap init</pre>
               <div class="inner">
                 <h2>Snaplets</h2>
                 <p>
-                  Snap comes with pieces of composable web functionality called 
-                  <strong><a href="/docs/tutorials/snaplets-tutorial">&#8220;snaplets&#8221;</a></strong>.
-                  Snaplets make it easy to write, share, and reuse
-                  code. The default Snaplets let you get a full-featured web application up and running in no time.
+                  Snap includes an optional system for building reusable pieces
+                  web functionality called <strong><a
+                  href="/docs/tutorials/snaplets-tutorial">&#8220;snaplets&#8221;</a></strong>.
+                  Snaplets make it easy to share and reuse common code across
+                  multiple web apps. The default snaplets let you get a
+                  full-featured web application up and running in no time.
                 </p>
                 <p>
                   <strong><a href="/download">Install</a></strong> Snap now, check out the

@@ -37,7 +37,7 @@ $ mkdir foo; cd foo; snap init
             <th>Status</th>
           </tr>
           <tr>
-            <td>Snap</td>
+            <td>snap</td>
             <td>
               <a href="https://travis-ci.org/snapframework/snap"><img src="https://travis-ci.org/snapframework/snap.svg?branch=master"/></a></td>
           </tr>
@@ -78,8 +78,8 @@ $ mkdir foo; cd foo; snap init
         <div id="packages">
           <dl>
             <dt>snap-core</dt>
-            <dd>Core type definitions (<tt>Snap</tt> monad, HTTP types, etc) and
-              utilities for web
+            <dd>A simple web server API containing core type definitions
+              (<tt>Snap</tt> monad, HTTP types, etc) and utilities for web
               handlers. <br/><span class="linklist">
                 [ <a href="http://hackage.haskell.org/package/snap-core"
                      >api docs</a> |
@@ -91,7 +91,7 @@ $ mkdir foo; cd foo; snap init
                    >test coverage report</a> ]</span></dd>
 
             <dt>snap-server</dt>
-            <dd>An iteratee-based HTTP server library, which runs <tt>Snap</tt> web
+            <dd>A web server based on io-streams, which runs <tt>Snap</tt> web
               handlers. <br/><span class="linklist">
                 [ <a href="http://hackage.haskell.org/package/snap-server"
                      >api docs</a> |
@@ -111,6 +111,15 @@ $ mkdir foo; cd foo; snap init
                 <a href="http://hackage.haskell.org/package/snap"
                    >hackage</a> |
                 <a href="http://github.com/snapframework/snap"
+                   >github</a> ]</span></dd>
+
+
+            <dt>snap-templates</dt>
+            <dd>A package containing a project template generator and a few simple project 
+                templates.  <br/><span class="linklist">
+                [ <a href="http://hackage.haskell.org/package/snap-templates"
+                   >hackage</a> |
+                <a href="http://github.com/snapframework/snap-templates"
                    >github</a> ]</span></dd>
 
 

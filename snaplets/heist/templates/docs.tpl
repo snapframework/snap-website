@@ -88,7 +88,7 @@
               <a class="book" href="http://hackage.haskell.org/package/snap-server">
                 <img src="/media/css/book.png" />
               </a>
-              An iteratee-based HTTP server library, which runs <tt>Snap</tt>
+              An HTTP server library based on io-streams, which runs <tt>Snap</tt>
               web handlers.</dd>
             <dt><a href="http://hackage.haskell.org/package/snap">snap</a></dt>
             <dd>

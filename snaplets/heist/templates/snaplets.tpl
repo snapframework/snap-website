@@ -4,12 +4,27 @@
     <div id="about" class="section left">
       <div class="inner">
         <h2>About Snaplets</h2>
-        <p><img src="/media/img/snaplet.png" align="left" style="display: inline; padding: 0 14px 14px 14px;" /><strong><a href="docs/tutorials/snaplets-tutorial">Snaplets</a></strong> are self
-        contained pieces of functionality that you can include in your web
-        apps.</p>  <p>You can develop your own snaplets and publish them as a
-        standalone project on hackage completely independent of the Snap team.
-        For convenience we're going to keep this page updated with all the
-        snaplets we know about.
+        <p>
+
+          <img src="/media/img/snaplet.png" align="left" style="display: inline;
+          padding: 0 14px 14px 14px;" /><strong><a
+          href="docs/tutorials/snaplets-tutorial">Snaplets</a></strong> are self
+          contained pieces of composable web functionality that are designed to
+          be reused across multiple web apps.
+
+        </p>
+
+        <p>
+
+          Snaplets can define their own routes, include filesystem resources
+          such as templates and out of the box configuration, and even depend on
+          other snaplets. You can develop your own snaplets and publish them as
+          a standalone project on hackage completely independent of the Snap
+          team. We highlight a few prominent snaplets here, but a more complete
+          list can be found in the <a
+          href="http://hackage.haskell.org/packages/#cat:Snap">Snap category on
+          hackage</a>.
+
         </p>
         <h2>Snaplets that come with Snap</h2>
         <div id="snapletdls">
@@ -43,9 +58,8 @@
       <div class="inner">
         <h2>Third-Party Snaplets</h2>
         <div id="snapletdls">
-          <p>These snaplets are not maintained by the Snap Framework team.  If
-          you know of a snaplet not listed here, please <a
-          href="mailto:snap_framework@googlegroups.com">let us know</a>.
+          <p>Here is a somewhat arbitrarily selected list of snaplets that are
+          not maintained by the Snap Framework team.
           </p>
           <dl>
             <dt>snaplet-acid-state
@@ -57,17 +71,6 @@
                 </span>
             </dt>
             <dd>Persist native Haskell data structures with acid-state.</dd>
-
-            <dt>snaplet-fay
-                <span class="linklist">
-                  [ <a href="http://hackage.haskell.org/package/snaplet-fay"
-                   > hackage </a>
-                  | <a href="https://github.com/faylang/snaplet-fay"
-                   >github</a> ]
-                </span>
-            </dt>
-            <dd>Fay integration for Snap that provides automatic
-            (re)compilation during development.</dd>
 
             <dt>snaplet-file-dialog
                 <span class="linklist">
@@ -108,26 +111,6 @@
             </dt>
             <dd>Provides splices for AJAX-enabled forms and buttons</dd>
 
-            <dt>snaplet-mongoDB
-                <span class="linklist">
-                  [ <a href="http://hackage.haskell.org/package/snaplet-mongoDB"
-                   > hackage </a>
-                  | <a href="https://bitbucket.org/kamilc/snaplet-mongodb"
-                   >bitbucket</a> ]
-                </span>
-            </dt>
-            <dd>MongoDB support</dd>
-
-            <dt>snaplet-mongodb-minimalistic
-                <span class="linklist">
-                  [ <a href="http://hackage.haskell.org/package/snaplet-mongodb-minimalistic"
-                   > hackage </a>
-                  | <a href="https://github.com/Palmik/snaplet-mongodb-minimalistic"
-                   >github</a> ]
-                </span>
-            </dt>
-            <dd>MongoDB support</dd>
-
             <dt>snaplet-mysql-simple
                 <span class="linklist">
                   [ <a href="http://hackage.haskell.org/package/snaplet-mysql-simple"
@@ -161,6 +144,16 @@
                 </span>
             </dt>
             <dd>Support for the <a href="http://postmarkapp.com">Postmark email system</a>.</dd>
+
+            <dt>snaplet-purescript
+                <span class="linklist">
+                  [ <a href="http://hackage.haskell.org/package/snaplet-purescript"
+                   > hackage </a>
+                  | <a href="https://github.com/adinapoli/snaplet-purescript"
+                   >github</a> ]
+                </span>
+            </dt>
+            <dd>Automatic (re)compilation of purescript projects.</dd>
 
             <dt>snaplet-recaptcha
                 <span class="linklist">
