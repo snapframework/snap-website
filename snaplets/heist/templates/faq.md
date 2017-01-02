@@ -137,7 +137,10 @@ unregister -f snap-server` to avoid potential version conflicts.
 Once you have done that, run your application as follows using values
 appropriate to your setup.
 
-    ./app --ssl-port=443 --ssl-cert=cert.pem --ssl-key=key.pem
+    ./app --ssl-port=443 --ssl-cert=cert.pem --ssl-key=key.pem --ssl-address=0.0.0.0 --ssl-chain-cert=False
+
+If you are setting the server configuration in your Haskell code, you need to
+make sure that you set a value for all five of the SSL config fields.
 
 ### Why do I get a "cannot find normal object file" error when building Snap?
 
