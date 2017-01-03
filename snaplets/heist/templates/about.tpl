@@ -68,8 +68,8 @@
             <strong><a href="http://softwaresimply.blogspot.com/">Doug
             Beardsley</a></strong> has been programming since 1990, doing
             web development in Haskell since 2008, and laments that those
-            two dates are so far apart.  He currently works as engineering
-            manager at <a href="http://vfiles.com">VFILES</a>.
+            two dates are so far apart.  He currently works as a Lead Software
+            Engineer at <a href="http://takt.com">Takt</a>.
           </p>
           <p>
             <strong>Greg Hale</strong> is a biologist turned web developer. He
