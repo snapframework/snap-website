@@ -4,6 +4,7 @@
 <div class="faqs">
 
 1. [How can I report a bug in Snap?         ](#how-can-i-report-a-bug-in-snap)
+1. [What are some good examples of Snap applications?](#what-are-some-good-examples-of-snap-applications)
 1. [Is anyone using Snap in production?     ](#is-anyone-using-snap-in-production)
 1. [Why can't I install Snap?               ](#why-cant-i-install-snap)
 1. [How do I run my app in development mode?](#how-do-i-run-my-app-in-development-mode)
@@ -27,6 +28,15 @@
 
 Found a bug in Snap? Please create a ticket on our
 [issue tracker.](http://github.com/snapframework/snap-core/issues)
+
+
+### What are some good examples of Snap applications?
+
+- [HSnippet](https://github.com/mightybyte/hsnippet) is a non-trivial app
+  built using Snap.
+
+- [This website](https://github.com/snapframework/snap-website) serves
+  everything using Snap.
 
 
 ### Is anyone using Snap in production?
