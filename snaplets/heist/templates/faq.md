@@ -35,6 +35,9 @@ Found a bug in Snap? Please create a ticket on our
 - [HSnippet](https://github.com/mightybyte/hsnippet) is a non-trivial app
   built using Snap.
 
+- A simple example project implementing a [Starcraft
+  Blog](https://github.com/bonus500/sc2blog).
+
 - [This website](https://github.com/snapframework/snap-website) serves
   everything using Snap.
 
