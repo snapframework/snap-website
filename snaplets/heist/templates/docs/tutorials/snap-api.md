@@ -53,7 +53,7 @@ echoHandler = do
           writeBS param
 ~~~~~~
 
-If you haven not built the snap executable yet, you can see the full code for
+If you have not built the snap executable yet, you can see the full code for
 this example
 [here](https://github.com/snapframework/snap/blob/0.14-stable/project_template/barebones/src/Main.hs).
 
