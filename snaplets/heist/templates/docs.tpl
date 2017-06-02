@@ -110,22 +110,6 @@
           </dl>
         </div>
 
-        <h2 id="talks">Talks</h2>
-        <div id="docdls">
-          <dl>
-            <dt>
-              <a href="http://vimeo.com/59109358">Building a Link Shortener with
-              Snaplets</a><br />
-              Ryan Trinkle, NY Haskell User Group, Jan 2013
-            </dt>
-            <dd style="height: auto">
-              <iframe src="http://player.vimeo.com/video/59109358"
-                      width="500" height="281" frameborder="0"
-                      webkitAllowFullScreen mozallowfullscreen allowFullScreen>
-              </iframe>
-            </dd>
-          </dl>
-        </div>
       </div>
     </div>
   </static>
