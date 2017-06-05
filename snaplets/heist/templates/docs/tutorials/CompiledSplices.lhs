@@ -30,10 +30,6 @@ buildbot.  So first we need to get some boilerplate and imports out of the way.
 > import           Control.Applicative
 > import           Control.Lens
 > import           Data.Map.Syntax
-> import qualified Data.Text as T
-> import           Data.Text.Encoding
-> import qualified Heist.Compiled.LowLevel as C
-> import           Text.XmlHtml
 
 As a review, normal (interpreted) Heist splices are defined like this.
 
@@ -114,11 +110,11 @@ directory with compiled splices.
 >      -> Splices (C.Splice n)
 >      -> IO (HeistState n)
 > load baseDir splices = do
->     tmap <- runEitherT $ do
+>     tmap <- runExceptT $ do
 >         let sc = mempty & scLoadTimeSplices .~ defaultLoadTimeSplices
 >                         & scCompiledSplices .~ splices
 >                         & scTemplateLocations .~ [loadTemplates baseDir]
->         initHeist $ emptyHeistConfig & hcNamespace .~ ""
+>         ExceptT $ initHeist $ emptyHeistConfig & hcNamespace .~ ""
 >                                      & hcErrorNotBound .~ False
 >                                      & hcSpliceConfig .~ sc
 >     either (error . concat) return tmap
@@ -152,7 +148,7 @@ structure with a compiled splice.
 > 
 > personSplices :: Monad n
 >              => Splices (RuntimeSplice n Person -> C.Splice n)
-> personSplices = mapS (C.pureSplice . C.textSplice) $ do
+> personSplices = mapV (C.pureSplice . C.textSplice) $ do
 >     "firstName" ## pFirstName
 >     "lastName" ## pLastName
 >     "age" ## pack . show . pAge
@@ -253,7 +249,6 @@ differently in the case of failure.
 
 < failingSplice :: MonadSnap m => C.Splice m
 < failingSplice = do
-<     children <- childNodes <$> getParamNode
 <     promise <- C.newEmptyPromise
 <     outputChildren <- C.withSplices C.runChildren splices (C.getPromise promise)
 <     return $ C.yieldRuntime $ do         
@@ -273,7 +268,7 @@ differently in the case of failure.
 <   
 < splices :: Monad n
 <         => Splices (RuntimeSplice n (Text, Text) -> C.Splice n)
-< splices = mapS (C.pureSplice . C.nodeSplice) $ do
+< splices = mapS (C.pureSplice . C.htmlNodeSplice) $ do
 <   "user"  ## (:[]) . TextNode . fst
 <   "value" ## (:[]) . TextNode . snd
 
