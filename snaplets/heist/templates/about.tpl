@@ -120,13 +120,6 @@
             free software for about fifteen.  He is also an amateur algebraist,
             doing research in ring theory.
           </p>
-          <p>
-            <strong><a href="https://github.com/norm2782">Jurri&euml;n
-            Stutterheim</a></strong> is an MSc student at Utrecht University in
-            Utrecht, The Netherlands. From the moment he set foot in Utrecht
-            University, he has been in love with Haskell. In his free time he
-            can be found in the gym, or enjoying a good glass of wine.
-          </p>
         </div><!--end developers-->
         <div>
           <h2>Contacting us</h2>
