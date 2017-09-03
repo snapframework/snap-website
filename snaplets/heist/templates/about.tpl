@@ -72,8 +72,10 @@
             Engineer at <a href="http://takt.com">Takt</a>.
           </p>
           <p>
-            <strong>Greg Hale</strong> is a biologist turned web developer. He
-            currently lives is Boston, Massachusets.
+            <strong><a href="https://github.com/imalsogreg">Greg Hale</a></strong>
+             is a biologist turned Haskell developer. He
+            currently lives in Baltimore, MD and works at
+            <a href="http://takt.com">Takt</a>.
           </p>
           <p>
             <strong><a href="http://rfrn.org/~shu">Shu-yu Guo</a></strong>
