@@ -47,7 +47,7 @@ Found a bug in Snap? Please create a ticket on our
 Yes!  Here is a list of sites that we know of that use Snap.  Let us know if
 you know of others:
 
-  -  [VFILES](http://vfiles.com) uses Snap for all of their backend services.
+  -  [Piperka](http://piperka.net/) uses Snap and serves Heist templates.
 
   -  Everything at [Fynder](https://fynder.io/) is powered by Snap.
 
@@ -55,15 +55,9 @@ you know of others:
      management platform which is used by a number of popular
      [websites](http://www.janrain.com/customers).
 
-  -  [Silk](http://www.silkapp.com/) uses Snap for some of their back end
-     services.
-
   -  [Soostone](http://www.soostone.com/) uses Snap for their entire
      web stack across multiple products with applications ranging from
      front-end UIs to high volume data/analytics APIs.
-
-  -  [zerobuzz](https://zerobuzz.net/) uses Snap for their website and other
-     products.
 
   -  [housetab.org](http://housetab.org) - a webapp for sharing expenses.
 
