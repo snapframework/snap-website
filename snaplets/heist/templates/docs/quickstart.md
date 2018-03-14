@@ -15,7 +15,7 @@ instructions assume that `$HOME/.cabal/bin` is on your `$PATH`.
 To set up a new Snap project, run the following commands:
 
 ~~~~~~ {.shell}
-$ cabal install snap-templates
+$ cabal install snap snap-templates
 $ mkdir myproject
 $ cd myproject
 $ snap init barebones
