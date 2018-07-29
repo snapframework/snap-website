@@ -65,11 +65,11 @@
             University and he works at <a href="http://www.google.ch/">Google</a>.
           </p>
           <p>
-            <strong><a href="http://softwaresimply.blogspot.com/">Doug
+            <strong><a href="http://mightybyte.net">Doug
             Beardsley</a></strong> has been programming since 1990, doing
             web development in Haskell since 2008, and laments that those
-            two dates are so far apart.  He currently works as a Lead Software
-            Engineer at <a href="http://takt.com">Takt</a>.
+            two dates are so far apart.  He currently works as a Senior Engineer
+            at <a href="http://kadena.io">Kadena</a>.
           </p>
           <p>
             <strong><a href="https://github.com/imalsogreg">Greg Hale</a></strong>
