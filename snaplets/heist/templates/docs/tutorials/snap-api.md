@@ -55,7 +55,7 @@ echoHandler = do
 
 If you have not built the snap executable yet, you can see the full code for
 this example
-[here](https://github.com/snapframework/snap/blob/0.14-stable/project_template/barebones/src/Main.hs).
+[here](https://github.com/snapframework/snap-templates/blob/master/project_template/barebones/src/Main.hs).
 
 The behavior of this code can be summarized with the following rules:
 
