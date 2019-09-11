@@ -2,14 +2,29 @@
 
 If you haven't already done so, first go to the [download](/download) page to
 find out how to install Snap.  The installation generates an executable called
-`snap` that you can use to get started with a basic snap project. By default,
-`cabal` will install executables to "`$HOME/.cabal/bin`".  To add `cabal` to your `$PATH`, add 
+`snap` that you can use to get started with a basic snap project.
 
+Our first step is to complete the installation process by adding `snap` to our `PATH`.  
+This step depends on your exact system configuration.  Below are the commands for the 
+default configurations of the haskell platform on Linux, Mac, and Windows.
+
+On Linux, the command is:
 ~~~~~~ {.shell}
 PATH=$HOME/.cabal/bin:$PATH
 ~~~~~~
 
-to your `~/.bashrc` and run `source ~/.bashrc`. The following
+On MacOS, the command is:
+~~~~~ {.shell
+PATH=$HOME/Library/Haskell/bin:$PATH
+~~~~~
+
+On Windows (with cygwin), the command is:
+~~~~~ {.shell}
+PATH=/cygdrive/c/Users/yourusername/AppData/Roaming/cabal/bin:$PATH
+~~~~~
+(you must replace yourusername with your actual user name.)
+
+Add the appropriate command to your `~/.bashrc`, then run `source ~/.bashrc`. The following
 instructions assume that `$HOME/.cabal/bin` is on your `$PATH`. 
 
 To set up a new Snap project, run the following commands:
