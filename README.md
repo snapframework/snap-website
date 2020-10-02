@@ -3,6 +3,17 @@ Snap Website
 
 This is the source code for http://snapframework.com/.
 
+
+Modules
+-------
+
+1.Home
+2.About
+3.Blog
+4.Docs
+5.Snaplets
+6.FAQ
+
 Building
 --------
 
